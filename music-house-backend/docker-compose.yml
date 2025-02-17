@@ -1,0 +1,37 @@
+version: '3.4'
+
+services:
+  java_music_house:
+    container_name: container_music_house_v1_1.0.0
+    image: music_house:1.0.0
+    build: .
+    ports:
+      - "8080:8080"  # Asegúrate de usar comillas en los puertos
+    environment:
+      - DB_HOST=mysql_container_music_house_v1_1.0.0
+      - DB_PORT=3306
+      - DB_NAME=music_house
+      - DB_USER=root
+      - DB_PASSWORD=secret
+    networks:
+      - my_net_music_house
+    depends_on:
+      - mysql_container_music_house_v1_1.0.0
+    restart: always
+
+  mysql_container_music_house_v1_1.0.0:
+    container_name: mysql_container_music_house_v1_1.0.0
+    image: mysql:latest
+    ports:
+      - "13307:3306"  # Asegúrate de usar comillas en los puertos
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=music_house
+      - MYSQL_PASSWORD=secret
+    networks:
+      - my_net_music_house
+    restart: always
+
+networks:
+  my_net_music_house:
+    driver: bridge

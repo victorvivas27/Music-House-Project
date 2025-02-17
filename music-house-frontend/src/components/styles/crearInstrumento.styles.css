@@ -1,0 +1,15 @@
+.cuerpo {
+  height: 100%;
+  margin-top: 300px;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 2rem;
+}
+
+.characteristic-image {
+  width: 50%;
+}

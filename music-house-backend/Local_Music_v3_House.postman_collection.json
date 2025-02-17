@@ -1,0 +1,1608 @@
+{
+  "info": {
+    "_postman_id": "87b6bb65-15f2-4785-adad-1d27522d9364",
+    "name": "Local_Music_House",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28090217"
+  },
+  "item": [
+    {
+      "name": "Local_Category",
+      "item": [
+        {
+          "name": "local_create_category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"categoryName\": \"TECLADO\",\r\n    \"description\": \"La categoría de teclado incluye instrumentos como el piano, el órgano, el teclado electrónico y el clavecín. Estos instrumentos producen sonido al pulsar teclas que activan mecanismos para hacer sonar cuerdas, tubos o generar sonidos electrónicos.\"\r\n}\r\n\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlCat}}create",
+              "host": [
+                "{{LocalUrlCat}}create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlCat}}all",
+              "host": [
+                "{{LocalUrlCat}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_category:id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlCat}}search/1",
+              "host": [
+                "{{LocalUrlCat}}search"
+              ],
+              "path": [
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_category:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlCat}}delete/14",
+              "host": [
+                "{{LocalUrlCat}}delete"
+              ],
+              "path": [
+                "14"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_category",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idCategory\":1,\r\n    \"categoryName\": \"VIENTO\",\r\n    \"description\": \"La categorías de percusión abarca instrumentos como la batería, los timbales, los platillos y la marimba, que se tocan golpeándolos para producir ritmos y efectos rítmicos en la música.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlCat}}update",
+              "host": [
+                "{{LocalUrlCat}}update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Find_Name_Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlCat}}find/nameCategory/viento",
+              "host": [
+                "{{LocalUrlCat}}find"
+              ],
+              "path": [
+                "nameCategory",
+                "viento"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_Instrument",
+      "item": [
+        {
+          "name": "local_create_instrument",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "  {\r\n        \"name\": \"Saxofón Alto\",\r\n        \"description\": \"Instrumento de viento de la familia de los saxofones, conocido por su uso en jazz y música clásica.\",\r\n        \"rentalPrice\":200000,\r\n        \"weight\": 2.5,\r\n        \"measures\": \"24''X10''\",\r\n        \"idCategory\": 3,\r\n        \"idTheme\": 3,\r\n        \"characteristic\": {\r\n            \"instrumentCase\": \"si\",\r\n            \"support\": \"no\",\r\n            \"tuner\": \"si\",\r\n            \"microphone\": \"si\",\r\n            \"phoneHolder\": \"no\"\r\n        },\r\n        \"imageUrls\": [\r\n            \"https://http2.mlstatic.com/D_NQ_NP_956277-MLC45585983682_042021-O.webp\",\r\n            \"https://http2.mlstatic.com/D_NQ_NP_852341-MLC45586013113_042021-O.webp\",\r\n            \"https://http2.mlstatic.com/D_NQ_NP_677153-MLC45586010171_042021-O.webp\"\r\n        ]\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/instrument/create",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "instrument",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_instrument",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIns}}delete/16",
+              "host": [
+                "{{LocalUrlIns}}delete"
+              ],
+              "path": [
+                "16"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_instrument",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIns}}all",
+              "host": [
+                "{{LocalUrlIns}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_instrument",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idInstrument\":1,\r\n    \"name\": \"Batería Acústica\",\r\n    \"description\": \"Batería completa que incluye bombo, cajas, platillos y timbales, ideal para músicos y bandas que buscan un sonido potente y versátil.\",\r\n    \"rentalPrice\": 17000.00,\r\n    \"weight\": 600.0,\r\n    \"measures\": \"35,0x150\",\r\n    \"idCategory\": 2,\r\n    \"idTheme\": 2,\r\n     \"characteristic\": {\r\n        \"instrumentCase\": \"no\",\r\n        \"support\": \"no\",\r\n        \"tuner\": \"no\",\r\n        \"microphone\": \"no\",\r\n        \"phoneHolder\": \"no\"\r\n        }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlIns}}update",
+              "host": [
+                "{{LocalUrlIns}}update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_instrument:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIns}}search/4",
+              "host": [
+                "{{LocalUrlIns}}search"
+              ],
+              "path": [
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Find_Name_Instrument",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIns}}find/name/s",
+              "host": [
+                "{{LocalUrlIns}}find"
+              ],
+              "path": [
+                "name",
+                "s"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Find_maxPrice_instrument",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIns}}find/maxPrice/300",
+              "host": [
+                "{{LocalUrlIns}}find"
+              ],
+              "path": [
+                "maxPrice",
+                "300"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Find_minPrice_instrument",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIns}}find/minPrice/3000",
+              "host": [
+                "{{LocalUrlIns}}find"
+              ],
+              "path": [
+                "minPrice",
+                "3000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Find_min_max_Instrument",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIns}}find?minPrice=1000&maxPrice=1500",
+              "host": [
+                "{{LocalUrlIns}}find"
+              ],
+              "query": [
+                {
+                  "key": "minPrice",
+                  "value": "1000"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "1500"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_Theme",
+      "item": [
+        {
+          "name": "local_create_theme",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"themeName\": \"INDUSTRIAL\",\r\n    \"description\": \"La temática industrial está inspirada en ambientes urbanos, fábricas y espacios industriales. Se caracteriza por el uso de materiales como el acero, el concreto y el metal, colores fríos como el gris y el negro.\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlThe}}create",
+              "host": [
+                "{{LocalUrlThe}}create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_theme",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlThe}}all",
+              "host": [
+                "{{LocalUrlThe}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_theme",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlThe}}delete/6",
+              "host": [
+                "{{LocalUrlThe}}delete"
+              ],
+              "path": [
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_theme:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlThe}}search/1",
+              "host": [
+                "{{LocalUrlThe}}search"
+              ],
+              "path": [
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_theme",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n     \"idTheme\":1,\r\n    \"themeName\":\"CLASICO URBANO\",\r\n    \"description\":\"Clásico se caracteriza por la simetría, el equilibrio y la proporción, con columnas griegas o romanas, frontones triangulares, arcos semicirculares y una paleta de colores sobria y elegante.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlThe}}update",
+              "host": [
+                "{{LocalUrlThe}}update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Find_Name_Theme",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlThe}}find/nameTheme/c",
+              "host": [
+                "{{LocalUrlThe}}find"
+              ],
+              "path": [
+                "nameTheme",
+                "c"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_ImageUrls",
+      "item": [
+        {
+          "name": "local_add_imageurls",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idInstrument\":3,\r\n    \"imageUrl\": \"https://img.kwcdn.com/product/Fancyalgo/VirtualModelMatting/dfb72a674d115a794a2685e5883ced38.jpg?imageView2/2/w/800/q/70/format/webp\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlIma}}add_image",
+              "host": [
+                "{{LocalUrlIma}}add_image"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_imageurls",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIma}}all",
+              "host": [
+                "{{LocalUrlIma}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_imageurls:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIma}}search/5",
+              "host": [
+                "{{LocalUrlIma}}search"
+              ],
+              "path": [
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_imageurls:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIma}}delete/3/6",
+              "host": [
+                "{{LocalUrlIma}}delete"
+              ],
+              "path": [
+                "3",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_imageurls",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idImage\": 7,\r\n    \"imageUrl\": \"https://img.kwcdn.com/product/Fancyalgo/VirtualModelMatting/dfb72a674d115a794a2685e5883ced38.jpg?imageView2/2/w/800/q/70/format/webp\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlIma}}update",
+              "host": [
+                "{{LocalUrlIma}}update"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_User",
+      "item": [
+        {
+          "name": "local_create_user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Victor\",\r\n    \"lastName\": \"Vivas\",\r\n    \"email\": \"vivasvictor@hotmail.com\",\r\n    \"password\": \"victor78\",\r\n    \"addresses\": [\r\n        {\r\n            \"street\": \"Carol Urzua\",\r\n            \"number\":6950,\r\n            \"city\": \"Santiago\",\r\n            \"state\": \"Metropolitana\",\r\n            \"country\": \"Chile\"\r\n        }\r\n    ],\r\n    \"phones\": [\r\n        {\r\n            \"phoneNumber\": \"+54986435678\"\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlAuth}}create/user",
+              "host": [
+                "{{LocalUrlAuth}}create"
+              ],
+              "path": [
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_user",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlUser}}all",
+              "host": [
+                "{{LocalUrlUser}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_user:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlUser}}search/1",
+              "host": [
+                "{{LocalUrlUser}}search"
+              ],
+              "path": [
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_user",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idUser\": 6,\r\n    \"name\": \"Victor juan\",\r\n    \"lastName\": \"Pérez amiel\",\r\n    \"email\": \"vivasvictor1223@hotmail.com\",\r\n    \"password\": \"victor78\",\r\n    \"addresses\": [\r\n        {\r\n            \"idAddress\": 4,\r\n            \"street\": \"Carol \",\r\n            \"number\": 90,\r\n            \"city\": \"Santiago hhhhh\",\r\n            \"state\": \"Metropolitana\",\r\n            \"country\": \"Argrntina\"\r\n        }\r\n    ],\r\n    \"phones\": [\r\n        {\r\n            \"idPhone\": 4,\r\n            \"phoneNumber\": \"+5455555555\"\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlUser}}update",
+              "host": [
+                "{{LocalUrlUser}}update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_user",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlUser}}delete/5",
+              "host": [
+                "{{LocalUrlUser}}delete"
+              ],
+              "path": [
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_login_user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"vivasvictor1223@hotmail.com\",\r\n    \"password\": \"victor78\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlAuth}}login",
+              "host": [
+                "{{LocalUrlAuth}}login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_Address",
+      "item": [
+        {
+          "name": "local_add_address",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idUser\":2,\r\n    \"street\": \"Avenida Secundaria\",\r\n    \"number\": 456,\r\n    \"city\": \"Ciudad Secundaria\",\r\n    \"state\": \"Estado Secundario\",\r\n    \"country\": \"País Secundario\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlAddr}}add_address",
+              "host": [
+                "{{LocalUrlAddr}}add_address"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_address",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlAddr}}all",
+              "host": [
+                "{{LocalUrlAddr}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_address:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlAddr}}search/4",
+              "host": [
+                "{{LocalUrlAddr}}search"
+              ],
+              "path": [
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_address",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idAddress\": 4,\r\n    \"street\": \"Carol Urzua\",\r\n    \"number\": 90000,\r\n    \"city\": \"Santiago\",\r\n    \"state\": \"Metropolitana\",\r\n    \"country\": \"Argrntina\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlAddr}}update",
+              "host": [
+                "{{LocalUrlAddr}}update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_address",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlAddr}}delete/5",
+              "host": [
+                "{{LocalUrlAddr}}delete"
+              ],
+              "path": [
+                "5"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_Phone",
+      "item": [
+        {
+          "name": "local_add_phone",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idUser\":4,\r\n    \"phoneNumber\": \"+54986435678\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlPhon}}add_phone",
+              "host": [
+                "{{LocalUrlPhon}}add_phone"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_phone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlPhon}}all",
+              "host": [
+                "{{LocalUrlPhon}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_phone:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlPhon}}search/3",
+              "host": [
+                "{{LocalUrlPhon}}search"
+              ],
+              "path": [
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_phone",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idPhone\": 3,\r\n    \"phoneNumber\": \"+55777779999\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlPhon}}update",
+              "host": [
+                "{{LocalUrlPhon}}update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_phone",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlPhon}}delete/3",
+              "host": [
+                "{{LocalUrlPhon}}delete"
+              ],
+              "path": [
+                "3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_User_Admin",
+      "item": [
+        {
+          "name": "local_crear_admin",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Yanina\",\r\n    \"lastName\": \"Juarez\",\r\n    \"email\": \"victorjaviervivas@gmail.com\",\r\n    \"password\": \"victor78\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlAuth}}create/admin",
+              "host": [
+                "{{LocalUrlAuth}}create"
+              ],
+              "path": [
+                "admin"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_login_admin",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"victorjaviervivas@gmail.com\",\r\n    \"password\": \"victor78\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlAuth}}login",
+              "host": [
+                "{{LocalUrlAuth}}login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_user_admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlAdmin}}all",
+              "host": [
+                "{{LocalUrlAdmin}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_user_admin",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idUser\": 7,\r\n    \"name\": \"Yaninaaaaa\",\r\n    \"lastName\": \"Juarezzz\",\r\n    \"email\": \"victorjaviervivas@gmail.com\",\r\n    \"password\": \"victor78\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlAdmin}}update",
+              "host": [
+                "{{LocalUrlAdmin}}update"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_Characteristic",
+      "item": [
+        {
+          "name": "local_all_characteristic",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlCharac}}all",
+              "host": [
+                "{{LocalUrlCharac}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_characteristic",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlCharac}}search/2",
+              "host": [
+                "{{LocalUrlCharac}}search"
+              ],
+              "path": [
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_characteristics",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idCharacteristic\":2,\r\n        \"instrumentCase\": \"noooo\",\r\n        \"support\": \"nooooo\",\r\n        \"tuner\": \"noooo\",\r\n        \"microphone\": \"nooo\",\r\n        \"phoneHolder\": \"noooo\"\r\n        }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlCharac}}update",
+              "host": [
+                "{{LocalUrlCharac}}update"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_Rol",
+      "item": [
+        {
+          "name": "local_add_rol_admin",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"idUser\":2,\r\n    \"rol\": \"ADMIN\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlRol}}user/rol/add",
+              "host": [
+                "{{LocalUrlRol}}user"
+              ],
+              "path": [
+                "rol",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_add_rol_user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idUser\": 3,\r\n    \"rol\": \"USER\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlRol}}user/rol/add",
+              "host": [
+                "{{LocalUrlRol}}user"
+              ],
+              "path": [
+                "rol",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_role_admin",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"idUser\":2,\r\n    \"rol\": \"ADMIN\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlRol}}user/rol/delete",
+              "host": [
+                "{{LocalUrlRol}}user"
+              ],
+              "path": [
+                "rol",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_rol_user",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idUser\": 3,\r\n    \"rol\": \"USER\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlRol}}user/rol/delete",
+              "host": [
+                "{{LocalUrlRol}}user"
+              ],
+              "path": [
+                "rol",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_Available_Date",
+      "item": [
+        {
+          "name": "Local_Add_Available_Date",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idInstrument\": 3,\r\n    \"dateAvailable\": \"2024-06-02\",\r\n    \"available\":true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlAvailable}}add",
+              "host": [
+                "{{LocalUrlAvailable}}add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_All_Available_Date",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlAvailable}}all",
+              "host": [
+                "{{LocalUrlAvailable}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Delete_Available_Date",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlAvailable}}delete/3/15",
+              "host": [
+                "{{LocalUrlAvailable}}delete"
+              ],
+              "path": [
+                "3",
+                "15"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_search_Available_Date:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlAvailable}}search/6",
+              "host": [
+                "{{LocalUrlAvailable}}search"
+              ],
+              "path": [
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Update_Available_Date",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": " {\r\n        \"idAvailableDate\": 1,\r\n        \"idInstrument\": 4,\r\n        \"dateAvailable\": \"2024-08-07\",\r\n        \"available\": false\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlAvailable}}update",
+              "host": [
+                "{{LocalUrlAvailable}}update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_All_Find_Available_Date",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlAvailable}}find/all/2024-06-04",
+              "host": [
+                "{{LocalUrlAvailable}}find"
+              ],
+              "path": [
+                "all",
+                "2024-06-04"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Find_Available_Date:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlAvailable}}find/all/2024-06-03/3",
+              "host": [
+                "{{LocalUrlAvailable}}find"
+              ],
+              "path": [
+                "all",
+                "2024-06-03",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Date_Available_Between:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlAvailable}}find/all/2024-06-04/between/2024-06-06/5",
+              "host": [
+                "{{LocalUrlAvailable}}find"
+              ],
+              "path": [
+                "all",
+                "2024-06-04",
+                "between",
+                "2024-06-06",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Date_Available_Between_All",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlAvailable}}find/all/2024-06-04/between/2024-07-03",
+              "host": [
+                "{{LocalUrlAvailable}}find"
+              ],
+              "path": [
+                "all",
+                "2024-06-04",
+                "between",
+                "2024-07-03"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/test-delete-past-dates",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "test-delete-past-dates"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_Favorite",
+      "item": [
+        {
+          "name": "Local_add_favorite",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idUser\": 6,\r\n    \"idInstrument\": 5\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlFav}}add",
+              "host": [
+                "{{LocalUrlFav}}add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_All_Favorite",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlFav}}all",
+              "host": [
+                "{{LocalUrlFav}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Delete_Favorite",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlFav}}delete/5/6/35",
+              "host": [
+                "{{LocalUrlFav}}delete"
+              ],
+              "path": [
+                "5",
+                "6",
+                "35"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Privacy_Policy",
+      "item": [
+        {
+          "name": "Local_Create_Privacy_Policy",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Política de Privacidad de Music House\",\r\n    \"content\": \"1. Introducción\\nEn [Music House] (\\\"nosotros\\\", \\\"nuestro\\\", \\\"nuestra empresa\\\"), nos comprometemos a proteger y respetar su privacidad. Esta política de privacidad explica cómo recopilamos, usamos y protegemos su información personal cuando utiliza nuestra aplicación de alquiler de instrumentos musicales (\\\"la App\\\").\\n\\n2. Información que Recopilamos\\nRecopilamos y procesamos los siguientes datos personales sobre usted:\\n\\nInformación de contacto: nombre, dirección de correo electrónico, número de teléfono.\\nInformación de la cuenta: nombre de usuario, contraseña, historial de alquileres.\\nInformación de pago: detalles de la tarjeta de crédito/débito, historial de transacciones.\\nInformación de ubicación: dirección de entrega y recogida de los instrumentos.\\nInformación técnica: dirección IP, tipo de dispositivo, sistema operativo, tipo de navegador.\\n\\n3. Cómo Usamos su Información\\nUsamos la información que recopilamos para los siguientes propósitos:\\n\\nProvisión de servicios: Para gestionar su cuenta, procesar sus alquileres y pagos, y proporcionar el servicio de alquiler de instrumentos.\\nComunicación: Para comunicarnos con usted sobre su cuenta, responder a sus consultas y enviarle actualizaciones importantes.\\nMejora del servicio: Para analizar el uso de nuestra App y mejorar nuestros servicios.\\nSeguridad: Para proteger nuestra App y a nuestros usuarios contra fraudes y abusos.\\n\\n4. Cómo Compartimos su Información\\nNo compartimos su información personal con terceros, excepto en las siguientes circunstancias:\\n\\nProveedores de servicios: Compartimos su información con proveedores de servicios que nos ayudan a operar nuestra App, como procesadores de pagos y servicios de entrega.\\nRequerimientos legales: Podemos divulgar su información si estamos obligados a hacerlo por ley o en respuesta a una solicitud legal válida.\\n\\n5. Seguridad de su Información\\nImplementamos medidas de seguridad adecuadas para proteger su información personal contra el acceso no autorizado, la alteración, la divulgación o la destrucción. Estas medidas incluyen encriptación de datos, firewalls y controles de acceso físico y lógico.\\n\\n6. Sus Derechos\\nUsted tiene los siguientes derechos en relación con su información personal:\\n\\nAcceso: Puede solicitar una copia de la información personal que tenemos sobre usted.\\nRectificación: Puede solicitar que corrijamos cualquier información incorrecta o incompleta.\\nEliminación: Puede solicitar que eliminemos su información personal en ciertas circunstancias.\\nOposición: Puede oponerse al procesamiento de su información personal en ciertas circunstancias.\\nPortabilidad: Puede solicitar que transfiramos su información personal a otra organización.\\nPara ejercer estos derechos, por favor, póngase en contacto con nosotros a través de [correo electrónico de contacto].\\n\\n7. Cambios a esta Política\\nPodemos actualizar esta política de privacidad de vez en cuando. Le notificaremos sobre cualquier cambio publicando la nueva política de privacidad en nuestra App. Le recomendamos que revise esta política periódicamente para estar informado sobre cómo protegemos su información.\\n\\n8. Contacto\\nSi tiene alguna pregunta o inquietud sobre esta política de privacidad, por favor, contáctenos en: [Music House]\\n[Siempre viva 4567]\\n[proyectointegradorequipo.01@gmail.com]\\n[+54 345 76538955]\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlPolicity}}create",
+              "host": [
+                "{{LocalUrlPolicity}}create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_All_Privacy_Policy",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlPolicity}}all",
+              "host": [
+                "{{LocalUrlPolicity}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Delete_Privacy_Policy",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlPolicity}}delete/2",
+              "host": [
+                "{{LocalUrlPolicity}}delete"
+              ],
+              "path": [
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Local_Update_Privacy_Policy",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"idPrivacyPolicy\":3,\r\n    \"title\": \"Política de Privacidad de Music House\",\r\n    \"content\": \"1. Introducción\\nEn [Music House] (\\\"nosotros\\\", \\\"nuestro\\\", \\\"nuestra empresa\\\"), nos comprometemos a proteger y respetar su privacidad. Esta política de privacidad explica cómo recopilamos, usamos y protegemos su información personal cuando utiliza nuestra aplicación de alquiler de instrumentos musicales (\\\"la App\\\").\\n\\n2. Información que Recopilamos\\nRecopilamos y procesamos los siguientes datos personales sobre usted:\\n\\nInformación de contacto: nombre, dirección de correo electrónico, número de teléfono.\\nInformación de la cuenta: nombre de usuario, contraseña, historial de alquileres.\\nInformación de pago: detalles de la tarjeta de crédito/débito, historial de transacciones.\\nInformación de ubicación: dirección de entrega y recogida de los instrumentos.\\nInformación técnica: dirección IP, tipo de dispositivo, sistema operativo, tipo de navegador.\\n\\n3. Cómo Usamos su Información\\nUsamos la información que recopilamos para los siguientes propósitos:\\n\\nProvisión de servicios: Para gestionar su cuenta, procesar sus alquileres y pagos, y proporcionar el servicio de alquiler de instrumentos.\\nComunicación: Para comunicarnos con usted sobre su cuenta, responder a sus consultas y enviarle actualizaciones importantes.\\nMejora del servicio: Para analizar el uso de nuestra App y mejorar nuestros servicios.\\nSeguridad: Para proteger nuestra App y a nuestros usuarios contra fraudes y abusos.\\n\\n4. Cómo Compartimos su Información\\nNo compartimos su información personal con terceros, excepto en las siguientes circunstancias:\\n\\nProveedores de servicios: Compartimos su información con proveedores de servicios que nos ayudan a operar nuestra App, como procesadores de pagos y servicios de entrega.\\nRequerimientos legales: Podemos divulgar su información si estamos obligados a hacerlo por ley o en respuesta a una solicitud legal válida.\\n\\n5. Seguridad de su Información\\nImplementamos medidas de seguridad adecuadas para proteger su información personal contra el acceso no autorizado, la alteración, la divulgación o la destrucción. Estas medidas incluyen encriptación de datos, firewalls y controles de acceso físico y lógico.\\n\\n6. Sus Derechos\\nUsted tiene los siguientes derechos en relación con su información personal:\\n\\nAcceso: Puede solicitar una copia de la información personal que tenemos sobre usted.\\nRectificación: Puede solicitar que corrijamos cualquier información incorrecta o incompleta.\\nEliminación: Puede solicitar que eliminemos su información personal en ciertas circunstancias.\\nOposición: Puede oponerse al procesamiento de su información personal en ciertas circunstancias.\\nPortabilidad: Puede solicitar que transfiramos su información personal a otra organización.\\nPara ejercer estos derechos, por favor, póngase en contacto con nosotros a través de [correo electrónico de contacto].\\n\\n7. Cambios a esta Política\\nPodemos actualizar esta política de privacidad de vez en cuando. Le notificaremos sobre cualquier cambio publicando la nueva política de privacidad en nuestra App. Le recomendamos que revise esta política periódicamente para estar informado sobre cómo protegemos su información.\\n\\n8. Contacto\\nSi tiene alguna pregunta o inquietud sobre esta política de privacidad, por favor, contáctenos en: [Music House]\\n[Siempre viva 4567]\\n[proyectointegradorequipo.01@gmail.com]\\n[+54 345 76538955]\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlPolicity}}update",
+              "host": [
+                "{{LocalUrlPolicity}}update"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "LocalUrlCat",
+      "value": "http://localhost:8080/api/category/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlIns",
+      "value": "http://localhost:8080/api/instrument/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlThe",
+      "value": "http://localhost:8080/api/theme/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlIma",
+      "value": "http://localhost:8080/api/imageurls/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlUser",
+      "value": "http://localhost:8080/api/user/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlAddr",
+      "value": "http://localhost:8080/api/address/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlPhon",
+      "value": "http://localhost:8080/api/phone/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlAuth",
+      "value": "http://localhost:8080/api/auth/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlCharac",
+      "value": "http://localhost:8080/api/characteristic/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlRol",
+      "value": "http://localhost:8080/api/roles/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlAvailable",
+      "value": "http://localhost:8080/api/available-dates/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlFav",
+      "value": "http://localhost:8080/api/favorite/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlPolicity",
+      "value": "http://localhost:8080/api/privacy-policy/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlAdmin",
+      "value": "http://localhost:8080/api/user/admin/",
+      "type": "string"
+    }
+  ]
+}

@@ -1,0 +1,451 @@
+{
+  "info": {
+    "_postman_id": "87b6bb65-15f2-4785-adad-1d27522d9364",
+    "name": "Local_Music_House",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28090217"
+  },
+  "item": [
+    {
+      "name": "Local_Category",
+      "item": [
+        {
+          "name": "local_create_category",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"categoryName\": \"PERCUSION\",\r\n    \"description\": \"La categoría de percusión abarca instrumentos como la batería, los timbales, los platillos y la marimba, que se tocan golpeándolos para producir ritmos y efectos rítmicos en la música.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlCat}}create",
+              "host": [
+                "{{LocalUrlCat}}create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlCat}}all",
+              "host": [
+                "{{LocalUrlCat}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_category:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlCat}}search/1",
+              "host": [
+                "{{LocalUrlCat}}search"
+              ],
+              "path": [
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_category:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlCat}}delete/1",
+              "host": [
+                "{{LocalUrlCat}}delete"
+              ],
+              "path": [
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_category",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idCategory\":2,\r\n    \"categoryName\": \"PERCUSION\",\r\n    \"description\": \"La categorías de percusión abarca instrumentos como la batería, los timbales, los platillos y la marimba, que se tocan golpeándolos para producir ritmos y efectos rítmicos en la música.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlCat}}update",
+              "host": [
+                "{{LocalUrlCat}}update"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_Instrument",
+      "item": [
+        {
+          "name": "local_create_instrument",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Bombo\",\r\n    \"description\": \"Instrumento de percusión de gran tamaño que forma parte de la batería acústica\",\r\n    \"rentalPrice\": 3000.00,\r\n    \"weight\": 30.0,\r\n    \"measures\": \"70x40\",\r\n    \"idCategory\": 2,\r\n    \"idTheme\": 1,\r\n    \"imageUrls\": [\r\n        \"https://www.fluteservice.cl/wp-content/uploads/2021/05/Yamaha-MB6324.jpg\",\r\n        \"https://http2.mlstatic.com/D_NQ_NP_986125-MLU75482699030_042024-O.webp\"\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlIns}}create",
+              "host": [
+                "{{LocalUrlIns}}create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_instrument",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIns}}delete/1",
+              "host": [
+                "{{LocalUrlIns}}delete"
+              ],
+              "path": [
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_instrument",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIns}}all",
+              "host": [
+                "{{LocalUrlIns}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_instrument",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idInstrument\":2,\r\n    \"name\": \"Batería Acústica\",\r\n    \"description\": \"Batería completa que incluye bombo, cajas, platillos y timbales, ideal para músicos y bandas que buscan un sonido potente y versátil.\",\r\n    \"rentalPrice\": 17000.00,\r\n    \"weight\": 600.0,\r\n    \"measures\": \"35,0x150\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlIns}}update",
+              "host": [
+                "{{LocalUrlIns}}update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_instrument:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIns}}search/2",
+              "host": [
+                "{{LocalUrlIns}}search"
+              ],
+              "path": [
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_Theme",
+      "item": [
+        {
+          "name": "local_create_theme",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"themeName\":\"CLASICO\",\r\n    \"description\":\"Clásico se caracteriza por la simetría, el equilibrio y la proporción, con columnas griegas o romanas, frontones triangulares, arcos semicirculares y una paleta de colores sobria y elegante.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlThe}}create",
+              "host": [
+                "{{LocalUrlThe}}create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_theme",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlThe}}all",
+              "host": [
+                "{{LocalUrlThe}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_theme",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlThe}}delete/1",
+              "host": [
+                "{{LocalUrlThe}}delete"
+              ],
+              "path": [
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_theme:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlThe}}search/1",
+              "host": [
+                "{{LocalUrlThe}}search"
+              ],
+              "path": [
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_theme",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n     \"idTheme\":1,\r\n    \"themeName\":\"CLASICO\",\r\n    \"description\":\"Clásico se caracteriza por la simetría, el equilibrio y la proporción, con columnas griegas o romanas, frontones triangulares, arcos semicirculares y una paleta de colores sobria y elegante.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlThe}}update",
+              "host": [
+                "{{LocalUrlThe}}update"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Local_ImageUrls",
+      "item": [
+        {
+          "name": "local_add_imageurls",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"idInstrument\":3,\r\n    \"imageUrl\": \"https://img.kwcdn.com/product/Fancyalgo/VirtualModelMatting/dfb72a674d115a794a2685e5883ced38.jpg?imageView2/2/w/800/q/70/format/webp\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlIma}}addimage",
+              "host": [
+                "{{LocalUrlIma}}addimage"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_all_imageurls",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIma}}all",
+              "host": [
+                "{{LocalUrlIma}}all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_search_imageurls:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIma}}search/3",
+              "host": [
+                "{{LocalUrlIma}}search"
+              ],
+              "path": [
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_delete_imageurls:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{LocalUrlIma}}delete/3/11",
+              "host": [
+                "{{LocalUrlIma}}delete"
+              ],
+              "path": [
+                "3",
+                "11"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "local_update_imageurls",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": " {\r\n        \"idImage\": 9,\r\n        \r\n        \"imageUrl\": \"https://img.kwcdn.com/product/Fancyalgo/VirtualModelMatting/dfb72a674d115a794a2685e5883ced38.jpg?imageView2/2/w/800/q/70/format/webp\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{LocalUrlIma}}update",
+              "host": [
+                "{{LocalUrlIma}}update"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "LocalUrlCat",
+      "value": "http://localhost:8080/api/category/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlIns",
+      "value": "http://localhost:8080/api/instrument/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlThe",
+      "value": "http://localhost:8080/api/theme/",
+      "type": "string"
+    },
+    {
+      "key": "LocalUrlIma",
+      "value": "http://localhost:8080/api/imageurls/",
+      "type": "string"
+    }
+  ]
+}
