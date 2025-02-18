@@ -9,6 +9,7 @@ import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.interfaces.InstrumentInterface;
 import com.musichouse.api.music.repository.*;
 import lombok.AllArgsConstructor;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,12 +72,9 @@ public class InstrumentService implements InstrumentInterface {
 
     @Override
     public List<InstrumentDtoExit> getAllInstruments() {
-        List<InstrumentDtoExit> instrumentDtoExits = instrumentRepository.findAll().stream()
-                .map(instrument -> {
-                    InstrumentDtoExit dto = mapper.map(instrument, InstrumentDtoExit.class);
-                    return dto;
-                }).toList();
-        return instrumentDtoExits;
+        return instrumentRepository.findAll().stream()
+                .map(instrument -> mapper.map(instrument, InstrumentDtoExit.class))
+                .toList();
     }
 
     @Override
