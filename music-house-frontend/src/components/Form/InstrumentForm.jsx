@@ -8,7 +8,8 @@ import {
   Grid,
   Divider,
   Tooltip,
-  Checkbox
+  Checkbox,
+  MenuItem
 } from '@mui/material'
 import CategorySelect from './CategorySelect'
 import ThemeSelect from './ThemeSelect'
@@ -65,7 +66,7 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
     if (!submitData) return
 
     if (typeof onSubmit === 'function') onSubmit(formData)
-  }, [submitData])
+  }, [formData, onSubmit, submitData])
 
   return (
     <Grid
@@ -147,18 +148,26 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
             md={6}
             sx={{ padding: 2, width: '50%', height: '100%' }}
           >
-            <Typography variant="h6">Asignar Categoría</Typography>
+            
             <FormControl fullWidth margin="normal">
               <CategorySelect
                 onChange={handleChange}
                 selectedCategoryId={formData?.idCategory}
               />
+              <MenuItem value="" disabled>
+                Selecciona una categoría
+              </MenuItem>
             </FormControl>
+
+            
             <FormControl fullWidth margin="normal">
               <ThemeSelect
                 onChange={handleChange}
                 selectedThemeId={formData?.idTheme}
               />
+               <MenuItem value="" disabled>
+                Selecciona una tematica
+              </MenuItem>
             </FormControl>
           </Grid>
         </Grid>

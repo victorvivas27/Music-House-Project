@@ -46,7 +46,7 @@ const pagesDesktop = [
   { to: '/favorites', text: 'Favoritos', user: true },
   { to: '/reservations', text: 'Mis reservas', user: true }
 ]
-const settings = ['Crear Cuenta', 'Iniciar sesión']
+
 
 export const Header = () => {
   const [prevScroll, setPrevScroll] = useState(0)
@@ -75,19 +75,16 @@ export const Header = () => {
     setIsMenuUserOpen(!isMenuUserOpen)
   }
 
-  const handleCloseNavMenu = (event) => {
+  const handleCloseNavMenu = () => {
     setIsMenuopen(!isMenuOpen)
   }
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null)
-  }
+ 
   const logOut = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setAuthGlobal(false)
     setUser(undefined)
-    console.log('Estado de autenticación después de cerrar sesión:', authGlobal) // Agrega un console.log para verificar el estado después de cerrar sesión
     navigationTo('/autentificacion')
   }
 
