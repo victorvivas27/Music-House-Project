@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import InstrumentForm from './InstrumentForm'
 import { createInstrument } from '../../api/instruments'
 import { formDataToCharacteristics } from '../utils/editInstrument'
 import { MessageDialog } from '../common/MessageDialog'
+import { useNavigate } from 'react-router-dom'
 
 const NewInstrumentForm = () => {
+  const navigate = useNavigate(); 
   const [showMessage, setShowMessage] = useState(false)
   const [message, setMessage] = useState()
   const initialFormData = {
@@ -31,7 +33,7 @@ const NewInstrumentForm = () => {
     setShowMessage(false)
   }
 
-  const onSubmit = (formData) => {
+  const onSubmit = useCallback( (formData) => {
     if (!formData) return
 
     const data = {
@@ -46,8 +48,16 @@ const NewInstrumentForm = () => {
       .catch(() => {
         setMessage('No se pudo registrar instrumento')
       })
-      .finally(() => setShowMessage(true))
-  }
+      .finally(() => {
+        setShowMessage(true);
+  
+        // ⏳ Cierra el mensaje y redirige después de 3 segundos (3000ms)
+        setTimeout(() => {
+          setShowMessage(false);
+          navigate(-1);  // 🔙 Regresa a la página anterior
+        }, 2000);
+      });
+  },[navigate])
 
   return (
     <>
@@ -56,7 +66,7 @@ const NewInstrumentForm = () => {
         title="Registrar Instrumento"
         message={message}
         isOpen={showMessage}
-        buttonText="Ok"
+        //buttonText="Ok"
         onClose={onClose}
         onButtonPressed={onClose}
       />

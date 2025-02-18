@@ -85,10 +85,10 @@ export const Instruments = () => {
   const getAllInstruments = () => {
     setLoading(true)
     getInstruments()
-      .then(([instruments, _]) => {
+      .then(([instruments]) => {
         setInstruments(instruments)
       })
-      .catch(([_, code]) => {
+      .catch(() => {
         setInstruments({ data: [] })
       })
   }
@@ -121,32 +121,27 @@ export const Instruments = () => {
   }
 
   const handleDelete = () => {
-    setShowMessage(false)
     deleteSelectedInstrument()
   }
 
   const deleteSelectedInstrument = () => {
     const idInstrument = selected[0]
-
+  
     deleteInstrument(idInstrument)
       .then(() => {
-        setMessage('Instrumento eliminado exitosamente')
-        setShowCancelButton(false)
-        setOnButtonPressed(false)
+        setShowMessage(false) // Cerrar el mensaje después de la eliminación
+        setSelected([])
+        getAllInstruments() // Refrescar la lista
       })
-      .catch(([error, code]) => {
+      .catch(([code]) => {
         setMessage(
           code === Code.BAD_REQUEST
-            ? 'Existen reservas asociadad al instrumento, no es posible eliminarlo'
-            : 'No fue posible eliminar instrumento.'
+            ? 'Existen reservas asociadas al instrumento, no es posible eliminarlo'
+            : 'No fue posible eliminar el instrumento.'
         )
         setShowCancelButton(false)
         setOnButtonPressed(false)
-      })
-      .finally(() => {
-        setSelected([])
-        setShowMessage(true)
-        getAllInstruments()
+        setShowMessage(true) // Solo mostrar el mensaje en caso de error
       })
   }
 
@@ -155,11 +150,9 @@ export const Instruments = () => {
     setSelected([])
   }
 
-  const handleDeletes = () => {
-    setRows(rows.filter((row) => row.id !== id))
-  }
 
-  const handleChangePage = (event, newPage) => {
+
+  const handleChangePage = (newPage) => {
     setPage(newPage)
   }
 
