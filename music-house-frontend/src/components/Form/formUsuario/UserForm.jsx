@@ -4,15 +4,15 @@ import {
   Typography,
   Grid,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
+  CircularProgress
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import { styled } from '@mui/material/styles'
-import { blue } from '@mui/material/colors'
 import { CustomButton, InputCustom } from './CustomComponents'
 import { RoleSelect } from './RoleSelect'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
-import { useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -43,12 +43,13 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
   }
 }))
 
-export const UserForm = ({ onSwitch, initialFormData, onSubmit }) => {
+export const UserForm = ({ onSwitch, initialFormData, onSubmit, loading }) => {
   const initialErrorState = {
     name: '',
     lastName: '',
     email: '',
     password: '',
+    telegramChatId: '',
     repeatPassword: '',
     general: ''
   }
@@ -71,7 +72,7 @@ export const UserForm = ({ onSwitch, initialFormData, onSubmit }) => {
   const [errors, setErrors] = useState(initialErrorState)
   const [success, setSuccess] = useState(initialSuccessState)
   const { user, isUserAdmin } = useAuthContext()
-  const navigate = useNavigate()
+
   const isLoggedUser =
     user?.idUser && user.idUser === Number(initialFormData?.idUser)
   const title = isLoggedUser
@@ -164,6 +165,10 @@ export const UserForm = ({ onSwitch, initialFormData, onSubmit }) => {
         formIsValid = false
       } else if (formData.password !== formData.repeatPassword) {
         newErrors.repeatPassword = 'Las contraseñas no coinciden'
+        formIsValid = false
+      }
+      if (!formData.telegramChatId) {
+        newErrors.telegramChatId = 'El codigo de telegram es requerido'
         formIsValid = false
       }
       if (!accept) {
@@ -419,6 +424,30 @@ export const UserForm = ({ onSwitch, initialFormData, onSubmit }) => {
                         }
                       />
                     </FormControl>
+
+                    <FormControl fullWidth margin="normal">
+                      <InputCustom
+                        placeholder="Codigo de Telegram "
+                        name="telegramChatId"
+                        onChange={handleChange}
+                        value={formData.telegramChatId}
+                        error={Boolean(errors.telegramChatId)}
+                        helperText={errors.telegramChatId}
+                        type="number"
+                        color="primary"
+                      />
+                    </FormControl>
+                    <Typography sx={{ fontSize: '14px', marginTop: '5px' }}>
+                      ¿No sabes tu código?{' '}
+                      <Link
+                        href="https://t.me/MyBotJva_bot"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ fontWeight: 'bold' }}
+                      >
+                        Haz clic aquí para obtenerlo en Telegram
+                      </Link>
+                    </Typography>
                   </>
                 )}
               </Grid>
@@ -445,10 +474,22 @@ export const UserForm = ({ onSwitch, initialFormData, onSubmit }) => {
               </Typography>
             )}
           </Grid>
+
           <ContainerBottom>
-            <CustomButton variant="contained" color="primary" type="submit">
-              {buttonText}
+            <CustomButton
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ minWidth: '150px', minHeight: '50px' }}
+              disabled={loading} // Deshabilita el botón mientras carga
+            >
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                buttonText
+              )}
             </CustomButton>
+
             {!formData.idUser && !isUserAdmin && (
               <Link
                 href=""
@@ -466,4 +507,33 @@ export const UserForm = ({ onSwitch, initialFormData, onSubmit }) => {
       </ContainerForm>
     </form>
   )
+}
+UserForm.propTypes = {
+  onSwitch: PropTypes.func, // Función para cambiar entre el formulario de registro e inicio de sesión
+  initialFormData: PropTypes.shape({
+    idUser: PropTypes.number,
+    name: PropTypes.string,
+    lastName: PropTypes.string,
+    email: PropTypes.string,
+    password: PropTypes.string,
+    repeatPassword: PropTypes.string,
+    telegramChatId: PropTypes.string,
+    addresses: PropTypes.arrayOf(
+      PropTypes.shape({
+        street: PropTypes.string,
+        number: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        city: PropTypes.string,
+        state: PropTypes.string,
+        country: PropTypes.string
+      })
+    ),
+    phones: PropTypes.arrayOf(
+      PropTypes.shape({
+        phoneNumber: PropTypes.string
+      })
+    ),
+    idRol: PropTypes.number
+  }),
+  loading:PropTypes.bool,
+  onSubmit: PropTypes.func // Función que se ejecuta al enviar el formulario
 }

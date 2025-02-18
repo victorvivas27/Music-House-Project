@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { Box, Typography } from '@mui/material'
 import { MainCrearUsuario } from '../common/crearUsuario/MainCrearUsuario'
 import BoxLogoSuperior from '../common/crearUsuario/BoxLogoSuperior'

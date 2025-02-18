@@ -13,55 +13,53 @@ const NewUser = ({ onSwitch }) => {
     password: '',
     repeatPassword: '',
     addresses: [
-      {
-        street: '',
-        number: '',
-        city: '',
-        state: '',
-        country: ''
-      }
+      { street: '', number: '', city: '', state: '', country: '' }
     ],
     phones: [
-      {
-        phoneNumber: ''
-      }
+      { phoneNumber: '' }
     ]
   }
+
   const [showMessage, setShowMessage] = useState(false)
-  const [message, setMessage] = useState()
-  const [isUserCreated, setIsUserCreated] = useState(false)
-  const { isUserAdmin } = useAuthContext()
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const { setAuthData } = useAuthContext() // 🟢 Usamos setAuthData en lugar de setUser/setIsUserAdmin
   const navigate = useNavigate()
 
-  const onClose = () => {
-    setShowMessage(false)
-
-    if (isUserCreated && !isUserAdmin) {
-      navigate(0)
-    }
-    if (isUserCreated && isUserAdmin) {
-      navigate(-1)
-    }
-  }
-
   const handleSubmit = (formData) => {
+    setLoading(true)
+
     const formDataToSend = { ...formData }
     delete formDataToSend.repeatPassword
-    // Aquí puedes enviar los datos del formulario a través de una función prop o realizar otras acciones
+
     UsersApi.registerUser(formDataToSend)
       .then((response) => {
-        setMessage(
-          `Usuario registrado exitosamente.${isUserAdmin ? '' : ' Ya puedes iniciar sesión'}`
-        )
-        setIsUserCreated(true)
+        const userData = response.data
+
+        if (!userData || !userData.token) {
+          throw new Error('Error al registrar usuario o falta el token.')
+        }
+
+        // 🟢 Iniciar sesión automáticamente con setAuthData
+        setAuthData(userData)
+
+        setMessage('Usuario registrado exitosamente. Redirigiendo...')
+
+        // 🔵 Redirigir según el rol
+        setShowMessage(true)
+        setTimeout(() => {
+          navigate(userData.roles.some(role => role.rol === 'ADMIN') ? '/admin' : '/')
+        }, 2000)
       })
       .catch((error) => {
-        setMessage(
-          'No se pudo registrar usuario\nPor favor, vuelve a intentarlo'
-        )
-        setIsUserCreated(false)
+        console.error(error)
+        setMessage('No se pudo registrar usuario. Por favor, vuelve a intentarlo.')
       })
-      .finally(() => setShowMessage(true))
+      .finally(() => {
+        setLoading(false)
+        setShowMessage(true)
+      })
   }
 
   return (
@@ -70,14 +68,14 @@ const NewUser = ({ onSwitch }) => {
         onSwitch={onSwitch}
         initialFormData={initialFormData}
         onSubmit={handleSubmit}
+        loading={loading}
       />
       <MessageDialog
         title="Registrar Usuario"
         message={message}
         isOpen={showMessage}
         buttonText="Ok"
-        onClose={onClose}
-        onButtonPressed={onClose}
+        onClose={() => setShowMessage(false)}
       />
     </>
   )

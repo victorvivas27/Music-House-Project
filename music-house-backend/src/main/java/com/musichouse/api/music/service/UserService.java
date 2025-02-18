@@ -91,7 +91,7 @@ public class UserService implements UserInterface {
 
         // Verificar si el usuario ya existe por su email
         if (userRepository.existsByEmail(userAdminDtoEntrance.getEmail())) {
-            throw new DataIntegrityViolationException("El correo electrónico ingresado ya está en uso 4444.");
+            throw new DataIntegrityViolationException("El correo electrónico ingresado ya está en uso.");
         }
 
         User user = modelMapper.map(userAdminDtoEntrance, User.class);

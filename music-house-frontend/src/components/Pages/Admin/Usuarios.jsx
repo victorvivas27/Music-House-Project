@@ -40,6 +40,12 @@ const headCells = [
     label: 'ID'
   },
   {
+    id: 'rol', // Agregado
+    numeric: false,
+    disablePadding: false,
+    label: 'Rol'
+  },
+  {
     id: 'name',
     numeric: false,
     disablePadding: false,
@@ -57,6 +63,7 @@ const headCells = [
     disablePadding: false,
     label: 'email'
   },
+
   {
     id: 'actions',
     numeric: false,
@@ -99,7 +106,7 @@ export const Usuarios = () => {
       .then(([usuarios]) => {
         setUsuarios(usuarios)
       })
-      .catch(([_, code]) => {
+      .catch(() => {
         setUsuarios([])
       })
   }
@@ -145,23 +152,21 @@ export const Usuarios = () => {
 
     UsersApi.deleteUser(idUser)
       .then(() => {
-        setMessage('Usuario eliminado exitosamente')
-        setShowCancelButton(false)
-        setOnButtonPressed(false)
+       getUsuarios()
       })
       .catch(() => {
         setMessage('No fue posible eliminar usuario')
         setShowCancelButton(false)
         setOnButtonPressed(false)
+        setShowMessage(true) // Solo mostrar modal en caso de erro
       })
       .finally(() => {
         setSelected([])
-        setShowMessage(true)
-        getUsuarios()
+        
       })
   }
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = ( newPage) => {
     setPage(newPage)
   }
 
@@ -248,6 +253,10 @@ export const Usuarios = () => {
                             align="center"
                           >
                             {row.idUser}
+                          </TableCell>
+                          <TableCell align="left">
+                            {row.roles.map((r) => r.rol).join(', ')}{' '}
+                            {/* Aquí se muestran los roles */}
                           </TableCell>
                           <TableCell align="left">{row.name}</TableCell>
                           <TableCell align="left">{row.lastName}</TableCell>
