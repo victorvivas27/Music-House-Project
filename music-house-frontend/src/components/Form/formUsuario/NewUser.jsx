@@ -4,6 +4,7 @@ import { UserForm } from './UserForm'
 import { MessageDialog } from '../../common/MessageDialog'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
+import PropTypes from 'prop-types'
 
 const NewUser = ({ onSwitch }) => {
   const initialFormData = {
@@ -82,3 +83,7 @@ const NewUser = ({ onSwitch }) => {
 }
 
 export default NewUser
+
+NewUser.propTypes={
+  onSwitch:PropTypes.func.isRequired
+}

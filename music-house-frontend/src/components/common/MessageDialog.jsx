@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { ScreenModal } from '../common/ScreenModal'
 import {
   DialogTitle,
@@ -37,3 +38,12 @@ export const MessageDialog = ({
     </ScreenModal>
   )
 }
+MessageDialog.propTypes = {
+  title: PropTypes.string.isRequired,  // Título del mensaje, obligatorio
+  message: PropTypes.string.isRequired,  // Mensaje a mostrar, obligatorio
+  isOpen: PropTypes.bool.isRequired,  // Determina si el modal está abierto o cerrado
+  buttonText: PropTypes.string.isRequired,  // Texto del botón, obligatorio
+  onButtonPressed: PropTypes.func.isRequired,  // Función que se ejecuta cuando se presiona el botón, obligatorio
+  showCancelButton: PropTypes.bool,  // Muestra un botón de cancelar (opcional)
+  onClose: PropTypes.func.isRequired  // Función para cerrar el modal, obligatorio
+};

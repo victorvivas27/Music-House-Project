@@ -3,6 +3,7 @@ import Dialog from '@mui/material/Dialog'
 import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import Slide from '@mui/material/Slide'
+import PropTypes from 'prop-types'
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />
@@ -44,3 +45,10 @@ export const ScreenModal = ({
     </Dialog>
   )
 }
+
+ScreenModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired, // Indica si el modal está abierto, obligatorio
+  onClose: PropTypes.func.isRequired, // Función para cerrar el modal, obligatorio
+  children: PropTypes.node.isRequired, // Contenido del modal, obligatorio
+  fullScreen: PropTypes.bool // Indica si el modal ocupa toda la pantalla, opcional
+};

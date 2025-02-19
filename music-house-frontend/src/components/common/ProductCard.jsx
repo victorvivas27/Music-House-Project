@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { Button, Tooltip } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import '../styles/product.styles.css'
+import PropTypes from 'prop-types'
 
 const DeleteFavoriteIcon = styled(DeleteIcon)(({ theme }) => ({
   fill: '#000000 !important',
@@ -62,5 +63,13 @@ const ProductCard = ({
     </ProductWrapper>
   )
 }
+
+ProductCard.propTypes = {
+  name: PropTypes.string.isRequired,  // Nombre del producto, obligatorio
+  imageUrl: PropTypes.string.isRequired,  // URL de la imagen del producto, obligatorio
+  id: PropTypes.string.isRequired,  // ID del producto, obligatorio
+  isFavorite: PropTypes.bool,  // Determina si el producto está en favoritos (opcional)
+  onClickTrash: PropTypes.func  // Función que se ejecuta al hacer clic en el ícono de eliminar, opcional
+};
 
 export default ProductCard

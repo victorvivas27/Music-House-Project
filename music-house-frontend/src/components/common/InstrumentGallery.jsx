@@ -1,4 +1,3 @@
-import * as React from 'react'
 import ImageList from '@mui/material/ImageList'
 import ImageListItem from '@mui/material/ImageListItem'
 import { Box, Container, Typography } from '@mui/material'
@@ -8,6 +7,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 
 import '../styles/instrumentGallery.styles.css'
 import background from '../../assets/background.svg'
+import PropTypes from 'prop-types'
 
 const srcset = (image, size, rows = 1, cols = 1) => {
   const urlHasParams = /\?/.test(image)
@@ -79,3 +79,13 @@ export const InstrumentGallery = ({ itemData }) => {
     </Container>
   )
 }
+
+InstrumentGallery.propTypes = {
+  itemData: PropTypes.arrayOf(
+    PropTypes.shape({
+      imageUrl: PropTypes.string.isRequired, // URL de la imagen
+      rows: PropTypes.number, // Opcional: cantidad de filas
+      cols: PropTypes.number // Opcional: cantidad de columnas
+    })
+  ).isRequired
+};

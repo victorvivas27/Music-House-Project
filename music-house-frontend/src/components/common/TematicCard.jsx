@@ -1,6 +1,7 @@
 import Card from '@mui/material/Card'
 import CardMedia from '@mui/material/CardMedia'
 import TematicTitle from './TematicTitle'
+import PropTypes from 'prop-types'
 
 export const TematicCard = ({ title, imageUrl }) => {
   return (
@@ -22,4 +23,9 @@ export const TematicCard = ({ title, imageUrl }) => {
     </Card>
   )
 }
+
+TematicCard.propTypes = {
+  title: PropTypes.string.isRequired, // El título de la temática es obligatorio y debe ser un string
+  imageUrl: PropTypes.string.isRequired // La URL de la imagen es obligatoria y debe ser un string
+};
 export default TematicCard
