@@ -34,13 +34,14 @@ public class JwtService {
      * @return Token JWT generado.
      */
     public String generateToken(UserDetails userDetails) {
+        User user =(User) userDetails;
         List<String> roles = userDetails.getAuthorities()
                 .stream()
                 .map(authority -> authority.getAuthority())
                 .collect(Collectors.toList());
 
         JwtClaims jwtClaims = JwtClaims.builder()
-                .id(UUID.randomUUID().toString())
+                .id(user.getIdUser().toString())
                 .roles(roles)
                 .name(((User) userDetails).getName())
                 .lastName(((User) userDetails).getLastName())

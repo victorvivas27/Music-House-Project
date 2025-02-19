@@ -32,27 +32,31 @@ import {
 import { Theme } from './components/Pages/Admin/Theme'
 import { AgregarTheme } from './components/Pages/Admin/AgregarThem'
 import { EditarTheme } from './components/Pages/Admin/EditarTheme'
+import { jwtDecode } from 'jwt-decode'
 
 
 export const App = () => {
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState()
+  const [userRoles, setUserRoles] = useState(null)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    const user = JSON.parse(localStorage.getItem('user'))
-    if (token && user) {
-      setUser(user)
+    if (token) {
+      try {
+        const decoded = jwtDecode(token)
+        setUserRoles(decoded.roles?.[0]?.rol || null) // Extraer el rol del token
+      } catch (error) {
+        console.error('Error al decodificar el token:', error)
+      }
     }
     setLoading(false)
   }, [])
-
   return (
     <>
       {!loading && (
-        <BrowserRouter>
+        <BrowserRouter userRoles={userRoles} >
           <HeaderVisibilityProvider>
-            <AuthContextProvider loggedUser={user}>
+            <AuthContextProvider>
               <ContextProvider>
                 <Routes>
                   <Route path="/autentificacion" element={<AuthPage />} />

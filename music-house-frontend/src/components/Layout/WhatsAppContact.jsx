@@ -1,5 +1,5 @@
 import { Box, Typography, keyframes } from '@mui/material'
-import React, { useState, useRef, useEffect } from 'react'
+import  { useState, useRef, useEffect } from 'react'
 import logo from '../../assets/whatsAppLogo.png'
 
 // Define keyframes for the slide-in animation

@@ -47,7 +47,6 @@ const pagesDesktop = [
   { to: '/reservations', text: 'Mis reservas', user: true }
 ]
 
-
 export const Header = () => {
   const [prevScroll, setPrevScroll] = useState(0)
   const [visible, setVisible] = useState(true)
@@ -55,8 +54,15 @@ export const Header = () => {
   const [isMenuUserOpen, setIsMenuUserOpen] = useState(false)
   const [anchorElNav, setAnchorElNav] = useState(null)
   const [anchorElUser, setAnchorElUser] = useState(null)
-  const { authGlobal, setAuthGlobal, user, setUser, isUserAdmin, isUser } =
-    useAuthContext()
+  const {
+    authGlobal,
+    setAuthGlobal,
+    idUser,
+    isUserAdmin,
+    isUser,
+    userName,
+    userLastName
+  } = useAuthContext()
   const { toggleHeaderVisibility } = useHeaderVisibility()
   const { pathname } = useLocation()
   const isHome = pathname === '/'
@@ -79,13 +85,10 @@ export const Header = () => {
     setIsMenuopen(!isMenuOpen)
   }
 
- 
   const logOut = () => {
     localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    setAuthGlobal(false)
-    setUser(undefined)
-    navigationTo('/autentificacion')
+  setAuthGlobal(false)
+  navigate('/autentificacion')
   }
 
   useEffect(() => {
@@ -106,6 +109,12 @@ export const Header = () => {
     }
   }, [prevScroll, toggleHeaderVisibility])
 
+  useEffect(() => {
+    if (authGlobal) {
+      console.log("Usuario autenticado:", userName, userLastName);
+    }
+  }, [authGlobal, userName, userLastName]);
+
   return (
     <HeaderWrapper
       isHome={isHome}
@@ -125,13 +134,15 @@ export const Header = () => {
             >
               {authGlobal ? (
                 <Avatar
-                  sx={{
-                    height: '2.5rem !important',
-                    width: '2.5rem !important'
-                  }}
-                >
-                  {user && user.avatar}
-                </Avatar>
+                sx={{
+                  height: '2rem !important',
+                  width: '2rem !important'
+                }}
+              >
+                {userName && userLastName
+                  ? `${userName.charAt(0).toUpperCase()}${userLastName.charAt(0).toUpperCase()}`
+                  : ''}
+              </Avatar>
               ) : (
                 <MenuIcon sx={{ fill: 'white' }} fontSize="large" />
               )}
@@ -185,7 +196,7 @@ export const Header = () => {
                   >
                     <Typography textAlign="center">
                       <Link
-                        to={`/editarUsuario/${user.idUser}`}
+                        to={`/editarUsuario/${idUser}`}
                         className="option-link"
                       >
                         Mi Perfil
@@ -274,17 +285,19 @@ export const Header = () => {
                 >
                   <Tooltip title="Opciones">
                     <Chip
-                      avatar={
+                       avatar={
                         <Avatar
                           sx={{
                             height: '2rem !important',
                             width: '2rem !important'
                           }}
                         >
-                          {user && user.avatar}
+                          {userName && userLastName
+                            ? `${userName.charAt(0).toUpperCase()}${userLastName.charAt(0).toUpperCase()}`
+                            : '...'} 
                         </Avatar>
                       }
-                      label={`Hola ${user.name}!`}
+                      label={`Hola ${userName} ${userLastName}!`}
                       color="primary"
                       onClick={handleOpenUserMenu}
                       sx={{
@@ -320,7 +333,7 @@ export const Header = () => {
                   >
                     <Typography textAlign="center">
                       <Link
-                        to={`/editarUsuario/${user.idUser}`}
+                        to={`/editarUsuario/${idUser}`}
                         className="option-link"
                       >
                         Mi Perfil

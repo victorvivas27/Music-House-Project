@@ -38,8 +38,8 @@ export const Instrument = () => {
   })
   const [instrument, setInstrument] = useState()
   const [showGallery, setShowGallery] = useState(false)
-  const { user, isUser, isUserAdmin } = useAuthContext()
-  const [favorites] = getAllFavorites(user?.idUser)
+  const { idUser, isUser, isUserAdmin } = useAuthContext()
+  const [favorites] = getAllFavorites(idUser)
   const [idFavorite, setIdFavorite] = useState()
   const [bookingDateFrom, setBookingDateFrom] = useState()
   const [bookingDateTo, setBookingDateTo] = useState()
@@ -50,14 +50,14 @@ export const Instrument = () => {
   useEffect(() => {
     setIsLoading(true)
     getInstrumentById(id)
-      .then(([instrument, _]) => {
+      .then(([instrument]) => {
         setInstrument(instrument)
       })
-      .catch(([_, code]) => {
+      .catch(() => {
         setInstrument(undefined)
         navigate('/noDisponible')
       })
-  }, [])
+  }, [id, navigate])
 
   useEffect(() => {
     if (!instrument?.data) return
@@ -77,28 +77,33 @@ export const Instrument = () => {
 
       setIdFavorite(favorite && favorite.length > 0 && favorite[0].idFavorite)
     }
-  }, [favorites])
+  }, [favorites, id])
 
   const onClose = () => {
     setShowGallery(false)
   }
 
   const handleFavoriteClick = () => {
-    addFavorite(user.idUser, id)
+    console.log("Usuario ID:", idUser);
+    console.log("Instrumento ID:", id);
+  
+    addFavorite(idUser, id)
       .then((response) => {
-        setIdFavorite(response.data.idFavorite)
+        console.log("Respuesta de addFavorite:", response);
+        setIdFavorite(response.data.idFavorite);
       })
-      .catch(([error, code]) => {
+      .catch(([code]) => {
+        console.log("Error en addFavorite, código:", code);
         if (code === Code.ALREADY_EXISTS) {
-          removeFromFavorites()
+          removeFromFavorites();
         }
-      })
-  }
+      });
+  };
 
   const removeFromFavorites = () => {
     if (!idFavorite) return
 
-    removeFavorite(idFavorite, user.idUser, id)
+    removeFavorite(idFavorite, idUser, id)
       .then(() => {
         setIdFavorite(undefined)
       })
@@ -375,7 +380,7 @@ export const Instrument = () => {
                     Valor día: $ {instrumentSelected?.rentalPrice}
                   </Typography>
                 </Box>
-                {user && !isUserAdmin && (
+                {isUser && !isUserAdmin && (
                   <>
                     <Box
                       sx={{

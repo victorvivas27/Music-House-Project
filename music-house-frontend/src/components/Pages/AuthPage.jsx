@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import Login from '../Form/formUsuario/Login'
 import { MainCrearUsuario } from '../common/crearUsuario/MainCrearUsuario'

@@ -8,6 +8,8 @@ import swal from 'sweetalert'
 import loginValidationSchema from './LoginValidation'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
+import PropTypes from 'prop-types'
+import { jwtDecode } from 'jwt-decode'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -39,9 +41,10 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
   }
 }))
 
-const Login = ({ theme, onSwitch }) => {
-  const navigate = useNavigate()
-  const { setAuthGlobal, setUser } = useAuthContext()
+const Login = ({ onSwitch }) => {
+  const navigate = useNavigate();
+  const { setAuthGlobal, setIsUserAdmin, setIsUser } = useAuthContext();
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -50,46 +53,44 @@ const Login = ({ theme, onSwitch }) => {
     validationSchema: loginValidationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        const response = await UsersApi.loginUser(values)
-        console.log('Server response:', response)
+        const response = await UsersApi.loginUser(values);
+        console.log('Server response:', response);
 
-        if (response && response.token && response.roles) {
-          const user = {
-            idUser: response.idUser,
-            roles: response.roles,
-            email: values.email,
-            name: response.name,
-            avatar:
-              `${response.name.charAt(0)}${response.lastName.charAt(0)}`.toUpperCase()
-          }
-          localStorage.setItem('user', JSON.stringify(user))
-          localStorage.setItem('token', response.token)
-          setAuthGlobal(true)
-          setUser(user)
-          swal(
-            '¡Inicio de sesión exitoso!',
-            'Has iniciado sesión correctamente'
-          )
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+
+          // Decodificar el token para obtener los roles
+          const decoded = jwtDecode(response.token);
+          const roles = decoded.roles || [];
+
+          // Actualizar el contexto de autenticación
+          setAuthGlobal(true);
+          setIsUserAdmin(roles.includes("ADMIN"));
+          setIsUser(roles.includes("USER"));
+
+          swal({
+            title: '¡Inicio de sesión exitoso!',
+            text: 'Has iniciado sesión correctamente',
+            icon: 'success',
+            buttons: false,
+            timer: 1000
+          });
+
           setTimeout(() => {
-            navigate('/')
-          }, 1000)
+            navigate('/');
+          }, 1000);
         } else {
-          console.error('Inicio de sesión fallido:', response)
-          swal(
-            'Error al iniciar sesión',
-            response.message || 'Credenciales incorrectas',
-            'error'
-          )
+          throw new Error(response.message || 'Credenciales incorrectas');
         }
       } catch (error) {
-        console.error('Error durante el inicio de sesión:', error)
+        console.error('Error durante el inicio de sesión:', error);
         swal(
           'Error al iniciar sesión',
           error.message || 'Ocurrió un error',
           'error'
-        )
+        );
       } finally {
-        setSubmitting(false)
+        setSubmitting(false);
       }
     }
   })
@@ -182,5 +183,9 @@ const Login = ({ theme, onSwitch }) => {
     </form>
   )
 }
-
+// Definición de los tipos de props esperados
+Login.propTypes = {
+  
+  onSwitch: PropTypes.func.isRequired,
+}
 export default Login

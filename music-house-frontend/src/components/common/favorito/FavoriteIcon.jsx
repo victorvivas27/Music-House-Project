@@ -2,7 +2,7 @@ import { styled, alpha } from '@mui/material/styles'
 import { IconButton } from '@mui/material'
 
 export const FavoriteIconWrapper = styled(IconButton)(
-  ({ theme, isFavorite }) => ({
+  ({ isFavorite }) => ({
     backgroundColor: isFavorite ? '#FAED74' : '#FFFFFF',
     '&:hover': {
       backgroundColor: isFavorite ? alpha('#FAED74', 0.7) : '#FFFFFF',

@@ -1,71 +1,77 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { getIsAdmin, getIsUser } from '../roles/constants'
+//import { getIsAdmin, getIsUser } from '../roles/constants'
 import PropTypes from 'prop-types'
+import { jwtDecode } from 'jwt-decode';
 
-const AuthUserContext = createContext()
 
-// eslint-disable-next-line react-refresh/only-export-components
+const AuthUserContext = createContext();
+
 export const useAuthContext = () => {
-  return useContext(AuthUserContext)
-}
+  return useContext(AuthUserContext);
+};
 
-export const AuthContextProvider = ({ loggedUser, children }) => {
-  const [authGlobal, setAuthGlobal] = useState(!!loggedUser)
-  const [user, setUser] = useState(loggedUser || null)
-  const [isUserAdmin, setIsUserAdmin] = useState(getIsAdmin(loggedUser?.roles))
-  const [isUser, setIsUser] = useState(getIsUser(loggedUser?.roles))
-
-  const setAuthData = (userData) => {
-    if (!userData || !userData.token) {
-      console.error('Error: Datos de usuario inválidos')
-      return
-    }
-
-    localStorage.setItem('token', userData.token)
-    setUser(userData)
-    setAuthGlobal(true)
-    setIsUserAdmin(getIsAdmin(userData.roles))
-    setIsUser(getIsUser(userData.roles))
-  }
+export const AuthContextProvider = ({ children }) => {
+  const [authGlobal, setAuthGlobal] = useState(false);
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
+  const [isUser, setIsUser] = useState(false);
+  const [idUser, setIdUser] = useState(null);
+  const [userName, setUserName] = useState(null);
+  const [userLastName, setUserLastName] = useState(null);
+  const [userRoles, setUserRoles] = useState([]); // Nueva variable para almacenar roles del usuario
 
   useEffect(() => {
-    setIsUserAdmin(getIsAdmin(user?.roles))
-    setIsUser(getIsUser(user?.roles))
-  }, [user])
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const roles = decoded.roles || [];
+        const userId = decoded.id || null;
+        const name = decoded.name || null;
+        const lastName = decoded.lastName || null;
+
+        setAuthGlobal(true);
+        setIsUserAdmin(roles.includes("ADMIN"));
+        setIsUser(roles.includes("USER"));
+        setIdUser(userId);
+        setUserName(name);
+        setUserLastName(lastName);
+        setUserRoles(roles); // Guardamos los roles obtenidos del token
+
+      } catch (error) {
+        console.error("Error al decodificar el token:", error);
+        localStorage.removeItem("token");
+        setAuthGlobal(false);
+        setIsUserAdmin(false);
+        setIsUser(false);
+        setIdUser(null);
+        setUserName(null);
+        setUserLastName(null);
+        setUserRoles([]);
+      }
+    }
+  }, []);
 
   return (
     <AuthUserContext.Provider
       value={{
         authGlobal,
         setAuthGlobal,
-        user,
-        setUser,
         isUserAdmin,
+        setIsUserAdmin,
         isUser,
-        setAuthData
+        setIsUser,
+        idUser,
+        userName,
+        userLastName,
+        userRoles // Pasamos los roles
       }}
     >
       {children}
     </AuthUserContext.Provider>
-  )
-}
-
-// 🟢 Validación de PropTypes
+  );
+};
 AuthContextProvider.propTypes = {
-  loggedUser: PropTypes.shape({
-    name: PropTypes.string,
-    lastName: PropTypes.string,
-    roles: PropTypes.arrayOf(
-      PropTypes.shape({
-        idRol: PropTypes.number,
-        rol: PropTypes.string,
-        registDate: PropTypes.string
-      })
-    ),
-    token: PropTypes.string
-  }),
-  children: PropTypes.node.isRequired
-}
-
-export default AuthContextProvider
+  children: PropTypes.node.isRequired,
+};

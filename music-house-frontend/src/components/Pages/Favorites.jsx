@@ -13,8 +13,8 @@ import { Code } from '../../api/constants'
 export const Favorites = () => {
   const [loading, setLoading] = useState(true)
   const [favorites, setFavorites] = useState()
-  const { user } = useAuthContext()
-  const [data, code] = getAllFavorites(user?.idUser, [])
+  const { idUser } = useAuthContext()
+  const [data, code] = getAllFavorites(idUser, [])
 
   useEffect(() => {
     if (code === Code.SUCCESS) {
@@ -31,7 +31,7 @@ export const Favorites = () => {
       favorite.idFavorite,
       favorite.idUser,
       favorite.instrument.idInstrument
-    ).then((response) => {
+    ).then(() => {
       const favs = favorites.filter(
         (fav) => fav.idFavorite !== favorite.idFavorite
       )
