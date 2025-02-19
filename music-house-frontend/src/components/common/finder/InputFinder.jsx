@@ -4,6 +4,7 @@ import { StyledInputBase } from './StyledInputBase'
 import SearchIcon from '@mui/icons-material/Search'
 import Close from '@mui/icons-material/Close'
 import { Box, IconButton } from '@mui/material'
+import PropTypes from 'prop-types'
 
 export const InputFinder = ({
   value,
@@ -65,3 +66,16 @@ export const InputFinder = ({
     </Search>
   )
 }
+
+// 🔹 Agregamos validación de `PropTypes`
+InputFinder.propTypes = {
+  value: PropTypes.string.isRequired,
+  setValue: PropTypes.func.isRequired,
+  onKeyUp: PropTypes.func,
+  onKeyDown: PropTypes.func,
+  inputRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+  ]),
+  onClose: PropTypes.func
+};
