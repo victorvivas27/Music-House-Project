@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
 
-export const CustomDateCalendar = styled(DateCalendar)(({ theme }) => ({
+export const CustomDateCalendar = styled(DateCalendar)(() => ({
   '& .MuiPickersArrowSwitcher-root': {
     display: 'none'
   },

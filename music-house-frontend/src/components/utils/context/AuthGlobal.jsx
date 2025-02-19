@@ -18,7 +18,40 @@ export const AuthContextProvider = ({ children }) => {
   const [idUser, setIdUser] = useState(null);
   const [userName, setUserName] = useState(null);
   const [userLastName, setUserLastName] = useState(null);
-  const [userRoles, setUserRoles] = useState([]); // Nueva variable para almacenar roles del usuario
+  const [userRoles, setUserRoles] = useState([]);
+
+  const setAuthData = (userData) => {
+    const { token } = userData; // Solo extraemos el token
+  
+    if (token) {
+      localStorage.setItem("token", token);
+      try {
+        const decoded = jwtDecode(token); // Decodificamos el token
+        const roles = decoded.roles || []; // Extraemos roles del token
+        const userId = decoded.id || null;
+        const name = decoded.name || null;
+        const lastName = decoded.lastName || null;
+  
+        setAuthGlobal(true);
+        setIsUserAdmin(roles.includes("ADMIN"));
+        setIsUser(roles.includes("USER"));
+        setIdUser(userId);
+        setUserName(name);
+        setUserLastName(lastName);
+        setUserRoles(roles); // Guardamos los roles obtenidos del token
+      } catch (error) {
+        console.error("Error al decodificar el token:", error);
+        localStorage.removeItem("token");
+        setAuthGlobal(false);
+        setIsUserAdmin(false);
+        setIsUser(false);
+        setIdUser(null);
+        setUserName(null);
+        setUserLastName(null);
+        setUserRoles([]);
+      }
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -37,8 +70,7 @@ export const AuthContextProvider = ({ children }) => {
         setIdUser(userId);
         setUserName(name);
         setUserLastName(lastName);
-        setUserRoles(roles); // Guardamos los roles obtenidos del token
-
+        setUserRoles(roles);
       } catch (error) {
         console.error("Error al decodificar el token:", error);
         localStorage.removeItem("token");
@@ -58,6 +90,7 @@ export const AuthContextProvider = ({ children }) => {
       value={{
         authGlobal,
         setAuthGlobal,
+        setAuthData, // Añadimos setAuthData aquí
         isUserAdmin,
         setIsUserAdmin,
         isUser,
@@ -65,13 +98,14 @@ export const AuthContextProvider = ({ children }) => {
         idUser,
         userName,
         userLastName,
-        userRoles // Pasamos los roles
+        userRoles
       }}
     >
       {children}
     </AuthUserContext.Provider>
   );
 };
+
 AuthContextProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };

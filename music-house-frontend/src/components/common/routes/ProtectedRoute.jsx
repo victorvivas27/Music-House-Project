@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
+import PropTypes from 'prop-types';
 
 export const ProtectedRoute = ({ redirectPath = '/', role, children }) => {
   const { isUserAdmin, isUser } = useAuthContext();
@@ -15,3 +16,8 @@ export const ProtectedRoute = ({ redirectPath = '/', role, children }) => {
 
   return children || <Outlet />;
 };
+ProtectedRoute.propTypes={
+  redirectPath: PropTypes.string,
+  role: PropTypes.string,
+  children: PropTypes.node,
+}

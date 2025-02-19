@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles'
 import { Container, CircularProgress, Typography } from '@mui/material'
+import PropTypes from 'prop-types'
 
 const CustomLoader = styled(CircularProgress)(({ theme }) => ({
   color: theme.palette.secondary.main
@@ -31,3 +32,7 @@ export const Loader = ({ title, fullSize = true }) => {
     </Container>
   )
 }
+ Loader.propTypes={
+  title:PropTypes.string,
+  fullSize:PropTypes.bool
+ }

@@ -77,7 +77,8 @@ const Login = ({ onSwitch }) => {
           });
 
           setTimeout(() => {
-            navigate('/');
+            navigate("/", { replace: true });
+          window.location.reload();
           }, 1000);
         } else {
           throw new Error(response.message || 'Credenciales incorrectas');

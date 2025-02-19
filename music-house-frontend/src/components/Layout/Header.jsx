@@ -88,7 +88,8 @@ export const Header = () => {
   const logOut = () => {
     localStorage.removeItem('token')
   setAuthGlobal(false)
-  navigate('/autentificacion')
+  navigate("/", { replace: true });
+  window.location.reload();
   }
 
   useEffect(() => {
@@ -109,11 +110,7 @@ export const Header = () => {
     }
   }, [prevScroll, toggleHeaderVisibility])
 
-  useEffect(() => {
-    if (authGlobal) {
-      console.log("Usuario autenticado:", userName, userLastName);
-    }
-  }, [authGlobal, userName, userLastName]);
+  
 
   return (
     <HeaderWrapper
@@ -163,24 +160,23 @@ export const Header = () => {
               }}
               hideBackdrop
             >
-              {pagesMobile.map((page, index) => {
-                return [
-                  ((page.user && isUser) ||
-                    (page.anonymous && !(isUser || isUserAdmin)) ||
-                    page.any) && (
-                    <MenuItem
-                      key={`menu-nav-${index}`}
-                      onClick={handleCloseNavMenu}
-                    >
-                      <Typography textAlign="center">
-                        <Link to={page.to} className="option-link">
-                          {page.text}
-                        </Link>
-                      </Typography>
-                    </MenuItem>
-                  )
-                ]
-              })}
+            {pagesMobile.map((page, index) => {
+  return (
+    ((page.user && isUser) || 
+     (page.admin && isUserAdmin) || 
+     (page.anonymous && !(isUser || isUserAdmin)) || 
+     page.any) && (
+      <MenuItem key={`menu-nav-${index}`} onClick={handleCloseNavMenu}>
+        <Typography textAlign="center">
+          <Link to={page.to} className="option-link">
+            {page.text}
+          </Link>
+        </Typography>
+      </MenuItem>
+    )
+  )
+})}
+
               {authGlobal ? (
                 <Box>
                   <Divider

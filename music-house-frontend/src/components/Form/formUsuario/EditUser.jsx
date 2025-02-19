@@ -85,13 +85,7 @@ const EditUser = ({ onSwitch }) => {
     setIsAddressUpdated(undefined)
     setIsPhoneUpdated(undefined)
     setShowMessage(true)
-  }, [
-    isUserUpdated,
-    isNewRoleAdded,
-    isOldRoleDeleted,
-    isAddressUpdated,
-    isPhoneUpdated
-  ])
+  }, [isUserUpdated, isNewRoleAdded, isOldRoleDeleted, isAddressUpdated, isPhoneUpdated, isLoggedUser, isUserAdmin])
 
   const getUserInfo = () => {
     UsersApi.getUserById(id)
@@ -100,7 +94,7 @@ const EditUser = ({ onSwitch }) => {
           setUser(user)
         }
       })
-      .catch(([_, code]) => {
+      .catch(([code]) => {
         if (code === Code.NOT_FOUND) {
           setMessage('Usuario no encontrado')
           setShowMessage(true)
@@ -112,7 +106,7 @@ const EditUser = ({ onSwitch }) => {
     setShowMessage(false)
 
     if (isUserUpdated) {
-      setIsUserUpdated(undefined)
+    
       navigate(-1)
     }
   }
@@ -128,10 +122,10 @@ const EditUser = ({ onSwitch }) => {
     const { idPhone, phoneNumber } = phone
 
     UsersApi.updateUser(formDataToSend)
-      .then((response) => {
+      .then(() => {
         setIsUserUpdated(true)
       })
-      .catch((error) => {
+      .catch(() => {
         setMessage(
           'No fue posible guardar usuario. Por favor, vuelve a intentarlo'
         )
@@ -154,13 +148,7 @@ const EditUser = ({ onSwitch }) => {
       setIsNewRoleAdded(true)
     }
 
-    if (isUserAdmin && oldRol !== undefined && oldRol !== newRol) {
-      UsersApi.deleteUserRole(user.data, oldRol)
-        .then(() => setIsOldRoleDeleted(true))
-        .catch(() => setIsOldRoleDeleted(false))
-    }
-
-    if (isUserAdmin && oldRol !== newRol) {
+    if (isUserAdmin && !user.data.roles.some((r) => r.rol === newRol)) {
       UsersApi.addUserRole(user.data, newRol)
         .then(() => setIsNewRoleAdded(true))
         .catch(() => setIsNewRoleAdded(false))
@@ -202,6 +190,12 @@ const EditUser = ({ onSwitch }) => {
             />
           </BoxFormUnder>
         )}
+        <Typography variant="h6" component="h6">
+  Rol actual:{' '}
+  {user.data.roles.length
+    ? user.data.roles.map((r) => r.rol).join(', ')
+    : 'Sin rol asignado'}
+</Typography>
       </>
       {!canEditUser && (
         <Box

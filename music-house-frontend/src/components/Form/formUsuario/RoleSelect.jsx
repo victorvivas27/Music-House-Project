@@ -18,14 +18,14 @@ export const RoleSelect = ({
     if (!roles) return
 
     setLoading(false)
-  }, [roles])
+  }, [])
 
   useEffect(() => {
     if (!selectedRoleId || !roles) return
 
     const selectedRole = roles.find((role) => role.idRol === selectedRoleId)
     setSelectedRole(selectedRole)
-  }, [selectedRoleId, roles])
+  }, [selectedRoleId])
 
   useEffect(() => {
     if (loading) return
@@ -33,7 +33,7 @@ export const RoleSelect = ({
       onChange({
         target: { name: 'idRol', value: selectedRole.idRol }
       })
-  }, [selectedRole])
+  }, [loading, onChange, selectedRole])
 
   if (loading) {
     return <Loader fullSize={false} />

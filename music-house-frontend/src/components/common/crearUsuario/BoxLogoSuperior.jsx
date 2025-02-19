@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { Grid } from '@mui/material'
 
-export const BoxLogoSuperior = styled(Grid)(({ theme }) => ({
+export const BoxLogoSuperior = styled(Grid)(() => ({
   display: 'flex',
   flexDirection: 'column',
   marginRight: '50px',
