@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Box } from '@mui/material'
 import InstrumentForm from './InstrumentForm'
 import { getInstrumentById, updateInstrument } from '../../api/instruments'
@@ -9,6 +9,8 @@ import {
 } from '../utils/editInstrument'
 import { MessageDialog } from '../common/MessageDialog'
 import { Loader } from '../common/loader/Loader'
+import PropTypes from 'prop-types'
+import { useNavigate } from 'react-router-dom'
 
 const EditInstrumentForm = ({ id, onSaved }) => {
   const [instrument, setInstrument] = useState(0)
@@ -17,21 +19,24 @@ const EditInstrumentForm = ({ id, onSaved }) => {
   const [showMessage, setShowMessage] = useState(false)
   const [message, setMessage] = useState()
   const imagesToUpdate = []
+  const navigate =useNavigate()
+
+  
+
+  const getInstrument = useCallback(() => {
+    setLoading(true)
+    getInstrumentById(id)
+      .then(([instrument]) => {
+        setInstrument(instrument)
+      })
+      .catch(() => {
+        setInstrument({})
+      })
+  },[id])
 
   useEffect(() => {
     getInstrument()
-  }, [])
-
-  const getInstrument = () => {
-    setLoading(true)
-    getInstrumentById(id)
-      .then(([instrument, _]) => {
-        setInstrument(instrument)
-      })
-      .catch(([_, code]) => {
-        setInstrument({})
-      })
-  }
+  }, [getInstrument])
 
   useEffect(() => {
     if (!(instrument && instrument.data?.idInstrument)) return
@@ -57,6 +62,7 @@ const EditInstrumentForm = ({ id, onSaved }) => {
   const onClose = () => {
     setShowMessage(false)
     if (typeof onSaved === 'function') onSaved()
+      navigate(-1)
   }
 
   const isSameImages = (newImageUrls) => {
@@ -139,6 +145,12 @@ const EditInstrumentForm = ({ id, onSaved }) => {
         }
 
         setMessage('Instrumento guardado exitosamente')
+        setShowMessage()
+         // 🚀 Cerrar automáticamente y volver atrás después de 2 segundos
+         setTimeout(() => {
+          setShowMessage(false)
+          navigate(-1) // Volver a la página anterior
+        }, 1000)
       })
       .catch(() => {
         setMessage('No se pudo guardar instrumento')
@@ -169,7 +181,7 @@ const EditInstrumentForm = ({ id, onSaved }) => {
         title="Editar Instrumento"
         message={message}
         isOpen={showMessage}
-        buttonText="Ok"
+        //buttonText="Ok"
         onClose={onClose}
         onButtonPressed={onClose}
       />
@@ -178,3 +190,8 @@ const EditInstrumentForm = ({ id, onSaved }) => {
 }
 
 export default EditInstrumentForm
+
+ EditInstrumentForm.propTypes={
+  id:PropTypes.string.isRequired,
+  onSaved:PropTypes.func
+ }

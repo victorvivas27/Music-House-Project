@@ -2,6 +2,7 @@ import { Select, MenuItem } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { getThemes } from '../../api/instruments'
 import { Loader } from '../common/loader/Loader'
+import PropTypes from 'prop-types'
 
 const ThemeSelect = ({ label, onChange, selectedThemeId = undefined }) => {
   const [loading, setLoading] = useState(true)
@@ -10,9 +11,10 @@ const ThemeSelect = ({ label, onChange, selectedThemeId = undefined }) => {
 
   useEffect(() => {
     if (!themes) return
-
-    setLoading(false)
+setLoading(false)
   }, [themes])
+
+
 
   useEffect(() => {
     if (!selectedThemeId || !themes) return
@@ -56,3 +58,9 @@ const ThemeSelect = ({ label, onChange, selectedThemeId = undefined }) => {
 }
 
 export default ThemeSelect
+
+ThemeSelect.propTypes={
+  label:PropTypes.string.isRequired,
+  onChange:PropTypes.func.isRequired,
+  selectedThemeId:PropTypes.string
+}

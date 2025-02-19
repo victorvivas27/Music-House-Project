@@ -5,6 +5,7 @@ import { getCategoryById, updateCategory } from '../../api/categories'
 import { MessageDialog } from '../common/MessageDialog'
 import { Loader } from '../common/loader/Loader'
 import PropTypes from 'prop-types'
+import { useNavigate } from 'react-router-dom'
 
 export const EditCategoryForm = ({ id, onSaved }) => {
   const [category, setCategory] = useState()
@@ -12,10 +13,9 @@ export const EditCategoryForm = ({ id, onSaved }) => {
   const [loading, setLoading] = useState(true)
   const [showMessage, setShowMessage] = useState(false)
   const [message, setMessage] = useState()
+  const navigate = useNavigate()
 
- 
-
-  const getCategory = useCallback( () => {
+  const getCategory = useCallback(() => {
     setLoading(true)
     getCategoryById(id)
       .then(([category]) => {
@@ -24,8 +24,8 @@ export const EditCategoryForm = ({ id, onSaved }) => {
       .catch(() => {
         setCategory({})
       })
-  },[id])
-  
+  }, [id])
+
   useEffect(() => {
     getCategory()
   }, [getCategory])
@@ -53,16 +53,17 @@ export const EditCategoryForm = ({ id, onSaved }) => {
     updateCategory(formData)
       .then(() => {
         setMessage('Categoría guardada exitosamente')
+
+        setShowMessage(true)
+
+        // Evitar que el formulario se vacíe antes de navegar
+        setTimeout(() => {
+          navigate("/categories")
+        }, 1000)
       })
       .catch(() => {
         setMessage('No se pudo guardar categoría')
-      })
-      .finally(() => {
         setShowMessage(true)
-         // Cerrar la ventana emergente automáticamente después de 3 segundos
-         setTimeout(() => {
-          setShowMessage(false);
-        }, 2000);
       })
   }
 
@@ -95,6 +96,6 @@ export const EditCategoryForm = ({ id, onSaved }) => {
   )
 }
 EditCategoryForm.propTypes = {
-  id: PropTypes.string.isRequired, 
-  onSaved: PropTypes.func, 
-};
+  id: PropTypes.string.isRequired,
+  onSaved: PropTypes.func
+}

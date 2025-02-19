@@ -5,6 +5,7 @@ import { MessageDialog } from '../common/MessageDialog'
 import { Loader } from '../common/loader/Loader'
 import { ThemeForm } from './ThemeForm'
 import PropTypes from 'prop-types'
+import { useNavigate } from 'react-router-dom'
 
 export const EditThemeForm = ({ id, onSaved }) => {
   const [theme, setTheme] = useState()
@@ -12,6 +13,7 @@ export const EditThemeForm = ({ id, onSaved }) => {
   const [loading, setLoading] = useState(true)
   const [showMessage, setShowMessage] = useState(false)
   const [message, setMessage] = useState()
+  const navigate =useNavigate()
 
   
 
@@ -46,26 +48,27 @@ export const EditThemeForm = ({ id, onSaved }) => {
   const onClose = () => {
     setShowMessage(false)
     if (typeof onSaved === 'function') onSaved()
+      
   }
 
   const onSubmit = (formData) => {
-    if (!formData) return
-
+    if (!formData) return;
+  
     updateTheme(formData)
       .then(() => {
-        setMessage('Thematica guardada exitosamente')
+        setMessage("Temática guardada exitosamente");
+        setShowMessage(true);
+  
+        // Evitar que el formulario se vacíe antes de navegar
+        setTimeout(() => {
+          navigate("/theme");
+        }, 1000);
       })
       .catch(() => {
-        setMessage('No se pudo guardar la tematica')
-      })
-      .finally(() => {
-        setShowMessage(true)
-         // Cerrar la ventana emergente automáticamente después de 3 segundos
-         setTimeout(() => {
-          setShowMessage(false);
-        }, 2000);
-      })
-  }
+        setMessage("No se pudo guardar la temática");
+        setShowMessage(true);
+      });
+  };
 
   if (loading) {
     return <Loader title="Un momento por favor" />
@@ -88,7 +91,7 @@ export const EditThemeForm = ({ id, onSaved }) => {
         title="Editar Tematica"
         message={message}
         isOpen={showMessage}
-        buttonText="Ok"
+        //buttonText="Ok"
         onClose={onClose}
         onButtonPressed={onClose}
       />

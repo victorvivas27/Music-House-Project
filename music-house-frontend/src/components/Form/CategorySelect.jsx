@@ -2,12 +2,9 @@ import { Select, MenuItem } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { getCategories } from '../../api/categories'
 import { Loader } from '../common/loader/Loader'
+import PropTypes from 'prop-types'
 
-const CategorySelect = ({
-  label,
-  onChange,
-  selectedCategoryId = undefined
-}) => {
+const CategorySelect = ({label,onChange,selectedCategoryId = undefined}) => {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('')
   const [categories, setCategories] = useState()
@@ -19,10 +16,10 @@ const CategorySelect = ({
   const getAllGategories = () => {
     setLoading(true)
     getCategories()
-      .then(([categories, _]) => {
+      .then(([categories]) => {
         setCategories(categories)
       })
-      .catch(([_, code]) => {
+      .catch(() => {
         setCategories([])
       })
       .finally(() => setLoading(false))
@@ -72,3 +69,8 @@ const CategorySelect = ({
 }
 
 export default CategorySelect
+CategorySelect.propTypes={
+  label:PropTypes.string.isRequired,
+  onChange:PropTypes.func.isRequired,
+  selectedCategoryId:PropTypes.string
+}
