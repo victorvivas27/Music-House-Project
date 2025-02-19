@@ -136,9 +136,7 @@ export const Categories = () => {
     const idCategory = selected[0]
     deleteCategory(idCategory)
       .then(() => {
-        setMessage('Categoría eliminada exitosamente')
-        setShowCancelButton(false)
-        setOnButtonPressed(false)
+       
         getAllGategories()
       })
       .catch(() => {
@@ -150,11 +148,8 @@ export const Categories = () => {
       })
       .finally(() => {
         setSelected([])
-        setShowMessage(true)
-          // Cerrar la ventana emergente automáticamente después de 3 segundos
-          setTimeout(() => {
-            setShowMessage(false);
-          }, 2000);
+        setShowMessage(false)
+        
         
       })
   }

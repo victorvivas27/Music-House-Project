@@ -26,6 +26,7 @@
     "react-router-dom": "6.23.0",
     "react-transition-group": "4.4.5",
     "sweetalert": "^2.1.2",
+    "sweetalert2": "^11.17.2",
     "yup": "1.4.0"
   },
   "devDependencies": {

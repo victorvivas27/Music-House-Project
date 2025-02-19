@@ -133,13 +133,9 @@ export const Theme = () => {
   }
 
   const handleDelete = () => {
-    console.log("Elementos seleccionados:", selected);
     const idTheme = selected[0]
     deleteTheme(idTheme)
       .then(() => {
-        setMessage('Tematica  eliminada exitosamente')
-        setShowCancelButton(false)
-        setOnButtonPressed(false)
         getAllTheme()
       })
       .catch(() => {
@@ -150,13 +146,8 @@ export const Theme = () => {
         setOnButtonPressed(false)
       })
       .finally(() => {
+        setShowMessage(false)
         setSelected([])
-        setShowMessage(true)
-          // Cerrar la ventana emergente automáticamente después de 3 segundos
-          setTimeout(() => {
-            setShowMessage(false);
-          }, 2000);
-        
       })
   }
 
@@ -165,9 +156,7 @@ export const Theme = () => {
     setSelected([])
   }
 
-
-
-  const handleChangePage = ( newPage) => {
+  const handleChangePage = (newPage) => {
     setPage(newPage)
   }
 
@@ -265,7 +254,6 @@ export const Theme = () => {
                           <DeleteIcon />
                         </IconButton>
                       </Tooltip>
-
                     </TableCell>
                   </TableRow>
                 )
