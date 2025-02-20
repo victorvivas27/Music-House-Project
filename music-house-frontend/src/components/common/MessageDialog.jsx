@@ -40,7 +40,7 @@ export const MessageDialog = ({
 }
 MessageDialog.propTypes = {
   title: PropTypes.string.isRequired,  // Título del mensaje, obligatorio
-  message: PropTypes.string.isRequired,  // Mensaje a mostrar, obligatorio
+  message: PropTypes.string,  // Mensaje a mostrar, obligatorio
   isOpen: PropTypes.bool.isRequired,  // Determina si el modal está abierto o cerrado
   buttonText: PropTypes.string.isRequired,  // Texto del botón, obligatorio
   onButtonPressed: PropTypes.func.isRequired,  // Función que se ejecuta cuando se presiona el botón, obligatorio

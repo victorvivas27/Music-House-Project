@@ -16,28 +16,25 @@ import { updateAddress } from '../../../api/addresses'
 import { updatePhone } from '../../../api/phones'
 
 const EditUser = ({ onSwitch }) => {
-  const { id } = useParams()
-  const [user, setUser] = useState()
-  const [formData, setFormData] = useState()
-  const [showMessage, setShowMessage] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [message, setMessage] = useState()
-  const [isUserUpdated, setIsUserUpdated] = useState()
-  const [isNewRoleAdded, setIsNewRoleAdded] = useState()
-  const [isOldRoleDeleted, setIsOldRoleDeleted] = useState()
-  const [isAddressUpdated, setIsAddressUpdated] = useState()
-  const [isPhoneUpdated, setIsPhoneUpdated] = useState()
-  const { user: loggedUser, isUserAdmin } = useAuthContext()
-  const navigate = useNavigate()
-  const isLoggedUser = loggedUser?.idUser && loggedUser.idUser === Number(id)
-  const canEditUser = !(isUserAdmin && !isLoggedUser)
+  const { id } = useParams();
+  const [user, setUser] = useState();
+  const [formData, setFormData] = useState();
+  const [showMessage, setShowMessage] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState();
+  const [isUserUpdated, setIsUserUpdated] = useState();
+  const [isNewRoleAdded, setIsNewRoleAdded] = useState();
+  const [isAddressUpdated, setIsAddressUpdated] = useState();
+  const [isPhoneUpdated, setIsPhoneUpdated] = useState();
+  const { user: loggedUser, isUserAdmin } = useAuthContext();
+  const navigate = useNavigate();
+  const isLoggedUser = loggedUser?.idUser && loggedUser.idUser === Number(id);
+  const canEditUser = !(isUserAdmin && !isLoggedUser);
+
+ 
 
   useEffect(() => {
-    getUserInfo()
-  }, [])
-
-  useEffect(() => {
-    if (!user) return
+    if (!user) return;
 
     const initialFormData = {
       idUser: id,
@@ -46,21 +43,26 @@ const EditUser = ({ onSwitch }) => {
       email: user.data.email,
       addresses: user.data.addresses,
       phones: user.data.phones,
-      idRol: user.data.roles.length && user.data.roles[0].idRol
-    }
-    setFormData(initialFormData)
-    setLoading(false)
-  }, [user])
+      roles: user.data.roles.map(role => ({
+        idRol: role.idRol,
+        rol: role.rol
+      })), // Guarda todos los roles
+    };
+    setFormData(initialFormData);
+    setLoading(false);
+  }, [id, user]);
+
+ 
 
   useEffect(() => {
     if (
       isUserUpdated === undefined ||
       isNewRoleAdded === undefined ||
-      isOldRoleDeleted === undefined ||
+      
       isAddressUpdated === undefined ||
       isPhoneUpdated === undefined
     )
-      return
+      return;
 
     if (
       (isLoggedUser &&
@@ -71,96 +73,108 @@ const EditUser = ({ onSwitch }) => {
         isAddressUpdated === true &&
         isPhoneUpdated === true &&
         isUserUpdated === true &&
-        isNewRoleAdded === true &&
-        isOldRoleDeleted === true)
+        isNewRoleAdded === true 
+      )
     ) {
-      setMessage('Usuario guardado exitosamente')
+      setMessage('Usuario guardado exitosamente');
     } else {
       setMessage(
         'No fue posible guardar el usuario. Por favor, inténtalo nuevamente'
-      )
+      );
     }
-    setIsNewRoleAdded(undefined)
-    setIsOldRoleDeleted(undefined)
-    setIsAddressUpdated(undefined)
-    setIsPhoneUpdated(undefined)
-    setShowMessage(true)
-  }, [isUserUpdated, isNewRoleAdded, isOldRoleDeleted, isAddressUpdated, isPhoneUpdated, isLoggedUser, isUserAdmin])
+    setIsNewRoleAdded(undefined);
+    
+    setIsAddressUpdated(undefined);
+    setIsPhoneUpdated(undefined);
+    setShowMessage(true);
+  }, [isUserUpdated, isNewRoleAdded,  isAddressUpdated, isPhoneUpdated, isLoggedUser, isUserAdmin]);
 
   const getUserInfo = () => {
     UsersApi.getUserById(id)
       .then(([user, code]) => {
+
         if (code === Code.SUCCESS) {
-          setUser(user)
+          setUser(user);
         }
       })
       .catch(([code]) => {
+
         if (code === Code.NOT_FOUND) {
-          setMessage('Usuario no encontrado')
-          setShowMessage(true)
+          setMessage('Usuario no encontrado');
+          setShowMessage(true);
         }
-      })
-  }
+      });
+  };
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
 
   const onClose = () => {
-    setShowMessage(false)
+    setShowMessage(false);
 
     if (isUserUpdated) {
-    
-      navigate(-1)
+      navigate(-1);
     }
-  }
+  };
 
   const handleSubmit = (formData) => {
-    const formDataToSend = { ...formData }
+    const formDataToSend = { ...formData };
     const oldRol =
-      (user.data.roles.length && user.data.roles[0].rol) || undefined
-    const newRol = roleById(formDataToSend.idRol)
-    const address = formDataToSend.addresses[0]
-    const { idAddress, street, number, city, state, country } = address
-    const phone = formDataToSend.phones[0]
-    const { idPhone, phoneNumber } = phone
+      (user.data.roles.length && user.data.roles[0].rol) || undefined;
+    const newRol = roleById(formDataToSend.idRol);
+    const address = formDataToSend.addresses[0];
+    const { idAddress, street, number, city, state, country } = address;
+    const phone = formDataToSend.phones[0];
+    const { idPhone, phoneNumber } = phone;
 
     UsersApi.updateUser(formDataToSend)
       .then(() => {
-        setIsUserUpdated(true)
+        setIsUserUpdated(true);
       })
       .catch(() => {
         setMessage(
           'No fue posible guardar usuario. Por favor, vuelve a intentarlo'
-        )
-        setIsUserUpdated(false)
-      })
+        );
+        setIsUserUpdated(false);
+      });
 
     updateAddress({ idAddress, street, number, city, state, country })
       .then(() => setIsAddressUpdated(true))
-      .catch(() => setIsAddressUpdated(false))
+      .catch(() => setIsAddressUpdated(false));
 
     updatePhone({ idPhone, phoneNumber })
       .then(() => setIsPhoneUpdated(true))
-      .catch(() => setIsPhoneUpdated(false))
+      .catch(() => setIsPhoneUpdated(false));
 
-    if (!isUserAdmin || oldRol === undefined) setIsOldRoleDeleted(true)
-    if (!isUserAdmin || newRol === undefined) setIsNewRoleAdded(true)
+    
+    if (!isUserAdmin || newRol === undefined) setIsNewRoleAdded(true);
 
     if (oldRol === newRol) {
-      setIsOldRoleDeleted(true)
-      setIsNewRoleAdded(true)
+      
+      setIsNewRoleAdded(true);
     }
 
-    if (isUserAdmin && !user.data.roles.some((r) => r.rol === newRol)) {
-      UsersApi.addUserRole(user.data, newRol)
-        .then(() => setIsNewRoleAdded(true))
-        .catch(() => setIsNewRoleAdded(false))
+    if (isUserAdmin && newRol && !user.data.roles.some((r) => r.rol === newRol)) {
+      UsersApi.addUserRole(user.data.idUser, newRol)
+        .then(() => {
+          setIsNewRoleAdded(true);
+          
+        })
+        .catch(() => {
+          setIsNewRoleAdded(false);
+        });
     }
-  }
+  };
+
+  
 
   if (!(isLoggedUser || isUserAdmin)) {
-    navigate('/')
+    navigate('/');
   }
 
   if (loading) {
-    return <Loader title="Un momento por favor" />
+    return <Loader title="Un momento por favor" />;
   }
 
   return (
@@ -179,7 +193,9 @@ const EditUser = ({ onSwitch }) => {
               onSwitch={onSwitch}
               initialFormData={formData}
               onSubmit={handleSubmit}
-            />
+              user={user}
+              setUser={setUser}
+              />
             <MessageDialog
               title="Editar Usuario"
               message={message}
@@ -187,15 +203,12 @@ const EditUser = ({ onSwitch }) => {
               buttonText="Ok"
               onClose={onClose}
               onButtonPressed={onClose}
-            />
+              />
           </BoxFormUnder>
         )}
-        <Typography variant="h6" component="h6">
-  Rol actual:{' '}
-  {user.data.roles.length
-    ? user.data.roles.map((r) => r.rol).join(', ')
-    : 'Sin rol asignado'}
-</Typography>
+       
+        
+      
       </>
       {!canEditUser && (
         <Box
@@ -204,12 +217,12 @@ const EditUser = ({ onSwitch }) => {
               xs: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              lg: 'none'
+              lg: 'none',
             },
             justifyContent: 'center',
             alignItems: 'center',
             width: '100%',
-            height: '100vh'
+            height: '100vh',
           }}
         >
           <Typography
@@ -219,7 +232,7 @@ const EditUser = ({ onSwitch }) => {
             textAlign="center"
             sx={{
               paddingTop: 30,
-              fontWeight: 'bold'
+              fontWeight: 'bold',
             }}
           >
             Funcionalidad no disponible en esta resolución
@@ -227,7 +240,7 @@ const EditUser = ({ onSwitch }) => {
         </Box>
       )}
     </MainCrearUsuario>
-  )
-}
+  );
+};
 
-export default EditUser
+export default EditUser;

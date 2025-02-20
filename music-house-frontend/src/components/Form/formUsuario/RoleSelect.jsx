@@ -63,7 +63,7 @@ export const RoleSelect = ({
 
 
 RoleSelect.propTypes = {
-  label: PropTypes.string.isRequired, // Etiqueta para el Select
+  label: PropTypes.string, // Etiqueta para el Select
   onChange: PropTypes.func.isRequired, // Función para manejar el cambio de rol
   selectedRoleId: PropTypes.oneOfType([ // Valor del rol seleccionado
     PropTypes.string,

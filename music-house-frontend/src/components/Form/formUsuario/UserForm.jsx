@@ -5,14 +5,17 @@ import {
   Grid,
   Checkbox,
   FormControlLabel,
-  CircularProgress
+  CircularProgress,
+  Button
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import { styled } from '@mui/material/styles'
 import { CustomButton, InputCustom } from './CustomComponents'
 import { RoleSelect } from './RoleSelect'
-import { useAuthContext } from '../../utils/context/AuthGlobal'
+//import { useAuthContext } from '../../utils/context/AuthGlobal'
 import PropTypes from 'prop-types'
+import { UsersApi } from '../../../api/users'
+import Swal from 'sweetalert2'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -43,7 +46,25 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
   }
 }))
 
-export const UserForm = ({ onSwitch, initialFormData, onSubmit, loading }) => {
+const buttonStyle = {
+  backgroundColor: '#FF5733', 
+  color: 'white',
+  padding: '8px 15px',
+  borderRadius: '5px',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '12px',
+  margin:"2px"
+}
+
+export const UserForm = ({
+  onSwitch,
+  initialFormData,
+  onSubmit,
+  loading,
+  user,
+  setUser
+}) => {
   const initialErrorState = {
     name: '',
     lastName: '',
@@ -71,15 +92,18 @@ export const UserForm = ({ onSwitch, initialFormData, onSubmit, loading }) => {
   const [accept, setAccept] = useState(!!formData.idUser)
   const [errors, setErrors] = useState(initialErrorState)
   const [success, setSuccess] = useState(initialSuccessState)
-  const { user, isUserAdmin } = useAuthContext()
 
-  const isLoggedUser =
-    user?.idUser && user.idUser === Number(initialFormData?.idUser)
+  const isUserAdmin = user.data.roles.some((role) => role.rol === 'ADMIN')
+  const isUser = user.data.roles.some((role) => role.rol === 'USER')
+  const idUser = user.data.idUser
+  const isLoggedUser = idUser && idUser === Number(initialFormData?.idUser)
+
   const title = isLoggedUser
     ? 'Mi perfil'
     : formData.idUser
       ? 'Editar cuenta usuario'
       : 'Crear una cuenta'
+
   const buttonText = formData.idUser || isUserAdmin ? 'Guardar' : 'Registrar'
 
   useEffect(() => {
@@ -180,6 +204,54 @@ export const UserForm = ({ onSwitch, initialFormData, onSubmit, loading }) => {
       setErrors(newErrors)
     } else {
       if (typeof onSubmit === 'function') onSubmit(formData)
+    }
+  }
+
+  const handleRemoveRole = (roleToRemove) => {
+    if (!isUserAdmin) return
+    if (user.data.roles.length <= 1) return
+    const role = user.data.roles.find((r) => r.rol === roleToRemove)
+    if (role) {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: `Estás a punto de eliminar el rol ${roleToRemove}. ¿Deseas continuar?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          UsersApi.deleteUserRole(idUser, roleToRemove)
+            .then(() => {
+              const updatedRoles = user.data.roles.filter(
+                (r) => r.rol !== roleToRemove
+              )
+              setUser((prevUser) => ({
+                ...prevUser,
+                data: {
+                  ...prevUser.data,
+                  roles: updatedRoles
+                }
+              }))
+              Swal.fire({
+                title: 'Rol eliminado!',
+                text: `El rol ${roleToRemove} ha sido eliminado exitosamente.`,
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000
+              })
+            })
+            .catch(() => {
+              Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al eliminar el rol. Por favor, intenta nuevamente.',
+                icon: 'error',
+                showConfirmButton: false,
+                timer: 2000
+              })
+            })
+        }
+      })
     }
   }
 
@@ -365,13 +437,43 @@ export const UserForm = ({ onSwitch, initialFormData, onSubmit, loading }) => {
                     helperText={errors.email}
                   />
                 </FormControl>
-                {formData.idUser && isUserAdmin && (
+                {formData.idUser && (
                   <Grid
                     item
                     xs={12}
                     md={6}
                     sx={{ padding: 2, width: '100%', height: '100%' }}
                   >
+                    {/* Botones de eliminación de roles con estilo */}
+                    {isUser && (
+                      <Button
+                        onClick={() => handleRemoveRole('USER')}
+                        style={buttonStyle}
+                        onMouseLeave={(e) =>
+                          (e.target.style.backgroundColor =
+                            buttonStyle.backgroundColor)
+                        }
+                      >
+                        Eliminar rol USER
+                      </Button>
+                    )}
+
+                    {isUserAdmin && (
+                      <Button
+                        onClick={() => handleRemoveRole('ADMIN')}
+                        style={buttonStyle}
+                        onMouseLeave={(e) =>
+                          (e.target.style.backgroundColor =
+                            buttonStyle.backgroundColor)
+                        }
+                      >
+                        Eliminar rol ADMIN
+                      </Button>
+                    )}
+                    <p>
+                      Recuerda que siempre debe existir un rol, el botón se
+                      desactiva si queda un rol para eliminar.
+                    </p>
                     <Typography variant="h6">Asignar Rol</Typography>
                     <FormControl fullWidth margin="normal">
                       <RoleSelect
@@ -384,6 +486,7 @@ export const UserForm = ({ onSwitch, initialFormData, onSubmit, loading }) => {
                     </FormControl>
                   </Grid>
                 )}
+
                 {!formData.idUser && (
                   <>
                     <FormControl fullWidth margin="normal">
@@ -481,7 +584,7 @@ export const UserForm = ({ onSwitch, initialFormData, onSubmit, loading }) => {
               color="primary"
               type="submit"
               sx={{ minWidth: '150px', minHeight: '50px' }}
-              disabled={loading} // Deshabilita el botón mientras carga
+              disabled={loading}
             >
               {loading ? (
                 <CircularProgress size={24} color="inherit" />
@@ -508,10 +611,11 @@ export const UserForm = ({ onSwitch, initialFormData, onSubmit, loading }) => {
     </form>
   )
 }
+
 UserForm.propTypes = {
   onSwitch: PropTypes.func, // Función para cambiar entre el formulario de registro e inicio de sesión
   initialFormData: PropTypes.shape({
-    idUser: PropTypes.number,
+    idUser: PropTypes.string,
     name: PropTypes.string,
     lastName: PropTypes.string,
     email: PropTypes.string,
@@ -534,6 +638,19 @@ UserForm.propTypes = {
     ),
     idRol: PropTypes.number
   }),
-  loading:PropTypes.bool,
-  onSubmit: PropTypes.func // Función que se ejecuta al enviar el formulario
+  loading: PropTypes.bool,
+  onSubmit: PropTypes.func,
+
+  // Agregar la validación de `user`
+  user: PropTypes.shape({
+    data: PropTypes.shape({
+      roles: PropTypes.arrayOf(
+        PropTypes.shape({
+          rol: PropTypes.string.isRequired
+        })
+      ).isRequired,
+      idUser: PropTypes.string.isRequired
+    }).isRequired
+  }).isRequired,
+  setUser: PropTypes.func
 }

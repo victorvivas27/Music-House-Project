@@ -32,81 +32,73 @@ import {
 import { Theme } from './components/Pages/Admin/Theme'
 import { AgregarTheme } from './components/Pages/Admin/AgregarThem'
 import { EditarTheme } from './components/Pages/Admin/EditarTheme'
-import { jwtDecode } from 'jwt-decode'
-
+//import { jwtDecode } from 'jwt-decode'
 
 export const App = () => {
-  const [loading, setLoading] = useState(true)
-  const [userRoles, setUserRoles] = useState(null)
-
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      try {
-        const decoded = jwtDecode(token)
-        setUserRoles(decoded.roles?.[0]?.rol || null) // Extraer el rol del token
-      } catch (error) {
-        console.error('Error al decodificar el token:', error)
-      }
-    }
-    setLoading(false)
-  }, [])
   return (
     <>
-      {!loading && (
-        <BrowserRouter userRoles={userRoles} >
-          <HeaderVisibilityProvider>
-            <AuthContextProvider>
-              <ContextProvider>
-                <Routes>
-                  <Route path="/autentificacion" element={<AuthPage />} />
-                  <Route element={<UserLayoutWithoutHeaderFooter />}>
-                    <Route path="/editarUsuario/:id" element={<EditUser />} />
+      <BrowserRouter>
+        <HeaderVisibilityProvider>
+          <AuthContextProvider>
+            <ContextProvider>
+              <Routes>
+                <Route path="/autentificacion" element={<AuthPage />} />
+                <Route element={<UserLayoutWithoutHeaderFooter />}>
+                  <Route path="/editarUsuario/:id" element={<EditUser />} />
+                </Route>
+                <Route element={<UserLayout />}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/instrument/:id" element={<Instrument />} />
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/favorites" element={<Favorites />} />
+                    <Route path="/reservations" element={<MisReservas />} />
+                    <Route
+                      path="/confirmBooking"
+                      element={<ConfirmBooking />}
+                    />
                   </Route>
-                  <Route element={<UserLayout />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/instrument/:id" element={<Instrument />} />
-                    <Route element={<ProtectedRoute />}>
-                      <Route path="/favorites" element={<Favorites />} />
-                      <Route path="/reservations" element={<MisReservas />} />
-                      <Route
-                        path="/confirmBooking"
-                        element={<ConfirmBooking />}
-                      />
-                    </Route>
+                </Route>
+                <Route element={<AdminLayout />}>
+                  <Route element={<ProtectedRoute role="ADMIN" />}>
+                    <Route path="/instruments" element={<Instruments />} />
+                    <Route path="/usuarios" element={<Usuarios />} />
+                    <Route path="/categories" element={<Categories />} />
+                    <Route path="/theme" element={<Theme />} />
+                    <Route path="/agregarTheme" element={<AgregarTheme />} />
+                    <Route path="/editarTheme/:id" element={<EditarTheme />} />
+                    <Route
+                      path="/agregarInstrumento"
+                      element={<AgregarInstrumento />}
+                    />
+                    <Route
+                      path="/editarInstrumento/:id"
+                      element={<EditarInstrumento />}
+                    />
+                    <Route
+                      path="/agregarCategoria"
+                      element={<AgregarCategoria />}
+                    />
+                    <Route
+                      path="/editarCategoria/:id"
+                      element={<EditarCategoria />}
+                    />
                   </Route>
-                  <Route element={<AdminLayout />}>
-                    <Route element={<ProtectedRoute role="ADMIN" />}>
-                      <Route path="/instruments" element={<Instruments />} />
-                      <Route path="/usuarios" element={<Usuarios />} />
-                      <Route path="/categories" element={<Categories />} />
-                      <Route path="/theme" element={<Theme />} />
-                      <Route path="/agregarTheme"element={<AgregarTheme />}/>
-                      <Route path="/editarTheme/:id" element={<EditarTheme />}/>
-                      <Route path="/agregarInstrumento"element={<AgregarInstrumento />}/>
-                      <Route path="/editarInstrumento/:id" element={<EditarInstrumento />}/>
-                      <Route path="/agregarCategoria" element={<AgregarCategoria />}/>
-                      <Route path="/editarCategoria/:id" element={<EditarCategoria />}/>
-                    </Route>
+                </Route>
+                <Route element={<AdminLayoutWithoutHeaderFooter />}>
+                  <Route element={<ProtectedRoute role="ADMIN" />}>
+                    <Route path="/agregarUsuario" element={<CrearUsuario />} />
                   </Route>
-                  <Route element={<AdminLayoutWithoutHeaderFooter />}>
-                    <Route element={<ProtectedRoute role="ADMIN" />}>
-                      <Route
-                        path="/agregarUsuario"
-                        element={<CrearUsuario />}
-                      />
-                    </Route>
-                  </Route>
-                  <Route path="/noDisponible" element={<ServerError />} />
-                  <Route path="*" element={<NotFoundPage />} />
-                </Routes>
-              </ContextProvider>
-            </AuthContextProvider>
-          </HeaderVisibilityProvider>
-        </BrowserRouter>
-      )}
+                </Route>
+                <Route path="/noDisponible" element={<ServerError />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </ContextProvider>
+          </AuthContextProvider>
+        </HeaderVisibilityProvider>
+      </BrowserRouter>
+      )
     </>
   )
 }

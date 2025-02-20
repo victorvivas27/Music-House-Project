@@ -36,11 +36,11 @@ export const UsersApi = {
 
   deleteUser: (idUser) => deleteFetch(`${URL_DELETE_USER}/${idUser}`),
 
-  addUserRole: (user, newRole) =>
-    postFetch(URL_ADD_ROLE_USER, { idUser: user.idUser, rol: newRole }),
+  addUserRole: (idUser, rol) =>
+    postFetch(URL_ADD_ROLE_USER, { idUser, rol }),
 
-  deleteUserRole: (user, oldRole) =>
-    deleteFetch(URL_DELETE_ROLE_USER, { idUser: user.idUser, rol: oldRole }),
+  deleteUserRole: (idUser, rol) =>
+    deleteFetch(URL_DELETE_ROLE_USER, { idUser, rol}),
 
   registerAdmin: async (adminUser) => {
     try {
