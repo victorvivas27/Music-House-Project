@@ -1,8 +1,7 @@
 import { styled } from '@mui/material/styles'
 import { Container } from '@mui/material'
 
-export const CreateWrapper = styled(Container)(
-  ({ theme, isHeaderVisible }) => ({
+export const CreateWrapper = styled(Container)(({ theme, isHeaderVisible }) => ({
     display: 'none',
 
     [theme.breakpoints.up('lg')]: {

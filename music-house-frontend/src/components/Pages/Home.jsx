@@ -58,7 +58,7 @@ export const Home = () => {
       {!loading && (
         <>
           <CssBaseline />
-          <MainWrapper isHeaderVisible={isHeaderVisible} >
+          <MainWrapper  >
             {state.tematics?.map((tematic, index) => (
               <TematicCard
                 key={`tematic-card-${index}`}

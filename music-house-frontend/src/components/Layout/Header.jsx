@@ -95,8 +95,7 @@ export const Header = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY
-      const isHeaderVisible =
-        (prevScroll > currentScroll && prevScroll - currentScroll > 70) ||
+      const isHeaderVisible =(prevScroll > currentScroll && prevScroll - currentScroll > 70) ||
         currentScroll < 10
       setVisible(isHeaderVisible)
       toggleHeaderVisibility(isHeaderVisible)
