@@ -2,6 +2,7 @@ import { Select, MenuItem } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { roleList } from '../../utils/roles/constants'
 import { Loader } from '../../common/loader/Loader'
+import PropTypes from 'prop-types'
 
 const roles = roleList()
 
@@ -59,3 +60,14 @@ export const RoleSelect = ({
     </Select>
   )
 }
+
+
+RoleSelect.propTypes = {
+  label: PropTypes.string.isRequired, // Etiqueta para el Select
+  onChange: PropTypes.func.isRequired, // Función para manejar el cambio de rol
+  selectedRoleId: PropTypes.oneOfType([ // Valor del rol seleccionado
+    PropTypes.string,
+    PropTypes.number
+  ]),
+  sx: PropTypes.object // Estilos opcionales para el Select
+};
