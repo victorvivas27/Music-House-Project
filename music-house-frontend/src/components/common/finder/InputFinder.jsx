@@ -69,7 +69,7 @@ export const InputFinder = ({
 
 // 🔹 Agregamos validación de `PropTypes`
 InputFinder.propTypes = {
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
   setValue: PropTypes.func.isRequired,
   onKeyUp: PropTypes.func,
   onKeyDown: PropTypes.func,

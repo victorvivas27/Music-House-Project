@@ -87,9 +87,9 @@ export const Header = () => {
 
   const logOut = () => {
     localStorage.removeItem('token')
-  setAuthGlobal(false)
-  navigate("/", { replace: true });
-  window.location.reload();
+    setAuthGlobal(false)
+    navigate('/', { replace: true })
+    window.location.reload()
   }
 
   useEffect(() => {
@@ -110,8 +110,6 @@ export const Header = () => {
     }
   }, [prevScroll, toggleHeaderVisibility])
 
-  
-
   return (
     <HeaderWrapper
       isHome={isHome}
@@ -131,15 +129,15 @@ export const Header = () => {
             >
               {authGlobal ? (
                 <Avatar
-                sx={{
-                  height: '2rem !important',
-                  width: '2rem !important'
-                }}
-              >
-                {userName && userLastName
-                  ? `${userName.charAt(0).toUpperCase()}${userLastName.charAt(0).toUpperCase()}`
-                  : ''}
-              </Avatar>
+                  sx={{
+                    height: '2rem !important',
+                    width: '2rem !important'
+                  }}
+                >
+                  {userName && userLastName
+                    ? `${userName.charAt(0).toUpperCase()}${userLastName.charAt(0).toUpperCase()}`
+                    : ''}
+                </Avatar>
               ) : (
                 <MenuIcon sx={{ fill: 'white' }} fontSize="large" />
               )}
@@ -160,22 +158,25 @@ export const Header = () => {
               }}
               hideBackdrop
             >
-            {pagesMobile.map((page, index) => {
-  return (
-    ((page.user && isUser) || 
-     (page.admin && isUserAdmin) || 
-     (page.anonymous && !(isUser || isUserAdmin)) || 
-     page.any) && (
-      <MenuItem key={`menu-nav-${index}`} onClick={handleCloseNavMenu}>
-        <Typography textAlign="center">
-          <Link to={page.to} className="option-link">
-            {page.text}
-          </Link>
-        </Typography>
-      </MenuItem>
-    )
-  )
-})}
+              {pagesMobile.map((page, index) => {
+                return (
+                  ((page.user && isUser) ||
+                    (page.admin && isUserAdmin) ||
+                    (page.anonymous && !(isUser || isUserAdmin)) ||
+                    page.any) && (
+                    <MenuItem
+                      key={`menu-nav-${index}`}
+                      onClick={handleCloseNavMenu}
+                    >
+                      <Typography textAlign="center">
+                        <Link to={page.to} className="option-link">
+                          {page.text}
+                        </Link>
+                      </Typography>
+                    </MenuItem>
+                  )
+                )
+              })}
 
               {authGlobal ? (
                 <Box>
@@ -281,7 +282,7 @@ export const Header = () => {
                 >
                   <Tooltip title="Opciones">
                     <Chip
-                       avatar={
+                      avatar={
                         <Avatar
                           sx={{
                             height: '2rem !important',
@@ -290,7 +291,7 @@ export const Header = () => {
                         >
                           {userName && userLastName
                             ? `${userName.charAt(0).toUpperCase()}${userLastName.charAt(0).toUpperCase()}`
-                            : '...'} 
+                            : '...'}
                         </Avatar>
                       }
                       label={`Hola ${userName} ${userLastName}!`}
