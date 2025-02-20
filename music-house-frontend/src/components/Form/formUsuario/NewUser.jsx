@@ -68,6 +68,7 @@ const NewUser = ({ onSwitch }) => {
         initialFormData={initialFormData}
         onSubmit={handleSubmit}
         loading={loading}
+        
       />
       <MessageDialog
         title="Registrar Usuario"

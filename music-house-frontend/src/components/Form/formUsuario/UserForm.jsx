@@ -93,9 +93,9 @@ export const UserForm = ({
   const [errors, setErrors] = useState(initialErrorState)
   const [success, setSuccess] = useState(initialSuccessState)
 
-  const isUserAdmin = user.data.roles.some((role) => role.rol === 'ADMIN')
-  const isUser = user.data.roles.some((role) => role.rol === 'USER')
-  const idUser = user.data.idUser
+ const isUserAdmin = user?.data?.roles?.some((role) => role.rol === 'ADMIN') || false
+const isUser = user?.data?.roles?.some((role) => role.rol === 'USER') || false
+const idUser = user?.data?.idUser || null
   const isLoggedUser = idUser && idUser === Number(initialFormData?.idUser)
 
   const title = isLoggedUser
@@ -587,7 +587,7 @@ export const UserForm = ({
               disabled={loading}
             >
               {loading ? (
-                <CircularProgress size={24} color="inherit" />
+                <CircularProgress size={40} sx={{ color: '#FFD700' }} />
               ) : (
                 buttonText
               )}
