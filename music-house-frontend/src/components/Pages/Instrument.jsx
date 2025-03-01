@@ -9,7 +9,7 @@ import { InstrumentGallery } from '../common/InstrumentGallery'
 import { InstrumentAvailability } from '../common/availability/InstrumentAvailability'
 import { useAppStates } from '../utils/global.context'
 import { useAuthContext } from '../utils/context/AuthGlobal'
-import { ArrowLeft } from '../Images/ArrowLeft'
+//import { ArrowLeft } from '../Images/ArrowLeft'
 import { Si } from '../Images/Si'
 import { No } from '../Images/No'
 import { Favorite } from '@mui/icons-material'
@@ -38,11 +38,11 @@ export const Instrument = () => {
   })
   const [instrument, setInstrument] = useState()
   const [showGallery, setShowGallery] = useState(false)
-  const { idUser, isUser, isUserAdmin } = useAuthContext()
+  const { idUser, isUser,isUserAdmin } = useAuthContext()
   const [favorites] = getAllFavorites(idUser)
   const [idFavorite, setIdFavorite] = useState()
-  const [bookingDateFrom, setBookingDateFrom] = useState()
-  const [bookingDateTo, setBookingDateTo] = useState()
+  const [bookingDateFrom, setBookingDateFrom] = useState(null)
+  const [bookingDateTo, setBookingDateTo] = useState(null)
   const [isValidBookingRange, setIsValidBookingRange] = useState()
   const [message, setMessage] = useState()
   const [showMessage, setShowMessage] = useState(false)
@@ -84,21 +84,16 @@ export const Instrument = () => {
   }
 
   const handleFavoriteClick = () => {
-    console.log("Usuario ID:", idUser);
-    console.log("Instrumento ID:", id);
-  
     addFavorite(idUser, id)
       .then((response) => {
-        console.log("Respuesta de addFavorite:", response);
-        setIdFavorite(response.data.idFavorite);
+        setIdFavorite(response.data.idFavorite)
       })
       .catch(([code]) => {
-        console.log("Error en addFavorite, código:", code);
         if (code === Code.ALREADY_EXISTS) {
-          removeFromFavorites();
+          removeFromFavorites()
         }
-      });
-  };
+      })
+  }
 
   const removeFromFavorites = () => {
     if (!idFavorite) return
@@ -137,6 +132,16 @@ export const Instrument = () => {
         {loading && <Loader title="Cargando detalle del instrumento" />}
         {!loading && (
           <>
+
+            <Typography variant="h6" sx={{ color: 'red', textAlign: 'center' }}>
+              Estado de usuario: {isUser ? 'USER' : 'No autenticado'}
+            </Typography>
+
+            <Typography variant="h6" sx={{ color: 'red', textAlign: 'center' }}>
+              Estado de usuario: {isUserAdmin ? 'ADMIN' : 'No autenticado'}
+            </Typography>
+
+
             <Box sx={{ position: 'relative', width: '100%' }}>
               <Typography
                 variant="h2"
@@ -150,6 +155,8 @@ export const Instrument = () => {
               >
                 {instrumentSelected?.name}
               </Typography>
+
+            {/* Aqui se es usurio aparece el icono para favorito */}
               {isUser && (
                 <Box
                   sx={{
@@ -162,22 +169,29 @@ export const Instrument = () => {
                 >
                   <Tooltip
                     title={
-                      !!idFavorite
+                      idFavorite
                         ? 'Remover de favoritos'
                         : 'Agregar a favoritos'
                     }
                   >
-                    <FavoriteIconWrapper
-                      aria-label="Agregar a favoritos"
-                      onClick={handleFavoriteClick}
-                      isFavorite={!!idFavorite}
-                    >
-                      <Favorite sx={{ color: '#000000 !important' }} />
-                    </FavoriteIconWrapper>
+                    <span>
+                      {' '}
+
+                      <FavoriteIconWrapper
+                        aria-label="Agregar a favoritos"
+                        onClick={handleFavoriteClick}
+                        isFavorite={!!idFavorite}
+                      >
+                        <Favorite sx={{ color: '#000000 !important' }} />
+                      </FavoriteIconWrapper>
+                    </span>
                   </Tooltip>
                 </Box>
               )}
             </Box>
+
+
+            {/* Aqui datos del instrumento */}
             <InstrumentDetailWrapper>
               <Box
                 sx={{
@@ -270,6 +284,8 @@ export const Instrument = () => {
                 </Tooltip>
               </Box>
             </InstrumentDetailWrapper>
+
+             {/*Aqui comienzan las caracteristicas*/}
             <Box
               sx={{
                 width: '100%',
@@ -309,7 +325,7 @@ export const Instrument = () => {
                           className="instrument-characteristic-image"
                         />
                       </Tooltip>
-                      <ArrowLeft className="instrument-characteristic-arrow" />
+                      {/* <ArrowLeft className="instrument-characteristic-arrow" />*/}
                       {instrumentSelected?.characteristics[
                         characteristic.id
                       ] === 'si' ? (
@@ -322,18 +338,21 @@ export const Instrument = () => {
                 })}
               </Box>
             </Box>
+
+             {/*Aqui comienza el calendario */}
+             {isUserAdmin&&(
             <Box
               sx={{
                 width: '100%',
                 display: 'flex',
                 flexDirection: 'column'
               }}
-            >
+              >
               <Divider />
               <Typography
                 variant="h5"
                 sx={{ textAlign: 'center', fontWeight: '300', padding: '1rem' }}
-              >
+                >
                 Disponibilidad
               </Typography>
               <Box
@@ -343,10 +362,14 @@ export const Instrument = () => {
                   width: '100%',
                   justifyContent: 'center'
                 }}
-              >
+                >
                 <InstrumentAvailability id={id} />
               </Box>
             </Box>
+
+)}
+            {isUser && (
+              <>
             <Box
               sx={{
                 width: '100%',
@@ -380,8 +403,6 @@ export const Instrument = () => {
                     Valor día: $ {instrumentSelected?.rentalPrice}
                   </Typography>
                 </Box>
-                {isUser && !isUserAdmin && (
-                  <>
                     <Box
                       sx={{
                         width: '100%',
@@ -430,14 +451,14 @@ export const Instrument = () => {
                         </Button>
                       </Tooltip>
                     </Box>
-                  </>
-                )}
               </Box>
               <Box sx={{ width: '100%' }}>
                 <Divider sx={{ width: '100%' }} />
                 <InstrumentTerms />
               </Box>
             </Box>
+            </>
+          )}
           </>
         )}
         <MessageDialog

@@ -32,6 +32,7 @@ import {
 import { Theme } from './components/Pages/Admin/Theme'
 import { AgregarTheme } from './components/Pages/Admin/AgregarThem'
 import { EditarTheme } from './components/Pages/Admin/EditarTheme'
+import Perfil from './components/Pages/Perfil'
 //import { jwtDecode } from 'jwt-decode'
 
 export const App = () => {
@@ -48,6 +49,7 @@ export const App = () => {
                 </Route>
                 <Route element={<UserLayout />}>
                   <Route path="/" element={<Home />} />
+                  <Route path="/perfil/:id" element={<Perfil />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/instrument/:id" element={<Instrument />} />

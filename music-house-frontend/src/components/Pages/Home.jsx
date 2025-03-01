@@ -8,11 +8,11 @@ import TematicCard from '../common/TematicCard'
 import ProductsWrapper from '../common/ProductsWrapper'
 import ProductCard from '../common/ProductCard'
 import { Loader } from '../common/loader/Loader'
-import { useHeaderVisibility } from '../utils/context/HeaderVisibilityGlobal'
+
 import '../styles/home.styles.css'
 
 export const Home = () => {
-  const { isHeaderVisible } = useHeaderVisibility()
+
   const { state, dispatch } = useAppStates()
   const { searchOptions } = state
   const [selectedInstruments, setSelectedInstruments] = useState([])
@@ -21,7 +21,7 @@ export const Home = () => {
  
 
   useEffect(() => {
-    getInstruments().then(([instruments, _]) => {
+    getInstruments().then(([instruments]) => {
       setInstruments(instruments)
     })
   }, [])

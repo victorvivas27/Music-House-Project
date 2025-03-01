@@ -83,9 +83,9 @@ export const InstrumentGallery = ({ itemData }) => {
 InstrumentGallery.propTypes = {
   itemData: PropTypes.arrayOf(
     PropTypes.shape({
-      imageUrl: PropTypes.string.isRequired, // URL de la imagen
+      imageUrl: PropTypes.string,
       rows: PropTypes.number, // Opcional: cantidad de filas
       cols: PropTypes.number // Opcional: cantidad de columnas
     })
-  ).isRequired
+  )
 };

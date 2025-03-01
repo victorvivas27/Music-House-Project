@@ -35,8 +35,7 @@ export const deleteInstrument = (idInstrument) => {
 }
 
 export const searchInstrumentsByName = (name) => {
-  return useGetFetch(
-    `${BASE_URL}/instrument/find/name/${name}`,
-    (!name || name === '') && []
-  )
+  if (!name) return []; // Si `name` no existe, no hacer la petición
+
+  return useGetFetch(`${BASE_URL}/instrument/find/name/${name}`);
 }
