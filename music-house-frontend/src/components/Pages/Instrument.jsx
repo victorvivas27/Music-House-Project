@@ -23,14 +23,11 @@ export const Instrument = () => {
   const { state } = useAppStates()
   const navigate = useNavigate()
   const [loading, setIsLoading] = useState(true)
-  const [instrumentSelected, setInstrumentSelected] = useState({
-    characteristics: {}
-  })
+  const [instrumentSelected, setInstrumentSelected] = useState({characteristics: {}})
   const [instrument, setInstrument] = useState()
   const [showGallery, setShowGallery] = useState(false)
   const { isUser, isUserAdmin } = useAuthContext()
-
-  const [showMessage, setShowMessage] = useState(false)
+const [showMessage, setShowMessage] = useState(false)
 
   useEffect(() => {
     setIsLoading(true)
@@ -173,7 +170,7 @@ export const Instrument = () => {
                           instrumentSelected.imageUrls[0].imageUrl
                         }
                         alt={instrumentSelected?.name}
-                        style={{ objectFit: 'cover' }}
+                        style={{ objectFit: 'cover',padding:20 }}
                       />
                     </Button>
                   </Tooltip>

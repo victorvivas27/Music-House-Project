@@ -42,7 +42,7 @@ export const Favorites = () => {
     Swal.fire({
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Sí,quitar de favoritos',
       cancelButtonText: 'Cancelar',
       reverseButtons: true
     }).then((result) => {
@@ -59,7 +59,7 @@ export const Favorites = () => {
           setFavorites(updatedFavorites)
           Swal.fire({
             icon: 'success',
-            title: 'Eliminado!',
+            title: 'Quitado de favoritos!',
             timer: 1500, // Desaparece después de 1.5 segundos
             showConfirmButton: false
           })
@@ -67,7 +67,7 @@ export const Favorites = () => {
           Swal.fire({
             icon: 'error',
             title: 'Error!',
-            text: 'Ocurrió un error al eliminar el favorito.',
+            text: 'Ocurrió un error al quitar de favoritos.',
             timer: 1500, // Desaparece después de 1.5 segundos
             showConfirmButton: false
           })

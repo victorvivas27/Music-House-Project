@@ -1,15 +1,15 @@
 import { Favorite, FavoriteBorder } from '@mui/icons-material'
-import { Box, Button, Tooltip,Snackbar } from '@mui/material'
+import { Box, Button, Tooltip, Snackbar } from '@mui/material'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
 import { useParams } from 'react-router-dom'
-import {  useEffect, useState } from 'react'
-import { addFavorite, getAllFavorites } from '../../../api/favorites';
+import { useEffect, useState } from 'react'
+import { addFavorite, getAllFavorites } from '../../../api/favorites'
 
 const FavoriteIcon = () => {
   const { idUser } = useAuthContext()
   const { id } = useParams()
   const [isFavorite, setIsFavorite] = useState(false)
-  const [error, setError] = useState('') // Estado para manejar errores
+  const [error, setError] = useState('')
   const [openSnackbar, setOpenSnackbar] = useState(false)
 
   // Obtener todos los favoritos del usuario al cargar el componente
@@ -58,7 +58,9 @@ const FavoriteIcon = () => {
 
   return (
     <Box>
-      <Tooltip title={isFavorite ? 'Ya está en favoritos' : 'Agregar a favoritos'}>
+      <Tooltip
+        title={isFavorite ? 'Ya está en favoritos' : 'Agregar a favoritos'}
+      >
         <Button
           onClick={handleFavoriteClick}
           sx={{
@@ -68,6 +70,7 @@ const FavoriteIcon = () => {
             zIndex: 1,
             padding: 0
           }}
+          disableRipple // Desactiva el efecto ripple
         >
           {isFavorite ? (
             <Favorite
