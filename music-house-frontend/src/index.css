@@ -1,3 +1,10 @@
+:root{
+  --calendario-fondo-disponible:#fbf194;
+  --calendario-fondo-no-disponible:#ee4116;
+  --calendario-color-disponible:#7d7373;
+  --calendario-color-no-disponible:#dbd8d8;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -21,4 +28,20 @@ main {
 body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: 0; /* Firefox */
+}
+/* Animación de "latido" */
+@keyframes pulse {
+  0% {
+    transform: scale(1); /* Tamaño original */
+  }
+  50% {
+    transform: scale(1.2); /* Aumenta el tamaño */
+  }
+  100% {
+    transform: scale(1); /* Vuelve al tamaño original */
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite; /* Aplica la animación */
 }

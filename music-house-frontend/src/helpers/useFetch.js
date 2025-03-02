@@ -88,8 +88,6 @@ export const deleteFetch = (endpoint, payload) => {
         }
 
         reject([error?.response?.data?.message, code])
-
-        reject(error)
       })
   })
 

@@ -10,7 +10,7 @@ import { Code } from '../../../api/constants'
 import { useAppStates } from '../../utils/global.context'
 import { actions } from '../../utils/actions'
 import { InputFinder } from './InputFinder'
-import { DateRangeFinder } from './DateRangeFinder'
+
 import { ButtonFinder } from './ButtonFinder'
 import dayjs from 'dayjs'
 import { findInstrumentsAvailabilityByDates } from '../../../api/availability'
@@ -135,14 +135,7 @@ export const Finder = () => {
           inputRef={inputFinderRef}
           onClose={() => clearFinder()}
         />
-        <DateRangeFinder
-          dateFrom={dateFrom}
-          setFromDate={setDateFrom}
-          dateTo={dateTo}
-          setToDate={setDateTo}
-          minFromDateDefault={dayjs()}
-          minToDateDefault={dayjs().add(1, 'day')}
-        />
+        
         <ButtonFinder
           variant="contained"
           onClick={handleSubmitSearch}
