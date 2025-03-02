@@ -40,8 +40,6 @@ export const Favorites = () => {
   const handleRemoveFavorite = (favorite) => {
     // Mostrar la confirmación usando Swal
     Swal.fire({
-      title: '¿Estás seguro?',
-      text: "No podrás revertir esto",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',
@@ -62,11 +60,10 @@ export const Favorites = () => {
           Swal.fire({
             icon: 'success',
             title: 'Eliminado!',
-            text: 'El favorito ha sido eliminado.',
             timer: 1500, // Desaparece después de 1.5 segundos
             showConfirmButton: false
           })
-        }).catch((error) => {
+        }).catch(() => {
           Swal.fire({
             icon: 'error',
             title: 'Error!',
