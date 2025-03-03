@@ -68,4 +68,10 @@ public class GlobalExeceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiResponse<>(e.getMessage(), null));
     }
+
+    @ExceptionHandler(PastDateException.class)
+    public ResponseEntity<?> handlePastDateException(PastDateException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse<>(e.getMessage(), null));
+    }
 }

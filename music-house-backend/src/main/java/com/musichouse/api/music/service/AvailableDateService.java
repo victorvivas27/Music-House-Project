@@ -5,6 +5,7 @@ import com.musichouse.api.music.dto.dto_exit.AvailableDateDtoExit;
 import com.musichouse.api.music.dto.dto_modify.AvailableDateDtoModify;
 import com.musichouse.api.music.entity.AvailableDate;
 import com.musichouse.api.music.entity.Instrument;
+import com.musichouse.api.music.exception.PastDateException;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.interfaces.AvailableDateInterface;
 import com.musichouse.api.music.repository.AvailableDateRepository;
@@ -29,16 +30,25 @@ public class AvailableDateService implements AvailableDateInterface {
     @Override
     public List<AvailableDateDtoExit> addAvailableDates(List<AvailableDateDtoEntrance> availableDatesDtoList) throws ResourceNotFoundException {
         List<AvailableDateDtoExit> addedDates = new ArrayList<>();
+
         for (AvailableDateDtoEntrance availableDateDto : availableDatesDtoList) {
             UUID instrumentId = availableDateDto.getIdInstrument();
+
             if (instrumentId == null) {
                 throw new IllegalArgumentException("El ID del instrumento no puede ser nulo");
             }
+
+            // Validar que la fecha no sea pasada
+            LocalDate dateToAdd = availableDateDto.getDateAvailable();
+            if (dateToAdd.isBefore(LocalDate.now())) {
+                throw new PastDateException("No se pueden agregar fechas pasadas");
+            }
+
             Instrument instrument = instrumentRepository.findById(instrumentId)
                     .orElseThrow(() -> new ResourceNotFoundException("No se encontró el instrumento con el ID proporcionado"));
+
             Optional<AvailableDate> existingAvailableDateOpt =
-                    availableDateRepository.findByInstrumentIdInstrumentAndDateAvailable
-                            (instrumentId, availableDateDto.getDateAvailable());
+                    availableDateRepository.findByInstrumentIdInstrumentAndDateAvailable(instrumentId, dateToAdd);
 
             AvailableDate availableDate;
             if (existingAvailableDateOpt.isPresent()) {
@@ -46,19 +56,23 @@ public class AvailableDateService implements AvailableDateInterface {
                 availableDate.setAvailable(availableDateDto.getAvailable());
             } else {
                 availableDate = new AvailableDate();
-                availableDate.setDateAvailable(availableDateDto.getDateAvailable());
+                availableDate.setDateAvailable(dateToAdd);
                 availableDate.setInstrument(instrument);
                 availableDate.setAvailable(availableDateDto.getAvailable());
             }
+
             AvailableDate availableDateSave = availableDateRepository.save(availableDate);
+
             AvailableDateDtoExit availableDateDtoExit = new AvailableDateDtoExit();
             availableDateDtoExit.setIdAvailableDate(availableDateSave.getIdAvailableDate());
             availableDateDtoExit.setRegistDate(new Date());
             availableDateDtoExit.setDateAvailable(availableDateSave.getDateAvailable());
             availableDateDtoExit.setAvailable(availableDateSave.getAvailable());
             availableDateDtoExit.setIdInstrument(instrumentId);
+
             addedDates.add(availableDateDtoExit);
         }
+
         return addedDates;
     }
 

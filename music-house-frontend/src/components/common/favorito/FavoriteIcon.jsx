@@ -1,5 +1,5 @@
 import { Favorite, FavoriteBorder } from '@mui/icons-material'
-import { Box, Button, Tooltip, Snackbar } from '@mui/material'
+import { Box, Button, Tooltip, Snackbar, Alert } from '@mui/material'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
@@ -91,13 +91,22 @@ const FavoriteIcon = () => {
         </Button>
       </Tooltip>
 
-      {/* Snackbar para mostrar errores */}
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={3000}
-        message={error}
-        onClose={handleCloseSnackbar}
-      />
+        {/* Snackbar para mostrar errores */}
+        <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+  <Alert
+    onClose={handleCloseSnackbar}
+    severity="info" // Tipos: success | warning | info | error
+    sx={{
+      backgroundColor: 'blue', // Amarillo
+      color: 'white', // Texto oscuro
+      fontWeight: 'bold',
+      fontSize: '1rem',
+      borderRadius: '8px'
+    }}
+  >
+    {error}
+  </Alert>
+</Snackbar>
     </Box>
   )
 }

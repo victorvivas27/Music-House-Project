@@ -100,7 +100,6 @@ export const App = () => {
           </AuthContextProvider>
         </HeaderVisibilityProvider>
       </BrowserRouter>
-      )
     </>
   )
 }

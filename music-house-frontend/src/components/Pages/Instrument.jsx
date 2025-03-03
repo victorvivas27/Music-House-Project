@@ -10,24 +10,25 @@ import { useAppStates } from '../utils/global.context'
 import { useAuthContext } from '../utils/context/AuthGlobal'
 import { Si } from '../Images/Si'
 import { No } from '../Images/No'
-
 import { InstrumentTerms } from '../common/terms/InstrumentTerms'
 import { Loader } from '../common/loader/Loader'
 import { MessageDialog } from '../common/MessageDialog'
-
 import '../styles/instrument.styles.css'
 import FavoriteIcon from '../common/favorito/FavoriteIcon'
-
+import MyCalendar from '../common/availability/MyCalendar'
+import CalendarReserva from '../common/availability/CalendarReseva'
 export const Instrument = () => {
   const { id } = useParams()
   const { state } = useAppStates()
   const navigate = useNavigate()
   const [loading, setIsLoading] = useState(true)
-  const [instrumentSelected, setInstrumentSelected] = useState({characteristics: {}})
+  const [instrumentSelected, setInstrumentSelected] = useState({
+    characteristics: {}
+  })
   const [instrument, setInstrument] = useState()
   const [showGallery, setShowGallery] = useState(false)
   const { isUser, isUserAdmin } = useAuthContext()
-const [showMessage, setShowMessage] = useState(false)
+  const [showMessage, setShowMessage] = useState(false)
 
   useEffect(() => {
     setIsLoading(true)
@@ -58,17 +59,13 @@ const [showMessage, setShowMessage] = useState(false)
   return (
     <main>
       <MainWrapper sx={{ alignItems: 'center', position: 'relative' }}>
+        {/*<Typography variant="h2" sx={{ color: 'red', textAlign: 'center' }}>
+          {isUserAdmin ? 'ADMIN' : isUser ? 'USER' : 'No autenticado'}
+        </Typography>*/}
+
         {loading && <Loader title="Cargando detalle del instrumento" />}
         {!loading && (
           <>
-            <Typography variant="h6" sx={{ color: 'red', textAlign: 'center' }}>
-              Estado de usuario: {isUser ? 'USER' : 'No autenticado'}
-            </Typography>
-
-            <Typography variant="h6" sx={{ color: 'red', textAlign: 'center' }}>
-              Estado de usuario: {isUserAdmin ? 'ADMIN' : 'No autenticado'}
-            </Typography>
-
             <Typography
               variant="h2"
               sx={{
@@ -153,7 +150,7 @@ const [showMessage, setShowMessage] = useState(false)
                   borderRadius: '.625rem'
                 }}
               >
-                <Box >
+                <Box>
                   <Tooltip title="Ver más imágenes">
                     <Button
                       onClick={() => setShowGallery(true)}
@@ -170,7 +167,7 @@ const [showMessage, setShowMessage] = useState(false)
                           instrumentSelected.imageUrls[0].imageUrl
                         }
                         alt={instrumentSelected?.name}
-                        style={{ objectFit: 'cover',padding:20 }}
+                        style={{ objectFit: 'cover', padding: 20 }}
                       />
                     </Button>
                   </Tooltip>
@@ -256,7 +253,12 @@ const [showMessage, setShowMessage] = useState(false)
                     padding: '1rem'
                   }}
                 >
-                  Agregar fechas disponibles de los instrumentos
+                  <div className="container mx-auto p-4">
+                    <h1 className="text-2xl font-bold mb-4">
+                      Calendario de Disponibilidad
+                    </h1>
+                    <MyCalendar instrument={instrument} />
+                  </div>
                 </Typography>
                 <Box
                   sx={{
@@ -314,7 +316,9 @@ const [showMessage, setShowMessage] = useState(false)
                         justifyContent: 'center',
                         alignItems: 'center'
                       }}
-                    ></Box>
+                    >
+                      <CalendarReserva instrument={instrument} />
+                    </Box>
                     <Box
                       sx={{
                         flexGrow: 1,

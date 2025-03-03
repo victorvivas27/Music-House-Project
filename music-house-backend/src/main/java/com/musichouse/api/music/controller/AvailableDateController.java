@@ -3,6 +3,7 @@ package com.musichouse.api.music.controller;
 import com.musichouse.api.music.dto.dto_entrance.AvailableDateDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.AvailableDateDtoExit;
 import com.musichouse.api.music.dto.dto_modify.AvailableDateDtoModify;
+import com.musichouse.api.music.exception.PastDateException;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.service.AvailableDateService;
 import com.musichouse.api.music.util.ApiResponse;
@@ -31,6 +32,9 @@ public class AvailableDateController {
             List<AvailableDateDtoExit> addedDates = availableDateService.addAvailableDates(availableDatesDtoList);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ApiResponse<>("Fechas disponibles agregadas exitosamente.", addedDates));
+        } catch (PastDateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(e.getMessage(), null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse<>("No se encontró el instrumento con el ID proporcionado", null));
