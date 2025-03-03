@@ -210,7 +210,7 @@ const CalendarReserva = ({ instrument }) => {
     >
       {loading ? (
         <CircularProgress
-          size={24}
+          size={30}
           sx={{
             color: 'blue',
             position: 'absolute', // Evita que cambie el tamaño del botón

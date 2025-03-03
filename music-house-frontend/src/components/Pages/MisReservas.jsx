@@ -33,12 +33,7 @@ import dayjs from 'dayjs'
 import { deleteReservation, getReservationById } from '../../api/reservations'
 
 const headCells = [
-  {
-    id: 'idReservation',
-    numeric: true,
-    disablePadding: false,
-    label: 'ID Reserva'
-  },
+  
   {
     id: 'imageUrl',
     numeric: true,
@@ -146,15 +141,7 @@ const ReservationRow = ({
             {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>
-        <TableCell
-          component="th"
-          id={labelId}
-          scope="row"
-          padding="none"
-          align="center"
-        >
-          {row.idReservation}
-        </TableCell>
+       
         <TableCell align="left">
           <img src={row.imageUrl} alt="" width="100px" />
         </TableCell>
@@ -452,30 +439,38 @@ const MisReservas = () => {
   }
 
   const handleDelete = () => {
-    setShowMessage(false)
-    const idReservation = selected[0]
-
-    const reservation = rows.find((row) => row.idReservation === idReservation)
-
-    if (!reservation) return // Corrección en la validación
-
+    setShowMessage(false); // Cerrar modal de confirmación
+    const idReservation = selected[0];
+    const reservation = rows.find((row) => row.idReservation === idReservation);
+    if (!reservation) return;
+  
     deleteReservation(reservation.idInstrument, idUser, idReservation)
       .then(() => {
-        setMessage('Reserva eliminada exitosamente')
-        setShowCancelButton(false)
-        setOnButtonPressed(false)
+        setMessage('Reserva eliminada exitosamente');
+        setShowCancelButton(false);
+        setOnButtonPressed(false);
+  
+        // Mostrar el mensaje de éxito SIN BOTÓN
+        setShowMessage(true);
+  
+        // Cerrar el modal automáticamente después de 2 segundos
+        setTimeout(() => {
+          setShowMessage(false);
+        }, 2000);
       })
       .catch(() => {
-        setMessage('No fue posible eliminar la reserva.')
-        setShowCancelButton(false)
-        setOnButtonPressed(false)
+        setMessage('No fue posible eliminar la reserva.');
+        setShowCancelButton(false);
+        setOnButtonPressed(false);
+  
+        // Mostrar el mensaje de error CON botón para cerrarlo manualmente
+        setShowMessage(true);
       })
       .finally(() => {
-        setSelected([])
-        setShowMessage(true)
-        getReservations() // Refrescar lista de reservas
-      })
-  }
+        setSelected([]);
+        getReservations(); // Refrescar lista de reservas
+      });
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -576,7 +571,7 @@ const MisReservas = () => {
         title="Eliminar reserva"
         message={message}
         isOpen={showMessage}
-        buttonText="Ok"
+        buttonText={showCancelButton ? "Ok" : null}
         onClose={handleClose}
         onButtonPressed={() =>
           onButtonPressed ? handleDelete() : handleClose()
