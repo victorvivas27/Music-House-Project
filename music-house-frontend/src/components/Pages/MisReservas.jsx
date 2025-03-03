@@ -29,9 +29,8 @@ import {
 import { MessageDialog } from '../common/MessageDialog'
 import { Loader } from '../common/loader/Loader'
 import { useAuthContext } from '../utils/context/AuthGlobal'
-import { ReservationApi } from '../../api/reservations'
-import { Code } from '../../api/constants'
 import dayjs from 'dayjs'
+import { deleteReservation, getReservationById } from '../../api/reservations'
 
 const headCells = [
   {
@@ -394,32 +393,41 @@ const MisReservas = () => {
   const [message, setMessage] = useState()
   const [showCancelButton, setShowCancelButton] = useState(false)
   const [onButtonPressed, setOnButtonPressed] = useState()
-  const { user } = useAuthContext()
+  const { idUser } = useAuthContext()
 
   useEffect(() => {
-    if (!user) return
+    if (!idUser) return
 
     getReservations()
-  }, [user])
+  }, [idUser])
 
   useEffect(() => {
-    if (!reservations) return
-
-    setRows(reservations.data)
-    setLoading(false)
-    if (window) {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (!reservations || reservations.length === 0) {
+      setRows([]); // Asegura que rows se vacíe si no hay reservas
+      setLoading(false);
+      return;
     }
-  }, [reservations])
+  
+    setRows(reservations.data);
+    setLoading(false);
+  
+    if (window) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [reservations]);
 
   const getReservations = () => {
     setLoading(true)
-    ReservationApi.getReservationById(user.idUser, [])
-      .then(([data, _]) => {
+    getReservationById(idUser)
+      .then((data) => {
         setReservations(data)
       })
-      .catch(([_, code]) => {
-        setReservations({ data: [] })
+      .catch((error) => {
+        console.error('Error obteniendo reservas:', error)
+        setReservations([]) // Devolver array vacío si hay error
+      })
+      .finally(() => {
+        setLoading(false)
       })
   }
 
@@ -446,35 +454,26 @@ const MisReservas = () => {
   const handleDelete = () => {
     setShowMessage(false)
     const idReservation = selected[0]
-    const reservation = rows.filter(
-      (rows) => rows.idReservation === idReservation
-    )
 
-    if (!reservation.length > 0) return
+    const reservation = rows.find((row) => row.idReservation === idReservation)
 
-    ReservationApi.deleteReservation(
-      reservation[0]?.idInstrument,
-      user.idUser,
-      idReservation
-    )
+    if (!reservation) return // Corrección en la validación
+
+    deleteReservation(reservation.idInstrument, idUser, idReservation)
       .then(() => {
         setMessage('Reserva eliminada exitosamente')
         setShowCancelButton(false)
         setOnButtonPressed(false)
       })
-      .catch(([error, code]) => {
-        setMessage(
-          code === Code.NOT_FOUND
-            ? 'Reserva no encontrada.'
-            : 'No fue posible eliminar reserva.'
-        )
+      .catch(() => {
+        setMessage('No fue posible eliminar la reserva.')
         setShowCancelButton(false)
         setOnButtonPressed(false)
       })
       .finally(() => {
         setSelected([])
         setShowMessage(true)
-        getReservations()
+        getReservations() // Refrescar lista de reservas
       })
   }
 
@@ -525,6 +524,7 @@ const MisReservas = () => {
 
                   return (
                     <ReservationRow
+                      key={row.idReservation}
                       row={row}
                       isItemSelected={isItemSelected}
                       labelId={labelId}

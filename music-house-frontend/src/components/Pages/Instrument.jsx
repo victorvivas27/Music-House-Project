@@ -329,24 +329,9 @@ export const Instrument = () => {
                         justifyContent: 'center'
                       }}
                     >
-                      <Tooltip title="Reservar">
-                        <Button
-                          variant="contained"
-                          sx={{
-                            borderRadius: '1rem',
-                            padding: '1.3rem',
-                            maxHeight: '4.5rem'
-                          }}
-                        >
-                          <Typography
-                            textAlign="center"
-                            sx={{ fontWeight: 'bold' }}
-                            variant="h6"
-                          >
-                            Reservar
-                          </Typography>
-                        </Button>
-                      </Tooltip>
+                      
+                       
+                      
                     </Box>
                   </Box>
                   <Box sx={{ width: '100%' }}>
