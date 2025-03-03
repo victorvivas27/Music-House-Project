@@ -34,7 +34,7 @@ const CalendarReserva = ({ instrument }) => {
   const { idUser } = useAuthContext()
   const [reservedDates, setReservedDates] = useState([])
   const [loading, setLoading] = useState(false) // Estado para el loader
-  const navigate=useNavigate()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchAvailableDates = async () => {
@@ -90,8 +90,8 @@ const CalendarReserva = ({ instrument }) => {
     try {
       await createReservation(idUser, idInstrument, startDate, endDate)
       setSuccess('Reserva realizada con éxito.')
-      setSelectedDates([]) 
-      navigate("/reservations")
+      setSelectedDates([])
+      navigate('/reservations')
     } catch (error) {
       setError(error.message)
     } finally {
@@ -103,10 +103,8 @@ const CalendarReserva = ({ instrument }) => {
   const fetchReservedDates = async () => {
     try {
       const reservations = await getReservationById(idUser)
-      
 
       if (!reservations.data || !Array.isArray(reservations.data)) {
-        
         return
       }
 
@@ -200,16 +198,30 @@ const CalendarReserva = ({ instrument }) => {
       sx={{
         borderRadius: '1rem',
         padding: '1.3rem',
-        maxHeight: '4.5rem',
-        minWidth: '120px'
+        height: '4.5rem', // Altura fija
+        width: '180px', // Ancho fijo
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative', // Necesario para posicionar el loader
       }}
       onClick={handleConfirmReservation}
-      disabled={loading} // Deshabilita el botón mientras carga
+      disabled={loading}
     >
       {loading ? (
-        <CircularProgress size={24} sx={{ color: 'white' }} />
+        <CircularProgress
+          size={24}
+          sx={{
+            color: 'blue',
+            position: 'absolute', // Evita que cambie el tamaño del botón
+          }}
+        />
       ) : (
-        <Typography textAlign="center" sx={{ fontWeight: 'bold' }} variant="h6">
+        <Typography
+          textAlign="center"
+          sx={{ fontWeight: 'bold' }}
+          variant="h6"
+        >
           Reservar
         </Typography>
       )}
