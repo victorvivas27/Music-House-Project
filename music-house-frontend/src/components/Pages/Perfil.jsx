@@ -24,6 +24,8 @@ import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { removeAddress } from '../../api/addresses'
 import Swal from 'sweetalert2'
+import ModalNewPhone from '../common/nuevontelefono/ModalNewPhone'
+import { removePhone } from '../../api/phones'
 
 const Perfil = () => {
   const { idUser } = useAuthContext()
@@ -32,9 +34,13 @@ const Perfil = () => {
   const [error, setError] = useState('')
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [openModal, setOpenModal] = useState(false)
+  const [openModalPhone, setOpenModalPhone] = useState(false)
 
   const handleOpenModal = () => setOpenModal(true)
   const handleCloseModal = () => setOpenModal(false)
+
+  const handleOpenModalPhone = () => setOpenModalPhone(true)
+  const handleCloseModalPhone = () => setOpenModalPhone(false)
 
   // Función para cargar los datos del usuario
   const fetchUser = async () => {
@@ -131,15 +137,98 @@ const Perfil = () => {
 
                   {/* Teléfono */}
                   <Box display="flex" alignItems="center" mb={2}>
-                    <PhoneIcon sx={{ color: '#43A047', mr: 1 }} />
-                    <Typography variant="subtitle1">
-                      <strong>Teléfono:</strong>{' '}
-                      {userData?.phones?.[0]?.phoneNumber || 'No disponible'}
-                    </Typography>
+                    <Box sx={{ width: 900 }}>
+                      <Box display="flex" alignItems="center">
+                        <Tooltip title="Agregar un nuevo telefono">
+                          <IconButton
+                            onClick={handleOpenModalPhone}
+                            sx={{ color: '#1976D2' }}
+                          >
+                            <AddIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <PhoneIcon sx={{ color: '#43A047', mr: 1 }} />
+                        <Typography variant="subtitle1">
+                          <strong>Telefonos:</strong>
+                        </Typography>
+                      </Box>
+
+                      <Grid container spacing={3} sx={{ mt: 2 }}>
+                        {userData?.phones?.length > 0 ? (
+                          userData.phones.map((phone) => (
+                            <Grid item xs={12} sm={5} key={phone.idPhone}>
+                              <Card
+                                sx={{
+                                  p: 1,
+                                  borderRadius: '8px',
+                                  boxShadow: 3,
+                                  border: '1px solid black'
+                                }}
+                              >
+                                <CardContent>
+                                  <Box
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                  >
+                                    <Typography variant="h6" fontWeight="bold">
+                                      {phone.phoneNumber}
+                                    </Typography>
+
+                                    {/* Botón de eliminar con confirmación */}
+                                    <IconButton
+                                      onClick={async () => {
+                                        if (userData.phones.length > 1) {
+                                          // Evita eliminar la última dirección
+                                          const result = await Swal.fire({
+                                            title: '¿Estás seguro?',
+                                            text: 'Esta acción eliminará el telefono .',
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#d33',
+                                            cancelButtonColor: '#3085d6',
+                                            confirmButtonText: 'Sí, eliminar',
+                                            cancelButtonText: 'Cancelar'
+                                          })
+
+                                          if (result.isConfirmed) {
+                                            await removePhone(phone.idPhone)
+                                            fetchUser() // 🔄 Actualiza la lista después de eliminar
+                                            Swal.fire(
+                                              'Eliminado',
+                                              'El telefono ha sido eliminada correctamente.',
+                                              'success'
+                                            )
+                                          }
+                                        } else {
+                                          Swal.fire(
+                                            'Acción no permitida',
+                                            'Debe haber al menos un telefono registrada.',
+                                            'error'
+                                          )
+                                        }
+                                      }}
+                                      color="error"
+                                      disabled={userData.phones.length === 1} // 🔹 Desactiva el botón si solo hay una dirección
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Box>
+                                </CardContent>
+                              </Card>
+                            </Grid>
+                          ))
+                        ) : (
+                          <Typography variant="body2" sx={{ mt: 2 }}>
+                            No hay direcciones registradas.
+                          </Typography>
+                        )}
+                      </Grid>
+                    </Box>
                   </Box>
 
                   {/* Sección de Direcciones con Grid */}
-                  <Box sx={{width:800}}>
+                  <Box sx={{ width: 900 }}>
                     <Box display="flex" alignItems="center">
                       <Tooltip title="Agregar nueva dirección">
                         <IconButton
@@ -155,18 +244,17 @@ const Perfil = () => {
                       </Typography>
                     </Box>
 
-                    <Grid container spacing={2} sx={{ mt: 2 }}>
+                    <Grid container spacing={3} sx={{ mt: 2 }}>
                       {userData?.addresses?.length > 0 ? (
                         userData.addresses.map((address) => (
-                          <Grid
-                            item
-                            xs={12}
-                            sm={6}
-                            md={4}
-                            key={address.idAddress}
-                          >
+                          <Grid item xs={12} sm={5} key={address.idAddress}>
                             <Card
-                              sx={{ p: 2, borderRadius: '8px', boxShadow: 3 }}
+                              sx={{
+                                p: 1,
+                                borderRadius: '8px',
+                                boxShadow: 3,
+                                border: '1px solid black'
+                              }}
                             >
                               <CardContent>
                                 <Box
@@ -250,6 +338,14 @@ const Perfil = () => {
               handleClose={handleCloseModal}
               idUser={idUser}
               refreshUserData={fetchUser}
+            />
+
+            {/* Modal para agregar nuevo telefono */}
+            <ModalNewPhone
+              open={openModalPhone}
+              handleCloseModalPhone={handleCloseModalPhone}
+              idUser={idUser}
+              refreshPhoneData={fetchUser}
             />
           </Box>
         </>

@@ -9,13 +9,14 @@ import {
 import PropTypes from 'prop-types'
 import { addAddress } from '../../../api/addresses'
 import { useState } from 'react'
+import Swal from 'sweetalert2'
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 500,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -35,7 +36,6 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(null)
 
   // Manejo de cambios en los inputs
   const handleChange = (e) => {
@@ -50,13 +50,11 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    setSuccess(null)
 
     try {
       await addAddress({ idUser, ...formData })
       refreshUserData() // 🔄 Actualiza la lista de direcciones
 
-      setSuccess('Dirección agregada con éxito.')
       setFormData({
         street: '',
         number: '',
@@ -65,11 +63,21 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
         country: ''
       }) // Limpiar formulario
 
-      // 🔹 Mantenemos el `loading` activo por 1.5 segundos antes de cerrar
+      // 🔹 Cerrar modal después de mostrar la alerta
       setTimeout(() => {
         setLoading(false)
         handleClose()
-      }, 1500)
+        // 🔹 Mostrar SweetAlert2 sin botón de confirmación y con auto-cierre en 1.5s
+        Swal.fire({
+          title: 'Dirección agregada',
+          text: 'La dirección ha sido agregada con éxito.',
+          icon: 'success',
+          timer: 1500, // ⏳ Se cierra en 1.5 segundos
+          showConfirmButton: false, // ❌ Oculta el botón de "OK"
+          allowOutsideClick: false, // Evita que se cierre si el usuario hace clic afuera
+          timerProgressBar: true // Muestra barra de tiempo de cierre
+        })
+      }, 1500) // ⏳ Mismo tiempo que la alerta
     } catch (error) {
       setError('Hubo un error al agregar la dirección.')
       setLoading(false)
@@ -90,6 +98,8 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
             value={formData.street}
             onChange={handleChange}
             margin="normal"
+            multiline
+            rows={1} // 🔹 Hace el campo más alto (3 líneas)
             required
           />
           <TextField
@@ -100,6 +110,8 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
             onChange={handleChange}
             margin="normal"
             required
+            multiline
+            rows={1}
           />
           <TextField
             fullWidth
@@ -109,6 +121,8 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
             onChange={handleChange}
             margin="normal"
             required
+            multiline
+            rows={1}
           />
           <TextField
             fullWidth
@@ -118,6 +132,8 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
             onChange={handleChange}
             margin="normal"
             required
+            multiline
+            rows={1}
           />
           <TextField
             fullWidth
@@ -127,9 +143,11 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
             onChange={handleChange}
             margin="normal"
             required
+            multiline
+            rows={1}
           />
           {error && <Typography color="error">{error}</Typography>}
-          {success && <Typography color="green">{success}</Typography>}
+
           <Box mt={2} display="flex" justifyContent="space-between">
             <Button onClick={handleClose} color="secondary">
               Cancelar
