@@ -40,7 +40,7 @@ const countryCodes = [
 
 const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }) => {
   const [formData, setFormData] = useState({
-    countryCode: '+54', // 📌 Código por defecto: Argentina
+    countryCode: '', // 📌 Código por defecto: Argentina
     phoneNumber: ''
   })
 
@@ -76,7 +76,7 @@ const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }
 
       // 🔹 Limpiar el formulario antes de cerrar
       setFormData({
-        countryCode: '+54',
+        countryCode: '',
         phoneNumber: ''
       })
 
@@ -115,7 +115,7 @@ const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }
         <form onSubmit={handleSubmit}>
           {/* 📌 Select para elegir el código de país */}
           <FormControl fullWidth margin="normal">
-            <InputLabel>Código de País</InputLabel>
+           
             <Select
               value={formData.countryCode}
               onChange={handleCountryCodeChange}
