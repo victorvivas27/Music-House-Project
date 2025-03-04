@@ -2,7 +2,11 @@ import {
   Box,
   Button,
   CircularProgress,
+  FormControl,
+  InputLabel,
+  MenuItem,
   Modal,
+  Select,
   TextField,
   Typography
 } from '@mui/material'
@@ -25,13 +29,18 @@ const style = {
   borderRadius: '8px'
 }
 
-const ModalNewPhone = ({
-  open,
-  handleCloseModalPhone,
-  idUser,
-  refreshPhoneData
-}) => {
+// 📌 Lista de códigos de país para Latinoamérica (Mercosur)
+const countryCodes = [
+  { code: '+54', country: 'Argentina' },
+  { code: '+55', country: 'Brasil' },
+  { code: '+56', country: 'Chile' },
+  { code: '+595', country: 'Paraguay' },
+  { code: '+598', country: 'Uruguay' }
+]
+
+const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }) => {
   const [formData, setFormData] = useState({
+    countryCode: '+54', // 📌 Código por defecto: Argentina
     phoneNumber: ''
   })
 
@@ -46,6 +55,14 @@ const ModalNewPhone = ({
     })
   }
 
+  // Manejo del cambio en el código de país
+  const handleCountryCodeChange = (event) => {
+    setFormData({
+      ...formData,
+      countryCode: event.target.value
+    })
+  }
+
   // Enviar el formulario
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -53,28 +70,31 @@ const ModalNewPhone = ({
     setError(null)
 
     try {
-      await addPhone({ idUser, ...formData }) // Agregar el teléfono
+      const formattedPhoneNumber = `${formData.countryCode}${formData.phoneNumber}` // 📌 Formato final del número
+      await addPhone({ idUser, phoneNumber: formattedPhoneNumber }) // 📌 Enviar al backend como un solo campo
       await refreshPhoneData() // 🔄 Asegurar que se actualiza la lista de teléfonos
 
       // 🔹 Limpiar el formulario antes de cerrar
       setFormData({
+        countryCode: '+54',
         phoneNumber: ''
       })
 
-      // 🔹 Asegurar que el modal se cierre después de 1.5 segundos
+    
+
       setTimeout(() => {
         setLoading(false)
         handleCloseModalPhone()
-        // 🔹 Mostrar SweetAlert2 sin botón de confirmación y con auto-cierre
-        Swal.fire({
-          title: 'Teléfono agregado',
-          text: 'El teléfono ha sido agregado con éxito.',
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false,
-          allowOutsideClick: false,
-          timerProgressBar: true
-        })
+          // 🔹 Mostrar alerta y cerrar modal después de 1.5 segundos
+      Swal.fire({
+        title: 'Teléfono agregado',
+        text: 'El teléfono ha sido agregado con éxito.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        timerProgressBar: true
+      })
       }, 1500)
     } catch (error) {
       setError('Hubo un error al agregar el teléfono.')
@@ -93,6 +113,22 @@ const ModalNewPhone = ({
           Agregar un Nuevo Teléfono
         </Typography>
         <form onSubmit={handleSubmit}>
+          {/* 📌 Select para elegir el código de país */}
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Código de País</InputLabel>
+            <Select
+              value={formData.countryCode}
+              onChange={handleCountryCodeChange}
+            >
+              {countryCodes.map((country) => (
+                <MenuItem key={country.code} value={country.code}>
+                  {country.country} ({country.code})
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* 📌 Campo para el número de teléfono */}
           <TextField
             fullWidth
             label="Número de Teléfono"

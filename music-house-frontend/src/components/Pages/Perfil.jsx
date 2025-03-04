@@ -171,9 +171,19 @@ const Perfil = () => {
                                     justifyContent="space-between"
                                     alignItems="center"
                                   >
-                                    <Typography variant="h6" fontWeight="bold">
-                                      {phone.phoneNumber}
-                                    </Typography>
+                                      {/* 📌 Número de teléfono clickeable para llamadas */}
+              <Typography variant="h6" fontWeight="bold">
+                <a
+                  href={`tel:${phone.phoneNumber}`}
+                  style={{
+                    textDecoration: 'none',
+                    color: '#1976D2',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {phone.phoneNumber}
+                </a>
+              </Typography>
 
                                     {/* Botón de eliminar con confirmación */}
                                     <IconButton
