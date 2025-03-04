@@ -85,14 +85,14 @@ const Perfil = () => {
             sx={{
               borderRadius: '12px',
               boxShadow: 3,
-              maxWidth: 1000,
+              maxWidth: 1300,
               backgroundColor: '#f9f9f9'
             }}
           >
             <Grid container justifyContent="center">
               <Card
                 sx={{
-                  width: '600px',
+                  width: '900px',
                   minHeight: '500px',
                   p: 4,
                   boxShadow: 4,
@@ -139,7 +139,7 @@ const Perfil = () => {
                   </Box>
 
                   {/* Sección de Direcciones con Grid */}
-                  <Box>
+                  <Box sx={{width:800}}>
                     <Box display="flex" alignItems="center">
                       <Tooltip title="Agregar nueva dirección">
                         <IconButton
