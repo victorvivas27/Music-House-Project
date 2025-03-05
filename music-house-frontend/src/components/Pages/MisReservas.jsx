@@ -409,8 +409,8 @@ const MisReservas = () => {
       .then((data) => {
         setReservations(data)
       })
-      .catch((error) => {
-        console.error('Error obteniendo reservas:', error)
+      .catch(() => {
+        
         setReservations([]) // Devolver array vacío si hay error
       })
       .finally(() => {

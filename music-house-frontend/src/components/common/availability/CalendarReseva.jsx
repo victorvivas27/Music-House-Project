@@ -28,8 +28,11 @@ const CalendarReserva = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
   const [selectedDates, setSelectedDates] = useState([]) // Lista de fechas seleccionadas
   const [error, setError] = useState('')
+  const [infoMessage, setInfoMessage] = useState(''); // Para mensajes amigables
   const [success, setSuccess] = useState('')
   const [openSnackbar, setOpenSnackbar] = useState(false)
+
+  const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false);
   const idInstrument = instrument?.data?.idInstrument
   const { idUser } = useAuthContext()
   const [reservedDates, setReservedDates] = useState([])
@@ -55,9 +58,7 @@ const CalendarReserva = ({ instrument }) => {
     fetchAvailableDates()
   }, [idInstrument])
 
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false)
-  }
+ 
 
   const handleDateSelect = (date) => {
     const formattedDate = dayjs(date).format('YYYY-MM-DD')
@@ -100,40 +101,51 @@ const CalendarReserva = ({ instrument }) => {
     }
   }
 
-  const fetchReservedDates = async () => {
-    try {
-      const reservations = await getReservationById(idUser)
+ // 👇 Modificación en `fetchReservedDates`
+ const fetchReservedDates = async () => {
+  try {
+    const reservations = await getReservationById(idUser);
 
-      if (!reservations.data || !Array.isArray(reservations.data)) {
-        return
+    // 🟢 Si no hay reservas, mostramos un mensaje amigable
+    if (!reservations.data || !Array.isArray(reservations.data) || reservations.data.length === 0) {
+      setReservedDates([]);
+      setInfoMessage("📅 ¡Aún no tienes reservas! No dudes en reservar este hermoso instrumento y disfruta de la música. 🎶");
+      setOpenSnackbarInfo(true);
+      return;
+    }
+
+    const instrumentReservations = reservations.data.filter(
+      (res) => res.idInstrument === idInstrument
+    );
+
+    const bookedDates = instrumentReservations.flatMap((res) => {
+      const start = dayjs(res.startDate);
+      const end = dayjs(res.endDate);
+      const range = [];
+
+      for (let d = start; d.isBefore(end) || d.isSame(end); d = d.add(1, "day")) {
+        range.push(d.format("YYYY-MM-DD"));
       }
 
-      // Filtramos solo las reservas del instrumento actual
-      const instrumentReservations = reservations.data.filter(
-        (res) => res.idInstrument === idInstrument
-      )
+      return range;
+    });
 
-      const bookedDates = instrumentReservations.flatMap((res) => {
-        const start = dayjs(res.startDate)
-        const end = dayjs(res.endDate)
-        const range = []
+    setReservedDates(bookedDates);
+  } catch (error) {
+    const { statusCode, message } = error;
 
-        for (
-          let d = start;
-          d.isBefore(end) || d.isSame(end);
-          d = d.add(1, 'day')
-        ) {
-          range.push(d.format('YYYY-MM-DD'))
-        }
-
-        return range
-      })
-
-      setReservedDates(bookedDates)
-    } catch (error) {
-      console.error('Error al obtener las reservas:', error)
+    if (statusCode === 404) {
+      // 🟢 Si el error es 404, significa que simplemente no hay reservas, mostramos un mensaje amigable.
+      setReservedDates([]);
+      setInfoMessage("📅 ¡Aún no tienes reservas! No dudes en reservar este hermoso instrumento y disfruta de la música. 🎶");
+      setOpenSnackbarInfo(true);
+    } else {
+      // 🛑 Si el error es otro (500, 403, etc.), mostrar error real
+      setError(`⚠️ Error ${statusCode}: ${message}`);
+      setOpenSnackbar(true);
     }
   }
+};
 
   // Llamar al cargar el componente y después de una reserva exitosa
   useEffect(() => {
@@ -229,26 +241,53 @@ const CalendarReserva = ({ instrument }) => {
   </Tooltip>
 )}
 
-        {/* Snackbar de éxito/error */}
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={3000}
-          onClose={handleCloseSnackbar}
-        >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity={success ? 'success' : 'warning'}
-            sx={{
-              backgroundColor: success ? '#4CAF50' : '#FFC107',
-              color: '#333',
-              fontWeight: 'bold',
-              fontSize: '1rem',
-              borderRadius: '8px'
-            }}
-          >
-            {success || error}
-          </Alert>
-        </Snackbar>
+      {/* Snackbar para errores reales (API falló) */}
+<Snackbar
+  open={openSnackbar}
+  autoHideDuration={5000}
+  onClose={() => setOpenSnackbar(false)}
+  anchorOrigin={{ vertical: "top", horizontal: "center" }}
+>
+  <Alert
+    onClose={() => setOpenSnackbar(false)}
+    severity="error"
+    sx={{
+      backgroundColor: "#E57373", // 🔴 Rojo para errores reales
+      color: "#fff",
+      fontWeight: "bold",
+      fontSize: "1rem",
+      borderRadius: "8px",
+      display: "flex",
+      alignItems: "center",
+    }}
+  >
+    {error}
+  </Alert>
+</Snackbar>
+
+{/* Snackbar para mensaje amigable cuando no hay reservas */}
+<Snackbar
+  open={openSnackbarInfo}
+  autoHideDuration={5000}
+  onClose={() => setOpenSnackbarInfo(false)}
+  anchorOrigin={{ vertical: "top", horizontal: "center" }}
+>
+  <Alert
+    onClose={() => setOpenSnackbarInfo(false)}
+    severity="info"
+    sx={{
+      backgroundColor: "#4A90E2", // 🔵 Azul para mensajes amigables
+      color: "#fff",
+      fontWeight: "bold",
+      fontSize: "1rem",
+      borderRadius: "8px",
+      display: "flex",
+      alignItems: "center",
+    }}
+  >
+    {infoMessage}
+  </Alert>
+</Snackbar>
 
         {/* Leyenda de colores más organizada */}
         <Box sx={{ mt: 3, textAlign: 'center', width: '100%' }}>

@@ -13,14 +13,20 @@ export const getReservations= async () => {
     }
   }
 
-  export const getReservationById= async (id) => {
+  export const getReservationById = async (id) => {
     try {
       const response = await axios.get(`${BASE_URL}/reservations/search/user/${id}`);
       return response.data;
     } catch (error) {
-      throw new Error('Error al obtener la reserva');
+      const statusCode = error.response?.status || 500; // Si no hay status, asumimos 500
+      const errorMessage = error.response?.data?.message || "Error desconocido";
+
+      console.error(`📢 Error en la API getReservationById [${statusCode}]: ${errorMessage}`);
+
+      // Lanzar el error con código y mensaje
+      throw { statusCode, message: errorMessage };
     }
-  }
+};
 
   export const deleteReservation =async (idInstrument, idUser, idReservation) => {
     try {
