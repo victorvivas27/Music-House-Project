@@ -10,6 +10,7 @@ export const updatePhone = ({ idPhone, phoneNumber }) => {
     phoneNumber
   })
 }
+
 export const addPhone = async ({ idUser, phoneNumber }) => {
   try {
     const response = await axios.post(`${BASE_URL}/phone/add_phone`, {

@@ -40,7 +40,7 @@ const countryCodes = [
 
 const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }) => {
   const [formData, setFormData] = useState({
-    countryCode: '', // 📌 Código por defecto: Argentina
+    countryCode: '+54', // 📌 Código por defecto: Argentina
     phoneNumber: ''
   })
 
@@ -76,13 +76,11 @@ const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }
 
       // 🔹 Limpiar el formulario antes de cerrar
       setFormData({
-        countryCode: '',
+        countryCode: '+54',
         phoneNumber: ''
       })
 
-    
-
-      setTimeout(() => {
+  setTimeout(() => {
         setLoading(false)
         handleCloseModalPhone()
           // 🔹 Mostrar alerta y cerrar modal después de 1.5 segundos

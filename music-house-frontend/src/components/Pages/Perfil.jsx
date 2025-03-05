@@ -13,7 +13,8 @@ import {
   Snackbar,
   Alert,
   Tooltip,
-  IconButton
+  IconButton,
+  Button
 } from '@mui/material'
 import EmailIcon from '@mui/icons-material/Email'
 import PhoneIcon from '@mui/icons-material/Phone'
@@ -21,11 +22,14 @@ import HomeIcon from '@mui/icons-material/Home'
 import { Loader } from '../common/loader/Loader'
 import ModalNewDireccion from '../common/nuevadireccion/ModalNewDireccion'
 import AddIcon from '@mui/icons-material/Add'
+import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { removeAddress } from '../../api/addresses'
 import Swal from 'sweetalert2'
 import ModalNewPhone from '../common/nuevontelefono/ModalNewPhone'
 import { removePhone } from '../../api/phones'
+import ModalUpdateUser from '../common/modificardatosuser/ModalUpdateUser'
+import ModalUpdatePhone from '../common/nuevontelefono/ModalUpdatePhone'
 
 const Perfil = () => {
   const { idUser } = useAuthContext()
@@ -35,12 +39,28 @@ const Perfil = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const [openModalPhone, setOpenModalPhone] = useState(false)
+  const [openModalUser, setOpenModalUser] = useState(false)
+  const [openModalPhoneUpdate, setOpenModalPhoneUpdate] = useState(false)
+  const [selectedPhone, setSelectedPhone] = useState(null)
 
   const handleOpenModal = () => setOpenModal(true)
   const handleCloseModal = () => setOpenModal(false)
 
   const handleOpenModalPhone = () => setOpenModalPhone(true)
   const handleCloseModalPhone = () => setOpenModalPhone(false)
+
+  const handleOpenModalUser = () => setOpenModalUser(true)
+  const handleCloseModalUser = () => setOpenModalUser(false)
+
+  const handleOpenModalPhoneUpdate = (phone) => {
+    setSelectedPhone(phone) // 📌 Guardar el teléfono seleccionado
+    setOpenModalPhoneUpdate(true)
+  }
+
+  const handleCloseModalPhoneUpdate = () => {
+    setOpenModalPhoneUpdate(false)
+    setSelectedPhone(null) // 📌 Limpiar el estado al cerrar
+  }
 
   // Función para cargar los datos del usuario
   const fetchUser = async () => {
@@ -71,6 +91,7 @@ const Perfil = () => {
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false)
   }
+ 
 
   if (loading) return <Loader title="Un momento por favor..." />
 
@@ -109,6 +130,7 @@ const Perfil = () => {
                 <CardContent>
                   {/* Encabezado con Avatar y Email */}
                   <Box display="flex" alignItems="center" mb={2}>
+                    <Tooltip title="Haz clic para editar tus datos">
                     <Avatar
                       sx={{
                         bgcolor: '#1976D2',
@@ -116,14 +138,18 @@ const Perfil = () => {
                         height: 90,
                         fontSize: 40
                       }}
+                      onClick={handleOpenModalUser}
                     >
                       {userData?.name?.[0] || '?'}
                     </Avatar>
+                    </Tooltip>
+                    
                     <Box ml={2}>
                       <Typography variant="h5" fontWeight="bold">
                         {userData?.name || 'Nombre no disponible'}{' '}
                         {userData?.lastName || ''}
                       </Typography>
+                      
                       <Box display="flex" alignItems="center" mt={0.5}>
                         <EmailIcon sx={{ color: '#1976D2', mr: 1 }} />
                         <Typography variant="body2" color="text.secondary">
@@ -171,58 +197,69 @@ const Perfil = () => {
                                     justifyContent="space-between"
                                     alignItems="center"
                                   >
-                                      {/* 📌 Número de teléfono clickeable para llamadas */}
-              <Typography variant="h6" fontWeight="bold">
-                <a
-                  href={`tel:${phone.phoneNumber}`}
-                  style={{
-                    textDecoration: 'none',
-                    color: '#1976D2',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  {phone.phoneNumber}
-                </a>
-              </Typography>
+                                    {/* 📌 Número de teléfono clickeable para llamadas */}
+                                    <Typography variant="h6" fontWeight="bold">
+                                      <a
+                                        href={`tel:${phone.phoneNumber}`}
+                                        style={{
+                                          textDecoration: 'none',
+                                          color: '#1976D2',
+                                          fontWeight: 'bold'
+                                        }}
+                                      >
+                                        {phone.phoneNumber}
+                                      </a>
+                                    </Typography>
 
-                                    {/* Botón de eliminar con confirmación */}
-                                    <IconButton
-                                      onClick={async () => {
-                                        if (userData.phones.length > 1) {
-                                          // Evita eliminar la última dirección
-                                          const result = await Swal.fire({
-                                            title: '¿Estás seguro?',
-                                            text: 'Esta acción eliminará el telefono .',
-                                            icon: 'warning',
-                                            showCancelButton: true,
-                                            confirmButtonColor: '#d33',
-                                            cancelButtonColor: '#3085d6',
-                                            confirmButtonText: 'Sí, eliminar',
-                                            cancelButtonText: 'Cancelar'
-                                          })
+                                    <Box>
+                                      {/* Botón de editar */}
+                                      <IconButton
+                                        onClick={() =>
+                                          handleOpenModalPhoneUpdate(phone)
+                                        }
+                                        sx={{ color: '#1976D2' }}
+                                      >
+                                        <EditIcon />
+                                      </IconButton>
 
-                                          if (result.isConfirmed) {
-                                            await removePhone(phone.idPhone)
-                                            fetchUser() // 🔄 Actualiza la lista después de eliminar
+                                      {/* Botón de eliminar con confirmación */}
+                                      <IconButton
+                                        onClick={async () => {
+                                          if (userData.phones.length > 1) {
+                                            const result = await Swal.fire({
+                                              title: '¿Estás seguro?',
+                                              text: 'Esta acción eliminará el teléfono.',
+                                              icon: 'warning',
+                                              showCancelButton: true,
+                                              confirmButtonColor: '#d33',
+                                              cancelButtonColor: '#3085d6',
+                                              confirmButtonText: 'Sí, eliminar',
+                                              cancelButtonText: 'Cancelar'
+                                            })
+
+                                            if (result.isConfirmed) {
+                                              await removePhone(phone.idPhone)
+                                              fetchUser()
+                                              Swal.fire(
+                                                'Eliminado',
+                                                'El teléfono ha sido eliminado correctamente.',
+                                                'success'
+                                              )
+                                            }
+                                          } else {
                                             Swal.fire(
-                                              'Eliminado',
-                                              'El telefono ha sido eliminada correctamente.',
-                                              'success'
+                                              'Acción no permitida',
+                                              'Debe haber al menos un teléfono registrado.',
+                                              'error'
                                             )
                                           }
-                                        } else {
-                                          Swal.fire(
-                                            'Acción no permitida',
-                                            'Debe haber al menos un telefono registrada.',
-                                            'error'
-                                          )
-                                        }
-                                      }}
-                                      color="error"
-                                      disabled={userData.phones.length === 1} // 🔹 Desactiva el botón si solo hay una dirección
-                                    >
-                                      <DeleteIcon />
-                                    </IconButton>
+                                        }}
+                                        color="error"
+                                        disabled={userData.phones.length === 1}
+                                      >
+                                        <DeleteIcon />
+                                      </IconButton>
+                                    </Box>
                                   </Box>
                                 </CardContent>
                               </Card>
@@ -230,7 +267,7 @@ const Perfil = () => {
                           ))
                         ) : (
                           <Typography variant="body2" sx={{ mt: 2 }}>
-                            No hay direcciones registradas.
+                            No hay teléfonos registrados.
                           </Typography>
                         )}
                       </Grid>
@@ -275,7 +312,7 @@ const Perfil = () => {
                                   <Typography variant="h6" fontWeight="bold">
                                     {address.street}
                                   </Typography>
-
+                                 
                                   {/* Botón de eliminar con confirmación */}
                                   <IconButton
                                     onClick={async () => {
@@ -356,6 +393,24 @@ const Perfil = () => {
               handleCloseModalPhone={handleCloseModalPhone}
               idUser={idUser}
               refreshPhoneData={fetchUser}
+            />
+
+            {/* Modal para modificar datos del usuario */}
+            <ModalUpdateUser
+              open={openModalUser}
+              handleCloseModalUser={handleCloseModalUser}
+              idUser={idUser}
+              refreshUserData={fetchUser}
+              userData={userData}
+            />
+            <Button >Modificar Datos </Button>
+
+            {/* Modal para modificar datos del telefono  */}
+            <ModalUpdatePhone
+              open={openModalPhoneUpdate}
+              handleCloseModalPhoneUpdate={handleCloseModalPhoneUpdate}
+              refreshUserData={fetchUser}
+              selectedPhone={selectedPhone} // 📌 Pasa el teléfono seleccionado
             />
           </Box>
         </>
