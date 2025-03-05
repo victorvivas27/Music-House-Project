@@ -3,7 +3,6 @@ import {
   Button,
   CircularProgress,
   FormControl,
-  InputLabel,
   MenuItem,
   Modal,
   Select,
@@ -15,6 +14,7 @@ import PropTypes from 'prop-types'
 import { useState } from 'react'
 import Swal from 'sweetalert2'
 import { addPhone } from '../../../api/phones'
+import { countryCodes } from '../../utils/codeapaises/CountryCodes'
 
 const style = {
   position: 'absolute',
@@ -29,16 +29,14 @@ const style = {
   borderRadius: '8px'
 }
 
-// 📌 Lista de códigos de país para Latinoamérica (Mercosur)
-const countryCodes = [
-  { code: '+54', country: 'Argentina' },
-  { code: '+55', country: 'Brasil' },
-  { code: '+56', country: 'Chile' },
-  { code: '+595', country: 'Paraguay' },
-  { code: '+598', country: 'Uruguay' }
-]
 
-const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }) => {
+
+const ModalNewPhone = ({
+  open,
+  handleCloseModalPhone,
+  idUser,
+  refreshPhoneData
+}) => {
   const [formData, setFormData] = useState({
     countryCode: '+54', // 📌 Código por defecto: Argentina
     phoneNumber: ''
@@ -62,6 +60,7 @@ const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }
       countryCode: event.target.value
     })
   }
+  
 
   // Enviar el formulario
   const handleSubmit = async (e) => {
@@ -80,19 +79,19 @@ const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }
         phoneNumber: ''
       })
 
-  setTimeout(() => {
+      setTimeout(() => {
         setLoading(false)
         handleCloseModalPhone()
-          // 🔹 Mostrar alerta y cerrar modal después de 1.5 segundos
-      Swal.fire({
-        title: 'Teléfono agregado',
-        text: 'El teléfono ha sido agregado con éxito.',
-        icon: 'success',
-        timer: 1500,
-        showConfirmButton: false,
-        allowOutsideClick: false,
-        timerProgressBar: true
-      })
+        // 🔹 Mostrar alerta y cerrar modal después de 1.5 segundos
+        Swal.fire({
+          title: 'Teléfono agregado',
+          text: 'El teléfono ha sido agregado con éxito.',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+          allowOutsideClick: false,
+          timerProgressBar: true
+        })
       }, 1500)
     } catch (error) {
       setError('Hubo un error al agregar el teléfono.')
@@ -113,7 +112,6 @@ const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }
         <form onSubmit={handleSubmit}>
           {/* 📌 Select para elegir el código de país */}
           <FormControl fullWidth margin="normal">
-           
             <Select
               value={formData.countryCode}
               onChange={handleCountryCodeChange}
