@@ -91,7 +91,6 @@ const Perfil = () => {
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false)
   }
- 
 
   if (loading) return <Loader title="Un momento por favor..." />
 
@@ -131,25 +130,25 @@ const Perfil = () => {
                   {/* Encabezado con Avatar y Email */}
                   <Box display="flex" alignItems="center" mb={2}>
                     <Tooltip title="Haz clic para editar tus datos">
-                    <Avatar
-                      sx={{
-                        bgcolor: '#1976D2',
-                        width: 90,
-                        height: 90,
-                        fontSize: 40
-                      }}
-                      onClick={handleOpenModalUser}
-                    >
-                      {userData?.name?.[0] || '?'}
-                    </Avatar>
+                      <Avatar
+                        sx={{
+                          bgcolor: '#1976D2',
+                          width: 90,
+                          height: 90,
+                          fontSize: 40
+                        }}
+                        onClick={handleOpenModalUser}
+                      >
+                        {userData?.name?.[0] || '?'}
+                      </Avatar>
                     </Tooltip>
-                    
+
                     <Box ml={2}>
                       <Typography variant="h5" fontWeight="bold">
                         {userData?.name || 'Nombre no disponible'}{' '}
                         {userData?.lastName || ''}
                       </Typography>
-                      
+
                       <Box display="flex" alignItems="center" mt={0.5}>
                         <EmailIcon sx={{ color: '#1976D2', mr: 1 }} />
                         <Typography variant="body2" color="text.secondary">
@@ -312,7 +311,7 @@ const Perfil = () => {
                                   <Typography variant="h6" fontWeight="bold">
                                     {address.street}
                                   </Typography>
-                                 
+
                                   {/* Botón de eliminar con confirmación */}
                                   <IconButton
                                     onClick={async () => {
@@ -403,7 +402,6 @@ const Perfil = () => {
               refreshUserData={fetchUser}
               userData={userData}
             />
-            <Button >Modificar Datos </Button>
 
             {/* Modal para modificar datos del telefono  */}
             <ModalUpdatePhone

@@ -141,7 +141,6 @@ const ModalUpdateUser = ({
             Para modificar tu correo electrónico, por favor contacta con
             soporte.
           </Typography>
-        
 
           {error && <Typography color="error">{error}</Typography>}
 
