@@ -54,7 +54,7 @@ const Login = ({ onSwitch }) => {
     onSubmit: async (values, { setSubmitting }) => {
       try {
         const response = await UsersApi.loginUser(values);
-        console.log('Server response:', response);
+       
 
         if (response && response.token) {
           localStorage.setItem('token', response.token);

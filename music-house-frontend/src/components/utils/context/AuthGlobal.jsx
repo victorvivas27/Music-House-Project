@@ -23,13 +23,13 @@ export const AuthContextProvider = ({ children }) => {
   const setAuthData = (userData) => {
     const { token } = userData; // Solo extraemos el token
 
-    //console.log("1)setAuthData - token recibido:", token); // Log del token recibido
+    
 
     if (token) {
       localStorage.setItem("token", token);
       try {
         const decoded = jwtDecode(token); // Decodificamos el token
-        //console.log("2)setAuthData - token decodificado:", decoded); // Log del token decodificado
+        
 
         const roles = decoded.roles || []; // Extraemos roles del token
         const userId = decoded.id || null;
@@ -44,7 +44,7 @@ export const AuthContextProvider = ({ children }) => {
         setUserLastName(lastName);
         setUserRoles(roles); // Guardamos los roles obtenidos del token
 
-        //console.log("3)setAuthData - datos actualizados:", {roles, userId, name, lastName}); // Log de los datos actualizados
+       
       } catch (error) {
         //console.error("Error al decodificar el token:", error);
         localStorage.removeItem("token");
@@ -62,12 +62,12 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-   // console.log("4)useEffect - token desde localStorage:", token); // Log del token en localStorage
+  
 
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        //console.log("5)useEffect - token decodificado:", decoded); // Log del token decodificado
+       
 
         const roles = decoded.roles || [];
         const userId = decoded.id || null;
@@ -82,7 +82,7 @@ export const AuthContextProvider = ({ children }) => {
         setUserLastName(lastName);
         setUserRoles(roles);
 
-        //console.log("6)useEffect - datos actualizados desde localStorage:", {roles, userId, name, lastName }); // Log de los datos actualizados desde localStorage
+        
       } catch (error) {
         console.error("Error al decodificar el token:", error);
         localStorage.removeItem("token");
@@ -94,9 +94,7 @@ export const AuthContextProvider = ({ children }) => {
         setUserLastName(null);
         setUserRoles([]);
       }
-    } else {
-      //console.log("7)useEffect - No hay token en localStorage"); // Log cuando no se encuentra el token
-    }
+    } 
   }, []);
 
 

@@ -44,7 +44,7 @@ const ModalUpdateDireccion = ({
 
   // 🚀 Cuando el teléfono seleccionado cambia, actualizar el formulario
   useEffect(() => {
-    console.log('selectedDireccion en el modal:', selectedDireccion)
+    
     if (selectedDireccion) {
       setFormData({
         street: selectedDireccion.street || '',

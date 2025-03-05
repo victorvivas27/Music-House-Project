@@ -33,7 +33,7 @@ export const EditThemeForm = ({ id, onSaved }) => {
   }, [getTheme])
 
   useEffect(() => {
-    console.log("Datos obtenidos del tema:", theme);
+    
     if (!(theme && theme.data?.idTheme)) return
 
     const data = {

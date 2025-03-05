@@ -10,10 +10,6 @@ import axios from 'axios';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-/* console.log("Variables de entorno disponibles en Vite:", import.meta.env);
-console.log("BASE URL FINAL:", BASE_URL); */
- 
-
 // Definir las rutas usando la base dinámica
 const URL_GET_USERS = `${BASE_URL}/user/all`;
 const URL_GET_USER = `${BASE_URL}/user/search/`;

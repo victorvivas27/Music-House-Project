@@ -16,7 +16,7 @@ export const createTheme = ({ themeName, description }) => {
 }
 
 export const updateTheme = ({ idTheme, themeName, description }) => {
-  console.log("Enviando datos a la API:", { idTheme, themeName, description });
+ 
   return putFetch(`${BASE_URL}/theme/update`, {
     idTheme,
     themeName,
@@ -25,6 +25,6 @@ export const updateTheme = ({ idTheme, themeName, description }) => {
 }
 
 export const deleteTheme = (idTheme) => {
-  console.log("Intentando eliminar el ID:", idTheme);
+  
   return deleteFetch(`${BASE_URL}/theme/delete/${idTheme}`)
 }
