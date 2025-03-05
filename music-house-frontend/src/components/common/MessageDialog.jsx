@@ -42,8 +42,8 @@ MessageDialog.propTypes = {
   title: PropTypes.string.isRequired,  // Título del mensaje, obligatorio
   message: PropTypes.string,  // Mensaje a mostrar, obligatorio
   isOpen: PropTypes.bool.isRequired,  // Determina si el modal está abierto o cerrado
-  buttonText: PropTypes.string.isRequired,  // Texto del botón, obligatorio
-  onButtonPressed: PropTypes.func.isRequired,  // Función que se ejecuta cuando se presiona el botón, obligatorio
+  buttonText: PropTypes.string,  // Texto del botón, obligatorio
+  onButtonPressed: PropTypes.func,  // Función que se ejecuta cuando se presiona el botón, obligatorio
   showCancelButton: PropTypes.bool,  // Muestra un botón de cancelar (opcional)
   onClose: PropTypes.func.isRequired  // Función para cerrar el modal, obligatorio
 };

@@ -6,7 +6,11 @@ import {
   Checkbox,
   FormControlLabel,
   CircularProgress,
-  Button
+  Button,
+  InputAdornment,
+  IconButton,
+  OutlinedInput,
+  FormHelperText
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import { styled } from '@mui/material/styles'
@@ -16,6 +20,8 @@ import { RoleSelect } from './RoleSelect'
 import PropTypes from 'prop-types'
 import { UsersApi } from '../../../api/users'
 import Swal from 'sweetalert2'
+import { Visibility, VisibilityOff } from '@mui/icons-material'
+import usePasswordValidation from '../../../hook/usePasswordValidation'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -47,14 +53,14 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
 }))
 
 const buttonStyle = {
-  backgroundColor: '#FF5733', 
+  backgroundColor: '#FF5733',
   color: 'white',
   padding: '8px 15px',
   borderRadius: '5px',
   border: 'none',
   cursor: 'pointer',
   fontSize: '12px',
-  margin:"2px"
+  margin: '2px'
 }
 
 export const UserForm = ({
@@ -74,9 +80,6 @@ export const UserForm = ({
     repeatPassword: '',
     general: ''
   }
-  const initialSuccessState = {
-    repeatPassword: ''
-  }
 
   const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
     color: 'black',
@@ -91,11 +94,16 @@ export const UserForm = ({
   const [formData, setFormData] = useState({ ...initialFormData })
   const [accept, setAccept] = useState(!!formData.idUser)
   const [errors, setErrors] = useState(initialErrorState)
-  const [success, setSuccess] = useState(initialSuccessState)
 
- const isUserAdmin = user?.data?.roles?.some((role) => role.rol === 'ADMIN') || false
-const isUser = user?.data?.roles?.some((role) => role.rol === 'USER') || false
-const idUser = user?.data?.idUser || null
+  const [showPassword, setShowPassword] = useState(false)
+  const [showPasswordRepeat, setShowPasswordRepeat] = useState(false)
+  const { passwordErrors, success, validatePassword, validateRepeatPassword } =
+    usePasswordValidation()
+
+  const isUserAdmin =
+    user?.data?.roles?.some((role) => role.rol === 'ADMIN') || false
+  const isUser = user?.data?.roles?.some((role) => role.rol === 'USER') || false
+  const idUser = user?.data?.idUser || null
   const isLoggedUser = idUser && idUser === Number(initialFormData?.idUser)
 
   const title = isLoggedUser
@@ -112,27 +120,47 @@ const idUser = user?.data?.idUser || null
 
   const handleChange = (event) => {
     const { name, value } = event.target
-    const [field, index] = name.split('-')
-    if (index !== undefined) {
-      const updatedArray = [...formData[field]]
-      updatedArray[index] = {
-        ...updatedArray[index],
-        [event.target.dataset.field]: value
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+
+    // Limpiar errores generales
+    setErrors((prev) => ({
+      ...prev,
+      general: ''
+    }))
+
+    // 📌 Validación de email en tiempo real
+    if (name === 'email') {
+      if (!/^\S+@\S+\.\S+$/.test(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          email: '❌ El email no tiene un formato válido'
+        }))
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          email: ''
+        }))
       }
-      setFormData({ ...formData, [field]: updatedArray })
-    } else {
-      setFormData({ ...formData, [name]: value })
     }
 
-    setFormData({ ...formData, [name]: value })
-    setErrors({ ...errors, [name]: '', general: '' })
+    // 📌 Validación de contraseña en tiempo real
+    if (name === 'password') {
+      validatePassword(value)
+    }
 
-    if (name === 'repeatPassword' && formData.password === value) {
-      setSuccess({ ...success, repeatPassword: 'Las password son identicas' })
-    } else {
-      setSuccess({ ...success, repeatPassword: '' })
+    // 📌 Validación de coincidencia de contraseñas
+    if (name === 'password' || name === 'repeatPassword') {
+      validateRepeatPassword(
+        name === 'password' ? value : formData.password,
+        name === 'repeatPassword' ? value : formData.repeatPassword
+      )
     }
   }
+  const allErrors = { ...errors, ...passwordErrors } // Fusionamos errores
 
   const handleCheckBoxChange = (e) => {
     setAccept(e.target.checked)
@@ -168,38 +196,42 @@ const idUser = user?.data?.idUser || null
     let newErrors = { ...initialErrorState }
 
     if (!formData.name) {
-      newErrors.name = 'El nombre es requerido'
+      newErrors.name = '❌ El nombre es requerido'
       formIsValid = false
     }
     if (!formData.lastName) {
-      newErrors.lastName = 'El apellido es requerido'
+      newErrors.lastName = '❌ El apellido es requerido'
       formIsValid = false
     }
+
+    // ✅ Validación de email
     if (!formData.email) {
-      newErrors.email = 'El email es requerido'
+      newErrors.email = '❌ El email es requerido'
       formIsValid = false
     }
+
     if (!formData.idUser) {
       if (!formData.password) {
-        newErrors.password = 'La contraseña es requerida'
+        newErrors.password = '❌ La contraseña es requerida'
         formIsValid = false
       }
       if (!formData.repeatPassword) {
-        newErrors.repeatPassword = 'Repetir la contraseña es requerido'
+        newErrors.repeatPassword = '⚠️ Debes repetir la contraseña'
         formIsValid = false
       } else if (formData.password !== formData.repeatPassword) {
-        newErrors.repeatPassword = 'Las contraseñas no coinciden'
+        newErrors.repeatPassword = '❌ Las contraseñas no coinciden'
         formIsValid = false
       }
       if (!formData.telegramChatId) {
-        newErrors.telegramChatId = 'El codigo de telegram es requerido'
+        newErrors.telegramChatId = '❌ El código de Telegram es requerido'
         formIsValid = false
       }
       if (!accept) {
-        newErrors.general = 'Debe aceptar los términos y condiciones'
+        newErrors.general = '❌ Debes aceptar los términos y condiciones'
         formIsValid = false
       }
     }
+
     if (!formIsValid) {
       setErrors(newErrors)
     } else {
@@ -489,43 +521,76 @@ const idUser = user?.data?.idUser || null
 
                 {!formData.idUser && (
                   <>
-                    <FormControl fullWidth margin="normal">
-                      <InputCustom
-                        placeholder="Password"
+                    {/* Campo de contraseña */}
+                    <FormControl
+                      fullWidth
+                      margin="normal"
+                      error={Boolean(allErrors.password)}
+                    >
+                      <OutlinedInput
+                        placeholder="Contraseña"
                         name="password"
                         onChange={handleChange}
                         value={formData.password}
-                        type="password"
-                        color="primary"
-                        error={Boolean(errors.password)}
-                        helperText={
-                          errors.password ||
-                          (success.repeatPassword && (
-                            <span style={{ color: 'green' }}>
-                              {success.repeatPassword}
-                            </span>
-                          ))
+                        type={showPassword ? 'text' : 'password'}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowPassword(!showPassword)}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
                         }
                       />
+                      {allErrors.password && (
+                        <FormHelperText>{allErrors.password}</FormHelperText>
+                      )}
                     </FormControl>
-                    <FormControl fullWidth margin="normal">
-                      <InputCustom
-                        placeholder="Repeat password"
+
+                    {/* Campo de repetir contraseña */}
+                    <FormControl
+                      fullWidth
+                      margin="normal"
+                      error={Boolean(allErrors.repeatPassword)}
+                    >
+                      <OutlinedInput
+                        placeholder="Repetir Contraseña"
                         name="repeatPassword"
                         onChange={handleChange}
                         value={formData.repeatPassword}
-                        type="password"
-                        color="primary"
-                        error={Boolean(errors.repeatPassword)}
-                        helperText={
-                          errors.repeatPassword ||
-                          (success.repeatPassword && (
-                            <span style={{ color: 'green' }}>
-                              {success.repeatPassword}
-                            </span>
-                          ))
+                        type={showPasswordRepeat ? 'text' : 'password'}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() =>
+                                setShowPasswordRepeat(!showPasswordRepeat)
+                              }
+                              edge="end"
+                            >
+                              {showPasswordRepeat ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
                         }
                       />
+                      {allErrors.repeatPassword ? (
+                        <FormHelperText>
+                          {allErrors.repeatPassword}
+                        </FormHelperText>
+                      ) : success.repeatPassword ? (
+                        <FormHelperText sx={{ color: 'green' }}>
+                          {success.repeatPassword}
+                        </FormHelperText>
+                      ) : null}
                     </FormControl>
 
                     <FormControl fullWidth margin="normal">
@@ -650,7 +715,7 @@ UserForm.propTypes = {
         })
       ).isRequired,
       idUser: PropTypes.string.isRequired
-    }).isRequired
-  }).isRequired,
+    })
+  }),
   setUser: PropTypes.func
 }

@@ -14,7 +14,8 @@ import PropTypes from 'prop-types'
 import { useState } from 'react'
 import Swal from 'sweetalert2'
 import { addPhone } from '../../../api/phones'
-import { countryCodes } from '../../utils/codeapaises/CountryCodes'
+import { countryCodes } from '../../utils/codepaises/CountryCodes'
+
 
 const style = {
   position: 'absolute',

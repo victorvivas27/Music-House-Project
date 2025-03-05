@@ -64,7 +64,7 @@ const NewUser = ({ onSwitch }) => {
   return (
     <>
       <UserForm
-        onSwitch={onSwitch}
+      onSwitch={onSwitch}
         initialFormData={initialFormData}
         onSubmit={handleSubmit}
         loading={loading}

@@ -31,7 +31,11 @@ public class UserDtoEntrance {
     private String email;
 
     @NotNull(message = "La contraseña es obligatoria")
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+    @Size(min = 6, max = 30, message = "La contraseña debe tener entre 6 y 30 caracteres")
+    @Pattern(regexp = ".*[A-Z].*", message = "La contraseña debe contener al menos una letra mayúscula")
+    @Pattern(regexp = ".*[a-z].*", message = "La contraseña debe contener al menos una letra minúscula")
+    @Pattern(regexp = ".*\\d.*", message = "La contraseña debe contener al menos un número")
+    @Pattern(regexp = ".*[@#$%^&+=!*].*", message = "La contraseña debe contener al menos un carácter especial (@, #, $, etc.)")
     private String password;
 
     @NotNull(message = "El campo addresses debe estar presente y no puede estar vacío")
