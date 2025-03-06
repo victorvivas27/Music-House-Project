@@ -1,5 +1,6 @@
 package com.musichouse.api.music.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musichouse.api.music.dto.dto_entrance.LoginDtoEntrance;
 import com.musichouse.api.music.dto.dto_entrance.UserAdminDtoEntrance;
 import com.musichouse.api.music.dto.dto_entrance.UserDtoEntrance;
@@ -12,9 +13,11 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin
 @RestController
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final UserService userService;
     private final UserRepository userRepository;
+    private final ObjectMapper objectMapper;
 
     @PostMapping("/create/admin")
     public ResponseEntity<ApiResponse<TokenDtoExit>> createUserAdmin(
@@ -55,16 +59,28 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/create/user")
-    public ResponseEntity<?> createUser(@RequestBody @Valid UserDtoEntrance userDtoEntrance) {
+    @PostMapping(value = "/create/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createUser(
+            @RequestParam("user") String userJson,  // Se recibe el JSON como String
+            @RequestPart("file") MultipartFile file // Se recibe el archivo como MultipartFile
+    ) {
         try {
-            TokenDtoExit tokenDtoExit = userService.createUser(userDtoEntrance);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>("Usuario creado con éxito.", tokenDtoExit));
+            // Convertir el JSON String a un objeto UserDtoEntrance
+            UserDtoEntrance userDtoEntrance = objectMapper.readValue(userJson, UserDtoEntrance.class);
+
+            // Llamar al servicio para crear el usuario
+            TokenDtoExit tokenDtoExit = userService.createUser(userDtoEntrance, file);
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new ApiResponse<>("Usuario creado con éxito.", tokenDtoExit));
+
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>("El correo electrónico ingresado ya está en uso. Por favor, elija otro correo electrónico.", null));
+                    .body(new ApiResponse<>("El correo electrónico ingresado ya está en uso.", null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>(e.getMessage(), null));
         }
     }

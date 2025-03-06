@@ -17,8 +17,9 @@ public class UserDtoExit {
 
     private UUID idUser;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    private String picture;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date registDate;
 
     private String name;

@@ -31,7 +31,7 @@ public class MailManager {
     @Value("${spring.mail.username}")
     private String sender;
 
-    public void sendMessage(String email, String name, String lastName) throws MessagingException {
+    public void sendMessage(String email, String name, String lastName, String picture) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         try {
@@ -43,6 +43,7 @@ public class MailManager {
             Context context = new Context();
             context.setVariable("nombre", name);
             context.setVariable("apellido", lastName);
+            context.setVariable("imagenURL", picture);
             String content = templateEngine.process("email_register", context);
 
             helper.setText(content, true);

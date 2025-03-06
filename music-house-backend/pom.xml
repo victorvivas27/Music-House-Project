@@ -166,6 +166,13 @@
             <version>6.5.0</version>
         </dependency>
 
+        <!-- Dependencia de Amazon AWS -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.12.21</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

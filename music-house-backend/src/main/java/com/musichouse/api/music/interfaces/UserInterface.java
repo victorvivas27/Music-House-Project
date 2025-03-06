@@ -8,12 +8,13 @@ import com.musichouse.api.music.dto.dto_exit.UserDtoExit;
 import com.musichouse.api.music.dto.dto_modify.UserDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import jakarta.mail.MessagingException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface UserInterface {
-    TokenDtoExit createUser(UserDtoEntrance userDtoEntrance) throws MessagingException;
+    TokenDtoExit createUser(UserDtoEntrance userDtoEntrance, MultipartFile file) throws MessagingException;
 
     TokenDtoExit createUserAdmin(UserAdminDtoEntrance userAdminDtoEntrance) throws MessagingException;
 

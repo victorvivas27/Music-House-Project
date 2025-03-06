@@ -31,6 +31,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,37 +51,67 @@ public class UserService implements UserInterface {
     private final ModelMapper modelMapper;
     private final TelegramService telegramService;
     private final FavoriteRepository favoriteRepository;
+    private final AWSS3Service awss3Service;
     @Autowired
     private final MailManager mailManager;
 
 
     @Transactional
     @Override
-    public TokenDtoExit createUser(UserDtoEntrance userDtoEntrance) throws DataIntegrityViolationException, MessagingException {
-        User user = modelMapper.map(userDtoEntrance, User.class);
-        String contraseñaEncriptada = passwordEncoder.encode(user.getPassword());
-        user.setPassword(contraseñaEncriptada);
+    public TokenDtoExit createUser(UserDtoEntrance userDtoEntrance, MultipartFile file)
+            throws DataIntegrityViolationException, MessagingException {
 
+        // 1️⃣ **Verificar si el usuario ya existe antes de subir la imagen o enviar mensaje**
+        if (userRepository.existsByEmail(userDtoEntrance.getEmail())) {
+            throw new DataIntegrityViolationException("El correo electrónico ingresado ya está en uso.");
+        }
+
+        // 2️⃣ **Si el usuario no existe, continuar con el registro**
+        User user = modelMapper.map(userDtoEntrance, User.class);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // 3️⃣ **Obtener o crear el rol de usuario**
         Role role = rolRepository.findByRol(RoleConstants.USER)
                 .orElseGet(() -> rolRepository.save(new Role(RoleConstants.USER)));
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
+
+        user.setRoles(Set.of(role));
         user.setTelegramChatId(userDtoEntrance.getTelegramChatId());
-        user.getAddresses().forEach(address -> address.setUser(user));
-        user.getPhones().forEach(phone -> phone.setUser(user));
+
+        // 4️⃣ **Subir la imagen a AWS S3 solo después de verificar el usuario**
+        String fileUrl = awss3Service.uploadFileToS3(file);
+        user.setPicture(fileUrl);
+
+        // 5️⃣ **Guardar usuario en la base de datos**
         User userSaved = userRepository.save(user);
+
+        // 6️⃣ **Generar token**
         String token = jwtService.generateToken(userSaved);
-        TokenDtoExit tokenDtoSalida = new TokenDtoExit(
-                userSaved.getIdUser(),
+
+        // 7️⃣ **Enviar mensaje de bienvenida por correo**
+        try {
+            sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName(), userSaved.getPicture());
+        } catch (MessagingException e) {
+            LOGGER.warn("No se pudo enviar el correo de bienvenida a {}", userSaved.getEmail(), e);
+        }
+
+        // 8️⃣ **Enviar mensaje de bienvenida en Telegram**
+        telegramService.enviarMensajeDeBienvenida(
+                userSaved.getTelegramChatId(),
                 userSaved.getName(),
                 userSaved.getLastName(),
-                new ArrayList<>(userSaved.getRoles()),
-                token
+                userSaved.getEmail(),
+                userSaved.getPicture()
         );
-        sendMessageUser(user.getEmail(), user.getName(), user.getLastName());
-        telegramService.enviarMensajeDeBienvenida(userSaved.getTelegramChatId(), userSaved.getName(), userSaved.getLastName());
-        return tokenDtoSalida;
+
+        // 9️⃣ **Construcción con Builder**
+        return TokenDtoExit.builder()
+                .idUser(userSaved.getIdUser())
+                .name(userSaved.getName())
+                .lastName(userSaved.getLastName())
+                .roles(new ArrayList<>(userSaved.getRoles()))
+                .token(token)
+                .picture(userSaved.getPicture())
+                .build();
     }
 
 
@@ -111,7 +142,7 @@ public class UserService implements UserInterface {
         // Enviar correo de bienvenida
         boolean emailSent = true;
         try {
-            sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName());
+            sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName(),userSaved.getPicture());
         } catch (MessagingException e) {
             emailSent = false;
             LOGGER.warn("No se pudo enviar el correo de bienvenida a {}", userSaved.getEmail(), e);
@@ -143,6 +174,7 @@ public class UserService implements UserInterface {
         User user = userOptional.get();
         TokenDtoExit tokenDtoSalida = new TokenDtoExit(
                 user.getIdUser(),
+                user.getPicture(),
                 user.getName(),
                 user.getLastName(),
                 new ArrayList<>(user.getRoles()),
@@ -204,8 +236,8 @@ public class UserService implements UserInterface {
     }
 
 
-    public void sendMessageUser(String email, String name, String lastName) throws MessagingException {
-        mailManager.sendMessage(email, name, lastName);
+    public void sendMessageUser(String email, String name, String lastName,String picture) throws MessagingException {
+        mailManager.sendMessage(email, name, lastName,picture);
 
     }
 

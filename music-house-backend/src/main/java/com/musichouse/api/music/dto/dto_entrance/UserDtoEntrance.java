@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
 
@@ -15,6 +16,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDtoEntrance {
+
+    @NotNull(message = "Debes volocar un imagen de perfil")
+    @Size(min = 1, max = 2048, message = "La imagen de perfil debe tener entre 1 y 2048 caracteres")
+    @URL(message = "La imagen de perfil debe ser una URL válida")
+    private String picture;
 
     @NotNull(message = "El nombre es obligatorio")
     @Size(min = 2, max = 50, message = "El nombre debe tener entre 2 y 50 caracteres")

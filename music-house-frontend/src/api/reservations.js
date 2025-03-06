@@ -20,10 +20,6 @@ export const getReservations= async () => {
     } catch (error) {
       const statusCode = error.response?.status || 500; // Si no hay status, asumimos 500
       const errorMessage = error.response?.data?.message || "Error desconocido";
-
-      console.error(`📢 Error en la API getReservationById [${statusCode}]: ${errorMessage}`);
-
-      // Lanzar el error con código y mensaje
       throw { statusCode, message: errorMessage };
     }
 };

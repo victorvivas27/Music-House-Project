@@ -34,12 +34,20 @@ import java.util.stream.Collectors;
  */
 @EqualsAndHashCode(exclude = {"addresses", "phones", "roles"})
 public class User implements UserDetails {
+
     /**
      * Identificador único para el usuario.
      */
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID idUser;
+
+    /**
+     * La imagen de perfil del usuario.
+     */
+
+    @Column(nullable = false, length = 2048)
+    private String picture;
 
     /**
      * El nombre del usuario.
