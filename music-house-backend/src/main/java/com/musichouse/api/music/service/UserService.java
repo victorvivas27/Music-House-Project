@@ -76,6 +76,10 @@ public class UserService implements UserInterface {
 
         user.setRoles(Set.of(role));
         user.setTelegramChatId(userDtoEntrance.getTelegramChatId());
+        
+        user.getAddresses().forEach(address -> address.setUser(user));
+
+        user.getPhones().forEach(phone -> phone.setUser(user));
 
         // 4️⃣ **Subir la imagen a AWS S3 solo después de verificar el usuario**
         String fileUrl = awss3Service.uploadFileToS3(file);
@@ -89,7 +93,7 @@ public class UserService implements UserInterface {
 
         // 7️⃣ **Enviar mensaje de bienvenida por correo**
         try {
-            sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName(), userSaved.getPicture());
+            sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName());
         } catch (MessagingException e) {
             LOGGER.warn("No se pudo enviar el correo de bienvenida a {}", userSaved.getEmail(), e);
         }
@@ -99,8 +103,8 @@ public class UserService implements UserInterface {
                 userSaved.getTelegramChatId(),
                 userSaved.getName(),
                 userSaved.getLastName(),
-                userSaved.getEmail(),
-                userSaved.getPicture()
+                userSaved.getEmail()
+
         );
 
         // 9️⃣ **Construcción con Builder**
@@ -110,7 +114,6 @@ public class UserService implements UserInterface {
                 .lastName(userSaved.getLastName())
                 .roles(new ArrayList<>(userSaved.getRoles()))
                 .token(token)
-                .picture(userSaved.getPicture())
                 .build();
     }
 
@@ -142,7 +145,7 @@ public class UserService implements UserInterface {
         // Enviar correo de bienvenida
         boolean emailSent = true;
         try {
-            sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName(),userSaved.getPicture());
+            sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName());
         } catch (MessagingException e) {
             emailSent = false;
             LOGGER.warn("No se pudo enviar el correo de bienvenida a {}", userSaved.getEmail(), e);
@@ -174,7 +177,6 @@ public class UserService implements UserInterface {
         User user = userOptional.get();
         TokenDtoExit tokenDtoSalida = new TokenDtoExit(
                 user.getIdUser(),
-                user.getPicture(),
                 user.getName(),
                 user.getLastName(),
                 new ArrayList<>(user.getRoles()),
@@ -236,8 +238,8 @@ public class UserService implements UserInterface {
     }
 
 
-    public void sendMessageUser(String email, String name, String lastName,String picture) throws MessagingException {
-        mailManager.sendMessage(email, name, lastName,picture);
+    public void sendMessageUser(String email, String name, String lastName) throws MessagingException {
+        mailManager.sendMessage(email, name, lastName);
 
     }
 

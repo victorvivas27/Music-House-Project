@@ -26,7 +26,21 @@ export const UsersApi = {
 
   getUserById: (id) => getFetch(`${URL_GET_USER}${id}`),
 
-  registerUser: (user) => postFetch(URL_CREATE_USER, user),
+  // ✅ MODIFICADO: Ahora usa `axios.post()` en lugar de `postFetch`
+  registerUser: async (formData) => {
+    try {
+      const response = await axios.post(URL_CREATE_USER, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      return response.data;
+    } catch (error) {
+      
+      throw new Error("Error al registrar usuario", error);
+    }
+  },
 
   updateUser: (user) => putFetch(URL_UPDATE_USER, user),
 

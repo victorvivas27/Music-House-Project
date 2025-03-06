@@ -16,7 +16,7 @@ public class TelegramService {
     private final MyTelegramBot telegramBot;
 
     @Async
-    public void enviarMensajeDeBienvenida(Long telegramChatId, String userName, String lastName,String email, String picture) {
+    public void enviarMensajeDeBienvenida(Long telegramChatId, String userName, String lastName,String email) {
         String codigoDescuento = CodeGenerator.generateCodeRandom();
 
 

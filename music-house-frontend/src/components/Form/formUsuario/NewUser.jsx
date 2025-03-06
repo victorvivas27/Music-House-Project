@@ -1,4 +1,4 @@
-import {  useState } from 'react'
+import { useState } from 'react'
 import { UsersApi } from '../../../api/users'
 import { UserForm } from './UserForm'
 import { MessageDialog } from '../../common/MessageDialog'
@@ -9,10 +9,12 @@ import { useNavigate } from 'react-router-dom'
 const NewUser = ({ onSwitch }) => {
   const initialFormData = {
     name: '',
+    picture: '',
     lastName: '',
     email: '',
     password: '',
     repeatPassword: '',
+    telegramChatId: '',
     addresses: [{ street: '', number: '', city: '', state: '', country: '' }],
     phones: [{ phoneNumber: '' }]
   }
@@ -21,60 +23,67 @@ const NewUser = ({ onSwitch }) => {
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const { setAuthData } = useAuthContext()
-  const navigate =useNavigate()
+  const navigate = useNavigate()
 
-  const handleSubmit = (formData) => {
+  const handleSubmit = async (formData) => {
     setLoading(true)
-  
-    const formDataToSend = { ...formData }
-    delete formDataToSend.repeatPassword
-  
-    UsersApi.registerUser(formDataToSend)
-      .then((response) => {
-        const userData = response.data
-  
-        if (!userData || !userData.token) {
-          throw new Error('Error al registrar usuario o falta el token.')
-        }
-  
-        setAuthData(userData)
-  
+
+    try {
+      // 🔹 Crear `FormData`
+      const formDataToSend = new FormData()
+      const { picture, repeatPassword, ...userWithoutPicture } = formData
+
+      // 🔹 Convertir el JSON a string y agregarlo a FormData
+      formDataToSend.append('user', JSON.stringify(userWithoutPicture))
+
+      // 🔹 Solo agregar la imagen si el usuario seleccionó una
+      if (picture instanceof File) {
+        formDataToSend.append('file', picture)
+      }
+
+      // 🔹 Llamamos a `UsersApi.registerUser()`
+      const response = await UsersApi.registerUser(formDataToSend)
+
+      // 🔹 Verificar si la API devuelve `data.token`
+      if (response && response.data && response.data.token) {
+        setAuthData(response.data) // Guardar usuario en el contexto
         setMessage('Usuario registrado exitosamente.')
         setShowMessage(true)
-  
-  
-  
+
         setTimeout(() => {
-       
-          navigate("/", { replace: true });
-          window.location.reload();
+          navigate('/about', { replace: true })
+          // window.location.reload()
         }, 1000)
-      })
-      .catch(() => {
-        setMessage('No se pudo registrar usuario. Por favor, intenta de nuevo.')
-        setShowMessage(true)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
+      } else {
+        throw new Error('Error al registrar usuario. No se recibió el token.')
+      }
+    } catch (error) {
+      let errorMessage = 'No se pudo registrar usuario. Intenta de nuevo.'
+
+      if (error.response) {
+        errorMessage = error.response.data.message || errorMessage
+      }
+
+      setMessage(errorMessage)
+      setShowMessage(true)
+    } finally {
+      setLoading(false)
+    }
   }
-  
- 
 
   return (
     <>
       <UserForm
-      onSwitch={onSwitch}
+        onSwitch={onSwitch}
         initialFormData={initialFormData}
         onSubmit={handleSubmit}
         loading={loading}
-        
       />
       <MessageDialog
         title="Registrar Usuario"
         message={message}
         isOpen={showMessage}
-        key={message} // Forzar actualización del modal
+        key={message}
         onClose={() => setShowMessage(false)}
       />
     </>

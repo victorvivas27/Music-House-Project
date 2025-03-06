@@ -15,7 +15,7 @@ public class TokenDtoExit {
 
     private UUID idUser;
 
-    private String picture;
+
 
     private String name;
 
@@ -28,9 +28,9 @@ public class TokenDtoExit {
     @Builder.Default
     private String tokenType = "Bearer ";
 
-    public TokenDtoExit(UUID idUser,String picture, String name, String lastName, List<Role> roles, String token) {
+    public TokenDtoExit(UUID idUser ,String name, String lastName, List<Role> roles, String token) {
         this.idUser = idUser;
-        this.picture = picture;
+
         this.name = name;
         this.lastName = lastName;
         this.roles = roles;

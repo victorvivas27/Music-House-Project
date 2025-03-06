@@ -364,6 +364,24 @@ export const UserForm = ({
                     helperText={errors.lastName}
                   />
                 </FormControl>
+
+                <FormControl fullWidth margin="normal">
+                  <InputCustom
+                    placeholder="Avatar"
+                    name="picture"
+                    type="file"
+                    color="primary"
+                    inputProps={{ accept: 'image/*' }} // Solo permite imágenes
+                    onChange={(e) => {
+                      const file = e.target.files[0] // Obtener el archivo
+                      if (file) {
+                        setFormData((prev) => ({ ...prev, picture: file })) // Guardarlo en `formData`
+                      }
+                    }}
+                    error={Boolean(errors.picture)}
+                    helperText={errors.picture}
+                  />
+                </FormControl>
                 {formData.addresses.map((address, index) => (
                   <Grid
                     key={index}
@@ -605,6 +623,8 @@ export const UserForm = ({
                         color="primary"
                       />
                     </FormControl>
+
+                    
                     <Typography sx={{ fontSize: '14px', marginTop: '5px' }}>
                       ¿No sabes tu código?{' '}
                       <Link
