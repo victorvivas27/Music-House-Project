@@ -76,7 +76,7 @@ public class UserService implements UserInterface {
 
         user.setRoles(Set.of(role));
         user.setTelegramChatId(userDtoEntrance.getTelegramChatId());
-        
+
         user.getAddresses().forEach(address -> address.setUser(user));
 
         user.getPhones().forEach(phone -> phone.setUser(user));

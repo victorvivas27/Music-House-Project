@@ -10,26 +10,30 @@ import {
   InputAdornment,
   IconButton,
   OutlinedInput,
-  FormHelperText
+  FormHelperText,
+  Box,
+  Avatar,
+  Select,
+  MenuItem
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import { styled } from '@mui/material/styles'
 import { CustomButton, InputCustom } from './CustomComponents'
 import { RoleSelect } from './RoleSelect'
-//import { useAuthContext } from '../../utils/context/AuthGlobal'
 import PropTypes from 'prop-types'
 import { UsersApi } from '../../../api/users'
 import Swal from 'sweetalert2'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import usePasswordValidation from '../../../hook/usePasswordValidation'
+import { inputStyles } from '../../styles/StyleGeneral'
+import { countryCodes } from '../../utils/codepaises/CountryCodes'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   width: '100vw',
-  alignItems: 'center !important',
+
   justifyContent: 'center',
-  padding: '0px',
 
   [theme.breakpoints.up('md')]: {
     alignItems: 'flex-end !important',
@@ -47,14 +51,13 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
 
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
-    width: '100%',
-    marginLeft: '0px'
+    width: '100%'
   }
 }))
 
 const buttonStyle = {
   backgroundColor: '#FF5733',
-  color: 'white',
+  color: 'var(--texto-inverso)',
   padding: '8px 15px',
   borderRadius: '5px',
   border: 'none',
@@ -100,6 +103,18 @@ export const UserForm = ({
   const { passwordErrors, success, validatePassword, validateRepeatPassword } =
     usePasswordValidation()
 
+  const [preview, setPreview] = useState(null)
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (file && file.size <= 5 * 1024 * 1024) {
+      setPreview(URL.createObjectURL(file))
+      setFormData((prev) => ({ ...prev, picture: file }))
+    } else {
+      alert('El archivo supera el límite de 5MB.')
+    }
+  }
+
   const isUserAdmin =
     user?.data?.roles?.some((role) => role.rol === 'ADMIN') || false
   const isUser = user?.data?.roles?.some((role) => role.rol === 'USER') || false
@@ -134,17 +149,39 @@ export const UserForm = ({
 
     // 📌 Validación de email en tiempo real
     if (name === 'email') {
-      if (!/^\S+@\S+\.\S+$/.test(value)) {
-        setErrors((prev) => ({
-          ...prev,
-          email: '❌ El email no tiene un formato válido'
-        }))
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          email: ''
-        }))
-      }
+      setErrors((prev) => ({
+        ...prev,
+        email:
+          !value || value.trim() === ''
+            ? '❌ El email es requerido'
+            : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+              ? '⚠️ El email no es válido'
+              : ''
+      }))
+    }
+
+    if (name === 'name') {
+      setErrors((prev) => ({
+        ...prev,
+        name:
+          !value || value.trim() === ''
+            ? '❌ El nombre es requerido'
+            : value.length < 3
+              ? '⚠️Minimo 3 caracteres'
+              : ''
+      }))
+    }
+
+    if (name === 'lastName') {
+      setErrors((prev) => ({
+        ...prev,
+        lastName:
+          !value || value.trim() === ''
+            ? '❌ El apellido es requerido'
+            : value.length < 3
+              ? '⚠️Minimo 3 caracteres'
+              : ''
+      }))
     }
 
     // 📌 Validación de contraseña en tiempo real
@@ -159,8 +196,23 @@ export const UserForm = ({
         name === 'repeatPassword' ? value : formData.repeatPassword
       )
     }
+
+    if (name === 'telegramChatId') {
+      const stringValue = String(value).trim()
+      setErrors((prev) => ({
+        ...prev,
+        telegramChatId: !stringValue
+          ? '❌ El código de Telegram es requerido'
+          : /\D/.test(stringValue)
+            ? '⚠️ El código de Telegram debe contener solo números'
+            : stringValue.length < 5 || stringValue.length > 15
+              ? '⚠️ El código de Telegram debe tener entre 5 y 15 dígitos'
+              : ''
+      }))
+    }
   }
-  const allErrors = { ...errors, ...passwordErrors } // Fusionamos errores
+  // Fusionamos errores
+  const allErrors = { ...errors, ...passwordErrors }
 
   const handleCheckBoxChange = (e) => {
     setAccept(e.target.checked)
@@ -171,6 +223,7 @@ export const UserForm = ({
 
   const handleAddressChange = (index, e) => {
     const { name, value } = e.target
+
     const updateAddresses = formData.addresses.map((address, i) =>
       i === index ? { ...address, [name]: value } : address
     )
@@ -178,12 +231,114 @@ export const UserForm = ({
       ...prevState,
       addresses: updateAddresses
     }))
+    // 📌 Validación de la calle (street)
+    if (name === 'street') {
+      setErrors((prev) => ({
+        ...prev,
+        [`street_${index}`]:
+          !value || value.trim() === ''
+            ? '❌ La calle es requerida'
+            : value.length < 3
+              ? '⚠️ Minimo 3 caracteres'
+              : ''
+      }))
+    }
+
+    if (name === 'number') {
+      const stringValue = String(value).trim()
+      setErrors((prev) => ({
+        ...prev,
+        [`number_${index}`]: !stringValue
+          ? '❌ El numero es requerido'
+          : /\D/.test(stringValue)
+            ? '⚠️Solo números'
+            : stringValue.length < 2 || stringValue.length > 15
+              ? '⚠️Entre 1 y 15 dígitos'
+              : ''
+      }))
+    }
+
+    if (name === 'city') {
+      setErrors((prev) => ({
+        ...prev,
+        [`city_${index}`]:
+          !value || value.trim() === ''
+            ? '❌La ciudad es requerida'
+            : value.length < 3
+              ? '⚠️ Minimo 3 caracteres'
+              : ''
+      }))
+    }
+
+    if (name === 'state') {
+      setErrors((prev) => ({
+        ...prev,
+        [`state_${index}`]:
+          !value || value.trim() === ''
+            ? '❌El estado es requerido'
+            : value.length < 3
+              ? '⚠️ Minimo 3 caracteres'
+              : ''
+      }))
+    }
+
+    if (name === 'country') {
+      setErrors((prev) => ({
+        ...prev,
+        [`country_${index}`]:
+          !value || value.trim() === ''
+            ? '❌El pais es requerido'
+            : value.length < 3
+              ? '⚠️ Minimo 3 caracteres'
+              : ''
+      }))
+    }
   }
-  const handlePhoneChange = (index, e) => {
-    const { name, value } = e.target
-    const updatedPhones = formData.phones.map((phone, i) =>
-      i === index ? { ...phone, [name]: value } : phone
-    )
+  const handlePhoneChange = (index, field, value) => {
+    const updatedPhones = formData.phones.map((phone, i) => {
+      if (i === index) {
+        let newPhoneNumber = phone.phoneNumber
+        // 📌 1️⃣ Filtrar solo números y el signo "+"
+        const validValue = value.replace(/[^0-9+]/g, '')
+
+        if (field === 'countryCode') {
+          // 📌 Si cambia el código de país, reemplaza solo el prefijo
+          newPhoneNumber = `${validValue}${phone.phoneNumber.replace(phone.countryCode, '')}`
+        } else if (field === 'phoneNumber') {
+          // 📌 Si cambia el número, mantiene el código de país
+          newPhoneNumber = `${phone.countryCode}${validValue.replace(phone.countryCode, '')}`
+        }
+
+        // 📌 2️⃣ Validar longitud (excluyendo código de país)
+        const minLength = 12
+        const maxLength = 15
+
+        if (newPhoneNumber.length < minLength) {
+          setErrors((prev) => ({
+            ...prev,
+            [`phone_${index}`]: `⚠️ El número debe tener al menos ${minLength} dígitos.`
+          }))
+        } else if (newPhoneNumber.length > maxLength) {
+          setErrors((prev) => ({
+            ...prev,
+            [`phone_${index}`]: `⚠️ El número no debe superar ${maxLength} dígitos.`
+          }))
+        } else {
+          setErrors((prev) => ({
+            ...prev,
+            [`phone_${index}`]: ''
+          }))
+        }
+
+        return {
+          ...phone,
+          [field]: validValue,
+          phoneNumber: newPhoneNumber
+        }
+      }
+      return phone
+    })
+
     setFormData((prevState) => ({
       ...prevState,
       phones: updatedPhones
@@ -195,37 +350,7 @@ export const UserForm = ({
     let formIsValid = true
     let newErrors = { ...initialErrorState }
 
-    if (!formData.name) {
-      newErrors.name = '❌ El nombre es requerido'
-      formIsValid = false
-    }
-    if (!formData.lastName) {
-      newErrors.lastName = '❌ El apellido es requerido'
-      formIsValid = false
-    }
-
-    // ✅ Validación de email
-    if (!formData.email) {
-      newErrors.email = '❌ El email es requerido'
-      formIsValid = false
-    }
-
     if (!formData.idUser) {
-      if (!formData.password) {
-        newErrors.password = '❌ La contraseña es requerida'
-        formIsValid = false
-      }
-      if (!formData.repeatPassword) {
-        newErrors.repeatPassword = '⚠️ Debes repetir la contraseña'
-        formIsValid = false
-      } else if (formData.password !== formData.repeatPassword) {
-        newErrors.repeatPassword = '❌ Las contraseñas no coinciden'
-        formIsValid = false
-      }
-      if (!formData.telegramChatId) {
-        newErrors.telegramChatId = '❌ El código de Telegram es requerido'
-        formIsValid = false
-      }
       if (!accept) {
         newErrors.general = '❌ Debes aceptar los términos y condiciones'
         formIsValid = false
@@ -291,28 +416,29 @@ export const UserForm = ({
     <form onSubmit={handleSubmit}>
       <ContainerForm>
         <Grid
-          item
-          xs={12}
-          md={6}
           sx={{
-            padding: 3,
-            width: { md: '70%', xs: '90%' },
-            height: '100%',
+            margin: '20px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            gap: '20px'
+            alignItems: 'center',
+            gap: '10px',
+            width: '80%',
+            boxShadow: 24
           }}
         >
           <Typography
             variant="h3"
-            sx={{ color: { xs: 'white', md: 'black' }, fontWeight: 'light' }}
+            sx={{
+              color: { xs: 'white', md: 'var(--texto-primario)' },
+              fontWeight: 'light'
+            }}
           >
             {title}
           </Typography>
           <Grid
             sx={{
-              width: '100%',
+              width: '90%',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -321,67 +447,131 @@ export const UserForm = ({
           >
             <Grid
               sx={{
-                width: '100%',
+                width: '90%',
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: { xs: 'center', md: 'flex-start' },
+                alignItems: { xs: 'center', md: 'flex-end' },
                 flexDirection: { md: 'row', xs: 'column' },
-                gap: '10px'
+                gap: '10px',
+
+                margin: 2
               }}
             >
               <Grid
                 sx={{
-                  width: '100%',
+                  width: '90%',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'center',
-                  alignItems: 'center'
+                  alignItems: 'center',
+
+                  margin: 2
                 }}
               >
-                <FormControl fullWidth margin="normal">
+                <FormControl
+                  fullWidth
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    minHeight: '60px',
+                    border: '1px solid blue',
+                    margin: 2
+                  }}
+                >
+                  {/* Contenedor del avatar y la subida de imagen */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center'
+                    }}
+                  >
+                    {/* 📌 Avatar que dispara la subida de imagen */}
+                    <label htmlFor="avatar-upload">
+                      <Avatar
+                        src={preview}
+                        sx={{
+                          width: 100,
+                          height: 100,
+                          bgcolor: 'var(--color-secundario)',
+                          fontSize: 40,
+                          cursor: 'pointer',
+                          color: 'var(--color-primario)',
+                          margin: 2,
+                          border: '2px solid var(--color-primario)', // Agrega un borde opcional
+                          '&:hover': { opacity: 0.8 } // Efecto al pasar el cursor
+                        }}
+                      >
+                        {!preview && 'A'} {/* Letra inicial si no hay imagen */}
+                      </Avatar>
+                    </label>
+
+                    {/* 📌 Input oculto que maneja la subida de imagen */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      id="avatar-upload"
+                      style={{ display: 'none' }}
+                      onChange={handleFileChange}
+                    />
+
+                    {/* 📌 Mensaje con información del tamaño y formatos permitidos */}
+                    <Typography
+                      variant="body2"
+                      color="var(--text-primario)"
+                      sx={{ mt: 1, textAlign: 'center' }}
+                    >
+                      Máximo 5MB - Formatos permitidos: JPG, PNG
+                    </Typography>
+                  </Box>
+
+                  {/* Mensaje de error si existe */}
+                  {errors.picture && (
+                    <Typography color="var(--color-error)" variant="body1">
+                      {errors.picture}
+                    </Typography>
+                  )}
+                </FormControl>
+                <FormControl
+                  fullWidth
+                  margin="normal"
+                  sx={{
+                    minHeight: '60px',
+                    border: '1px solid blue'
+                  }}
+                >
                   <InputCustom
                     placeholder="Nombre"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    required
                     type="text"
-                    color="primary"
-                    error={Boolean(errors.name)}
+                    sx={inputStyles}
+                    error={Boolean(allErrors.name)}
                     helperText={errors.name}
                   />
                 </FormControl>
-                <FormControl fullWidth margin="normal">
+
+                <FormControl
+                  fullWidth
+                  margin="normal"
+                  sx={{
+                    minHeight: '60px',
+                    border: '1px solid blue'
+                  }}
+                >
                   <InputCustom
                     placeholder="Apellido"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    required
                     type="text"
-                    color="primary"
-                    error={Boolean(errors.lastName)}
+                    sx={inputStyles}
+                    error={Boolean(allErrors.lastName)}
                     helperText={errors.lastName}
                   />
                 </FormControl>
 
-                <FormControl fullWidth margin="normal">
-                  <InputCustom
-                    placeholder="Avatar"
-                    name="picture"
-                    type="file"
-                    color="primary"
-                    inputProps={{ accept: 'image/*' }} // Solo permite imágenes
-                    onChange={(e) => {
-                      const file = e.target.files[0] // Obtener el archivo
-                      if (file) {
-                        setFormData((prev) => ({ ...prev, picture: file })) // Guardarlo en `formData`
-                      }
-                    }}
-                    error={Boolean(errors.picture)}
-                    helperText={errors.picture}
-                  />
-                </FormControl>
                 {formData.addresses.map((address, index) => (
                   <Grid
                     key={index}
@@ -390,103 +580,205 @@ export const UserForm = ({
                     sx={{ marginTop: '1px' }}
                   >
                     <Grid item xs={12} sm={6}>
-                      <InputCustom
-                        placeholder="Calle"
-                        name="street"
-                        value={address.street}
-                        onChange={(e) => handleAddressChange(index, e)}
-                        required
-                        type="text"
-                        color="primary"
+                      <FormControl
+                        key={index}
                         fullWidth
-                      />
+                        margin="normal"
+                        sx={{
+                          minHeight: '60px',
+                          border: '1px solid blue'
+                        }}
+                      >
+                        <InputCustom
+                          placeholder="Calle"
+                          name="street"
+                          value={address.street}
+                          onChange={(e) => handleAddressChange(index, e)}
+                          error={Boolean(allErrors[`street_${index}`])}
+                          helperText={errors[`street_${index}`] || ' '}
+                          type="text"
+                          sx={inputStyles}
+                          fullWidth
+                        />
+                      </FormControl>
                     </Grid>
+
                     <Grid item xs={12} sm={6}>
-                      <InputCustom
-                        placeholder="Número"
-                        name="number"
-                        value={address.number}
-                        onChange={(e) => handleAddressChange(index, e)}
-                        required
-                        type="number"
-                        color="primary"
+                      <FormControl
+                        key={index}
                         fullWidth
-                      />
+                        margin="normal"
+                        sx={{
+                          minHeight: '60px',
+                          border: '1px solid blue'
+                        }}
+                      >
+                        <InputCustom
+                          placeholder="Número"
+                          name="number"
+                          value={address.number}
+                          onChange={(e) => handleAddressChange(index, e)}
+                          error={Boolean(allErrors[`number_${index}`])}
+                          helperText={errors[`number_${index}`] || ' '}
+                          type="text"
+                          sx={inputStyles}
+                          fullWidth
+                        />
+                      </FormControl>
                     </Grid>
+
                     <Grid item xs={12} sm={4}>
-                      <InputCustom
-                        placeholder="Ciudad"
-                        name="city"
-                        value={address.city}
-                        onChange={(e) => handleAddressChange(index, e)}
-                        required
-                        type="text"
-                        color="primary"
+                      <FormControl
+                        key={index}
                         fullWidth
-                      />
+                        margin="normal"
+                        sx={{
+                          minHeight: '60px',
+                          border: '1px solid blue'
+                        }}
+                      >
+                        <InputCustom
+                          placeholder="Ciudad"
+                          name="city"
+                          value={address.city}
+                          onChange={(e) => handleAddressChange(index, e)}
+                          error={Boolean(allErrors[`city_${index}`])}
+                          helperText={errors[`city_${index}`] || ' '}
+                          type="text"
+                          sx={inputStyles}
+                          fullWidth
+                        />
+                      </FormControl>
                     </Grid>
+
                     <Grid item xs={12} sm={4}>
-                      <InputCustom
-                        placeholder="Provincia"
-                        name="state"
-                        value={address.state}
-                        onChange={(e) => handleAddressChange(index, e)}
-                        required
-                        type="text"
-                        color="primary"
+                      <FormControl
+                        key={index}
                         fullWidth
-                      />
+                        margin="normal"
+                        sx={{
+                          minHeight: '60px',
+                          border: '1px solid blue'
+                        }}
+                      >
+                        <InputCustom
+                          placeholder="Estado"
+                          name="state"
+                          value={address.state}
+                          onChange={(e) => handleAddressChange(index, e)}
+                          error={Boolean(allErrors[`state_${index}`])}
+                          helperText={errors[`state_${index}`] || ' '}
+                          type="text"
+                          sx={inputStyles}
+                          fullWidth
+                        />
+                      </FormControl>
                     </Grid>
+
                     <Grid item xs={12} sm={4}>
-                      <InputCustom
-                        placeholder="País"
-                        name="country"
-                        value={address.country}
-                        onChange={(e) => handleAddressChange(index, e)}
-                        required
-                        type="text"
-                        color="primary"
+                      <FormControl
+                        key={index}
                         fullWidth
-                      />
+                        margin="normal"
+                        sx={{
+                          minHeight: '60px',
+                          border: '1px solid blue'
+                        }}
+                      >
+                        <InputCustom
+                          placeholder="País"
+                          name="country"
+                          value={address.country}
+                          onChange={(e) => handleAddressChange(index, e)}
+                          error={Boolean(allErrors[`country_${index}`])}
+                          helperText={errors[`country_${index}`] || ' '}
+                          type="text"
+                          sx={inputStyles}
+                          fullWidth
+                        />
+                      </FormControl>
                     </Grid>
                   </Grid>
                 ))}
+
                 {formData.phones.map((phone, index) => (
-                  <FormControl key={index} fullWidth margin="normal">
+                  <FormControl
+                    key={index}
+                    fullWidth
+                    margin="normal"
+                    sx={{
+                      minHeight: '60px',
+                      border: '1px solid blue'
+                    }}
+                  >
+                    {/* 📌 Select para elegir el código de país */}
+                    <FormControl fullWidth margin="normal">
+                      {/* 📌 Select para elegir el código de país */}
+                      <Select
+                        value={phone.countryCode}
+                        onChange={(e) =>
+                          handlePhoneChange(
+                            index,
+                            'countryCode',
+                            e.target.value
+                          )
+                        }
+                      >
+                        {countryCodes.map((country) => (
+                          <MenuItem key={country.code} value={country.code}>
+                            {country.country} ({country.code})
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+
+                    {/* 📌 Input para el número de teléfono */}
                     <InputCustom
                       placeholder="Teléfono"
-                      name="phoneNumber"
                       value={phone.phoneNumber}
-                      onChange={(e) => handlePhoneChange(index, e)}
-                      required
+                      onChange={(e) =>
+                        handlePhoneChange(index, 'phoneNumber', e.target.value)
+                      }
+                      error={Boolean(allErrors[`phone_${index}`])}
+                      helperText={errors[`phone_${index}`] || ' '}
                       type="text"
-                      color="primary"
+                      sx={inputStyles}
                     />
                   </FormControl>
                 ))}
               </Grid>
+
               <Grid
                 sx={{
-                  width: '100%',
+                  width: '50%',
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'flex-start',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  gap: 1
                 }}
               >
-                <FormControl fullWidth margin="normal">
+                <FormControl
+                  fullWidth
+                  margin="normal"
+                  sx={{
+                    minHeight: '60px',
+                    border: '1px solid blue'
+                  }}
+                >
                   <InputCustom
                     placeholder="Email"
                     name="email"
                     onChange={handleChange}
                     value={formData.email}
                     type="email"
-                    color="primary"
-                    error={Boolean(errors.email)}
+                    sx={inputStyles}
+                    error={Boolean(allErrors.email)}
                     helperText={errors.email}
                   />
                 </FormControl>
+
                 {formData.idUser && (
                   <Grid
                     item
@@ -525,7 +817,11 @@ export const UserForm = ({
                       desactiva si queda un rol para eliminar.
                     </p>
                     <Typography variant="h6">Asignar Rol</Typography>
-                    <FormControl fullWidth margin="normal">
+                    <FormControl
+                      fullWidth
+                      margin="normal"
+                      sx={{ minHeight: '60px', border: '1px solid blue' }}
+                    >
                       <RoleSelect
                         selectedRoleId={formData?.idRol}
                         onChange={handleChange}
@@ -543,7 +839,8 @@ export const UserForm = ({
                     <FormControl
                       fullWidth
                       margin="normal"
-                      error={Boolean(allErrors.password)}
+                      error={Boolean(allErrors.password || '')}
+                      sx={{ minHeight: '60px', border: '1px solid blue' }}
                     >
                       <OutlinedInput
                         placeholder="Contraseña"
@@ -576,6 +873,10 @@ export const UserForm = ({
                       fullWidth
                       margin="normal"
                       error={Boolean(allErrors.repeatPassword)}
+                      sx={{
+                        minHeight: '60px',
+                        border: '1px solid blue'
+                      }}
                     >
                       <OutlinedInput
                         placeholder="Repetir Contraseña"
@@ -605,33 +906,39 @@ export const UserForm = ({
                           {allErrors.repeatPassword}
                         </FormHelperText>
                       ) : success.repeatPassword ? (
-                        <FormHelperText sx={{ color: 'green' }}>
+                        <FormHelperText sx={{ color: 'var(--color-exit)' }}>
                           {success.repeatPassword}
                         </FormHelperText>
                       ) : null}
                     </FormControl>
 
-                    <FormControl fullWidth margin="normal">
+                    <FormControl
+                      fullWidth
+                      margin="normal"
+                      sx={{
+                        minHeight: '60px',
+                        border: '1px solid blue'
+                      }}
+                    >
                       <InputCustom
                         placeholder="Codigo de Telegram "
                         name="telegramChatId"
                         onChange={handleChange}
                         value={formData.telegramChatId}
-                        error={Boolean(errors.telegramChatId)}
+                        error={Boolean(allErrors.telegramChatId)}
                         helperText={errors.telegramChatId}
-                        type="number"
-                        color="primary"
+                        type="text" // Cambiar a "text" para permitir validación
+                        sx={inputStyles}
                       />
                     </FormControl>
 
-                    
                     <Typography sx={{ fontSize: '14px', marginTop: '5px' }}>
                       ¿No sabes tu código?{' '}
                       <Link
                         href="https://t.me/MyBotJva_bot"
                         target="_blank"
                         rel="noopener noreferrer"
-                        sx={{ fontWeight: 'bold' }}
+                        sx={{ fontWeight: 'bold', color: 'var(--color-azul)' }}
                       >
                         Haz clic aquí para obtenerlo en Telegram
                       </Link>
@@ -641,38 +948,66 @@ export const UserForm = ({
               </Grid>
             </Grid>
             {!formData.idUser && !isUserAdmin && (
-              <FormControlLabel
-                control={
-                  <CustomCheckbox
-                    checked={accept}
-                    onChange={handleCheckBoxChange}
-                  />
-                }
-                label={
-                  <Typography sx={{ fontWeight: 'bold' }}>
-                    Acepto los términos y condiciones del servicio
-                  </Typography>
-                }
-                sx={{ color: 'black', marginTop: '30px', marginRight: '0' }}
-              />
-            )}
-            {errors.general && (
-              <Typography color="error" sx={{ marginTop: '10px' }}>
-                {errors.general}
-              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  border: '1px solid blue'
+                }}
+              >
+                {/* 📌 Checkbox de términos y condiciones */}
+                <FormControlLabel
+                  control={
+                    <CustomCheckbox
+                      checked={accept}
+                      onChange={handleCheckBoxChange}
+                    />
+                  }
+                  label={
+                    <Typography sx={{ fontWeight: 'bold' }}>
+                      Acepto los términos y condiciones del servicio
+                    </Typography>
+                  }
+                  sx={{
+                    color: 'var(--texto-primario)',
+                    marginTop: '30px',
+                    marginRight: '0'
+                  }}
+                />
+
+                {/* 📌 Mensaje de error con espacio reservado */}
+                <Typography
+                  sx={{
+                    marginTop: '5px',
+                    color: 'var(--color-error)',
+                    minHeight: '40px',
+                    textAlign: 'center'
+                  }}
+                >
+                  {errors.general || ' '}{' '}
+                </Typography>
+              </Box>
             )}
           </Grid>
 
           <ContainerBottom>
             <CustomButton
               variant="contained"
-              color="primary"
               type="submit"
-              sx={{ minWidth: '150px', minHeight: '50px' }}
               disabled={loading}
+              sx={{
+                minWidth: '150px',
+                minHeight: '50px',
+                color: 'var(--color-secundario)',
+                background: 'var(--color-primario)'
+              }}
             >
               {loading ? (
-                <CircularProgress size={40} sx={{ color: '#FFD700' }} />
+                <CircularProgress
+                  size={40}
+                  sx={{ color: 'var(--color-azul)' }}
+                />
               ) : (
                 buttonText
               )}
@@ -682,10 +1017,15 @@ export const UserForm = ({
               <Link
                 href=""
                 underline="always"
-                sx={{ color: 'black', marginTop: { xs: '40px', md: '20px' } }}
+                sx={{
+                  color: 'var(--texto-primario)',
+                  marginTop: { xs: '40px', md: '20px' }
+                }}
                 onClick={onSwitch}
               >
-                <Typography sx={{ fontWeight: '600' }}>
+                <Typography
+                  sx={{ fontWeight: '600', color: 'var(--color-azul)' }}
+                >
                   Ya tengo una cuenta
                 </Typography>
               </Link>
@@ -698,7 +1038,7 @@ export const UserForm = ({
 }
 
 UserForm.propTypes = {
-  onSwitch: PropTypes.func, // Función para cambiar entre el formulario de registro e inicio de sesión
+  onSwitch: PropTypes.func, 
   initialFormData: PropTypes.shape({
     idUser: PropTypes.string,
     name: PropTypes.string,

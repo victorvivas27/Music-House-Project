@@ -108,6 +108,8 @@ const Perfil = () => {
 
   if (loading) return <Loader title="Un momento por favor..." />
 
+  console.log(userData?.picture)
+
   return (
     <main
       style={{
@@ -152,8 +154,10 @@ const Perfil = () => {
                           fontSize: 40
                         }}
                         onClick={handleOpenModalUser}
+                        src={userData?.picture} // La imagen del usuario si existe
                       >
-                        {userData?.name?.[0] || '?'}
+                        {userData?.picture ? null : userData?.name?.[0]}
+                        {/* Si hay imagen, no muestra texto; si no hay imagen, muestra la inicial del nombre */}
                       </Avatar>
                     </Tooltip>
 

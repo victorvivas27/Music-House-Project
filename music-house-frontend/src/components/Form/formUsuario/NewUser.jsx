@@ -6,6 +6,7 @@ import { useAuthContext } from '../../utils/context/AuthGlobal'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 
+
 const NewUser = ({ onSwitch }) => {
   const initialFormData = {
     name: '',
@@ -16,7 +17,7 @@ const NewUser = ({ onSwitch }) => {
     repeatPassword: '',
     telegramChatId: '',
     addresses: [{ street: '', number: '', city: '', state: '', country: '' }],
-    phones: [{ phoneNumber: '' }]
+    phones: [{ phoneNumber: '', countryCode: '', }]
   }
 
   const [showMessage, setShowMessage] = useState(false)
@@ -31,8 +32,9 @@ const NewUser = ({ onSwitch }) => {
     try {
       // 🔹 Crear `FormData`
       const formDataToSend = new FormData()
-      const { picture, repeatPassword, ...userWithoutPicture } = formData
-
+      const { picture, ...userWithoutPicture } = formData
+      // Eliminar `repeatPassword` del objeto `userWithoutPicture`
+      delete userWithoutPicture.repeatPassword
       // 🔹 Convertir el JSON a string y agregarlo a FormData
       formDataToSend.append('user', JSON.stringify(userWithoutPicture))
 

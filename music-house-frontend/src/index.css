@@ -1,8 +1,22 @@
-:root{
-  --calendario-fondo-disponible:#fbf194;
-  --calendario-fondo-no-disponible:#ee4116;
-  --calendario-color-disponible:#7d7373;
-  --calendario-color-no-disponible:#dbd8d8;
+:root {
+  /* 🗓️ Colores del calendario */
+  --calendario-fondo-no-disponible: #EE4116;
+  --calendario-color-no-disponible: #B0B0B0; /* Ajustado para mejor contraste */
+
+  /* 🎯 Colores principales */
+  --color-primario: #FBC02D;  /* Amarillo dorado, más equilibrado */
+  --color-secundario: #5C5C5C; /* Gris oscuro, mayor contraste */
+
+  /* ✅ Estados */
+  --color-exito: #28A745; /* Verde para éxito */
+  --color-advertencia: #FFC107; /* Amarillo para alertas */
+  --color-error: #DC3545; /* Rojo para errores */
+  --color-azul: #002fff;  /* Azul corporativo */
+
+  /* 🎭 Tonos de texto */
+  --texto-primario: #212121; /* Negro suave */
+  --texto-secundario: #616161; /* Gris medio para contraste */
+  --texto-inverso: #ffffff; /* Blanco */
 }
 
 * {

@@ -1,19 +1,16 @@
 import { styled } from '@mui/material/styles'
 import { Grid } from '@mui/material'
 
-export const BoxFormUnder = styled(Grid)(({theme}) => ({
+export const BoxFormUnder = styled(Grid)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   paddingTop: '10px',
-  width:'100%',
-  height:'100%',
+  width: '100%',
+  height: '100%',
   [theme.breakpoints.up('md')]: {
-    
-  paddingRight:'50px',
-  alignItems:'flex-end',
-  justifyContent:'center',
-  
-  },
+    alignItems: 'flex-end',
+    justifyContent: 'center'
+  }
 }))
 
 export default BoxFormUnder

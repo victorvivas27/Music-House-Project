@@ -1,4 +1,3 @@
-
 import { Box, Typography } from '@mui/material'
 import { MainCrearUsuario } from '../common/crearUsuario/MainCrearUsuario'
 import BoxLogoSuperior from '../common/crearUsuario/BoxLogoSuperior'
@@ -37,12 +36,10 @@ export const CrearUsuario = () => {
         }}
       >
         <Typography
-          gutterBottom
           variant="h6"
           component="h6"
           textAlign="center"
           sx={{
-            paddingTop: 30,
             fontWeight: 'bold'
           }}
         >

@@ -35,6 +35,7 @@ const ModalUpdateUser = ({
   const [formData, setFormData] = useState({
     name: '',
     lastName: '',
+    picture:'',
     email: ''
   })
 
@@ -47,6 +48,7 @@ const ModalUpdateUser = ({
       setFormData({
         name: userData.name || '',
         lastName: userData.lastName || '',
+        picture : userData.picture || '',
         email: userData.email || ''
       })
     }
