@@ -11,4 +11,6 @@ public interface AWSS3Interface {
     List<String> getObjectFromS3();
 
     InputStream downloadFile(String key);
+
+    void deleteFileFromS3(String key);
 }

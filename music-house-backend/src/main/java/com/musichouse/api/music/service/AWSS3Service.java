@@ -62,6 +62,21 @@ public class AWSS3Service implements AWSS3Interface {
         return object.getObjectContent();
     }
 
+    @Override
+    public void deleteFileFromS3(String key) {
+        try {
+            if (!doesObjectExist(key)) {
+                throw new FileNotFoundException("El archivo con clave " + key + " no existe en S3.");
+            }
+
+            amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
+            LOGGER.info("Archivo eliminado de S3: {}", key);
+        } catch (AmazonS3Exception e) {
+            LOGGER.error("Error al eliminar el archivo de S3: {}", key, e);
+            throw new RuntimeException("No se pudo eliminar el archivo de S3", e);
+        }
+    }
+
 
     public boolean doesObjectExist(String key) {
         try {
@@ -74,3 +89,5 @@ public class AWSS3Service implements AWSS3Interface {
         }
     }
 }
+
+

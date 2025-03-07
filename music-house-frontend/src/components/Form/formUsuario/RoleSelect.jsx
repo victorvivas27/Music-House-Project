@@ -1,4 +1,4 @@
-import { Select, MenuItem } from '@mui/material'
+import { Select, MenuItem, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { roleList } from '../../utils/roles/constants'
 import { Loader } from '../../common/loader/Loader'
@@ -10,7 +10,7 @@ export const RoleSelect = ({
   label,
   onChange,
   selectedRoleId = undefined,
-  sx
+  
 }) => {
   const [loading, setLoading] = useState(true)
   const [selectedRole, setSelectedRole] = useState('')
@@ -46,12 +46,27 @@ export const RoleSelect = ({
 
   return (
     <Select
+      displayEmpty // Permite mostrar un placeholder cuando no se ha seleccionado nada
       value={selectedRole}
       onChange={handleRoleChange}
       label={label}
       color="secondary"
-      sx={sx}
+      sx={{
+        backgroundColor: '#D7D7D7D7', // Fondo claro
+        color: 'var(--color-secundario)', // Color del texto
+        borderRadius: '5px', // Bordes redondeados
+
+        '&:hover': {
+          backgroundColor: '#D7D7D7D7' // Efecto hover
+        }
+      }}
     >
+      {/* 📌 Placeholder */}
+      <MenuItem value="" disabled>
+       <Typography variant="h6">Asignar Rol</Typography>
+      </MenuItem>
+
+      {/* 📌 Lista de roles */}
       {roles?.map((role, index) => (
         <MenuItem key={`role-select-${index}`} value={role}>
           {role.rol}
@@ -61,13 +76,13 @@ export const RoleSelect = ({
   )
 }
 
-
 RoleSelect.propTypes = {
   label: PropTypes.string, // Etiqueta para el Select
   onChange: PropTypes.func.isRequired, // Función para manejar el cambio de rol
-  selectedRoleId: PropTypes.oneOfType([ // Valor del rol seleccionado
+  selectedRoleId: PropTypes.oneOfType([
+    // Valor del rol seleccionado
     PropTypes.string,
     PropTypes.number
   ]),
   sx: PropTypes.object // Estilos opcionales para el Select
-};
+}

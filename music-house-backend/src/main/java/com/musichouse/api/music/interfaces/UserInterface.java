@@ -22,7 +22,7 @@ public interface UserInterface {
 
     UserDtoExit getUserById(UUID idUser) throws ResourceNotFoundException;
 
-    UserDtoExit updateUser(UserDtoModify userDtoModify) throws ResourceNotFoundException;
+    UserDtoExit updateUser(UserDtoModify userDtoModify,MultipartFile file) throws ResourceNotFoundException;
 
     void deleteUser(UUID idUser) throws ResourceNotFoundException;
 

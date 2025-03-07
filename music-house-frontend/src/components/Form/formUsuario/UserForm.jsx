@@ -54,7 +54,7 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
 }))
 
 const buttonStyle = {
-  backgroundColor: 'var(--color-secundario)',
+  backgroundColor: 'var(--color-error)',
   color: 'var(--texto-inverso)',
   padding: '8px 15px',
   borderRadius: '5px',
@@ -95,12 +95,10 @@ export const UserForm = ({
   const [formData, setFormData] = useState({ ...initialFormData })
   const [accept, setAccept] = useState(!!formData.idUser)
   const [errors, setErrors] = useState(initialErrorState)
-
   const [showPassword, setShowPassword] = useState(false)
   const [showPasswordRepeat, setShowPasswordRepeat] = useState(false)
   const { passwordErrors, success, validatePassword, validateRepeatPassword } =
     usePasswordValidation()
-
   const [preview, setPreview] = useState(null)
 
   const handleFileChange = (e) => {
@@ -354,6 +352,7 @@ export const UserForm = ({
         formIsValid = false
       }
     }
+   
 
     if (!formIsValid) {
       setErrors(newErrors)
@@ -365,6 +364,7 @@ export const UserForm = ({
   const handleRemoveRole = (roleToRemove) => {
     if (!isUserAdmin) return
     if (user.data.roles.length <= 1) return
+
     const role = user.data.roles.find((r) => r.rol === roleToRemove)
     if (role) {
       Swal.fire({
@@ -416,20 +416,20 @@ export const UserForm = ({
       style={{ margin: 'auto', width: '100%' /*border: '5px solid blue'*/ }}
     >
       <ContainerForm>
-      <Grid
-  sx={{
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '10px',
-    width: '90%',
-    boxShadow: ' rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;',
-    borderRadius: '8px', // Bordes redondeados para mejor estética
-    padding: '20px', // Espaciado interno para evitar que la sombra toque los elementos internos
-   
-  }}
->
+        <Grid
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '10px',
+            width: '90%',
+            boxShadow:
+              ' rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;',
+            borderRadius: '8px', // Bordes redondeados para mejor estética
+            padding: '20px' // Espaciado interno para evitar que la sombra toque los elementos internos
+          }}
+        >
           <Typography
             variant="h4"
             sx={{
@@ -720,7 +720,7 @@ export const UserForm = ({
                           backgroundColor: '#D7D7D7D7', // Fondo claro
                           color: 'var(--color-secundario)', // Color del texto
                           borderRadius: '5px', // Bordes redondeados
-                         
+
                           '&:hover': {
                             backgroundColor: '#D7D7D7D7' // Efecto hover
                           }
@@ -794,51 +794,58 @@ export const UserForm = ({
                     md={6}
                     sx={{ padding: 2, width: '100%', height: '100%' }}
                   >
-                    {/* Botones de eliminación de roles con estilo */}
+                    {/* 📌 Botón para eliminar el rol USER */}
                     {isUser && (
                       <Button
-                        onClick={() => handleRemoveRole('USER')}
+                        onClick={() => {
+                          if (user.data.roles.length === 1) {
+                            // Mostrar alerta cuando solo queda un rol
+                            Swal.fire({
+                              title: 'Acción no permitida',
+                              text: 'No puedes eliminar el único rol del usuario.',
+                              icon: 'error',
+                              confirmButtonText: 'Entendido'
+                            })
+                          } else {
+                            handleRemoveRole('USER')
+                          }
+                        }}
                         style={buttonStyle}
-                        onMouseLeave={(e) =>
-                          (e.target.style.backgroundColor =
-                            buttonStyle.backgroundColor)
-                        }
                       >
                         Eliminar rol USER
                       </Button>
                     )}
 
+                    {/* 📌 Botón para eliminar el rol ADMIN */}
                     {isUserAdmin && (
                       <Button
-                        onClick={() => handleRemoveRole('ADMIN')}
+                        onClick={() => {
+                          if (user.data.roles.length === 1) {
+                            Swal.fire({
+                              title: 'Acción no permitida',
+                              text: 'No puedes eliminar el único rol del usuario.',
+                              icon: 'error',
+                              confirmButtonText: 'Entendido'
+                            })
+                          } else {
+                            handleRemoveRole('ADMIN')
+                          }
+                        }}
                         style={buttonStyle}
-                        onMouseLeave={(e) =>
-                          (e.target.style.backgroundColor =
-                            buttonStyle.backgroundColor)
-                        }
                       >
                         Eliminar rol ADMIN
                       </Button>
                     )}
-                    <p>
-                      Recuerda que siempre debe existir un rol, el botón se
-                      desactiva si queda un rol para eliminar.
-                    </p>
-                    <Typography variant="h6">Asignar Rol</Typography>
-                    <FormControl
-                      fullWidth
-                      margin="normal"
-                      sx={{
-                        minHeight: '60px'
-                        //border: '1px solid blue'
-                      }}
-                    >
+
+                   {/*  <p>
+                      Recuerda que siempre debe existir un rol. El botón se
+                      desactiva si queda un único rol.
+                    </p> */}
+
+                    <FormControl fullWidth margin="normal">
                       <RoleSelect
                         selectedRoleId={formData?.idRol}
                         onChange={handleChange}
-                        sx={{
-                          backgroundColor: 'var(--color-secundario)'
-                        }}
                       />
                     </FormControl>
                   </Grid>

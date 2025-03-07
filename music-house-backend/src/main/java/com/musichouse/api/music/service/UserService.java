@@ -206,20 +206,33 @@ public class UserService implements UserInterface {
     }
 
     @Override
-    public UserDtoExit updateUser(UserDtoModify userDtoModify) throws ResourceNotFoundException {
+    public UserDtoExit updateUser(UserDtoModify userDtoModify, MultipartFile file) throws ResourceNotFoundException {
         User userToUpdate = userRepository.findById(userDtoModify.getIdUser())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userDtoModify.getIdUser()));
+
         userToUpdate.setName(userDtoModify.getName());
         userToUpdate.setLastName(userDtoModify.getLastName());
         userToUpdate.setEmail(userDtoModify.getEmail());
-        String newPassword = userDtoModify.getPassword();
-        if (newPassword != null && !newPassword.isEmpty()) {
-            String contraseñaEncriptada = passwordEncoder.encode(newPassword);
-            userToUpdate.setPassword(contraseñaEncriptada);
-        }
-        userRepository.save(userToUpdate);
-        return modelMapper.map(userToUpdate, UserDtoExit.class);
 
+        // 📌 1️⃣ Eliminar la imagen anterior si se sube una nueva
+        if (file != null && !file.isEmpty()) {
+            if (userToUpdate.getPicture() != null) {
+                String oldPictureKey =
+                        userToUpdate
+                                .getPicture()
+                                .substring(userToUpdate
+                                        .getPicture().lastIndexOf("/") + 1);
+                awss3Service.deleteFileFromS3(oldPictureKey);
+            }
+
+            // 📌 2️⃣ Subir la nueva imagen
+            String fileUrl = awss3Service.uploadFileToS3(file);
+            userToUpdate.setPicture(fileUrl);
+        }
+
+        userRepository.save(userToUpdate);
+
+        return modelMapper.map(userToUpdate, UserDtoExit.class);
     }
 
 

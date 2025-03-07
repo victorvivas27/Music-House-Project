@@ -16,7 +16,7 @@ const usePasswordValidation = () => {
       errorMessage = '❌ La contraseña debe tener al menos 6 caracteres'
     } else if (!strongPasswordRegex.test(password)) {
       errorMessage =
-        '⚠️ La contraseña debe contener al menos 1 mayúscula, 1 minúscula, 1 número y 1 carácter especial (@$!%*?&)'
+        '⚠️ Debe contener al menos 1 mayúscula, 1 minúscula, 1 número y 1 carácter especial (@$!%*?&)'
     }
 
     setPasswordErrors((prev) => ({

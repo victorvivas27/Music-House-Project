@@ -38,6 +38,7 @@ const EditUser = ({ onSwitch }) => {
 
     const initialFormData = {
       idUser: id,
+      picture: user.data.picture,
       name: user.data.name,
       lastName: user.data.lastName,
       email: user.data.email,
@@ -83,11 +84,11 @@ const EditUser = ({ onSwitch }) => {
       );
     }
     setIsNewRoleAdded(undefined);
-    
     setIsAddressUpdated(undefined);
     setIsPhoneUpdated(undefined);
     setShowMessage(true);
   }, [isUserUpdated, isNewRoleAdded,  isAddressUpdated, isPhoneUpdated, isLoggedUser, isUserAdmin]);
+    
 
   const getUserInfo = () => {
     UsersApi.getUserById(id)
