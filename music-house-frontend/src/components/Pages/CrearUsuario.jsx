@@ -11,7 +11,7 @@ export const CrearUsuario = () => {
   const { isUserAdmin } = useAuthContext()
 
   return (
-    <MainCrearUsuario>
+    <MainCrearUsuario >
       <>
         <BoxLogoSuperior>
           <Link to="/">

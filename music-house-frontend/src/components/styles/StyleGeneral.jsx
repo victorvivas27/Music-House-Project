@@ -12,6 +12,6 @@ export const inputStyles = {
       '&.Mui-focused fieldset': {
         borderColor: 'var(--color-azul)', // Borde cuando está enfocado
       },
-      //minHeight: '55px',border: "1px solid blue" 
+     
     },
   };

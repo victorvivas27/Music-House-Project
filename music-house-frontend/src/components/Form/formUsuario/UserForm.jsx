@@ -31,10 +31,9 @@ import { countryCodes } from '../../utils/codepaises/CountryCodes'
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
-  width: '100vw',
-
+  width: '100%',
+  //border: '5px solid green',
   justifyContent: 'center',
-
   [theme.breakpoints.up('md')]: {
     alignItems: 'flex-end !important',
     flexDirection: 'column'
@@ -48,7 +47,6 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center',
   flexDirection: 'column',
-
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
     width: '100%'
@@ -56,7 +54,7 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
 }))
 
 const buttonStyle = {
-  backgroundColor: '#FF5733',
+  backgroundColor: 'var(--color-secundario)',
   color: 'var(--texto-inverso)',
   padding: '8px 15px',
   borderRadius: '5px',
@@ -413,22 +411,27 @@ export const UserForm = ({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={handleSubmit}
+      style={{ margin: 'auto', width: '100%' /*border: '5px solid blue'*/ }}
+    >
       <ContainerForm>
-        <Grid
-          sx={{
-            margin: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '10px',
-            width: '80%',
-            boxShadow: 24
-          }}
-        >
+      <Grid
+  sx={{
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '10px',
+    width: '90%',
+    boxShadow: ' rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;',
+    borderRadius: '8px', // Bordes redondeados para mejor estética
+    padding: '20px', // Espaciado interno para evitar que la sombra toque los elementos internos
+   
+  }}
+>
           <Typography
-            variant="h3"
+            variant="h4"
             sx={{
               color: { xs: 'white', md: 'var(--texto-primario)' },
               fontWeight: 'light'
@@ -436,9 +439,10 @@ export const UserForm = ({
           >
             {title}
           </Typography>
+
           <Grid
             sx={{
-              width: '90%',
+              width: '99%',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -447,13 +451,12 @@ export const UserForm = ({
           >
             <Grid
               sx={{
-                width: '90%',
+                width: '99%',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: { xs: 'center', md: 'flex-end' },
                 flexDirection: { md: 'row', xs: 'column' },
                 gap: '10px',
-
                 margin: 2
               }}
             >
@@ -464,7 +467,6 @@ export const UserForm = ({
                   flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center',
-
                   margin: 2
                 }}
               >
@@ -474,7 +476,6 @@ export const UserForm = ({
                     display: 'flex',
                     alignItems: 'center',
                     minHeight: '60px',
-                    border: '1px solid blue',
                     margin: 2
                   }}
                 >
@@ -498,11 +499,12 @@ export const UserForm = ({
                           cursor: 'pointer',
                           color: 'var(--color-primario)',
                           margin: 2,
-                          border: '2px solid var(--color-primario)', // Agrega un borde opcional
-                          '&:hover': { opacity: 0.8 } // Efecto al pasar el cursor
+                          border: '2px solid var(--color-primario)',
+                          '&:hover': { opacity: 0.8 }
                         }}
                       >
-                        {!preview && 'A'} {/* Letra inicial si no hay imagen */}
+                        {/* Letra inicial si no hay imagen */}
+                        {!preview && 'A'}
                       </Avatar>
                     </label>
 
@@ -536,8 +538,8 @@ export const UserForm = ({
                   fullWidth
                   margin="normal"
                   sx={{
-                    minHeight: '60px',
-                    border: '1px solid blue'
+                    minHeight: '60px'
+                    //border: '1px solid blue'
                   }}
                 >
                   <InputCustom
@@ -556,8 +558,8 @@ export const UserForm = ({
                   fullWidth
                   margin="normal"
                   sx={{
-                    minHeight: '60px',
-                    border: '1px solid blue'
+                    minHeight: '60px'
+                    //border: '1px solid blue'
                   }}
                 >
                   <InputCustom
@@ -580,15 +582,7 @@ export const UserForm = ({
                     sx={{ marginTop: '1px' }}
                   >
                     <Grid item xs={12} sm={6}>
-                      <FormControl
-                        key={index}
-                        fullWidth
-                        margin="normal"
-                        sx={{
-                          minHeight: '60px',
-                          border: '1px solid blue'
-                        }}
-                      >
+                      <FormControl key={index} fullWidth margin="normal">
                         <InputCustom
                           placeholder="Calle"
                           name="street"
@@ -609,8 +603,8 @@ export const UserForm = ({
                         fullWidth
                         margin="normal"
                         sx={{
-                          minHeight: '60px',
-                          border: '1px solid blue'
+                          minHeight: '60px'
+                          //border: '1px solid blue'
                         }}
                       >
                         <InputCustom
@@ -633,8 +627,8 @@ export const UserForm = ({
                         fullWidth
                         margin="normal"
                         sx={{
-                          minHeight: '60px',
-                          border: '1px solid blue'
+                          minHeight: '60px'
+                          //border: '1px solid blue'
                         }}
                       >
                         <InputCustom
@@ -657,8 +651,8 @@ export const UserForm = ({
                         fullWidth
                         margin="normal"
                         sx={{
-                          minHeight: '60px',
-                          border: '1px solid blue'
+                          minHeight: '60px'
+                          //border: '1px solid blue'
                         }}
                       >
                         <InputCustom
@@ -681,8 +675,8 @@ export const UserForm = ({
                         fullWidth
                         margin="normal"
                         sx={{
-                          minHeight: '60px',
-                          border: '1px solid blue'
+                          minHeight: '60px'
+                          // border: '1px solid blue'
                         }}
                       >
                         <InputCustom
@@ -705,16 +699,15 @@ export const UserForm = ({
                   <FormControl
                     key={index}
                     fullWidth
-                    margin="normal"
                     sx={{
-                      minHeight: '60px',
-                      border: '1px solid blue'
+                      minHeight: '60px'
                     }}
                   >
                     {/* 📌 Select para elegir el código de país */}
                     <FormControl fullWidth margin="normal">
                       {/* 📌 Select para elegir el código de país */}
                       <Select
+                        displayEmpty // Permite mostrar una opción de placeholder
                         value={phone.countryCode}
                         onChange={(e) =>
                           handlePhoneChange(
@@ -723,7 +716,22 @@ export const UserForm = ({
                             e.target.value
                           )
                         }
+                        sx={{
+                          backgroundColor: '#D7D7D7D7', // Fondo claro
+                          color: 'var(--color-secundario)', // Color del texto
+                          borderRadius: '5px', // Bordes redondeados
+                         
+                          '&:hover': {
+                            backgroundColor: '#D7D7D7D7' // Efecto hover
+                          }
+                        }}
                       >
+                        {/* 📌 Opción Placeholder */}
+                        <MenuItem value="" disabled>
+                          Código País
+                        </MenuItem>
+
+                        {/* 📌 Lista de opciones */}
                         {countryCodes.map((country) => (
                           <MenuItem key={country.code} value={country.code}>
                             {country.country} ({country.code})
@@ -750,7 +758,7 @@ export const UserForm = ({
 
               <Grid
                 sx={{
-                  width: '50%',
+                  width: '99%',
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
@@ -763,8 +771,8 @@ export const UserForm = ({
                   fullWidth
                   margin="normal"
                   sx={{
-                    minHeight: '60px',
-                    border: '1px solid blue'
+                    minHeight: '60px'
+                    //border: '1px solid blue'
                   }}
                 >
                   <InputCustom
@@ -820,13 +828,16 @@ export const UserForm = ({
                     <FormControl
                       fullWidth
                       margin="normal"
-                      sx={{ minHeight: '60px', border: '1px solid blue' }}
+                      sx={{
+                        minHeight: '60px'
+                        //border: '1px solid blue'
+                      }}
                     >
                       <RoleSelect
                         selectedRoleId={formData?.idRol}
                         onChange={handleChange}
                         sx={{
-                          backgroundColor: 'rgba(255, 255, 255, 0.4) !important'
+                          backgroundColor: 'var(--color-secundario)'
                         }}
                       />
                     </FormControl>
@@ -840,16 +851,28 @@ export const UserForm = ({
                       fullWidth
                       margin="normal"
                       error={Boolean(allErrors.password || '')}
-                      sx={{ minHeight: '60px', border: '1px solid blue' }}
+                      sx={{
+                        minHeight: '60px'
+                        // border: '1px solid blue'
+                      }}
                     >
                       <OutlinedInput
+                        sx={{
+                          backgroundColor: '#D7D7D7D7', // Fondo claro
+                          color: 'var(--color-secundario)', // Color del texto
+                          borderRadius: '5px', // Bordes redondeados
+                          padding: '5px', // Espaciado interno
+                          '&:hover': {
+                            backgroundColor: '#D7D7D7D7' // Efecto hover
+                          }
+                        }}
                         placeholder="Contraseña"
                         name="password"
                         onChange={handleChange}
                         value={formData.password}
                         type={showPassword ? 'text' : 'password'}
                         endAdornment={
-                          <InputAdornment position="end">
+                          <InputAdornment>
                             <IconButton
                               onClick={() => setShowPassword(!showPassword)}
                               edge="end"
@@ -874,18 +897,27 @@ export const UserForm = ({
                       margin="normal"
                       error={Boolean(allErrors.repeatPassword)}
                       sx={{
-                        minHeight: '60px',
-                        border: '1px solid blue'
+                        minHeight: '60px'
+                        //border: '1px solid blue'
                       }}
                     >
                       <OutlinedInput
+                        sx={{
+                          backgroundColor: '#D7D7D7D7', // Fondo claro
+                          color: 'var(--color-secundario)', // Color del texto
+                          borderRadius: '5px', // Bordes redondeados
+                          padding: '5px', // Espaciado interno
+                          '&:hover': {
+                            backgroundColor: '#D7D7D7D7' // Efecto hover
+                          }
+                        }}
                         placeholder="Repetir Contraseña"
                         name="repeatPassword"
                         onChange={handleChange}
                         value={formData.repeatPassword}
                         type={showPasswordRepeat ? 'text' : 'password'}
                         endAdornment={
-                          <InputAdornment position="end">
+                          <InputAdornment>
                             <IconButton
                               onClick={() =>
                                 setShowPasswordRepeat(!showPasswordRepeat)
@@ -916,8 +948,8 @@ export const UserForm = ({
                       fullWidth
                       margin="normal"
                       sx={{
-                        minHeight: '60px',
-                        border: '1px solid blue'
+                        minHeight: '60px'
+                        // border: '1px solid blue'
                       }}
                     >
                       <InputCustom
@@ -952,8 +984,8 @@ export const UserForm = ({
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  alignItems: 'center',
-                  border: '1px solid blue'
+                  alignItems: 'center'
+                  //border: '1px solid blue'
                 }}
               >
                 {/* 📌 Checkbox de términos y condiciones */}
@@ -1038,7 +1070,7 @@ export const UserForm = ({
 }
 
 UserForm.propTypes = {
-  onSwitch: PropTypes.func, 
+  onSwitch: PropTypes.func,
   initialFormData: PropTypes.shape({
     idUser: PropTypes.string,
     name: PropTypes.string,
