@@ -409,6 +409,13 @@ export const UserForm = ({
       })
     }
   }
+ 
+ useEffect(() => {
+  if (formData.picture && typeof formData.picture === "string") {
+    setPreview(formData.picture);
+  }
+
+}, [formData.picture]);
 
   return (
     <form

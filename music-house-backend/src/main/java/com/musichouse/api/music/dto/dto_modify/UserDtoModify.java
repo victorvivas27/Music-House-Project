@@ -21,8 +21,7 @@ public class UserDtoModify {
     @NotNull(message = "El idUser es obligatorio")
     private UUID idUser;
 
-    //@NotNull(message = "Debes volocar un imagen de perfil")
-    @Size(min = 1, max = 2048, message = "La imagen de perfil debe tener entre 1 y 2048 caracteres")
+    @Size(max = 2048, message = "La imagen de perfil debe tener máximo 2048 caracteres")
     @URL(message = "La imagen de perfil debe ser una URL válida")
     private String picture;
 

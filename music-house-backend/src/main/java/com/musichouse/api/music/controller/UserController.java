@@ -3,13 +3,12 @@ package com.musichouse.api.music.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.musichouse.api.music.dto.dto_entrance.UserDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.UserDtoExit;
 import com.musichouse.api.music.dto.dto_modify.UserDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.service.UserService;
 import com.musichouse.api.music.util.ApiResponse;
-import jakarta.validation.Valid;
+import jakarta.validation.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.MappingException;
 import org.slf4j.Logger;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @CrossOrigin
@@ -59,33 +59,46 @@ public class UserController {
         }
     }
 
-    @PutMapping(value= "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<UserDtoExit>> updateUser(
-            @RequestParam("user") String userJson,  // Se recibe el JSON como String
-            @RequestPart("file") MultipartFile file // Se recibe el archivo como MultipartFile
-    )
-    {
+            @RequestParam("user") String userJson, // Se recibe el JSON como String
+            @RequestPart(value = "file", required = false) MultipartFile file // Se permite que el archivo sea opcional
+    ) {
         try {
-            // Convertir el JSON String a un objeto UserDtoEntrance
-            UserDtoModify userDtoModify = objectMapper.readValue(userJson,UserDtoModify.class);
+            // 📌 1️⃣ Convertir el JSON String a un objeto UserDtoModify
+            UserDtoModify userDtoModify = objectMapper.readValue(userJson, UserDtoModify.class);
 
-            UserDtoExit userDtoExit = userService.updateUser(userDtoModify,file);
+            // 📌 2️⃣ Obtener una instancia del Validator manualmente
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            Validator validator = factory.getValidator();
 
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
+            // 📌 3️⃣ Aplicar validación manualmente
+            Set<ConstraintViolation<UserDtoModify>> violations = validator.validate(userDtoModify);
+            if (!violations.isEmpty()) {
+                String errorMessage = violations.stream()
+                        .map(ConstraintViolation::getMessage)
+                        .findFirst()
+                        .orElse("Datos inválidos");
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ApiResponse<>(errorMessage, null));
+            }
+
+            // 📌 4️⃣ Llamar al servicio para actualizar el usuario
+            UserDtoExit userDtoExit = userService.updateUser(userDtoModify, file);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ApiResponse<>("Usuario actualizado con éxito.", userDtoExit));
 
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse<>("El correo electrónico ingresado ya está en uso. Por favor, elija otro correo electrónico.", null));
-
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse<>("No se encontró el usuario con el ID proporcionado.", null));
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("Error al procesar el JSON de entrada.", null));
         }
     }
 

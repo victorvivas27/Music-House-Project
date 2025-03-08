@@ -208,13 +208,21 @@ public class UserService implements UserInterface {
     @Override
     public UserDtoExit updateUser(UserDtoModify userDtoModify, MultipartFile file) throws ResourceNotFoundException {
         User userToUpdate = userRepository.findById(userDtoModify.getIdUser())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userDtoModify.getIdUser()));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found with id: " + userDtoModify.getIdUser()));
 
+        // 📌 1️⃣ Verificar si el email ya existe antes de hacer cualquier cambio
+        if (!userToUpdate.getEmail().equals(userDtoModify.getEmail()) &&
+                userRepository.existsByEmail(userDtoModify.getEmail())) {
+            throw new DataIntegrityViolationException("El correo electrónico ingresado ya está en uso.");
+        }
+
+        // 📌 2️⃣ Actualizar los datos del usuario
         userToUpdate.setName(userDtoModify.getName());
         userToUpdate.setLastName(userDtoModify.getLastName());
         userToUpdate.setEmail(userDtoModify.getEmail());
 
-        // 📌 1️⃣ Eliminar la imagen anterior si se sube una nueva
+        // 📌 3️⃣ Manejo de la imagen: Eliminar solo si la validación pasó
         if (file != null && !file.isEmpty()) {
             if (userToUpdate.getPicture() != null) {
                 String oldPictureKey =
@@ -225,7 +233,7 @@ public class UserService implements UserInterface {
                 awss3Service.deleteFileFromS3(oldPictureKey);
             }
 
-            // 📌 2️⃣ Subir la nueva imagen
+            // 📌 4️⃣ Subir la nueva imagen
             String fileUrl = awss3Service.uploadFileToS3(file);
             userToUpdate.setPicture(fileUrl);
         }

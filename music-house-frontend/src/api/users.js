@@ -1,7 +1,6 @@
 import {
   getFetch,
   postFetch,
-  putFetch,
   deleteFetch
 } from '../helpers/useFetch';
 import axios from 'axios';
@@ -34,15 +33,25 @@ export const UsersApi = {
           "Content-Type": "multipart/form-data",
         },
       });
-  
+
       return response.data;
     } catch (error) {
-      
+
       throw new Error("Error al registrar usuario", error);
     }
   },
-
-  updateUser: (user) => putFetch(URL_UPDATE_USER, user),
+  updateUser: async (formData) => {
+    try {
+      const response = await axios.put(URL_UPDATE_USER, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error("Error al modificar usuario", error);
+    }
+  },
 
   deleteUser: (idUser) => deleteFetch(`${URL_DELETE_USER}/${idUser}`),
 
@@ -50,7 +59,7 @@ export const UsersApi = {
     postFetch(URL_ADD_ROLE_USER, { idUser, rol }),
 
   deleteUserRole: (idUser, rol) =>
-    deleteFetch(URL_DELETE_ROLE_USER, { idUser, rol}),
+    deleteFetch(URL_DELETE_ROLE_USER, { idUser, rol }),
 
   registerAdmin: async (adminUser) => {
     try {

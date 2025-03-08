@@ -6,7 +6,6 @@ import { useAuthContext } from '../../utils/context/AuthGlobal'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 
-
 const NewUser = ({ onSwitch }) => {
   const initialFormData = {
     name: '',
@@ -17,7 +16,7 @@ const NewUser = ({ onSwitch }) => {
     repeatPassword: '',
     telegramChatId: '',
     addresses: [{ street: '', number: '', city: '', state: '', country: '' }],
-    phones: [{ phoneNumber: '', countryCode: '', }]
+    phones: [{ phoneNumber: '', countryCode: '' }]
   }
 
   const [showMessage, setShowMessage] = useState(false)
