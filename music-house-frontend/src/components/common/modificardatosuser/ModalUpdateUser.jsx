@@ -1,7 +1,9 @@
 import {
+  Avatar,
   Box,
   Button,
   CircularProgress,
+  FormControl,
   Modal,
   TextField,
   Typography
@@ -33,14 +35,26 @@ const ModalUpdateUser = ({
 }) => {
   // Estado para los campos del formulario
   const [formData, setFormData] = useState({
+    picture: '',
     name: '',
     lastName: '',
-    picture:'',
+
     email: ''
   })
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [preview, setPreview] = useState(null)
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (file && file.size <= 5 * 1024 * 1024) {
+      setPreview(URL.createObjectURL(file))
+      setFormData((prev) => ({ ...prev, picture: file }))
+    } else {
+      alert('El archivo supera el límite de 5MB.')
+    }
+  }
 
   // 🚀 Cuando `userData` cambia, actualizar el formulario con los datos actuales del usuario
   useEffect(() => {
@@ -48,7 +62,7 @@ const ModalUpdateUser = ({
       setFormData({
         name: userData.name || '',
         lastName: userData.lastName || '',
-        picture : userData.picture || '',
+        picture: userData.picture || '',
         email: userData.email || ''
       })
     }
@@ -69,13 +83,29 @@ const ModalUpdateUser = ({
     setError(null)
 
     try {
-      await UsersApi.updateUser({ idUser, ...formData })
+      // Crear FormData
+      const formDataToSend = new FormData()
 
-      refreshUserData() // 🔄 Actualiza los datos del usuario en el perfil
+      // Agregar `idUser` dentro del objeto `user`
+      const { picture, ...userWithoutEmail } = formData
+      const userWithId = { ...userWithoutEmail, idUser } // 🔹 Agregar idUser dentro del objeto
+
+      // Convertir a JSON y agregarlo a FormData
+      formDataToSend.append('user', JSON.stringify(userWithId))
+
+      // Si el usuario subió una nueva imagen, agregarla
+      if (picture instanceof File) {
+        formDataToSend.append('file', picture)
+      }
+
+      // Enviar datos a la API
+      await UsersApi.updateUser(formDataToSend)
+
+      // 🔄 Refrescar datos y cerrar modal
+      refreshUserData()
       setTimeout(() => {
         setLoading(false)
         handleCloseModalUser()
-        // 🔹 Mostrar SweetAlert y cerrar modal
         Swal.fire({
           title: 'Usuario modificado',
           text: 'El usuario ha sido modificado con éxito.',
@@ -91,7 +121,11 @@ const ModalUpdateUser = ({
       setLoading(false)
     }
   }
-
+  useEffect(() => {
+    if (formData.picture && typeof formData.picture === 'string') {
+      setPreview(formData.picture)
+    }
+  }, [formData.picture])
   return (
     <Modal
       open={open}
@@ -103,6 +137,70 @@ const ModalUpdateUser = ({
           Modificar Datos
         </Typography>
         <form onSubmit={handleSubmit}>
+          <FormControl
+            fullWidth
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              minHeight: '60px',
+              margin: 2
+            }}
+          >
+            {/* Contenedor del avatar y la subida de imagen */}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
+              }}
+            >
+              {/* 📌 Avatar que dispara la subida de imagen */}
+              <label htmlFor="avatar-upload">
+                <Avatar
+                  src={preview}
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    bgcolor: 'var(--color-secundario)',
+                    fontSize: 40,
+                    cursor: 'pointer',
+                    color: 'var(--color-primario)',
+                    margin: 2,
+                    border: '2px solid var(--color-primario)',
+                    '&:hover': { opacity: 0.8 }
+                  }}
+                >
+                  {/* Letra inicial si no hay imagen */}
+                  {!preview && 'A'}
+                </Avatar>
+              </label>
+
+              {/* 📌 Input oculto que maneja la subida de imagen */}
+              <input
+                type="file"
+                accept="image/*"
+                id="avatar-upload"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+
+              {/* 📌 Mensaje con información del tamaño y formatos permitidos */}
+              <Typography
+                variant="body2"
+                color="var(--text-primario)"
+                sx={{ mt: 1, textAlign: 'center' }}
+              >
+                Máximo 5MB - Formatos permitidos: JPG, PNG
+              </Typography>
+            </Box>
+
+            {/* Mensaje de error si existe */}
+            {/*  {error.picture && (
+                              <Typography color="var(--color-error)" variant="body1">
+                                {error.picture}
+                              </Typography>
+                            )} */}
+          </FormControl>
           <TextField
             fullWidth
             label="Nombre"

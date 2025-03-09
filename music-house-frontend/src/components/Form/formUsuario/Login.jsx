@@ -5,7 +5,8 @@ import {
   InputAdornment,
   IconButton,
   OutlinedInput,
-  FormHelperText
+  FormHelperText,
+  CircularProgress
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import { styled } from '@mui/material/styles'
@@ -21,6 +22,7 @@ import { jwtDecode } from 'jwt-decode'
 
 import { useState } from 'react'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
+import { inputStyles } from '../../styles/StyleGeneral'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -54,9 +56,10 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
 
 const Login = ({ onSwitch }) => {
   const navigate = useNavigate()
-  const { setAuthGlobal, setIsUserAdmin, setIsUser } = useAuthContext()
+  const { setAuthData } = useAuthContext()
   const [showPassword, setShowPassword] = useState(false)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
+  const [loading, setLoading] = useState(false)
 
   const formik = useFormik({
     initialValues: {
@@ -65,46 +68,41 @@ const Login = ({ onSwitch }) => {
     },
     validationSchema: loginValidationSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      try {
-        const response = await UsersApi.loginUser(values)
+      setLoading(true) // 🔹 1️⃣ Activamos el loading en el botón
 
-        if (response && response.token) {
-          localStorage.setItem('token', response.token)
+      setTimeout(async () => {
+        // 🔹 2️⃣ Esperamos 2s antes de llamar a la API
+        try {
+          const response = await UsersApi.loginUser(values)
 
-          // Decodificar el token para obtener los roles
-          const decoded = jwtDecode(response.token)
-          const roles = decoded.roles || []
+          if (response && response.token) {
+            setAuthData(response) // ✅ Guardamos la data en el contexto
+            swal({
+              title: '¡Inicio de sesión exitoso!',
+              text: 'Redirigiendo en 2 segundos...',
+              icon: 'success',
+              buttons: false,
+              timer: 2000
+            })
 
-          // Actualizar el contexto de autenticación
-          setAuthGlobal(true)
-          setIsUserAdmin(roles.includes('ADMIN'))
-          setIsUser(roles.includes('USER'))
-
-          swal({
-            title: '¡Inicio de sesión exitoso!',
-            text: 'Has iniciado sesión correctamente',
-            icon: 'success',
-            buttons: false,
-            timer: 1000
-          })
-
-          setTimeout(() => {
-            navigate('/', { replace: true })
-            window.location.reload()
-          }, 1000)
-        } else {
-          throw new Error(response.message || 'Credenciales incorrectas')
+            setTimeout(() => {
+              navigate('/', { replace: true })
+              // No recargamos la página manualmente, el contexto lo maneja
+            }, 2000)
+          } else {
+            throw new Error(response.message || 'Credenciales incorrectas')
+          }
+        } catch (error) {
+          swal(
+            'Error al iniciar sesión',
+            error.message || 'Ocurrió un error',
+            'error'
+          )
+        } finally {
+          setSubmitting(false)
+          setLoading(false)
         }
-      } catch (error) {
-        console.error('Error durante el inicio de sesión:', error)
-        swal(
-          'Error al iniciar sesión',
-          error.message || 'Ocurrió un error',
-          'error'
-        )
-      } finally {
-        setSubmitting(false)
-      }
+      }, 2000)
     }
   })
 
@@ -142,7 +140,14 @@ const Login = ({ onSwitch }) => {
                 alignItems: 'center'
               }}
             >
-              <FormControl fullWidth margin="normal">
+              <FormControl
+                fullWidth
+                margin="normal"
+                sx={{
+                  minHeight: '60px'
+                  //border: '1px solid blue'
+                }}
+              >
                 <InputCustom
                   placeholder="Email"
                   name="email"
@@ -152,32 +157,67 @@ const Login = ({ onSwitch }) => {
                   color="primary"
                   error={formik.touched.email && Boolean(formik.errors.email)}
                   helperText={formik.touched.email && formik.errors.email}
+                  sx={inputStyles}
                 />
               </FormControl>
 
-              <FormControl fullWidth margin="normal" error={formik.touched.password && Boolean(formik.errors.password)}>
-  <OutlinedInput
-    placeholder="Password"
-    name="password"
-    onChange={formik.handleChange}
-    value={formik.values.password}
-    type={showPassword ? 'text' : 'password'}
-    endAdornment={
-      <InputAdornment position="end">
-        <IconButton
-          aria-label={showPassword ? 'hide the password' : 'display the password'}
-          onClick={handleClickShowPassword}
-          edge="end"
-        >
-          {showPassword ? <VisibilityOff /> : <Visibility />}
-        </IconButton>
-      </InputAdornment>
-    }
-  />
-  {formik.touched.password && formik.errors.password && (
-    <FormHelperText>{formik.errors.password}</FormHelperText>
-  )}
-</FormControl>
+              <FormControl
+                fullWidth
+                margin="normal"
+                error={
+                  formik.touched.password && Boolean(formik.errors.password)
+                }
+                sx={{
+                  minHeight: '60px'
+                  //border: '1px solid blue'
+                }}
+              >
+                <OutlinedInput
+                  sx={{
+                    backgroundColor: '#D7D7D7D7', // Fondo claro
+                    color: 'var(--color-secundario)', // Color del texto
+                    borderRadius: '5px', // Bordes redondeados
+                    padding: '5px', // Espaciado interno
+                    '&:hover': {
+                      backgroundColor: '#D7D7D7D7' // Efecto hover
+                    }
+                  }}
+                  placeholder="Password"
+                  name="password"
+                  onChange={formik.handleChange}
+                  value={formik.values.password}
+                  type={showPassword ? 'text' : 'password'}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label={
+                          showPassword
+                            ? 'hide the password'
+                            : 'display the password'
+                        }
+                        onClick={handleClickShowPassword}
+                        edge="end"
+                      >
+                        {showPassword ? (
+                          <VisibilityOff
+                            sx={{ color: 'var(--color-exito)', fontSize: 40 }}
+                          />
+                        ) : (
+                          <Visibility
+                            sx={{
+                              color: 'var(--color-secundario)',
+                              fontSize: 40
+                            }}
+                          />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                {formik.touched.password && formik.errors.password && (
+                  <FormHelperText>{formik.errors.password}</FormHelperText>
+                )}
+              </FormControl>
             </Grid>
             <ContainerBottom>
               <CustomButton
@@ -185,8 +225,24 @@ const Login = ({ onSwitch }) => {
                 color="primary"
                 type="submit"
                 disabled={formik.isSubmitting}
+                sx={{
+                  minWidth: '150px',
+                  minHeight: '50px',
+                  color: 'var(--color-secundario)',
+                  background: 'var(--color-primario)'
+                }}
               >
-                Iniciar Sesión
+                {loading ? (
+                  <>
+                    Cargando...
+                    <CircularProgress
+                      size={40}
+                      sx={{ color: 'var(--color-azul)' }}
+                    />
+                  </>
+                ) : (
+                  'Iniciar Sesión'
+                )}
               </CustomButton>
               <Link
                 href=""
@@ -205,7 +261,6 @@ const Login = ({ onSwitch }) => {
           </Grid>
         </ContainerForm>
       </form>
-      
     </>
   )
 }

@@ -78,6 +78,7 @@ const Perfil = () => {
   // Función para cargar los datos del usuario
   const fetchUser = async () => {
     if (!idUser) return
+    
 
     try {
       const response = await UsersApi.getUserById(idUser)
@@ -107,8 +108,6 @@ const Perfil = () => {
   }
 
   if (loading) return <Loader title="Un momento por favor..." />
-
-  console.log(userData?.picture)
 
   return (
     <main

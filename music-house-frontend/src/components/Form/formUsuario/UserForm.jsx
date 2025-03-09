@@ -129,6 +129,8 @@ export const UserForm = ({
     if (isUserAdmin) setAccept(true)
   }, [isUserAdmin])
 
+  /*handleChange (manejarCambios) es una función que se encarga de manejar
+ los cambios en los campos del formulario,en tiempo real */
   const handleChange = (event) => {
     const { name, value } = event.target
 
@@ -137,10 +139,20 @@ export const UserForm = ({
       [name]: value
     }))
 
-    // Limpiar errores generales
     setErrors((prev) => ({
       ...prev,
       general: ''
+    }))
+
+    // 📌 Validaciones en tiempo real (solo formato)
+    setErrors((prev) => ({
+      ...prev,
+      [name]:
+        name === 'name' && value.length < 3
+          ? '⚠️Mínimo 3 caracteres'
+          : name === 'lastName' && value.length < 3
+            ? '⚠️Mínimo 3 caracteres'
+            : ''
     }))
 
     // 📌 Validación de email en tiempo real
@@ -149,43 +161,17 @@ export const UserForm = ({
         ...prev,
         email:
           !value || value.trim() === ''
-            ? '❌ El email es requerido'
+            ? ''
             : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
               ? '⚠️ El email no es válido'
               : ''
       }))
     }
 
-    if (name === 'name') {
-      setErrors((prev) => ({
-        ...prev,
-        name:
-          !value || value.trim() === ''
-            ? '❌ El nombre es requerido'
-            : value.length < 3
-              ? '⚠️Minimo 3 caracteres'
-              : ''
-      }))
-    }
-
-    if (name === 'lastName') {
-      setErrors((prev) => ({
-        ...prev,
-        lastName:
-          !value || value.trim() === ''
-            ? '❌ El apellido es requerido'
-            : value.length < 3
-              ? '⚠️Minimo 3 caracteres'
-              : ''
-      }))
-    }
-
-    // 📌 Validación de contraseña en tiempo real
     if (name === 'password') {
       validatePassword(value)
     }
 
-    // 📌 Validación de coincidencia de contraseñas
     if (name === 'password' || name === 'repeatPassword') {
       validateRepeatPassword(
         name === 'password' ? value : formData.password,
@@ -194,19 +180,17 @@ export const UserForm = ({
     }
 
     if (name === 'telegramChatId') {
-      const stringValue = String(value).trim()
-      setErrors((prev) => ({
+      const numericValue = value.replace(/\D/g, '') // 🔹 Solo números
+
+      setFormData((prev) => ({
         ...prev,
-        telegramChatId: !stringValue
-          ? '❌ El código de Telegram es requerido'
-          : /\D/.test(stringValue)
-            ? '⚠️ El código de Telegram debe contener solo números'
-            : stringValue.length < 5 || stringValue.length > 15
-              ? '⚠️ El código de Telegram debe tener entre 5 y 15 dígitos'
-              : ''
+        telegramChatId: numericValue
       }))
     }
   }
+
+  /*Fin de manejador de  erorres de nombre,apellido,email y contraseña y codigo de telegram */
+
   // Fusionamos errores
   const allErrors = { ...errors, ...passwordErrors }
 
@@ -217,113 +201,51 @@ export const UserForm = ({
     }
   }
 
-  const handleAddressChange = (index, e) => {
-    const { name, value } = e.target
+  /*handleChange (manejarCambios) es una función que se encarga de manejar
+ los cambios en los campos del formulario,en tiempo real */
+  const handleAddressChange = (index, event) => {
+    const { name, value } = event.target
 
-    const updateAddresses = formData.addresses.map((address, i) =>
+    const updatedAddresses = formData.addresses.map((address, i) =>
       i === index ? { ...address, [name]: value } : address
     )
+
     setFormData((prevState) => ({
       ...prevState,
-      addresses: updateAddresses
+      addresses: updatedAddresses
     }))
-    // 📌 Validación de la calle (street)
-    if (name === 'street') {
-      setErrors((prev) => ({
-        ...prev,
-        [`street_${index}`]:
-          !value || value.trim() === ''
-            ? '❌ La calle es requerida'
-            : value.length < 3
-              ? '⚠️ Minimo 3 caracteres'
-              : ''
-      }))
-    }
 
-    if (name === 'number') {
-      const stringValue = String(value).trim()
-      setErrors((prev) => ({
-        ...prev,
-        [`number_${index}`]: !stringValue
-          ? '❌ El numero es requerido'
-          : /\D/.test(stringValue)
-            ? '⚠️Solo números'
-            : stringValue.length < 2 || stringValue.length > 15
-              ? '⚠️Entre 1 y 15 dígitos'
-              : ''
-      }))
-    }
-
-    if (name === 'city') {
-      setErrors((prev) => ({
-        ...prev,
-        [`city_${index}`]:
-          !value || value.trim() === ''
-            ? '❌La ciudad es requerida'
-            : value.length < 3
-              ? '⚠️ Minimo 3 caracteres'
-              : ''
-      }))
-    }
-
-    if (name === 'state') {
-      setErrors((prev) => ({
-        ...prev,
-        [`state_${index}`]:
-          !value || value.trim() === ''
-            ? '❌El estado es requerido'
-            : value.length < 3
-              ? '⚠️ Minimo 3 caracteres'
-              : ''
-      }))
-    }
-
-    if (name === 'country') {
-      setErrors((prev) => ({
-        ...prev,
-        [`country_${index}`]:
-          !value || value.trim() === ''
-            ? '❌El pais es requerido'
-            : value.length < 3
-              ? '⚠️ Minimo 3 caracteres'
-              : ''
-      }))
-    }
+    // 📌 Validaciones en tiempo real (solo formato)
+    setErrors((prev) => ({
+      ...prev,
+      [`${name}_${index}`]:
+        name === 'number' && /\D/.test(value)
+          ? '⚠️Solo números'
+          : name === 'street' && value.length < 3
+            ? '⚠️Mínimo 3 caracteres'
+            : name === 'city' && value.length < 3
+              ? '⚠️Mínimo 3 caracteres'
+              : name === 'state' && value.length < 3
+                ? '⚠️Mínimo 3 caracteres'
+                : name === 'country' && value.length < 3
+                  ? '⚠️Mínimo 3 caracteres'
+                  : ''
+    }))
   }
+  /*Fin de manejador de  erorres de dirección:calle,numero,ciudad,estado,pais*/
+
+  /*handleChange (manejarCambios) es una función que se encarga de manejar
+ los cambios en los campos del formulario,en tiempo real */
   const handlePhoneChange = (index, field, value) => {
     const updatedPhones = formData.phones.map((phone, i) => {
       if (i === index) {
         let newPhoneNumber = phone.phoneNumber
-        // 📌 1️⃣ Filtrar solo números y el signo "+"
-        const validValue = value.replace(/[^0-9+]/g, '')
+        const validValue = value.replace(/[^0-9+]/g, '') // Solo números y "+"
 
         if (field === 'countryCode') {
-          // 📌 Si cambia el código de país, reemplaza solo el prefijo
           newPhoneNumber = `${validValue}${phone.phoneNumber.replace(phone.countryCode, '')}`
         } else if (field === 'phoneNumber') {
-          // 📌 Si cambia el número, mantiene el código de país
           newPhoneNumber = `${phone.countryCode}${validValue.replace(phone.countryCode, '')}`
-        }
-
-        // 📌 2️⃣ Validar longitud (excluyendo código de país)
-        const minLength = 12
-        const maxLength = 15
-
-        if (newPhoneNumber.length < minLength) {
-          setErrors((prev) => ({
-            ...prev,
-            [`phone_${index}`]: `⚠️ El número debe tener al menos ${minLength} dígitos.`
-          }))
-        } else if (newPhoneNumber.length > maxLength) {
-          setErrors((prev) => ({
-            ...prev,
-            [`phone_${index}`]: `⚠️ El número no debe superar ${maxLength} dígitos.`
-          }))
-        } else {
-          setErrors((prev) => ({
-            ...prev,
-            [`phone_${index}`]: ''
-          }))
         }
 
         return {
@@ -339,28 +261,129 @@ export const UserForm = ({
       ...prevState,
       phones: updatedPhones
     }))
+
+    // 📌 Validaciones de longitud
+    const minLength = 7
+    const maxLength = 15
+
+    setErrors((prev) => ({
+      ...prev,
+      [`phone_${index}`]:
+        value.length < minLength
+          ? `⚠️Mínimo ${minLength} dígitos`
+          : value.length > maxLength
+            ? `⚠️Máximo ${maxLength} dígitos`
+            : ''
+    }))
   }
 
-  const handleSubmit = (event) => {
+  /*Fin de manejador de  erorres del telefono*/
+
+  /*handleSubmtit (manejarEnviar) es una función que se encarga de manejar
+ los cambios al enviar el formulario */
+  const handleSubmit = async (event) => {
     event.preventDefault()
     let formIsValid = true
     let newErrors = { ...initialErrorState }
-
-    if (!formData.idUser) {
-      if (!accept) {
-        newErrors.general = '❌ Debes aceptar los términos y condiciones'
-        formIsValid = false
-      }
+    // 📌 Validar campos obligatorios
+    if (!formData.picture || formData.name.trim() === '') {
+      newErrors.picture = '❌El avatar es obligatorio'
+      formIsValid = false
     }
-   
+
+    // 📌 Validar campos obligatorios
+    if (!formData.name || formData.name.trim() === '') {
+      newErrors.name = '❌El nombre es obligatorio'
+      formIsValid = false
+    }
+
+    if (!formData.lastName || formData.lastName.trim() === '') {
+      newErrors.lastName = '❌El apellido es obligatorio'
+      formIsValid = false
+    }
+
+    if (!formData.email || formData.email.trim() === '') {
+      newErrors.email = '❌El email es obligatorio'
+      formIsValid = false
+    }
+
+    if (!formData.password) {
+      newErrors.password = '❌La contraseña es obligatoria'
+      formIsValid = false
+    }
+
+    if (!formData.repeatPassword) {
+      newErrors.repeatPassword = '❌Debes repetir la contraseña'
+      formIsValid = false
+    }
+    if (formData.password !== formData.repeatPassword) {
+      newErrors.repeatPassword = '❌ Las contraseñas no coinciden'
+      formIsValid = false
+    }
+
+    if (!formData.telegramChatId) {
+      newErrors.telegramChatId = '❌El código de Telegram es obligatorio'
+      formIsValid = false
+    }
+
+    // 📌 Validar dirección
+    formData.addresses.forEach((address, index) => {
+      if (!address.street)
+        newErrors[`street_${index}`] = '❌La calle es obligatoria'
+      if (!address.number)
+        newErrors[`number_${index}`] = '❌El número es obligatorio'
+      if (!address.city)
+        newErrors[`city_${index}`] = '❌La ciudad es obligatoria'
+      if (!address.state)
+        newErrors[`state_${index}`] = '❌El estado es obligatorio'
+      if (!address.country)
+        newErrors[`country_${index}`] = '❌El país es obligatorio'
+    })
+
+    // 📌 Validar teléfonos
+    formData.phones.forEach((phone, index) => {
+      if (!phone.phoneNumber)
+        newErrors[`phone_${index}`] = '❌El teléfono es obligatorio'
+    })
+
+    if (!formData.idUser && !accept) {
+      newErrors.general = '❌Debes aceptar los términos y condiciones'
+      formIsValid = false
+    }
 
     if (!formIsValid) {
       setErrors(newErrors)
-    } else {
-      if (typeof onSubmit === 'function') onSubmit(formData)
+      return
+    }
+
+    try {
+      await onSubmit(formData)
+    } catch (error) {
+      // 🔹 Captura errores del backend y los muestra en los inputs
+      if (error.response && error.response.data) {
+        const backendErrors = error.response.data
+        setErrors((prev) => ({
+          ...prev,
+          name: backendErrors.name || prev.name,
+          lastName: backendErrors.lastName || prev.lastName,
+          email: backendErrors.email || prev.email,
+          password: backendErrors.password || prev.password,
+          repeatPassword: backendErrors.repeatPassword || prev.repeatPassword,
+          telegramChatId: backendErrors.telegramChatId || prev.telegramChatId
+        }))
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'Ocurrió un problema al enviar el formulario.',
+          icon: 'error'
+        })
+      }
     }
   }
+  /*Fin de handleSubmit(manejarEnviar)*/
 
+  /*handleRemoveRole (manejarEliminarRol) es una función que se encarga de manejar
+  la eliminación de roles */
   const handleRemoveRole = (roleToRemove) => {
     if (!isUserAdmin) return
     if (user.data.roles.length <= 1) return
@@ -409,13 +432,12 @@ export const UserForm = ({
       })
     }
   }
- 
- useEffect(() => {
-  if (formData.picture && typeof formData.picture === "string") {
-    setPreview(formData.picture);
-  }
 
-}, [formData.picture]);
+  useEffect(() => {
+    if (formData.picture && typeof formData.picture === 'string') {
+      setPreview(formData.picture)
+    }
+  }, [formData.picture])
 
   return (
     <form
@@ -433,8 +455,8 @@ export const UserForm = ({
             width: '90%',
             boxShadow:
               ' rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;',
-            borderRadius: '8px', // Bordes redondeados para mejor estética
-            padding: '20px' // Espaciado interno para evitar que la sombra toque los elementos internos
+            borderRadius: '8px',
+            padding: '20px'
           }}
         >
           <Typography
@@ -541,6 +563,7 @@ export const UserForm = ({
                     </Typography>
                   )}
                 </FormControl>
+
                 <FormControl
                   fullWidth
                   margin="normal"
@@ -844,7 +867,7 @@ export const UserForm = ({
                       </Button>
                     )}
 
-                   {/*  <p>
+                    {/*  <p>
                       Recuerda que siempre debe existir un rol. El botón se
                       desactiva si queda un único rol.
                     </p> */}
@@ -886,15 +909,25 @@ export const UserForm = ({
                         value={formData.password}
                         type={showPassword ? 'text' : 'password'}
                         endAdornment={
-                          <InputAdornment>
+                          <InputAdornment position="end">
                             <IconButton
                               onClick={() => setShowPassword(!showPassword)}
                               edge="end"
                             >
                               {showPassword ? (
-                                <VisibilityOff />
+                                <VisibilityOff
+                                  sx={{
+                                    color: 'var(--color-exito)',
+                                    fontSize: 40
+                                  }}
+                                />
                               ) : (
-                                <Visibility />
+                                <Visibility
+                                  sx={{
+                                    color: 'var(--color-secundario)',
+                                    fontSize: 40
+                                  }}
+                                />
                               )}
                             </IconButton>
                           </InputAdornment>
@@ -931,7 +964,7 @@ export const UserForm = ({
                         value={formData.repeatPassword}
                         type={showPasswordRepeat ? 'text' : 'password'}
                         endAdornment={
-                          <InputAdornment>
+                          <InputAdornment position="end">
                             <IconButton
                               onClick={() =>
                                 setShowPasswordRepeat(!showPasswordRepeat)
@@ -939,9 +972,19 @@ export const UserForm = ({
                               edge="end"
                             >
                               {showPasswordRepeat ? (
-                                <VisibilityOff />
+                                <VisibilityOff
+                                  sx={{
+                                    color: 'var(--color-exito)',
+                                    fontSize: 40
+                                  }}
+                                />
                               ) : (
-                                <Visibility />
+                                <Visibility
+                                  sx={{
+                                    color: 'var(--color-secundario)',
+                                    fontSize: 40
+                                  }}
+                                />
                               )}
                             </IconButton>
                           </InputAdornment>
@@ -961,19 +1004,17 @@ export const UserForm = ({
                     <FormControl
                       fullWidth
                       margin="normal"
-                      sx={{
-                        minHeight: '60px'
-                        // border: '1px solid blue'
-                      }}
+                      sx={{ minHeight: '60px' }}
                     >
                       <InputCustom
-                        placeholder="Codigo de Telegram "
+                        placeholder="Código de Telegram"
                         name="telegramChatId"
                         onChange={handleChange}
                         value={formData.telegramChatId}
-                        error={Boolean(allErrors.telegramChatId)}
+                        error={Boolean(errors.telegramChatId)}
                         helperText={errors.telegramChatId}
-                        type="text" // Cambiar a "text" para permitir validación
+                        type="tel" // 🔹 "tel" en lugar de "text" para solo permitir números en móviles
+                        inputProps={{ maxLength: 15, pattern: '[0-9]*' }} // 🔹 Solo números permitidos
                         sx={inputStyles}
                       />
                     </FormControl>

@@ -1,102 +1,89 @@
-
 import { createContext, useContext, useEffect, useState } from 'react'
 //import { getIsAdmin, getIsUser } from '../roles/constants'
 import PropTypes from 'prop-types'
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'
 
-
-const AuthUserContext = createContext();
+const AuthUserContext = createContext()
 
 export const useAuthContext = () => {
-  return useContext(AuthUserContext);
-};
+  return useContext(AuthUserContext)
+}
 
 export const AuthContextProvider = ({ children }) => {
-  const [authGlobal, setAuthGlobal] = useState(false);
-  const [isUserAdmin, setIsUserAdmin] = useState(false);
-  const [isUser, setIsUser] = useState(false);
-  const [idUser, setIdUser] = useState(null);
-  const [userName, setUserName] = useState(null);
-  const [userLastName, setUserLastName] = useState(null);
-  const [userRoles, setUserRoles] = useState([]);
+  const [authGlobal, setAuthGlobal] = useState(false)
+  const [isUserAdmin, setIsUserAdmin] = useState(false)
+  const [isUser, setIsUser] = useState(false)
+  const [idUser, setIdUser] = useState(null)
+  const [userName, setUserName] = useState(null)
+  const [userLastName, setUserLastName] = useState(null)
+  const [userRoles, setUserRoles] = useState([])
 
   const setAuthData = (userData) => {
-    const { token } = userData; // Solo extraemos el token
-
-    
+    const { token } = userData // Solo extraemos el token
 
     if (token) {
-      localStorage.setItem("token", token);
+      localStorage.setItem('token', token)
       try {
-        const decoded = jwtDecode(token); // Decodificamos el token
-        
+        const decoded = jwtDecode(token) // Decodificamos el token
 
-        const roles = decoded.roles || []; // Extraemos roles del token
-        const userId = decoded.id || null;
-        const name = decoded.name || null;
-        const lastName = decoded.lastName || null;
+        const roles = decoded.roles || [] // Extraemos roles del token
+        const userId = decoded.id || null
+        const name = decoded.name || null
+        const lastName = decoded.lastName || null
 
-        setAuthGlobal(true);
-        setIsUserAdmin(roles.includes("ADMIN"));
-        setIsUser(roles.includes("USER"));
-        setIdUser(userId);
-        setUserName(name);
-        setUserLastName(lastName);
-        setUserRoles(roles); // Guardamos los roles obtenidos del token
-
-       
+        setAuthGlobal(true)
+        setIsUserAdmin(roles.includes('ADMIN'))
+        setIsUser(roles.includes('USER'))
+        setIdUser(userId)
+        setUserName(name)
+        setUserLastName(lastName)
+        setUserRoles(roles) // Guardamos los roles obtenidos del token
       } catch (error) {
         //console.error("Error al decodificar el token:", error);
-        localStorage.removeItem("token");
-        setAuthGlobal(false);
-        setIsUserAdmin(false);
-        setIsUser(false);
-        setIdUser(null);
-        setUserName(null);
-        setUserLastName(null);
-        setUserRoles([]);
+        localStorage.removeItem('token')
+        setAuthGlobal(false)
+        setIsUserAdmin(false)
+        setIsUser(false)
+        setIdUser(null)
+        setUserName(null)
+        setUserLastName(null)
+        setUserRoles([])
       }
     }
-  };
+  }
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-  
+    const token = localStorage.getItem('token')
 
     if (token) {
       try {
-        const decoded = jwtDecode(token);
-       
+        const decoded = jwtDecode(token)
 
-        const roles = decoded.roles || [];
-        const userId = decoded.id || null;
-        const name = decoded.name || null;
-        const lastName = decoded.lastName || null;
+        const roles = decoded.roles || []
+        const userId = decoded.id || null
+        const name = decoded.name || null
+        const lastName = decoded.lastName || null
 
-        setAuthGlobal(true);
-        setIsUserAdmin(roles.includes("ADMIN"));
-        setIsUser(roles.includes("USER"));
-        setIdUser(userId);
-        setUserName(name);
-        setUserLastName(lastName);
-        setUserRoles(roles);
-
-        
+        setAuthGlobal(true)
+        setIsUserAdmin(roles.includes('ADMIN'))
+        setIsUser(roles.includes('USER'))
+        setIdUser(userId)
+        setUserName(name)
+        setUserLastName(lastName)
+        setUserRoles(roles)
       } catch (error) {
-        console.error("Error al decodificar el token:", error);
-        localStorage.removeItem("token");
-        setAuthGlobal(false);
-        setIsUserAdmin(false);
-        setIsUser(false);
-        setIdUser(null);
-        setUserName(null);
-        setUserLastName(null);
-        setUserRoles([]);
+        console.error('Error al decodificar el token:', error)
+        localStorage.removeItem('token')
+        setAuthGlobal(false)
+        setIsUserAdmin(false)
+        setIsUser(false)
+        setIdUser(null)
+        setUserName(null)
+        setUserLastName(null)
+        setUserRoles([])
       }
-    } 
-  }, []);
-
+    }
+  }, [])
 
   return (
     <AuthUserContext.Provider
@@ -116,9 +103,9 @@ export const AuthContextProvider = ({ children }) => {
     >
       {children}
     </AuthUserContext.Provider>
-  );
-};
+  )
+}
 
 AuthContextProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
+  children: PropTypes.node.isRequired
+}

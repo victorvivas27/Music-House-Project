@@ -12,13 +12,11 @@ import { Loader } from '../common/loader/Loader'
 import '../styles/home.styles.css'
 
 export const Home = () => {
-
   const { state, dispatch } = useAppStates()
   const { searchOptions } = state
   const [selectedInstruments, setSelectedInstruments] = useState([])
   const [loading, setLoading] = useState(true)
   const [instruments, setInstruments] = useState()
- 
 
   useEffect(() => {
     getInstruments().then(([instruments]) => {
@@ -58,7 +56,7 @@ export const Home = () => {
       {!loading && (
         <>
           <CssBaseline />
-          <MainWrapper  >
+          <MainWrapper>
             {state.tematics?.map((tematic, index) => (
               <TematicCard
                 key={`tematic-card-${index}`}

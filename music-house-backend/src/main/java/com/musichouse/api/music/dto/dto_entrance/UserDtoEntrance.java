@@ -1,10 +1,7 @@
 package com.musichouse.api.music.dto.dto_entrance;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
@@ -52,6 +49,8 @@ public class UserDtoEntrance {
     @NotNull(message = "El campo phones debe estar presente y no puede estar vacío")
     private List<PhoneDtoEntrance> phones;
 
-    @NotNull(message = "El campo telegram id  debe estar presente y no puede estar vacío")
+    @NotNull(message = "❌ El código de Telegram es obligatorio")
+    @Min(value = 10000, message = "⚠️ El código de Telegram debe tener al menos 5 dígitos")
+    @Max(value = 999999999999999L, message = "⚠️ El código de Telegram no puede superar los 15 dígitos")
     private Long telegramChatId;
 }

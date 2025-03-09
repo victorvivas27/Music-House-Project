@@ -21,6 +21,7 @@
     "axios": "1.6.8",
     "dayjs": "^1.11.11",
     "formik": "2.4.6",
+    "framer-motion": "^12.4.10",
     "jwt-decode": "^4.0.0",
     "nodemon": "3.1.0",
     "prop-types": "^15.8.1",
