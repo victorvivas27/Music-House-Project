@@ -56,7 +56,7 @@ export const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState(null)
   const {
     authGlobal,
-    setAuthGlobal,
+   logOut,
     idUser,
     isUserAdmin,
     isUser,
@@ -85,12 +85,7 @@ export const Header = () => {
     setIsMenuopen(!isMenuOpen)
   }
 
-  const logOut = () => {
-    localStorage.removeItem('token')
-    setAuthGlobal(false)
-    navigate('/', { replace: true })
-    window.location.reload()
-  }
+
 
   useEffect(() => {
     const handleScroll = () => {

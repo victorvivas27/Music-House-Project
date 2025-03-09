@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 //import { getIsAdmin, getIsUser } from '../roles/constants'
 import PropTypes from 'prop-types'
 import { jwtDecode } from 'jwt-decode'
+import { useNavigate } from 'react-router-dom'
 
 const AuthUserContext = createContext()
 
@@ -17,6 +18,7 @@ export const AuthContextProvider = ({ children }) => {
   const [userName, setUserName] = useState(null)
   const [userLastName, setUserLastName] = useState(null)
   const [userRoles, setUserRoles] = useState([])
+  const navigate = useNavigate()
 
   const setAuthData = (userData) => {
     const { token } = userData // Solo extraemos el token
@@ -51,6 +53,20 @@ export const AuthContextProvider = ({ children }) => {
       }
     }
   }
+
+    // ✅ Función de Logout
+    const logOut = () => {
+      localStorage.removeItem('token') // 🔹 Eliminar token del almacenamiento
+      setAuthGlobal(false)
+      setIsUserAdmin(false)
+      setIsUser(false)
+      setIdUser(null)
+      setUserName(null)
+      setUserLastName(null)
+      setUserRoles([])
+  
+      navigate('/', { replace: true }) // 🔹 Redirigir al usuario a la página de inicio
+    }
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -98,7 +114,8 @@ export const AuthContextProvider = ({ children }) => {
         idUser,
         userName,
         userLastName,
-        userRoles
+        userRoles,
+        logOut
       }}
     >
       {children}
