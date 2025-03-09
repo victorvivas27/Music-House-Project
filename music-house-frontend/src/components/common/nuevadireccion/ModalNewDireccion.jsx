@@ -4,28 +4,15 @@ import {
   CircularProgress,
   Modal,
   TextField,
-  Typography
+  Typography,
+  useMediaQuery
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { addAddress } from '../../../api/addresses'
 import { useState } from 'react'
 import Swal from 'sweetalert2'
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 500,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-  borderRadius: '8px'
-}
-
 const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
-  // Estado para los campos del formulario
   const [formData, setFormData] = useState({
     street: '',
     number: '',
@@ -37,7 +24,20 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // Manejo de cambios en los inputs
+  const isMobile = useMediaQuery('(max-width:600px)')
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: isMobile ? '90%' : 500,
+    bgcolor: 'background.paper',
+    borderRadius: '8px',
+    boxShadow: 24,
+    p: isMobile ? 3 : 4
+  }
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -45,7 +45,6 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
     })
   }
 
-  // Enviar el formulario
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -53,7 +52,7 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
 
     try {
       await addAddress({ idUser, ...formData })
-      refreshUserData() // 🔄 Actualiza la lista de direcciones
+      refreshUserData()
 
       setFormData({
         street: '',
@@ -61,23 +60,21 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
         city: '',
         state: '',
         country: ''
-      }) // Limpiar formulario
+      })
 
-      // 🔹 Cerrar modal después de mostrar la alerta
       setTimeout(() => {
         setLoading(false)
         handleClose()
-        // 🔹 Mostrar SweetAlert2 sin botón de confirmación y con auto-cierre en 1.5s
         Swal.fire({
           title: 'Dirección agregada',
           text: 'La dirección ha sido agregada con éxito.',
           icon: 'success',
-          timer: 1500, // ⏳ Se cierra en 1.5 segundos
-          showConfirmButton: false, // ❌ Oculta el botón de "OK"
-          allowOutsideClick: false, // Evita que se cierre si el usuario hace clic afuera
-          timerProgressBar: true // Muestra barra de tiempo de cierre
+          timer: 1500,
+          showConfirmButton: false,
+          allowOutsideClick: false,
+          timerProgressBar: true
         })
-      }, 1500) // ⏳ Mismo tiempo que la alerta
+      }, 1500)
     } catch (error) {
       setError('Hubo un error al agregar la dirección.')
       setLoading(false)
@@ -85,9 +82,18 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
   }
 
   return (
-    <Modal open={open} onClose={handleClose} aria-labelledby="modal-title">
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-title"
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
       <Box sx={style}>
-        <Typography id="modal-title" variant="h6" component="h2">
+        <Typography id="modal-title" variant="h6" component="h2" textAlign="center">
           Agregar Nueva Dirección
         </Typography>
         <form onSubmit={handleSubmit}>
@@ -98,9 +104,8 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
             value={formData.street}
             onChange={handleChange}
             margin="normal"
-            multiline
-            rows={1} // 🔹 Hace el campo más alto (3 líneas)
             required
+            multiline
           />
           <TextField
             fullWidth
@@ -111,7 +116,6 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
             margin="normal"
             required
             multiline
-            rows={1}
           />
           <TextField
             fullWidth
@@ -122,7 +126,6 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
             margin="normal"
             required
             multiline
-            rows={1}
           />
           <TextField
             fullWidth
@@ -133,7 +136,6 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
             margin="normal"
             required
             multiline
-            rows={1}
           />
           <TextField
             fullWidth
@@ -144,33 +146,28 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
             margin="normal"
             required
             multiline
-            rows={1}
           />
+
           {error && <Typography color="error">{error}</Typography>}
 
           <Box mt={2} display="flex" justifyContent="space-between">
             <Button onClick={handleClose} color="secondary">
               Cancelar
             </Button>
-            {/* Botón con Loading */}
             <Button
               type="submit"
               variant="contained"
               color="primary"
               disabled={loading}
               sx={{
-                minWidth: '100px',
+                minWidth: isMobile ? '80px' : '100px',
                 height: '36px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
               }}
             >
-              {loading ? (
-                <CircularProgress size={20} color="inherit" />
-              ) : (
-                'Agregar'
-              )}
+              {loading ? <CircularProgress size={20} color="inherit" /> : 'Agregar'}
             </Button>
           </Box>
         </form>

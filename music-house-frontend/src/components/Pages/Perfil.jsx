@@ -13,7 +13,8 @@ import {
   Snackbar,
   Alert,
   Tooltip,
-  IconButton
+  IconButton,
+  useMediaQuery
 } from '@mui/material'
 import EmailIcon from '@mui/icons-material/Email'
 import PhoneIcon from '@mui/icons-material/Phone'
@@ -45,6 +46,8 @@ const Perfil = () => {
     useState(false)
   const [selectedPhone, setSelectedPhone] = useState(null)
   const [selectedDireccion, setSelectedDireccion] = useState(null)
+   // 📌 Media Query para detectar si estamos en pantallas pequeñas
+   const isMobile = useMediaQuery('(max-width:600px)')
 
   const handleOpenModal = () => setOpenModal(true)
   const handleCloseModal = () => setOpenModal(false)
@@ -108,34 +111,36 @@ const Perfil = () => {
   }
 
   if (loading) return <Loader title="Un momento por favor..." />
+  
 
   return (
     <main
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        padding: '320px'
-      }}
+    style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+      paddingTop: isMobile ? '200px' : '360px', 
+      paddingBottom: isMobile ? '100px' : '150px' // 📌 Ajuste de padding en móvil
+    }}
     >
       {!loading && userData && (
         <>
           <CssBaseline />
           <Box
-            sx={{
-              borderRadius: '12px',
-              boxShadow: 3,
-              maxWidth: 1300,
-              backgroundColor: '#f9f9f9'
-            }}
+           sx={{
+            borderRadius: '12px',
+            boxShadow: 3,
+            maxWidth: isMobile ? '95%' : 1300, // 📌 Ajuste de ancho en móvil
+            backgroundColor: '#f9f9f9'
+          }}
           >
             <Grid container justifyContent="center">
               <Card
-                sx={{
-                  width: '900px',
+                 sx={{
+                  width: isMobile ? '100%' : '900px', // 📌 Ancho dinámico según pantalla
                   minHeight: '500px',
-                  p: 4,
+                  p: isMobile ? 2 : 4, // 📌 Padding reducido en móviles
                   boxShadow: 4,
                   borderRadius: 4,
                   bgcolor: '#ffffff'
@@ -143,15 +148,15 @@ const Perfil = () => {
               >
                 <CardContent>
                   {/* Encabezado con Avatar y Email */}
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <Tooltip title="Haz clic para editar tus datos">
+                  <Box display="flex" alignItems="center" flexDirection={isMobile ? 'column' : 'row'} mb={2}>
+                    <Tooltip title="Editar tus datos">
                       <Avatar
-                        sx={{
-                          bgcolor: '#1976D2',
-                          width: 90,
-                          height: 90,
-                          fontSize: 40
-                        }}
+                       sx={{
+                        bgcolor: '#1976D2',
+                        width: isMobile ? 70 : 90,
+                        height: isMobile ? 70 : 90,
+                        fontSize: 40
+                      }}
                         onClick={handleOpenModalUser}
                         src={userData?.picture} // La imagen del usuario si existe
                       >
@@ -160,13 +165,13 @@ const Perfil = () => {
                       </Avatar>
                     </Tooltip>
 
-                    <Box ml={2}>
-                      <Typography variant="h5" fontWeight="bold">
+                    <Box ml={isMobile ? 0 : 2} textAlign={isMobile ? 'center' : 'left'}>
+                    <Typography variant={isMobile ? 'h6' : 'h5'} fontWeight="bold">
                         {userData?.name || 'Nombre no disponible'}{' '}
                         {userData?.lastName || ''}
                       </Typography>
 
-                      <Box display="flex" alignItems="center" mt={0.5}>
+                      <Box display="flex" alignItems="center" mt={0.5} justifyContent={isMobile ? 'center' : 'start'}>
                         <EmailIcon sx={{ color: '#1976D2', mr: 1 }} />
                         <Typography variant="body2" color="text.secondary">
                           {userData?.email || 'Correo no disponible'}
@@ -189,13 +194,13 @@ const Perfil = () => {
                             <AddIcon />
                           </IconButton>
                         </Tooltip>
-                        <PhoneIcon sx={{ color: '#43A047', mr: 1 }} />
+                        <PhoneIcon sx={{ color: '#43A047', mr: 1,fontSize: '50px' }} />
                         <Typography variant="subtitle1">
                           <strong>Telefonos:</strong>
                         </Typography>
                       </Box>
 
-                      <Grid container spacing={3} sx={{ mt: 2 }}>
+                      <Grid container spacing={isMobile ? 1 : 3} sx={{ mt: 2 }}>
                         {userData?.phones?.length > 0 ? (
                           userData.phones.map((phone) => {
                             return (
@@ -299,8 +304,8 @@ const Perfil = () => {
                   </Box>
 
                   {/* Sección de Direcciones con Grid */}
-                  <Box sx={{ width: 900 }}>
-                    <Box display="flex" alignItems="center">
+                  <Box sx={{ width: isMobile ? '100%' : 900 }}>
+                  <Box display="flex" alignItems="center" >
                       <Tooltip title="Agregar nueva dirección">
                         <IconButton
                           onClick={handleOpenModal}
@@ -309,13 +314,13 @@ const Perfil = () => {
                           <AddIcon />
                         </IconButton>
                       </Tooltip>
-                      <HomeIcon sx={{ color: '#FF9800', mr: 1 }} />
+                      <HomeIcon sx={{ color: '#FF9800', mr: 1,fontSize: '50px' }} />
                       <Typography variant="subtitle1">
                         <strong>Direcciones:</strong>
                       </Typography>
                     </Box>
 
-                    <Grid container spacing={3} sx={{ mt: 2 }}>
+                    <Grid container spacing={isMobile ? 1 : 3} sx={{ mt: 2 }}>
                       {userData?.addresses?.length > 0 ? (
                         userData.addresses.map((address) => (
                           <Grid item xs={12} sm={5} key={address.idAddress}>

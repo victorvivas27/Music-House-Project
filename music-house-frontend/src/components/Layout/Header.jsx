@@ -56,7 +56,7 @@ export const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState(null)
   const {
     authGlobal,
-   logOut,
+    logOut,
     idUser,
     isUserAdmin,
     isUser,
@@ -85,8 +85,6 @@ export const Header = () => {
     setIsMenuopen(!isMenuOpen)
   }
 
-
-
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY
@@ -106,9 +104,9 @@ export const Header = () => {
   }, [prevScroll, toggleHeaderVisibility])
 
   const handleCloseUserMenu = () => {
-    setIsMenuUserOpen(false);
-    setAnchorElUser(null);
-  };
+    setIsMenuUserOpen(false)
+    setAnchorElUser(null)
+  }
 
   return (
     <HeaderWrapper
@@ -187,17 +185,17 @@ export const Header = () => {
                       marginRight: 'auto'
                     }}
                   />
-     <MenuItem
-  key={'menu-nav-user-profile'}
-  onClick={() => {
-    handleCloseUserMenu(); // Cierra el menú primero
-    setTimeout(() => {
-      navigate(`/perfil/${idUser}`); // Luego navega a la página
-    },150); // Espera 100ms antes de redirigir
-  }}
->
-  <Typography textAlign="center">Mi Perfil</Typography>
-</MenuItem>
+                  <MenuItem
+                    key={'menu-nav-user-profile'}
+                    onClick={() => {
+                      handleCloseUserMenu() // Cierra el menú primero
+                      setTimeout(() => {
+                        navigate(`/perfil/${idUser}`) // Luego navega a la página
+                      }, 150) // Espera 100ms antes de redirigir
+                    }}
+                  >
+                    <Typography textAlign="center">Mi Perfil</Typography>
+                  </MenuItem>
                   <MenuItem key={`menu-nav-close-session`} onClick={logOut}>
                     <Typography textAlign="center">Cerrar sesión</Typography>
                   </MenuItem>
@@ -322,18 +320,16 @@ export const Header = () => {
                   }}
                   hideBackdrop
                 >
-                 <MenuItem
-  key={'menu-nav-user-profile'}
-  onClick={() => {
-    setIsMenuUserOpen(false); // Cerrar el menú de usuario
-    setAnchorElUser(null); // Reiniciar el ancla del menú
-    navigate(`/perfil/${idUser}`);
-  }}
->
-  <Typography textAlign="center">
-    Mi Perfil
-  </Typography>
-</MenuItem>
+                  <MenuItem
+                    key={'menu-nav-user-profile'}
+                    onClick={() => {
+                      setIsMenuUserOpen(false) // Cerrar el menú de usuario
+                      setAnchorElUser(null) // Reiniciar el ancla del menú
+                      navigate(`/perfil/${idUser}`)
+                    }}
+                  >
+                    <Typography textAlign="center">Mi Perfil</Typography>
+                  </MenuItem>
                   <MenuItem key={`menu-nav-close-session`} onClick={logOut}>
                     <Typography textAlign="center">Cerrar sesión</Typography>
                   </MenuItem>

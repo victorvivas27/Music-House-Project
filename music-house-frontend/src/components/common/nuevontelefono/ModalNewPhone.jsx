@@ -7,7 +7,8 @@ import {
   Modal,
   Select,
   TextField,
-  Typography
+  Typography,
+  useMediaQuery
 } from '@mui/material'
 import PropTypes from 'prop-types'
 
@@ -15,29 +16,7 @@ import { useState } from 'react'
 import Swal from 'sweetalert2'
 import { addPhone } from '../../../api/phones'
 import { countryCodes } from '../../utils/codepaises/CountryCodes'
-
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 500,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-  borderRadius: '8px'
-}
-
-
-
-const ModalNewPhone = ({
-  open,
-  handleCloseModalPhone,
-  idUser,
-  refreshPhoneData
-}) => {
+const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }) => {
   const [formData, setFormData] = useState({
     countryCode: '+54', // 📌 Código por defecto: Argentina
     phoneNumber: ''
@@ -46,7 +25,20 @@ const ModalNewPhone = ({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // Manejo de cambios en los inputs
+  const isMobile = useMediaQuery('(max-width:600px)')
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: isMobile ? '90%' : 500,
+    bgcolor: 'background.paper',
+    borderRadius: '8px',
+    boxShadow: 24,
+    p: isMobile ? 3 : 4
+  }
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -54,27 +46,23 @@ const ModalNewPhone = ({
     })
   }
 
-  // Manejo del cambio en el código de país
   const handleCountryCodeChange = (event) => {
     setFormData({
       ...formData,
       countryCode: event.target.value
     })
   }
-  
 
-  // Enviar el formulario
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
     try {
-      const formattedPhoneNumber = `${formData.countryCode}${formData.phoneNumber}` // 📌 Formato final del número
-      await addPhone({ idUser, phoneNumber: formattedPhoneNumber }) // 📌 Enviar al backend como un solo campo
-      await refreshPhoneData() // 🔄 Asegurar que se actualiza la lista de teléfonos
+      const formattedPhoneNumber = `${formData.countryCode}${formData.phoneNumber}`
+      await addPhone({ idUser, phoneNumber: formattedPhoneNumber })
+      await refreshPhoneData()
 
-      // 🔹 Limpiar el formulario antes de cerrar
       setFormData({
         countryCode: '+54',
         phoneNumber: ''
@@ -83,7 +71,6 @@ const ModalNewPhone = ({
       setTimeout(() => {
         setLoading(false)
         handleCloseModalPhone()
-        // 🔹 Mostrar alerta y cerrar modal después de 1.5 segundos
         Swal.fire({
           title: 'Teléfono agregado',
           text: 'El teléfono ha sido agregado con éxito.',
@@ -105,17 +92,24 @@ const ModalNewPhone = ({
       open={open}
       onClose={handleCloseModalPhone}
       aria-labelledby="modal-title"
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
     >
       <Box sx={style}>
-        <Typography id="modal-title" variant="h6" component="h2">
+        <Typography id="modal-title" variant="h6" component="h2" textAlign="center">
           Agregar un Nuevo Teléfono
         </Typography>
         <form onSubmit={handleSubmit}>
-          {/* 📌 Select para elegir el código de país */}
+          {/* 📌 Select para código de país */}
           <FormControl fullWidth margin="normal">
             <Select
               value={formData.countryCode}
               onChange={handleCountryCodeChange}
+              displayEmpty
+              sx={{ height: '50px' }} // 🔹 Ajuste para móviles
             >
               {countryCodes.map((country) => (
                 <MenuItem key={country.code} value={country.code}>
@@ -125,7 +119,7 @@ const ModalNewPhone = ({
             </Select>
           </FormControl>
 
-          {/* 📌 Campo para el número de teléfono */}
+          {/* 📌 Campo para número de teléfono */}
           <TextField
             fullWidth
             label="Número de Teléfono"
@@ -135,7 +129,6 @@ const ModalNewPhone = ({
             margin="normal"
             required
             multiline
-            rows={1}
           />
 
           {error && <Typography color="error">{error}</Typography>}
@@ -150,18 +143,14 @@ const ModalNewPhone = ({
               color="primary"
               disabled={loading}
               sx={{
-                minWidth: '100px',
+                minWidth: isMobile ? '80px' : '100px',
                 height: '36px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
               }}
             >
-              {loading ? (
-                <CircularProgress size={20} color="inherit" />
-              ) : (
-                'Agregar'
-              )}
+              {loading ? <CircularProgress size={20} color="inherit" /> : 'Agregar'}
             </Button>
           </Box>
         </form>
