@@ -46,8 +46,8 @@ const Perfil = () => {
     useState(false)
   const [selectedPhone, setSelectedPhone] = useState(null)
   const [selectedDireccion, setSelectedDireccion] = useState(null)
-   // 📌 Media Query para detectar si estamos en pantallas pequeñas
-   const isMobile = useMediaQuery('(max-width:600px)')
+  // 📌 Media Query para detectar si estamos en pantallas pequeñas
+  const isMobile = useMediaQuery('(max-width:600px)')
 
   const handleOpenModal = () => setOpenModal(true)
   const handleCloseModal = () => setOpenModal(false)
@@ -81,7 +81,6 @@ const Perfil = () => {
   // Función para cargar los datos del usuario
   const fetchUser = async () => {
     if (!idUser) return
-    
 
     try {
       const response = await UsersApi.getUserById(idUser)
@@ -111,33 +110,32 @@ const Perfil = () => {
   }
 
   if (loading) return <Loader title="Un momento por favor..." />
-  
 
   return (
     <main
-    style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      paddingTop: isMobile ? '200px' : '360px', 
-      paddingBottom: isMobile ? '100px' : '150px' // 📌 Ajuste de padding en móvil
-    }}
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        paddingTop: isMobile ? '200px' : '360px',
+        paddingBottom: isMobile ? '100px' : '150px' // 📌 Ajuste de padding en móvil
+      }}
     >
       {!loading && userData && (
         <>
           <CssBaseline />
           <Box
-           sx={{
-            borderRadius: '12px',
-            boxShadow: 3,
-            maxWidth: isMobile ? '95%' : 1300, // 📌 Ajuste de ancho en móvil
-            backgroundColor: '#f9f9f9'
-          }}
+            sx={{
+              borderRadius: '12px',
+              boxShadow: 3,
+              maxWidth: isMobile ? '95%' : 1300, // 📌 Ajuste de ancho en móvil
+              backgroundColor: '#f9f9f9'
+            }}
           >
             <Grid container justifyContent="center">
               <Card
-                 sx={{
+                sx={{
                   width: isMobile ? '100%' : '900px', // 📌 Ancho dinámico según pantalla
                   minHeight: '500px',
                   p: isMobile ? 2 : 4, // 📌 Padding reducido en móviles
@@ -148,15 +146,20 @@ const Perfil = () => {
               >
                 <CardContent>
                   {/* Encabezado con Avatar y Email */}
-                  <Box display="flex" alignItems="center" flexDirection={isMobile ? 'column' : 'row'} mb={2}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    flexDirection={isMobile ? 'column' : 'row'}
+                    mb={2}
+                  >
                     <Tooltip title="Editar tus datos">
                       <Avatar
-                       sx={{
-                        bgcolor: '#1976D2',
-                        width: isMobile ? 70 : 90,
-                        height: isMobile ? 70 : 90,
-                        fontSize: 40
-                      }}
+                        sx={{
+                          bgcolor: '#1976D2',
+                          width: isMobile ? 70 : 90,
+                          height: isMobile ? 70 : 90,
+                          fontSize: 40
+                        }}
                         onClick={handleOpenModalUser}
                         src={userData?.picture} // La imagen del usuario si existe
                       >
@@ -165,13 +168,24 @@ const Perfil = () => {
                       </Avatar>
                     </Tooltip>
 
-                    <Box ml={isMobile ? 0 : 2} textAlign={isMobile ? 'center' : 'left'}>
-                    <Typography variant={isMobile ? 'h6' : 'h5'} fontWeight="bold">
+                    <Box
+                      ml={isMobile ? 0 : 2}
+                      textAlign={isMobile ? 'center' : 'left'}
+                    >
+                      <Typography
+                        variant={isMobile ? 'h6' : 'h5'}
+                        fontWeight="bold"
+                      >
                         {userData?.name || 'Nombre no disponible'}{' '}
                         {userData?.lastName || ''}
                       </Typography>
 
-                      <Box display="flex" alignItems="center" mt={0.5} justifyContent={isMobile ? 'center' : 'start'}>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        mt={0.5}
+                        justifyContent={isMobile ? 'center' : 'start'}
+                      >
                         <EmailIcon sx={{ color: '#1976D2', mr: 1 }} />
                         <Typography variant="body2" color="text.secondary">
                           {userData?.email || 'Correo no disponible'}
@@ -194,7 +208,9 @@ const Perfil = () => {
                             <AddIcon />
                           </IconButton>
                         </Tooltip>
-                        <PhoneIcon sx={{ color: '#43A047', mr: 1,fontSize: '50px' }} />
+                        <PhoneIcon
+                          sx={{ color: '#43A047', mr: 1, fontSize: '50px' }}
+                        />
                         <Typography variant="subtitle1">
                           <strong>Telefonos:</strong>
                         </Typography>
@@ -305,7 +321,7 @@ const Perfil = () => {
 
                   {/* Sección de Direcciones con Grid */}
                   <Box sx={{ width: isMobile ? '100%' : 900 }}>
-                  <Box display="flex" alignItems="center" >
+                    <Box display="flex" alignItems="center">
                       <Tooltip title="Agregar nueva dirección">
                         <IconButton
                           onClick={handleOpenModal}
@@ -314,7 +330,9 @@ const Perfil = () => {
                           <AddIcon />
                         </IconButton>
                       </Tooltip>
-                      <HomeIcon sx={{ color: '#FF9800', mr: 1,fontSize: '50px' }} />
+                      <HomeIcon
+                        sx={{ color: '#FF9800', mr: 1, fontSize: '50px' }}
+                      />
                       <Typography variant="subtitle1">
                         <strong>Direcciones:</strong>
                       </Typography>
