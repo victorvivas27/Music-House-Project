@@ -11,6 +11,7 @@ import PropTypes from 'prop-types'
 import { addAddress } from '../../../api/addresses'
 import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
+import { CustomButton } from '../../Form/formUsuario/CustomComponents'
 
 const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
   const [formData, setFormData] = useState({
@@ -38,19 +39,19 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
     p: isMobile ? 3 : 4
   }
 
-    // 📌 Restablece el formulario cuando se cierra el modal
-    useEffect(() => {
-      if (!open) {
-        setFormData({ 
-          street: '',
-          number: '',
-          city: '',
-          state: '',
-          country: ''
-         })
-        setError(null) // También limpia errores al cerrar
-      }
-    }, [open])
+  // 📌 Restablece el formulario cuando se cierra el modal
+  useEffect(() => {
+    if (!open) {
+      setFormData({
+        street: '',
+        number: '',
+        city: '',
+        state: '',
+        country: ''
+      })
+      setError(null) // También limpia errores al cerrar
+    }
+  }, [open])
 
   const handleChange = (e) => {
     setFormData({
@@ -107,7 +108,12 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
       }}
     >
       <Box sx={style}>
-        <Typography id="modal-title" variant="h6" component="h2" textAlign="center">
+        <Typography
+          id="modal-title"
+          variant="h6"
+          component="h2"
+          textAlign="center"
+        >
           Agregar Nueva Dirección
         </Typography>
         <form onSubmit={handleSubmit}>
@@ -168,21 +174,32 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
             <Button onClick={handleClose} color="secondary">
               Cancelar
             </Button>
-            <Button
-              type="submit"
+            <CustomButton
               variant="contained"
-              color="primary"
+              type="submit"
               disabled={loading}
               sx={{
-                minWidth: isMobile ? '80px' : '100px',
-                height: '36px',
+                minWidth: '150px', // Ancho suficiente para acomodar el texto y el spinner
+                minHeight: '40px',
+
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                gap: '10px' // Agrega un pequeño espacio entre el spinner y el texto
               }}
             >
-              {loading ? <CircularProgress size={20} color="inherit" /> : 'Agregar'}
-            </Button>
+              {loading ? (
+                <>
+                  <CircularProgress
+                    size={20}
+                    sx={{ color: 'var(--color-azul)' }}
+                  />
+                  Cargando...
+                </>
+              ) : (
+                'Agregar'
+              )}
+            </CustomButton>
           </Box>
         </form>
       </Box>

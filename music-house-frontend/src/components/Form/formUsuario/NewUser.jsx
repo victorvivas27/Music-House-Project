@@ -52,7 +52,7 @@ const NewUser = ({ onSwitch }) => {
         setShowMessage(true)
 
         setTimeout(() => {
-          navigate('/about', { replace: true })
+          navigate('/', { replace: true })
           // window.location.reload()
         }, 1000)
       } else {

@@ -17,13 +17,13 @@ import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import { addPhone } from '../../../api/phones'
 import { countryCodes } from '../../utils/codepaises/CountryCodes'
+import { CustomButton } from '../../Form/formUsuario/CustomComponents'
 
 const ModalNewPhone = ({
   open,
   handleCloseModalPhone,
   idUser,
   refreshPhoneData
-
 }) => {
   const [formData, setFormData] = useState({
     countryCode: '', // 📌 Código vacío al inicio
@@ -46,13 +46,13 @@ const ModalNewPhone = ({
     boxShadow: 24,
     p: isMobile ? 3 : 4
   }
-    // 📌 Restablece el formulario cuando se cierra el modal
-    useEffect(() => {
-      if (!open) {
-        setFormData({ countryCode: '', phoneNumber: '' })
-        setError(null) // También limpia errores al cerrar
-      }
-    }, [open])
+  // 📌 Restablece el formulario cuando se cierra el modal
+  useEffect(() => {
+    if (!open) {
+      setFormData({ countryCode: '', phoneNumber: '' })
+      setError(null) // También limpia errores al cerrar
+    }
+  }, [open])
 
   // 📌 Manejo del cambio en el código de país
   const handleCountryCodeChange = (event) => {
@@ -115,14 +115,11 @@ const ModalNewPhone = ({
     try {
       const fullPhoneNumber = `${formData.countryCode}${formData.phoneNumber}`
       await addPhone({ idUser, phoneNumber: fullPhoneNumber })
-      
-
-      
 
       setTimeout(() => {
         setLoading(false)
         handleCloseModalPhone()
-        
+
         Swal.fire({
           title: 'Teléfono agregado',
           text: 'El teléfono ha sido agregado con éxito.',
@@ -132,7 +129,7 @@ const ModalNewPhone = ({
           allowOutsideClick: false,
           timerProgressBar: true
         })
-        
+
         setFormData({ countryCode: '', phoneNumber: '' }) // 🔹 Limpia el formulario
       }, 1500)
       await refreshPhoneData()
@@ -221,25 +218,32 @@ const ModalNewPhone = ({
             <Button onClick={handleCloseModalPhone} color="secondary">
               Cancelar
             </Button>
-            <Button
-              type="submit"
+            <CustomButton
               variant="contained"
-              color="primary"
+              type="submit"
               disabled={loading}
               sx={{
-                minWidth: isMobile ? '80px' : '100px',
-                height: '36px',
+                minWidth: '150px', // Ancho suficiente para acomodar el texto y el spinner
+                minHeight: '40px',
+               
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                gap: '10px' // Agrega un pequeño espacio entre el spinner y el texto
               }}
             >
               {loading ? (
-                <CircularProgress size={20} color="inherit" />
+                <>
+                  <CircularProgress
+                    size={20}
+                    sx={{ color: 'var(--color-azul)' }}
+                  />
+                  Cargando...
+                </>
               ) : (
                 'Agregar'
               )}
-            </Button>
+            </CustomButton>
           </Box>
         </form>
       </Box>

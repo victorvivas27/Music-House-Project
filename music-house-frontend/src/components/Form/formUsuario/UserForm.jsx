@@ -1091,15 +1091,17 @@ export const UserForm = ({
               sx={{
                 minWidth: '150px',
                 minHeight: '50px',
-                color: 'var(--color-secundario)',
-                background: 'var(--color-primario)'
+              gap: '10px'
               }}
             >
               {loading ? (
+                <>
+                Cargando...
                 <CircularProgress
-                  size={40}
+                  size={30}
                   sx={{ color: 'var(--color-azul)' }}
                 />
+                </>
               ) : (
                 buttonText
               )}
