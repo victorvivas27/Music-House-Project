@@ -4,7 +4,8 @@ import {
   CircularProgress,
   Modal,
   TextField,
-  Typography
+  Typography,
+  useMediaQuery
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
@@ -12,24 +13,11 @@ import Swal from 'sweetalert2'
 
 import { updatePhone } from '../../../api/phones'
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 500,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-  borderRadius: '8px'
-}
-
 const ModalUpdatePhone = ({
   open,
   handleCloseModalPhoneUpdate,
   refreshUserData,
-  selectedPhone // 📌 Recibir el teléfono seleccionado
+  selectedPhone
 }) => {
   const [formData, setFormData] = useState({
     phoneNumber: ''
@@ -38,7 +26,20 @@ const ModalUpdatePhone = ({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // 🚀 Cuando el teléfono seleccionado cambia, actualizar el formulario
+  const isMobile = useMediaQuery('(max-width:600px)')
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: isMobile ? '90%' : 500,
+    bgcolor: 'background.paper',
+    borderRadius: '8px',
+    boxShadow: 24,
+    p: isMobile ? 3 : 4
+  }
+
   useEffect(() => {
     if (selectedPhone) {
       setFormData({
@@ -87,9 +88,14 @@ const ModalUpdatePhone = ({
       open={open}
       onClose={handleCloseModalPhoneUpdate}
       aria-labelledby="modal-title"
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
     >
       <Box sx={style}>
-        <Typography id="modal-title" variant="h6" component="h2">
+        <Typography id="modal-title" variant="h6" component="h2" textAlign="center">
           Modificar Teléfono
         </Typography>
         <form onSubmit={handleSubmit}>
@@ -102,7 +108,6 @@ const ModalUpdatePhone = ({
             margin="normal"
             required
             multiline
-            rows={1}
           />
 
           {error && <Typography color="error">{error}</Typography>}
@@ -117,18 +122,14 @@ const ModalUpdatePhone = ({
               color="primary"
               disabled={loading}
               sx={{
-                minWidth: '100px',
+                minWidth: isMobile ? '80px' : '100px',
                 height: '36px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
               }}
             >
-              {loading ? (
-                <CircularProgress size={20} color="inherit" />
-              ) : (
-                'Guardar'
-              )}
+              {loading ? <CircularProgress size={20} color="inherit" /> : 'Guardar'}
             </Button>
           </Box>
         </form>

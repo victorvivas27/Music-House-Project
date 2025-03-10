@@ -4,26 +4,14 @@ import {
   CircularProgress,
   Modal,
   TextField,
-  Typography
+  Typography,
+  useMediaQuery
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 
 import { updateAddress } from '../../../api/addresses'
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 500,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-  borderRadius: '8px'
-}
 
 const ModalUpdateDireccion = ({
   open,
@@ -42,9 +30,21 @@ const ModalUpdateDireccion = ({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // 🚀 Cuando el teléfono seleccionado cambia, actualizar el formulario
+  const isMobile = useMediaQuery('(max-width:600px)')
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: isMobile ? '90%' : 500,
+    bgcolor: 'background.paper',
+    borderRadius: '8px',
+    boxShadow: 24,
+    p: isMobile ? 3 : 4
+  }
+
   useEffect(() => {
-    
     if (selectedDireccion) {
       setFormData({
         street: selectedDireccion.street || '',
@@ -79,8 +79,8 @@ const ModalUpdateDireccion = ({
         setLoading(false)
         handleCloseModalDireccionUpdate()
         Swal.fire({
-          title: 'Direccion modificada',
-          text: 'La direccion ha sido modificado con éxito.',
+          title: 'Dirección modificada',
+          text: 'La dirección ha sido modificada con éxito.',
           icon: 'success',
           timer: 1500,
           showConfirmButton: false,
@@ -89,7 +89,7 @@ const ModalUpdateDireccion = ({
         })
       }, 1500)
     } catch (error) {
-      setError('Hubo un error al modificar la direccion.')
+      setError('Hubo un error al modificar la dirección.')
       setLoading(false)
     }
   }
@@ -99,10 +99,15 @@ const ModalUpdateDireccion = ({
       open={open}
       onClose={handleCloseModalDireccionUpdate}
       aria-labelledby="modal-title"
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
     >
       <Box sx={style}>
-        <Typography id="modal-title" variant="h6" component="h2">
-          Modificar Direccion
+        <Typography id="modal-title" variant="h6" component="h2" textAlign="center">
+          Modificar Dirección
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
@@ -114,18 +119,16 @@ const ModalUpdateDireccion = ({
             margin="normal"
             required
             multiline
-            rows={1}
           />
           <TextField
             fullWidth
-            label="Numero"
+            label="Número"
             name="number"
             value={formData.number}
             onChange={handleChange}
             margin="normal"
             required
             multiline
-            rows={1}
           />
           <TextField
             fullWidth
@@ -136,7 +139,6 @@ const ModalUpdateDireccion = ({
             margin="normal"
             required
             multiline
-            rows={1}
           />
           <TextField
             fullWidth
@@ -147,19 +149,18 @@ const ModalUpdateDireccion = ({
             margin="normal"
             required
             multiline
-            rows={1}
           />
           <TextField
             fullWidth
-            label="Pais"
+            label="País"
             name="country"
             value={formData.country}
             onChange={handleChange}
             margin="normal"
             required
             multiline
-            rows={1}
           />
+
           {error && <Typography color="error">{error}</Typography>}
 
           <Box mt={2} display="flex" justifyContent="space-between">
@@ -172,18 +173,14 @@ const ModalUpdateDireccion = ({
               color="primary"
               disabled={loading}
               sx={{
-                minWidth: '100px',
+                minWidth: isMobile ? '80px' : '100px',
                 height: '36px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
               }}
             >
-              {loading ? (
-                <CircularProgress size={20} color="inherit" />
-              ) : (
-                'Guardar'
-              )}
+              {loading ? <CircularProgress size={20} color="inherit" /> : 'Guardar'}
             </Button>
           </Box>
         </form>
