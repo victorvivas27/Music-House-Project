@@ -13,8 +13,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import { UsersApi } from '../../../api/users'
-
-
+import { CustomButton } from '../../Form/formUsuario/CustomComponents'
 
 const ModalUpdateUser = ({
   open,
@@ -127,12 +126,26 @@ const ModalUpdateUser = ({
       sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
     >
       <Box sx={style}>
-        <Typography id="modal-title" variant="h6" component="h2" textAlign="center">
+        <Typography
+          id="modal-title"
+          variant="h6"
+          component="h2"
+          textAlign="center"
+        >
           Modificar Datos
         </Typography>
         <form onSubmit={handleSubmit}>
-          <FormControl fullWidth sx={{ display: 'flex', alignItems: 'center', margin: 2 }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <FormControl
+            fullWidth
+            sx={{ display: 'flex', alignItems: 'center', margin: 2 }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
+              }}
+            >
               <label htmlFor="avatar-upload">
                 <Avatar
                   src={preview}
@@ -160,7 +173,11 @@ const ModalUpdateUser = ({
                 onChange={handleFileChange}
               />
 
-              <Typography variant="body2" color="var(--text-primario)" sx={{ mt: 1, textAlign: 'center' }}>
+              <Typography
+                variant="body2"
+                color="var(--text-primario)"
+                sx={{ mt: 1, textAlign: 'center' }}
+              >
                 Máximo 5MB - Formatos: JPG, PNG
               </Typography>
             </Box>
@@ -211,21 +228,32 @@ const ModalUpdateUser = ({
             <Button onClick={handleCloseModalUser} color="secondary">
               Cancelar
             </Button>
-            <Button
-              type="submit"
+            <CustomButton
               variant="contained"
-              color="primary"
+              type="submit"
               disabled={loading}
               sx={{
-                minWidth: isMobile ? '80px' : '100px',
-                height: '36px',
+                minWidth: '150px', // Ancho suficiente para acomodar el texto y el spinner
+                minHeight: '40px',
+
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                gap: '10px' // Agrega un pequeño espacio entre el spinner y el texto
               }}
             >
-              {loading ? <CircularProgress size={20} color="inherit" /> : 'Guardar'}
-            </Button>
+              {loading ? (
+                <>
+                  <CircularProgress
+                    size={20}
+                    sx={{ color: 'var(--color-azul)' }}
+                  />
+                  Cargando...
+                </>
+              ) : (
+                'Guardar'
+              )}
+            </CustomButton>
           </Box>
         </form>
       </Box>

@@ -65,6 +65,8 @@ export const Header = () => {
   } = useAuthContext()
   const { toggleHeaderVisibility } = useHeaderVisibility()
   const { pathname } = useLocation()
+  const [userMenuTimeout, setUserMenuTimeout] = useState(null)
+  const [menuTimeout, setMenuTimeout] = useState(null)
   const isHome = pathname === '/'
   const navigate = useNavigate()
 
@@ -74,15 +76,32 @@ export const Header = () => {
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget)
-    setIsMenuopen(!isMenuOpen)
+    setIsMenuopen(true)
+
+    // 🔄 Reinicia el temporizador cada vez que se abre el menú
+    clearTimeout(menuTimeout)
+    const timeout = setTimeout(() => {
+      setIsMenuopen(false)
+      setAnchorElNav(null)
+    }, 3000) // ⏳ Cierra después de 5 segundos de inactividad
+    setMenuTimeout(timeout)
   }
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget)
-    setIsMenuUserOpen(!isMenuUserOpen)
+    setIsMenuUserOpen(true)
+
+    // 🔄 Reinicia el temporizador cada vez que se abre el menú
+    clearTimeout(userMenuTimeout)
+    const timeout = setTimeout(() => {
+      setIsMenuUserOpen(false)
+      setAnchorElUser(null)
+    }, 3000) // ⏳ Cierra después de 5 segundos de inactividad
+    setUserMenuTimeout(timeout)
   }
 
   const handleCloseNavMenu = () => {
-    setIsMenuopen(!isMenuOpen)
+    clearTimeout(menuTimeout) // 🔹 Cancela el cierre automático
+    setIsMenuopen(false)
   }
 
   useEffect(() => {
@@ -188,10 +207,9 @@ export const Header = () => {
                   <MenuItem
                     key={'menu-nav-user-profile'}
                     onClick={() => {
+                      navigate(`/perfil/${idUser}`) // Luego navega a la página
+
                       handleCloseUserMenu() // Cierra el menú primero
-                      setTimeout(() => {
-                        navigate(`/perfil/${idUser}`) // Luego navega a la página
-                      }, 150) // Espera 100ms antes de redirigir
                     }}
                   >
                     <Typography textAlign="center">Mi Perfil</Typography>
