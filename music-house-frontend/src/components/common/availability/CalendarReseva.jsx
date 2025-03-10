@@ -23,16 +23,18 @@ import {
   getReservationById
 } from '../../../api/reservations'
 import { useNavigate } from 'react-router-dom'
+import { CustomButton } from '../../Form/formUsuario/CustomComponents'
+import Swal from 'sweetalert2'
 
 const CalendarReserva = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
   const [selectedDates, setSelectedDates] = useState([]) // Lista de fechas seleccionadas
   const [error, setError] = useState('')
-  const [infoMessage, setInfoMessage] = useState(''); // Para mensajes amigables
-  const [success, setSuccess] = useState('')
+  const [infoMessage, setInfoMessage] = useState('') // Para mensajes amigables
+
   const [openSnackbar, setOpenSnackbar] = useState(false)
 
-  const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false);
+  const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
   const idInstrument = instrument?.data?.idInstrument
   const { idUser } = useAuthContext()
   const [reservedDates, setReservedDates] = useState([])
@@ -57,8 +59,6 @@ const CalendarReserva = ({ instrument }) => {
 
     fetchAvailableDates()
   }, [idInstrument])
-
- 
 
   const handleDateSelect = (date) => {
     const formattedDate = dayjs(date).format('YYYY-MM-DD')
@@ -85,72 +85,97 @@ const CalendarReserva = ({ instrument }) => {
       return
     }
     setLoading(true) // Activar el loader
+
     const startDate = selectedDates[0] // Primera fecha seleccionada
     const endDate = selectedDates[selectedDates.length - 1] // Última fecha seleccionada
 
     try {
       await createReservation(idUser, idInstrument, startDate, endDate)
-      setSuccess('Reserva realizada con éxito.')
+
+      // ✅ Mostrar SweetAlert2 en lugar de setSuccess
+      Swal.fire({
+        title: '¡Reserva realizada!',
+        text: `Tu reserva ha sido confirmada del ${startDate} al ${endDate}.`,
+        icon: 'success',
+        confirmButtonText: 'OK',
+        timer: 3000, // ⏳ Se cierra automáticamente en 3 segundos
+        timerProgressBar: true
+      })
+
       setSelectedDates([])
-      navigate('/reservations')
+      setTimeout(() => {
+        navigate('/reservations')
+      }, 3100)
     } catch (error) {
       setError(error.message)
-    } finally {
       setOpenSnackbar(true)
+    } finally {
       setLoading(false) // Desactivar el loader al terminar
     }
   }
 
- // 👇 Modificación en `fetchReservedDates`
- const fetchReservedDates = async () => {
-  try {
-    const reservations = await getReservationById(idUser);
+  // 👇 Modificación en `fetchReservedDates`
+  const fetchReservedDates = async () => {
+    try {
+      const reservations = await getReservationById(idUser)
 
-    // 🟢 Si no hay reservas, mostramos un mensaje amigable
-    if (!reservations.data || !Array.isArray(reservations.data) || reservations.data.length === 0) {
-      setReservedDates([]);
-      setInfoMessage("📅 ¡Aún no tienes reservas! No dudes en reservar este hermoso instrumento y disfruta de la música. 🎶");
-      setOpenSnackbarInfo(true);
-      return;
-    }
-
-    const instrumentReservations = reservations.data.filter(
-      (res) => res.idInstrument === idInstrument
-    );
-
-    const bookedDates = instrumentReservations.flatMap((res) => {
-      const start = dayjs(res.startDate);
-      const end = dayjs(res.endDate);
-      const range = [];
-
-      for (let d = start; d.isBefore(end) || d.isSame(end); d = d.add(1, "day")) {
-        range.push(d.format("YYYY-MM-DD"));
+      // 🟢 Si no hay reservas, mostramos un mensaje amigable
+      if (
+        !reservations.data ||
+        !Array.isArray(reservations.data) ||
+        reservations.data.length === 0
+      ) {
+        setReservedDates([])
+        setInfoMessage(
+          '📅 ¡Aún no tienes reservas! No dudes en reservar este hermoso instrumento y disfruta de la música. 🎶'
+        )
+        setOpenSnackbarInfo(true)
+        return
       }
 
-      return range;
-    });
+      const instrumentReservations = reservations.data.filter(
+        (res) => res.idInstrument === idInstrument
+      )
 
-    setReservedDates(bookedDates);
-  } catch (error) {
-    const { statusCode, message } = error;
+      const bookedDates = instrumentReservations.flatMap((res) => {
+        const start = dayjs(res.startDate)
+        const end = dayjs(res.endDate)
+        const range = []
 
-    if (statusCode === 404) {
-      // 🟢 Si el error es 404, significa que simplemente no hay reservas, mostramos un mensaje amigable.
-      setReservedDates([]);
-      setInfoMessage("📅 ¡Aún no tienes reservas! No dudes en reservar este hermoso instrumento y disfruta de la música. 🎶");
-      setOpenSnackbarInfo(true);
-    } else {
-      // 🛑 Si el error es otro (500, 403, etc.), mostrar error real
-      setError(`⚠️ Error ${statusCode}: ${message}`);
-      setOpenSnackbar(true);
+        for (
+          let d = start;
+          d.isBefore(end) || d.isSame(end);
+          d = d.add(1, 'day')
+        ) {
+          range.push(d.format('YYYY-MM-DD'))
+        }
+
+        return range
+      })
+
+      setReservedDates(bookedDates)
+    } catch (error) {
+      const { statusCode, message } = error
+
+      if (statusCode === 404) {
+        // 🟢 Si el error es 404, significa que simplemente no hay reservas, mostramos un mensaje amigable.
+        setReservedDates([])
+        setInfoMessage(
+          '📅 ¡Aún no tienes reservas! No dudes en reservar este hermoso instrumento y disfruta de la música. 🎶'
+        )
+        setOpenSnackbarInfo(true)
+      } else {
+        // 🛑 Si el error es otro (500, 403, etc.), mostrar error real
+        setError(`⚠️ Error ${statusCode}: ${message}`)
+        setOpenSnackbar(true)
+      }
     }
   }
-};
 
   // Llamar al cargar el componente y después de una reserva exitosa
   useEffect(() => {
     if (idUser) fetchReservedDates()
-  }, [idUser, success]) // Se ejecuta nuevamente si hay una reserva exitosa
+  }, [idUser]) // Se ejecuta nuevamente si hay una reserva exitosa
 
   const CustomDayComponent = (props) => {
     const { day, ...other } = props
@@ -204,90 +229,84 @@ const CalendarReserva = ({ instrument }) => {
         </Box>
 
         {selectedDates.length > 0 && (
-  <Tooltip title="Reservar">
-    <Button
-      variant="contained"
-      sx={{
-        borderRadius: '1rem',
-        padding: '1.3rem',
-        height: '4.5rem', // Altura fija
-        width: '180px', // Ancho fijo
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative', // Necesario para posicionar el loader
-      }}
-      onClick={handleConfirmReservation}
-      disabled={loading}
-    >
-      {loading ? (
-        <CircularProgress
-          size={30}
-          sx={{
-            color: 'blue',
-            position: 'absolute', // Evita que cambie el tamaño del botón
-          }}
-        />
-      ) : (
-        <Typography
-          textAlign="center"
-          sx={{ fontWeight: 'bold' }}
-          variant="h6"
+          <Tooltip title="Reservar">
+            <CustomButton
+              variant="contained"
+              sx={{
+                minWidth: '250px', // Asegura que el ancho no cambie
+
+                minHeight: '50px', // Altura fija
+                padding: '10px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px'
+              }}
+              onClick={handleConfirmReservation}
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  Cargando Reserva...
+                  <CircularProgress
+                    size={20}
+                    sx={{ color: 'var(--color-azul)' }}
+                  />
+                </>
+              ) : (
+                'Reservar'
+              )}
+            </CustomButton>
+          </Tooltip>
+        )}
+
+        {/* Snackbar para errores reales (API falló) */}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={5000}
+          onClose={() => setOpenSnackbar(false)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
-          Reservar
-        </Typography>
-      )}
-    </Button>
-  </Tooltip>
-)}
+          <Alert
+            onClose={() => setOpenSnackbar(false)}
+            severity="error"
+            sx={{
+              backgroundColor: '#E57373', // 🔴 Rojo para errores reales
+              color: '#fff',
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            {error}
+          </Alert>
+        </Snackbar>
 
-      {/* Snackbar para errores reales (API falló) */}
-<Snackbar
-  open={openSnackbar}
-  autoHideDuration={5000}
-  onClose={() => setOpenSnackbar(false)}
-  anchorOrigin={{ vertical: "top", horizontal: "center" }}
->
-  <Alert
-    onClose={() => setOpenSnackbar(false)}
-    severity="error"
-    sx={{
-      backgroundColor: "#E57373", // 🔴 Rojo para errores reales
-      color: "#fff",
-      fontWeight: "bold",
-      fontSize: "1rem",
-      borderRadius: "8px",
-      display: "flex",
-      alignItems: "center",
-    }}
-  >
-    {error}
-  </Alert>
-</Snackbar>
-
-{/* Snackbar para mensaje amigable cuando no hay reservas */}
-<Snackbar
-  open={openSnackbarInfo}
-  autoHideDuration={5000}
-  onClose={() => setOpenSnackbarInfo(false)}
-  anchorOrigin={{ vertical: "top", horizontal: "center" }}
->
-  <Alert
-    onClose={() => setOpenSnackbarInfo(false)}
-    severity="info"
-    sx={{
-      backgroundColor: "#4A90E2", // 🔵 Azul para mensajes amigables
-      color: "#fff",
-      fontWeight: "bold",
-      fontSize: "1rem",
-      borderRadius: "8px",
-      display: "flex",
-      alignItems: "center",
-    }}
-  >
-    {infoMessage}
-  </Alert>
-</Snackbar>
+        {/* Snackbar para mensaje amigable cuando no hay reservas */}
+        <Snackbar
+          open={openSnackbarInfo}
+          autoHideDuration={5000}
+          onClose={() => setOpenSnackbarInfo(false)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert
+            onClose={() => setOpenSnackbarInfo(false)}
+            severity="info"
+            sx={{
+              backgroundColor: '#4A90E2', // 🔵 Azul para mensajes amigables
+              color: '#fff',
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            {infoMessage}
+          </Alert>
+        </Snackbar>
 
         {/* Leyenda de colores más organizada */}
         <Box sx={{ mt: 3, textAlign: 'center', width: '100%' }}>
