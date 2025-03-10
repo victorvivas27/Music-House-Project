@@ -3,6 +3,7 @@ import {
   Button,
   CircularProgress,
   FormControl,
+  InputAdornment,
   MenuItem,
   Modal,
   Select,
@@ -12,13 +13,20 @@ import {
 } from '@mui/material'
 import PropTypes from 'prop-types'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import { addPhone } from '../../../api/phones'
 import { countryCodes } from '../../utils/codepaises/CountryCodes'
-const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }) => {
+
+const ModalNewPhone = ({
+  open,
+  handleCloseModalPhone,
+  idUser,
+  refreshPhoneData
+
+}) => {
   const [formData, setFormData] = useState({
-    countryCode: '+54', // 📌 Código por defecto: Argentina
+    countryCode: '', // 📌 Código vacío al inicio
     phoneNumber: ''
   })
 
@@ -38,39 +46,83 @@ const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }
     boxShadow: 24,
     p: isMobile ? 3 : 4
   }
+    // 📌 Restablece el formulario cuando se cierra el modal
+    useEffect(() => {
+      if (!open) {
+        setFormData({ countryCode: '', phoneNumber: '' })
+        setError(null) // También limpia errores al cerrar
+      }
+    }, [open])
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
-
+  // 📌 Manejo del cambio en el código de país
   const handleCountryCodeChange = (event) => {
     setFormData({
-      ...formData,
-      countryCode: event.target.value
+      countryCode: event.target.value,
+      phoneNumber: '' // 🔹 Borra el número al cambiar el código de país
     })
+    setError(null)
   }
 
+  // 📌 Manejo del cambio en el número de teléfono
+  const handlePhoneChange = (event) => {
+    let value = event.target.value.replace(/\D/g, '') // 🔹 Solo permite números
+
+    if (!formData.countryCode) {
+      setError('Debe seleccionar un código de país antes de escribir.')
+      return
+    }
+
+    setError(null)
+    setFormData((prev) => ({
+      ...prev,
+      phoneNumber: value
+    }))
+  }
+
+  // 📌 Validación antes de enviar
+  const validatePhoneNumber = () => {
+    const minLength = 7
+    const maxLength = 15
+
+    if (!formData.phoneNumber || formData.phoneNumber.length < minLength) {
+      setError(`⚠️ Mínimo ${minLength} dígitos`)
+      return false
+    }
+    if (formData.phoneNumber.length > maxLength) {
+      setError(`⚠️ Máximo ${maxLength} dígitos`)
+      return false
+    }
+    return true
+  }
+
+  // 📌 Manejo del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
-    try {
-      const formattedPhoneNumber = `${formData.countryCode}${formData.phoneNumber}`
-      await addPhone({ idUser, phoneNumber: formattedPhoneNumber })
-      await refreshPhoneData()
+    if (!formData.countryCode) {
+      setError('Debe seleccionar un código de país.')
+      setLoading(false)
+      return
+    }
 
-      setFormData({
-        countryCode: '+54',
-        phoneNumber: ''
-      })
+    if (!validatePhoneNumber()) {
+      setLoading(false)
+      return
+    }
+
+    try {
+      const fullPhoneNumber = `${formData.countryCode}${formData.phoneNumber}`
+      await addPhone({ idUser, phoneNumber: fullPhoneNumber })
+      
+
+      
 
       setTimeout(() => {
         setLoading(false)
         handleCloseModalPhone()
+        
         Swal.fire({
           title: 'Teléfono agregado',
           text: 'El teléfono ha sido agregado con éxito.',
@@ -80,7 +132,10 @@ const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }
           allowOutsideClick: false,
           timerProgressBar: true
         })
+        
+        setFormData({ countryCode: '', phoneNumber: '' }) // 🔹 Limpia el formulario
       }, 1500)
+      await refreshPhoneData()
     } catch (error) {
       setError('Hubo un error al agregar el teléfono.')
       setLoading(false)
@@ -99,18 +154,33 @@ const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }
       }}
     >
       <Box sx={style}>
-        <Typography id="modal-title" variant="h6" component="h2" textAlign="center">
+        <Typography
+          id="modal-title"
+          variant="h6"
+          component="h2"
+          textAlign="center"
+        >
           Agregar un Nuevo Teléfono
         </Typography>
         <form onSubmit={handleSubmit}>
           {/* 📌 Select para código de país */}
           <FormControl fullWidth margin="normal">
             <Select
+              displayEmpty
               value={formData.countryCode}
               onChange={handleCountryCodeChange}
-              displayEmpty
-              sx={{ height: '50px' }} // 🔹 Ajuste para móviles
+              sx={{
+                backgroundColor: '#D7D7D7D7',
+                color: 'var(--color-secundario)',
+                borderRadius: '5px',
+                '&:hover': {
+                  backgroundColor: '#D7D7D7D7'
+                }
+              }}
             >
+              <MenuItem value="" disabled>
+                Selecciona un código de país
+              </MenuItem>
               {countryCodes.map((country) => (
                 <MenuItem key={country.code} value={country.code}>
                   {country.country} ({country.code})
@@ -119,19 +189,33 @@ const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }
             </Select>
           </FormControl>
 
-          {/* 📌 Campo para número de teléfono */}
+          {/* 📌 Input para número de teléfono con código visible */}
+
           <TextField
             fullWidth
             label="Número de Teléfono"
-            name="phoneNumber"
             value={formData.phoneNumber}
-            onChange={handleChange}
+            onChange={handlePhoneChange}
             margin="normal"
             required
             multiline
+            disabled={!formData.countryCode} // 🔹 Bloquea el input hasta que se seleccione un código
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  {formData.countryCode || '📞'}
+                </InputAdornment>
+              )
+            }}
           />
 
-          {error && <Typography color="error">{error}</Typography>}
+          {/* 📌 Mensaje de error con espacio fijo debajo del input */}
+          <Typography
+            color="error"
+            sx={{ minHeight: '20px', display: 'block' }}
+          >
+            {error || ' '}
+          </Typography>
 
           <Box mt={2} display="flex" justifyContent="space-between">
             <Button onClick={handleCloseModalPhone} color="secondary">
@@ -150,7 +234,11 @@ const ModalNewPhone = ({ open, handleCloseModalPhone, idUser, refreshPhoneData }
                 justifyContent: 'center'
               }}
             >
-              {loading ? <CircularProgress size={20} color="inherit" /> : 'Agregar'}
+              {loading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                'Agregar'
+              )}
             </Button>
           </Box>
         </form>

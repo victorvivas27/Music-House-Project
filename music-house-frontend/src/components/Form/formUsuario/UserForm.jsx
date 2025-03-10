@@ -735,9 +735,8 @@ export const UserForm = ({
                   >
                     {/* 📌 Select para elegir el código de país */}
                     <FormControl fullWidth margin="normal">
-                      {/* 📌 Select para elegir el código de país */}
                       <Select
-                        displayEmpty // Permite mostrar una opción de placeholder
+                        displayEmpty
                         value={phone.countryCode}
                         onChange={(e) =>
                           handlePhoneChange(
@@ -750,7 +749,6 @@ export const UserForm = ({
                           backgroundColor: '#D7D7D7D7', // Fondo claro
                           color: 'var(--color-secundario)', // Color del texto
                           borderRadius: '5px', // Bordes redondeados
-
                           '&:hover': {
                             backgroundColor: '#D7D7D7D7' // Efecto hover
                           }
@@ -773,14 +771,21 @@ export const UserForm = ({
                     {/* 📌 Input para el número de teléfono */}
                     <InputCustom
                       placeholder="Teléfono"
-                      value={phone.phoneNumber}
+                      value={phone.phoneNumber.replace(phone.countryCode, '')} // Evita la duplicación del código
                       onChange={(e) =>
                         handlePhoneChange(index, 'phoneNumber', e.target.value)
                       }
                       error={Boolean(allErrors[`phone_${index}`])}
-                      helperText={errors[`phone_${index}`] || ' '}
+                      helperText={errors[`phone_${index}`] || ' '} // Espacio reservado para evitar el movimiento de inputs
                       type="text"
                       sx={inputStyles}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            {phone.countryCode ? phone.countryCode : '📞'}
+                          </InputAdornment>
+                        )
+                      }}
                     />
                   </FormControl>
                 ))}

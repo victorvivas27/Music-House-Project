@@ -128,9 +128,9 @@ const Perfil = () => {
           <Box
             sx={{
               borderRadius: '12px',
-              boxShadow: 3,
-              maxWidth: isMobile ? '95%' : 1300, // 📌 Ajuste de ancho en móvil
-              backgroundColor: '#f9f9f9'
+              boxShadow:
+                ' rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;',
+              maxWidth: isMobile ? '95%' : 1300 // 📌 Ajuste de ancho en móvil
             }}
           >
             <Grid container justifyContent="center">
@@ -140,8 +140,7 @@ const Perfil = () => {
                   minHeight: '500px',
                   p: isMobile ? 2 : 4, // 📌 Padding reducido en móviles
                   boxShadow: 4,
-                  borderRadius: 4,
-                  bgcolor: '#ffffff'
+                  borderRadius: 4
                 }}
               >
                 <CardContent>
@@ -155,7 +154,6 @@ const Perfil = () => {
                     <Tooltip title="Editar tus datos">
                       <Avatar
                         sx={{
-                          bgcolor: '#1976D2',
                           width: isMobile ? 70 : 90,
                           height: isMobile ? 70 : 90,
                           fontSize: 40
@@ -186,7 +184,7 @@ const Perfil = () => {
                         mt={0.5}
                         justifyContent={isMobile ? 'center' : 'start'}
                       >
-                        <EmailIcon sx={{ color: '#1976D2', mr: 1 }} />
+                        <EmailIcon sx={{ color: 'var(--color-azul)', mr: 1 }} />
                         <Typography variant="body2" color="text.secondary">
                           {userData?.email || 'Correo no disponible'}
                         </Typography>
@@ -201,15 +199,21 @@ const Perfil = () => {
                     <Box sx={{ width: 900 }}>
                       <Box display="flex" alignItems="center">
                         <Tooltip title="Agregar un nuevo telefono">
-                          <IconButton
-                            onClick={handleOpenModalPhone}
-                            sx={{ color: '#1976D2' }}
-                          >
-                            <AddIcon />
+                          <IconButton onClick={handleOpenModalPhone}>
+                            <AddIcon
+                              sx={{
+                                color: 'var(--color-secundario)',
+                                fontSize: '40px'
+                              }}
+                            />
                           </IconButton>
                         </Tooltip>
                         <PhoneIcon
-                          sx={{ color: '#43A047', mr: 1, fontSize: '50px' }}
+                          sx={{
+                            color: 'var(--color-exito)',
+                            mr: 1,
+                            fontSize: '50px'
+                          }}
                         />
                         <Typography variant="subtitle1">
                           <strong>Telefonos:</strong>
@@ -244,7 +248,7 @@ const Perfil = () => {
                                           href={`tel:${phone.phoneNumber}`}
                                           style={{
                                             textDecoration: 'none',
-                                            color: '#1976D2',
+                                            color: 'var(--color-azul)',
                                             fontWeight: 'bold'
                                           }}
                                         >
@@ -258,9 +262,12 @@ const Perfil = () => {
                                           onClick={() =>
                                             handleOpenModalPhoneUpdate(phone)
                                           }
-                                          sx={{ color: '#1976D2' }}
                                         >
-                                          <EditIcon />
+                                          <EditIcon
+                                            sx={{
+                                              color: 'var(--color-primario)'
+                                            }}
+                                          />
                                         </IconButton>
 
                                         {/* Botón de eliminar con confirmación */}
@@ -300,8 +307,25 @@ const Perfil = () => {
                                           disabled={
                                             userData.phones.length === 1
                                           }
+                                          sx={{
+                                            opacity:
+                                              userData.phones.length === 1
+                                                ? 0.5
+                                                : 1, // 🔹 Reduce opacidad cuando está deshabilitado
+                                            cursor:
+                                              userData.phones.length === 1
+                                                ? 'not-allowed'
+                                                : 'pointer' // 🔹 Cambia el cursor
+                                          }}
                                         >
-                                          <DeleteIcon />
+                                          <DeleteIcon
+                                            sx={{
+                                              color:
+                                                userData.phones.length === 1
+                                                  ? 'gray'
+                                                  : 'var(--color-error)' // 🔹 Cambia color del ícono
+                                            }}
+                                          />
                                         </IconButton>
                                       </Box>
                                     </Box>
@@ -323,15 +347,21 @@ const Perfil = () => {
                   <Box sx={{ width: isMobile ? '100%' : 900 }}>
                     <Box display="flex" alignItems="center">
                       <Tooltip title="Agregar nueva dirección">
-                        <IconButton
-                          onClick={handleOpenModal}
-                          sx={{ color: '#1976D2' }}
-                        >
-                          <AddIcon />
+                        <IconButton onClick={handleOpenModal}>
+                          <AddIcon
+                            sx={{
+                              color: 'var(--color-secundario)',
+                              fontSize: '40px'
+                            }}
+                          />
                         </IconButton>
                       </Tooltip>
                       <HomeIcon
-                        sx={{ color: '#FF9800', mr: 1, fontSize: '50px' }}
+                        sx={{
+                          color: 'var(--color-primario)',
+                          mr: 1,
+                          fontSize: '50px'
+                        }}
                       />
                       <Typography variant="subtitle1">
                         <strong>Direcciones:</strong>
@@ -364,9 +394,10 @@ const Perfil = () => {
                                     onClick={() => {
                                       handleOpenModalDireccionUpdate(address)
                                     }}
-                                    sx={{ color: '#1976D2' }}
                                   >
-                                    <EditIcon />
+                                    <EditIcon
+                                      sx={{ color: 'var(--color-primario)' }}
+                                    />
                                   </IconButton>
                                   {/* Botón de eliminar con confirmación */}
                                   <IconButton
@@ -402,9 +433,26 @@ const Perfil = () => {
                                       }
                                     }}
                                     color="error"
-                                    disabled={userData.addresses.length === 1} // 🔹 Desactiva el botón si solo hay una dirección
+                                    disabled={userData.addresses.length === 1}
+                                    sx={{
+                                      opacity:
+                                        userData.addresses.length === 1
+                                          ? 0.5
+                                          : 1, // 🔹 Reduce opacidad cuando está deshabilitado
+                                      cursor:
+                                        userData.addresses.length === 1
+                                          ? 'not-allowed'
+                                          : 'pointer' // 🔹 Cambia el cursor
+                                    }}
                                   >
-                                    <DeleteIcon />
+                                    <DeleteIcon
+                                      sx={{
+                                        color:
+                                          userData.addresses.length === 1
+                                            ? 'gray'
+                                            : 'var(--color-error)' // 🔹 Cambia color del ícono
+                                      }}
+                                    />
                                   </IconButton>
                                 </Box>
                                 <Typography variant="body2">
