@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
 import {
-  Box,
-  Collapse,
   Table,
   TableBody,
   TableCell,
@@ -9,14 +7,13 @@ import {
   TablePagination,
   TableRow,
   Paper,
-  Checkbox,
-  IconButton,
+  Typography,
   Tooltip,
-  Typography
+  IconButton
 } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
+
 import MainWrapper from '../common/MainWrapper'
+import DeleteIcon from '@mui/icons-material/Delete'
 import {
   EnhancedTableHead,
   getLabelDisplayedRows,
@@ -24,480 +21,177 @@ import {
   handleSort,
   handleSelected,
   getEmptyRows,
-  useVisibleRows
+  useVisibleRows,
+  handleSelectAll
 } from '../Pages/Admin/common/tableHelper'
-import { MessageDialog } from '../common/MessageDialog'
+
 import { Loader } from '../common/loader/Loader'
 import { useAuthContext } from '../utils/context/AuthGlobal'
-import dayjs from 'dayjs'
+
 import { deleteReservation, getReservationById } from '../../api/reservations'
-
-const headCells = [
-  
-  {
-    id: 'imageUrl',
-    numeric: true,
-    disablePadding: false,
-    label: 'Imagen'
-  },
-  {
-    id: 'instrumentName',
-    numeric: true,
-    disablePadding: false,
-    label: 'Instrumento',
-    sx: { display: { xs: 'none', md: 'table-cell' } }
-  },
-
-  {
-    id: 'idInstrument',
-    numeric: true,
-    disablePadding: false,
-    label: 'Instrumento',
-    hidden: true
-  },
-  {
-    id: 'startDate',
-    numeric: false,
-    Date: true,
-    disablePadding: false,
-    label: 'Inicio',
-    sx: { display: { xs: 'none', md: 'table-cell' } }
-  },
-  {
-    id: 'endDate',
-    numeric: false,
-    Date: true,
-    disablePadding: false,
-    label: 'Entrega',
-    sx: { display: { xs: 'none', md: 'table-cell' } }
-  },
-  {
-    id: 'totalPrice',
-    numeric: true,
-    disablePadding: false,
-    label: 'Precio Total',
-    sx: { display: { xs: 'none', md: 'table-cell' } }
-  },
-  {
-    id: 'email',
-    numeric: false,
-    disablePadding: false,
-    label: 'email',
-    sx: { display: { xs: 'none', md: 'table-cell' } }
-  },
-  {
-    id: 'actions',
-    numeric: false,
-    disablePadding: false,
-    label: 'Acciones',
-    sx: { display: { xs: 'none', md: 'table-cell' } }
-  }
-]
-
-const ReservationRow = ({
-  row,
-  isItemSelected,
-  labelId,
-  isRowEven,
-  handleClick,
-  handleConfirmDelete,
-  isOpen = false
-}) => {
-  const [open, setOpen] = useState(isOpen)
-
-  return (
-    <>
-      <TableRow
-        hover
-        role="checkbox"
-        aria-checked={isItemSelected}
-        tabIndex={-1}
-        key={row.idReservation}
-        selected={isItemSelected}
-        sx={{
-          cursor: 'pointer',
-          backgroundColor: isRowEven ? '#fbf194' : 'inherit'
-        }}
-        onClick={(event) => handleClick(event, row.idReservation)}
-      >
-        <TableCell
-          padding="checkbox"
-          sx={{ display: { xs: 'none', md: 'table-cell' } }}
-        >
-          <Checkbox
-            color="primary"
-            checked={isItemSelected}
-            inputProps={{
-              'aria-labelledby': labelId
-            }}
-          />
-        </TableCell>
-        <TableCell sx={{ display: { xs: 'table-cell', md: 'none' } }}>
-          <IconButton
-            aria-label="Expandir detalle"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-          </IconButton>
-        </TableCell>
-       
-        <TableCell align="left">
-          <img src={row.imageUrl} alt="" width="100px" />
-        </TableCell>
-        <TableCell
-          align="left"
-          sx={{ display: { xs: 'none', md: 'table-cell' } }}
-        >
-          {row.instrumentName}
-        </TableCell>
-        <TableCell sx={{ display: 'none' }} align="left">
-          {row.idInstrument}
-        </TableCell>
-        <TableCell
-          align="left"
-          sx={{ display: { xs: 'none', md: 'table-cell' } }}
-        >
-          {dayjs(row.startDate).format('DD-MM-YYYY')}
-        </TableCell>
-        <TableCell
-          align="left"
-          sx={{ display: { xs: 'none', md: 'table-cell' } }}
-        >
-          {dayjs(row.endDate).format('DD-MM-YYYY')}
-        </TableCell>
-        <TableCell
-          align="left"
-          sx={{ display: { xs: 'none', md: 'table-cell' } }}
-        >
-          $ {row.totalPrice}
-        </TableCell>
-        <TableCell
-          align="left"
-          sx={{ display: { xs: 'none', md: 'table-cell' } }}
-        >
-          {row.email}
-        </TableCell>
-        <TableCell
-          align="left"
-          sx={{ display: { xs: 'none', md: 'table-cell' } }}
-        >
-          <Tooltip title="Eliminar">
-            <IconButton onClick={handleConfirmDelete}>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        </TableCell>
-      </TableRow>
-      <TableRow
-        sx={{
-          paddingBottom: 0,
-          paddingTop: 0,
-          display: { xs: 'table-row', md: 'none' }
-        }}
-      >
-        <TableCell
-          sx={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#E4E4E4' }}
-          colSpan={3}
-        >
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                Instrumento:
-              </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                {row.instrumentName}
-              </Typography>
-            </Box>
-            <Box sx={{ margin: 1 }}>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                Inicio:
-              </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                {dayjs(row.startDate).format('DD-MM-YYYY')}
-              </Typography>
-            </Box>
-            <Box sx={{ margin: 1 }}>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                Entrega:
-              </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                {dayjs(row.endDate).format('DD-MM-YYYY')}
-              </Typography>
-            </Box>
-            <Box sx={{ margin: 1 }}>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                Precio total:
-              </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                {row.totalPrice}
-              </Typography>
-            </Box>
-            <Box sx={{ margin: 1 }}>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                Mail:
-              </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                {row.email}
-              </Typography>
-            </Box>
-            <Box sx={{ margin: 1 }}>
-              <IconButton
-                size="large"
-                onClick={handleConfirmDelete}
-                sx={{ width: '100%' }}
-              >
-                <DeleteIcon fontSize="large" color="black" />
-              </IconButton>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </>
-  )
-}
+import PropTypes from 'prop-types'
+import { headCells } from '../utils/types/HeadCells'
+import { ReservationRow } from './Admin/common/ReservationRow '
+import Swal from 'sweetalert2'
 
 const MisReservas = () => {
-  const [reservations, setReservations] = useState()
-  const [rows, setRows] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [order, setOrder] = useState('desc')
-  const [orderBy, setOrderBy] = useState('idReservation')
-  const [selected, setSelected] = useState([])
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(5)
-  const [showMessage, setShowMessage] = useState(false)
-  const [message, setMessage] = useState()
-  const [showCancelButton, setShowCancelButton] = useState(false)
-  const [onButtonPressed, setOnButtonPressed] = useState()
-  const { idUser } = useAuthContext()
+  const [reservations, setReservations] = useState([]);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [order, setOrder] = useState("desc");
+  const [orderBy, setOrderBy] = useState("idReservation");
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { idUser } = useAuthContext();
 
   useEffect(() => {
-    if (!idUser) return
-
-    getReservations()
-  }, [idUser])
+    if (!idUser) return;
+    getReservations();
+  }, [idUser]);
 
   useEffect(() => {
     if (!reservations || reservations.length === 0) {
-      setRows([]); // Asegura que rows se vacíe si no hay reservas
+      setRows([]);
       setLoading(false);
       return;
     }
-  
     setRows(reservations.data);
     setLoading(false);
-  
-    if (window) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   }, [reservations]);
 
   const getReservations = () => {
-    setLoading(true)
+    setLoading(true);
     getReservationById(idUser)
       .then((data) => {
-        setReservations(data)
+        setReservations(data);
       })
       .catch(() => {
-        
-        setReservations([]) // Devolver array vacío si hay error
+        setReservations([]);
       })
       .finally(() => {
-        setLoading(false)
-      })
-  }
+        setLoading(false);
+      });
+  };
 
   const handleRequestSort = (event, property) => {
-    handleSort(event, property, orderBy, order, setOrderBy, setOrder)
-  }
+    handleSort(event, property, orderBy, order, setOrderBy, setOrder);
+  };
 
   const handleClick = (event, id) => {
-    handleSelected(event, id, selected, setSelected)
-  }
+    handleSelected(event, id, selected, setSelected);
+  };
+
+  const handleSelectAllClick = (event) => {
+    handleSelectAll(event, rows, "idReservation", setSelected);
+  };
 
   const handleConfirmDelete = () => {
-    setMessage('¿Desea eliminar esta reserva?')
-    setShowCancelButton(true)
-    setOnButtonPressed(true)
-    setShowMessage(true)
-  }
+    if (selected.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Atención",
+        text: "No has seleccionado ninguna reserva para eliminar.",
+      });
+      return;
+    }
 
-  const handleClose = () => {
-    setShowMessage(false)
-    setSelected([])
-  }
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDelete();
+      }
+    });
+  };
 
   const handleDelete = () => {
-    setShowMessage(false); // Cerrar modal de confirmación
-    const idReservation = selected[0];
-    const reservation = rows.find((row) => row.idReservation === idReservation);
-    if (!reservation) return;
-  
-    deleteReservation(reservation.idInstrument, idUser, idReservation)
+    Promise.all(
+      selected.map((idReservation) => {
+        const reservation = rows.find(
+          (row) => row.idReservation === idReservation
+        );
+        if (!reservation) return Promise.resolve();
+
+        return deleteReservation(
+          reservation.idInstrument,
+          idUser,
+          idReservation
+        );
+      })
+    )
       .then(() => {
-        setMessage('Reserva eliminada exitosamente');
-        setShowCancelButton(false);
-        setOnButtonPressed(false);
-  
-        // Mostrar el mensaje de éxito SIN BOTÓN
-        setShowMessage(true);
-  
-        // Cerrar el modal automáticamente después de 2 segundos
-        setTimeout(() => {
-          setShowMessage(false);
-        }, 2000);
+        Swal.fire({
+          icon: "success",
+          title: "Reservas eliminadas",
+          text: "Las reservas seleccionadas fueron eliminadas con éxito.",
+          timer: 2000,
+          showConfirmButton: false,
+        });
       })
       .catch(() => {
-        setMessage('No fue posible eliminar la reserva.');
-        setShowCancelButton(false);
-        setOnButtonPressed(false);
-  
-        // Mostrar el mensaje de error CON botón para cerrarlo manualmente
-        setShowMessage(true);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No fue posible eliminar algunas reservas.",
+        });
       })
       .finally(() => {
         setSelected([]);
-        getReservations(); // Refrescar lista de reservas
+        getReservations();
       });
   };
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
+    setPage(newPage);
+  };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
-  const emptyRows = getEmptyRows(page, rowsPerPage, rows)
+  const emptyRows = getEmptyRows(page, rowsPerPage, rows);
+  const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage);
 
-  const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
-
-  if (loading) return <Loader title="Cargando reservas" />
+  if (loading) return <Loader title="Cargando reservas" />;
 
   return (
-    <MainWrapper sx={{ width: '100%', minHeight: '90vh' }}>
+    <MainWrapper >
+      {/* ✅ Mostrar botón de eliminar SOLO cuando hay selecciones */}
+      {selected.length > 0 && (
+       <Tooltip title="Eliminar reservas seleccionadas">
+       <IconButton
+         onClick={handleConfirmDelete}
+         sx={{
+           color: selected.length > 0 ? "red" : "transparent",  // Si no hay selección, hace el ícono invisible
+           
+          
+          
+         }}
+       >
+         <DeleteIcon fontSize="large"  />
+       </IconButton>
+     </Tooltip>
+      )}
+
       <Paper
         sx={{
-          width: '100%',
-          mb: 2
+          width: "100%",
+          mb: 2,
+        
         }}
       >
         <TableContainer>
           <Table
-            sx={{ minWidth: { xs: '100%', md: 750 } }}
+            sx={{ minWidth: { xs: "100%", md: 750 } }}
             aria-labelledby="tableTitle"
             size="medium"
           >
@@ -508,32 +202,30 @@ const MisReservas = () => {
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               rowCount={rows?.length}
-              disableSelectAll
+              onSelectAllClick={handleSelectAllClick}
             />
             <TableBody>
               {visibleRows &&
                 visibleRows.map((row, index) => {
-                  const isItemSelected = isSelected(row.idUser, selected)
-                  const labelId = `enhanced-table-checkbox-${index}`
-                  const isRowEven = index % 2 === 0
-
+                  const isItemSelected = isSelected(
+                    row.idReservation,
+                    selected
+                  );
+                  const labelId = `enhanced-table-checkbox-${index}`;
                   return (
                     <ReservationRow
                       key={row.idReservation}
                       row={row}
                       isItemSelected={isItemSelected}
                       labelId={labelId}
-                      isRowEven={isRowEven}
                       handleClick={handleClick}
-                      handleConfirmDelete={handleConfirmDelete}
-                      isOpen={index === 0}
                     />
-                  )
+                  );
                 })}
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: 53 * emptyRows
+                    height: 53 * emptyRows,
                   }}
                 >
                   <TableCell colSpan={9} />
@@ -542,7 +234,7 @@ const MisReservas = () => {
               {page === 0 && rows.length === 0 && (
                 <TableRow
                   style={{
-                    height: 53 * emptyRows
+                    height: 53 * emptyRows,
                   }}
                 >
                   <TableCell colSpan={9}>
@@ -555,6 +247,7 @@ const MisReservas = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -567,19 +260,13 @@ const MisReservas = () => {
           labelRowsPerPage="Filas por página"
         />
       </Paper>
-      <MessageDialog
-        title="Eliminar reserva"
-        message={message}
-        isOpen={showMessage}
-        buttonText={showCancelButton ? "Ok" : null}
-        onClose={handleClose}
-        onButtonPressed={() =>
-          onButtonPressed ? handleDelete() : handleClose()
-        }
-        showCancelButton={showCancelButton}
-      />
     </MainWrapper>
-  )
-}
+  );
+};
 
-export default MisReservas
+// ✅ Definición de PropTypes para MisReservas
+MisReservas.propTypes = {
+  idUser: PropTypes.string,
+};
+
+export default MisReservas;

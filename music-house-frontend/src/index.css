@@ -17,6 +17,7 @@
   --texto-primario: #212121; /* Negro suave */
   --texto-secundario: #616161; /* Gris medio para contraste */
   --texto-inverso: #ffffff; /* Blanco */
+  --background-color:#f2f2f2
 }
 
 * {
