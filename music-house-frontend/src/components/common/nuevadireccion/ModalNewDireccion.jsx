@@ -9,7 +9,7 @@ import {
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { addAddress } from '../../../api/addresses'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 
 const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
@@ -37,6 +37,20 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
     boxShadow: 24,
     p: isMobile ? 3 : 4
   }
+
+    // 📌 Restablece el formulario cuando se cierra el modal
+    useEffect(() => {
+      if (!open) {
+        setFormData({ 
+          street: '',
+          number: '',
+          city: '',
+          state: '',
+          country: ''
+         })
+        setError(null) // También limpia errores al cerrar
+      }
+    }, [open])
 
   const handleChange = (e) => {
     setFormData({
