@@ -3,14 +3,17 @@ import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
 
 export const MainWrapper = styled(Box)(() => ({
-  display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh", // 🔹 Asegura que la tabla esté centrada verticalmente
-        width: "90vw",  // 🔹 Usa todo el ancho disponible
-             
-        marginTop:170,
-        marginBottom:50
- }))
+  display: 'flex',
+ 
+  justifyContent: 'flex-start',  // 🔹 Empieza desde arriba, no en el centro
+  alignItems: 'center',
+  minHeight: '100vh',  // 🔹 Permite que el contenedor crezca si el contenido es mayor a la pantalla
+  
+  width: '99vw',
+  border: '7px solid red',
+  marginTop: 300, // 🔹 Reduce margen superior si es necesario
+  marginBottom: 50,
+ 
+}))
 
 export default MainWrapper

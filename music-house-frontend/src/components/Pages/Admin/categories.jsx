@@ -23,7 +23,7 @@ import { Loader } from '../../common/loader/Loader'
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
- // getLabelDisplayedRows,
+  // getLabelDisplayedRows,
   isSelected,
   handleSort,
   handleSelectAll,
@@ -136,7 +136,6 @@ export const Categories = () => {
     const idCategory = selected[0]
     deleteCategory(idCategory)
       .then(() => {
-       
         getAllGategories()
       })
       .catch(() => {
@@ -149,8 +148,6 @@ export const Categories = () => {
       .finally(() => {
         setSelected([])
         setShowMessage(false)
-        
-        
       })
   }
 
@@ -159,8 +156,7 @@ export const Categories = () => {
     setSelected([])
   }
 
-
-  const handleChangePage = ( newPage) => {
+  const handleChangePage = (newPage) => {
     setPage(newPage)
   }
 
@@ -177,28 +173,23 @@ export const Categories = () => {
   if (loading) return <Loader title="Cargando categorías" />
 
   return (
-    <MainWrapper style={{border:"1px solid red"}}>
-      <Paper
-        sx={{
-         
-         
-          maxWidth:"90vw",
-          overflow: "hidden",
-        }}
-      >
+    <MainWrapper >
+      <Paper 
+      sx={{
+        border: '7px solid rgb(225, 20, 221)',
+        margin:10,
+        display: { xs: 'none', lg: 'initial' },
+        
+        }}>
         <EnhancedTableToolbar
           title="Categorías"
           titleAdd="Agregar categoría"
           handleAdd={handleAdd}
           numSelected={selected.length}
-         
+          
         />
         <TableContainer>
-          <Table
-          
-            aria-labelledby="tableTitle"
-            size="medium"
-          >
+          <Table aria-labelledby="tableTitle" size="medium">
             <EnhancedTableHead
               headCells={headCells}
               numSelected={selected.length}
@@ -226,7 +217,6 @@ export const Categories = () => {
                     className={isRowEven ? 'table-row-even' : 'table-row-odd'}
                     sx={{ cursor: 'pointer' }}
                     onClick={(event) => handleClick(event, row.idCategory)}
-                    
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
@@ -265,8 +255,7 @@ export const Categories = () => {
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: 53 * emptyRows,
-                   
+                    height: 53 * emptyRows
                   }}
                 >
                   <TableCell colSpan={4} />
@@ -297,13 +286,11 @@ export const Categories = () => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Filas por página"
-         // labelDisplayedRows={getLabelDisplayedRows}
-         sx={{
-          "& .MuiTablePagination-displayedRows": { display: "none" } ,
-          "& .MuiTablePagination-actions": { display: "none" } 
-        }}
-        
-         
+          // labelDisplayedRows={getLabelDisplayedRows}
+          sx={{
+            '& .MuiTablePagination-displayedRows': { display: 'none' },
+            '& .MuiTablePagination-actions': { display: 'none' }
+          }}
         />
       </Paper>
       <Box

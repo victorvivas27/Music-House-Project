@@ -173,9 +173,10 @@ export const Instruments = () => {
       <Paper
         sx={{
           display: { xs: 'none', lg: 'initial' },
-          width: '100%',
-          mb: 2,
-          maxWidth: 1200
+          border: '7px solid rgb(225, 20, 221)',
+          margin: 10,
+          
+          minWidth:1700
         }}
       >
         <EnhancedTableToolbar
@@ -186,7 +187,7 @@ export const Instruments = () => {
         />
         <TableContainer>
           <Table
-            sx={{ minWidth: 750 }}
+           
             aria-labelledby="tableTitle"
             size="medium"
           >

@@ -185,12 +185,13 @@ export const Usuarios = () => {
   return (
     <>
       {!loading && (
-        <MainWrapper sx={{ width: '100%' }}>
+        <MainWrapper >
           <Paper
             sx={{
               display: { xs: 'none', lg: 'initial' },
-              width: '100%',
-              mb: 2
+              border: '7px solid rgb(225, 20, 221)',
+              margin:10,
+              minWidth:1700
             }}
           >
             <EnhancedTableToolbar
@@ -201,7 +202,7 @@ export const Usuarios = () => {
             />
             <TableContainer>
               <Table
-                sx={{ minWidth: 750 }}
+               
                 aria-labelledby="tableTitle"
                 size="medium"
               >
@@ -322,7 +323,7 @@ export const Usuarios = () => {
           <Box
             sx={{
               display: { xs: 'flex', lg: 'none' },
-              height: '100vh'
+             
             }}
           >
             <Typography

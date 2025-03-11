@@ -66,6 +66,7 @@ body {
   background-color: var(--background-color);
   min-height: 100vh;
   overflow-x: hidden; /* Previene desbordamientos horizontales */
+  border:10px solid  #28A745;
 }
 
 /* 🎭 Evita zoom involuntario en móviles */

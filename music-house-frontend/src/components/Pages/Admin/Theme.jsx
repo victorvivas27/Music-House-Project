@@ -23,7 +23,7 @@ import { Loader } from '../../common/loader/Loader'
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
- // getLabelDisplayedRows,
+  // getLabelDisplayedRows,
   isSelected,
   handleSort,
   handleSelectAll,
@@ -177,10 +177,9 @@ export const Theme = () => {
       <Paper
         sx={{
           display: { xs: 'none', lg: 'initial' },
-          width: '100%',
-          mb: 2,
-          maxWidth: 1200,
-          minHeight: '50vh'
+
+          border: '7px solid rgb(225, 20, 221)',
+          margin: 10
         }}
       >
         <EnhancedTableToolbar
@@ -292,11 +291,11 @@ export const Theme = () => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Filas por página"
-         // labelDisplayedRows={getLabelDisplayedRows}
-         sx={{
-          "& .MuiTablePagination-displayedRows": { display: "none" } ,
-          "& .MuiTablePagination-actions": { display: "none" } 
-        }}
+          // labelDisplayedRows={getLabelDisplayedRows}
+          sx={{
+            '& .MuiTablePagination-displayedRows': { display: 'none' },
+            '& .MuiTablePagination-actions': { display: 'none' }
+          }}
         />
       </Paper>
       <Box
