@@ -6,235 +6,148 @@ import {
   IconButton,
   TableCell,
   TableRow,
-  
+  Tooltip,
   Typography
 } from '@mui/material'
 import dayjs from 'dayjs'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
-
+import DeleteIcon from '@mui/icons-material/Delete'
 
 export const ReservationRow = ({
   row,
   isItemSelected,
-
   handleClick,
-  
+  handleConfirmDelete,
   isOpen = false
 }) => {
   const [open, setOpen] = useState(isOpen)
 
   return (
     <>
-     <TableRow
-        hover
+      <TableRow
         role="checkbox"
         aria-checked={isItemSelected}
-        tabIndex={-1}
         key={row.idReservation}
         selected={isItemSelected}
-      
         onClick={(event) => handleClick(event, row.idReservation)}
+        sx={{
+          boxShadow:
+            ' rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px',
+
+          '&.Mui-selected': { backgroundColor: 'inherit' },
+          '&.Mui-selected:hover': { backgroundColor: 'inherit' }
+        }}
       >
         {/* ✅ Checkbox de selección */}
         <TableCell padding="checkbox">
           <Checkbox
             color="primary"
             checked={isItemSelected}
-            onClick={(event) => event} // 🔹 Evita seleccionar la fila al hacer clic en el checkbox
+            onChange={(event) => {
+              event.stopPropagation() // 🔹 Evita que seleccione la fila al hacer clic en el checkbox
+              handleClick(event, row.idReservation)
+            }}
           />
         </TableCell>
 
         {/* ✅ Botón de expansión - Se evita que seleccione la fila */}
-        <TableCell sx={{ display: { xs: "table-cell", md: "none" } }}>
+        <TableCell sx={{ display: { xs: 'table-cell', md: 'none' } }}>
           <IconButton
             aria-label="Expandir detalle"
             size="small"
             onClick={(event) => {
-              event.stopPropagation(); // 🔹 Evita que seleccione la fila
-              setOpen(!open);
+              event.stopPropagation() // 🔹 Evita que seleccione la fila
+              setOpen(!open)
             }}
           >
             {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>
 
+        {/* ✅ Imagen */}
         <TableCell>
-          <img src={row.imageUrl} alt="" width="100px" />
+          <img
+            src={row.imageUrl}
+            alt="Instrumento"
+            width="100px"
+            style={{
+              mixBlendMode: 'multiply', // Mezcla el fondo con el color de la tabla
+              borderRadius: '8px',
+              objectFit: 'contain',
+              display: 'block',
+              margin: 'auto'
+            }}
+          />
         </TableCell>
+
+        {/* ✅ Instrumento (Solo en Desktop) */}
         <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
           {row.instrumentName}
         </TableCell>
+
         <TableCell sx={{ display: 'none' }}>{row.idInstrument}</TableCell>
+
+        {/* ✅ Fechas (Solo en Desktop) */}
         <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
           {dayjs(row.startDate).format('DD-MM-YYYY')}
         </TableCell>
         <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
           {dayjs(row.endDate).format('DD-MM-YYYY')}
         </TableCell>
+
+        {/* ✅ Precio Total */}
         <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
           $ {row.totalPrice}
         </TableCell>
+
+        {/* ✅ Email */}
         <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
           {row.email}
         </TableCell>
+
+        {/* ✅ Icono de eliminar SOLO en la fila seleccionada */}
+        {isItemSelected && (
+          <TableCell align="center">
+            <Tooltip title="Eliminar reserva">
+              <IconButton
+                onClick={(event) => {
+                  event.stopPropagation()
+                  handleConfirmDelete(row.idReservation)
+                }}
+                sx={{ color: 'red' }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </TableCell>
+        )}
       </TableRow>
-      <TableRow
-        sx={{
-          display: { xs: 'table-row', md: 'none' }
-        }}
-      >
-        <TableCell
-          sx={{ padding: 0, width: '100%' }}
-          colSpan={3}
-        >
+
+      {/* ✅ Fila colapsable (Solo en Móvil) */}
+      <TableRow sx={{ display: { xs: 'table-row', md: 'none' } }}>
+        <TableCell sx={{ padding: 0, width: '100%' }} colSpan={3}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '30%'
-                }}
-              >
-                Instrumento:
+            <Box sx={{ padding: 2 }}>
+              <Typography variant="h6">
+                <strong>Detalles</strong>
               </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '0.9rem',
-                  width: '70%',
-                 
-                }}
-              >
-                {row.instrumentName}
+              <Typography variant="body2">
+                <strong>Instrumento:</strong> {row.instrumentName}
               </Typography>
-            </Box>
-            <Box sx={{ margin: 1 }}>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%'
-                }}
-              >
-                Inicio:
-              </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
+              <Typography variant="body2">
+                <strong>Inicio:</strong>{' '}
                 {dayjs(row.startDate).format('DD-MM-YYYY')}
               </Typography>
-            </Box>
-            <Box sx={{ margin: 1 }}>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                Entrega:
-              </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
+              <Typography variant="body2">
+                <strong>Entrega:</strong>{' '}
                 {dayjs(row.endDate).format('DD-MM-YYYY')}
               </Typography>
-            </Box>
-            <Box sx={{ margin: 1 }}>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                Precio total:
+              <Typography variant="body2">
+                <strong>Precio Total:</strong> ${row.totalPrice}
               </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                {row.totalPrice}
-              </Typography>
-            </Box>
-            <Box sx={{ margin: 1 }}>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                Mail:
-              </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  display: 'inline-block',
-                  textAlign: 'left',
-                  fontWeight: '300',
-                  fontSize: '1rem',
-                  width: '35%',
-                  padding: '.2rem 1rem .2rem 0'
-                }}
-              >
-                {row.email}
+              <Typography variant="body2">
+                <strong>Email:</strong> {row.email}
               </Typography>
             </Box>
           </Collapse>
@@ -243,6 +156,7 @@ export const ReservationRow = ({
     </>
   )
 }
+
 // ✅ Definición de PropTypes para ReservationRow
 ReservationRow.propTypes = {
   row: PropTypes.shape({
@@ -256,8 +170,6 @@ ReservationRow.propTypes = {
     idInstrument: PropTypes.string.isRequired
   }).isRequired,
   isItemSelected: PropTypes.bool.isRequired,
-  labelId: PropTypes.string.isRequired,
-  isRowEven: PropTypes.bool.isRequired,
   handleClick: PropTypes.func.isRequired,
   handleConfirmDelete: PropTypes.func.isRequired,
   isOpen: PropTypes.bool
