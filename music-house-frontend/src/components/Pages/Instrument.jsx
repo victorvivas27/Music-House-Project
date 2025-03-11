@@ -351,7 +351,7 @@ export const Instrument = () => {
           onButtonPressed={() => setShowMessage(false)}
         />
       </MainWrapper>
-      <ScreenModal isOpen={showGallery} onClose={onClose} fullScreen>
+      <ScreenModal isOpen={showGallery} onClose={onClose} >
         <InstrumentGallery itemData={instrumentSelected?.imageUrls} />
       </ScreenModal>
     </main>

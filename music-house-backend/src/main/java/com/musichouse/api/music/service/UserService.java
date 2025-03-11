@@ -33,6 +33,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,7 +87,7 @@ public class UserService implements UserInterface {
         user.getPhones().forEach(phone -> phone.setUser(user));
 
         // 4️⃣ **Subir la imagen a AWS S3 solo después de verificar el usuario**
-        String fileUrl = awss3Service.uploadFileToS3(file);
+        String fileUrl = awss3Service.uploadFileToS3(file,userDtoEntrance);
         user.setPicture(fileUrl);
 
         // 5️⃣ **Guardar usuario en la base de datos**
@@ -207,37 +212,38 @@ public class UserService implements UserInterface {
 
     @Override
     public UserDtoExit updateUser(UserDtoModify userDtoModify, MultipartFile file) throws ResourceNotFoundException {
+        // 🟢 1️⃣ Buscar el usuario a actualizar
         User userToUpdate = userRepository.findById(userDtoModify.getIdUser())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found with id: " + userDtoModify.getIdUser()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userDtoModify.getIdUser()));
 
-        // 📌 1️⃣ Verificar si el email ya existe antes de hacer cualquier cambio
+        // 🟢 2️⃣ Verificar si el email ya está en uso
         if (!userToUpdate.getEmail().equals(userDtoModify.getEmail()) &&
                 userRepository.existsByEmail(userDtoModify.getEmail())) {
             throw new DataIntegrityViolationException("El correo electrónico ingresado ya está en uso.");
         }
 
-        // 📌 2️⃣ Actualizar los datos del usuario
+        // 🟢 3️⃣ Actualizar datos del usuario
         userToUpdate.setName(userDtoModify.getName());
         userToUpdate.setLastName(userDtoModify.getLastName());
         userToUpdate.setEmail(userDtoModify.getEmail());
 
-        // 📌 3️⃣ Manejo de la imagen: Eliminar solo si la validación pasó
+        // 🟢 4️⃣ Manejo de la imagen en S3
         if (file != null && !file.isEmpty()) {
-            if (userToUpdate.getPicture() != null) {
-                String oldPictureKey =
-                        userToUpdate
-                                .getPicture()
-                                .substring(userToUpdate
-                                        .getPicture().lastIndexOf("/") + 1);
-                awss3Service.deleteFileFromS3(oldPictureKey);
+            // 📌 Obtener la URL de la imagen actual
+            String currentImageUrl = userToUpdate.getPicture();
+
+            // 📌 Eliminar imagen anterior solo si existe
+            if (currentImageUrl != null && !currentImageUrl.isEmpty()) {
+                String key = extractKeyFromS3Url(currentImageUrl);
+                awss3Service.deleteFileFromS3(key);
             }
 
-            // 📌 4️⃣ Subir la nueva imagen
-            String fileUrl = awss3Service.uploadFileToS3(file);
-            userToUpdate.setPicture(fileUrl);
+            // 📌 5️⃣ Subir la nueva imagen con la carpeta del usuario
+            String newFileUrl = awss3Service.uploadUserModifyFileToS3(file, userDtoModify);
+            userToUpdate.setPicture(newFileUrl);
         }
 
+        // 🟢 6️⃣ Guardar cambios en la base de datos
         userRepository.save(userToUpdate);
 
         return modelMapper.map(userToUpdate, UserDtoExit.class);
@@ -247,12 +253,29 @@ public class UserService implements UserInterface {
     @Override
     public void deleteUser(UUID idUser) throws ResourceNotFoundException {
         Optional<User> usuarioOptional = userRepository.findById(idUser);
+
         if (usuarioOptional.isPresent()) {
             User usuario = usuarioOptional.get();
+
+           // 🟢 1️⃣ Obtener la URL de la imagen guardada en S3
+            String imageUrl = usuario.getPicture();
+            LOGGER.info("ESTA ES LA IMAGEN"+imageUrl);
+
+            // 🟢 2️⃣ Extraer la clave del archivo S3 desde la URL
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                String key = extractKeyFromS3Url(imageUrl);
+                // 🟢 3️⃣ Eliminar la imagen de S3
+                awss3Service.deleteFileFromS3(key);
+            }
+
+            // 🟢 4️⃣ Eliminar favoritos y relaciones antes de borrar el usuario
             favoriteRepository.deleteByUserId(idUser);
             usuario.getRoles().clear();
             userRepository.save(usuario);
+
+            // 🟢 5️⃣ Eliminar al usuario de la base de datos
             userRepository.deleteById(idUser);
+
         } else {
             throw new ResourceNotFoundException("User not found with id: " + idUser);
         }
@@ -262,6 +285,28 @@ public class UserService implements UserInterface {
     public void sendMessageUser(String email, String name, String lastName) throws MessagingException {
         mailManager.sendMessage(email, name, lastName);
 
+    }
+
+    private String extractKeyFromS3Url(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return null;
+        }
+
+        try {
+            // 🟢 1️⃣ Reemplazar espacios en la URL con "%20" para asegurar compatibilidad
+            String encodedUrl = imageUrl.replace(" ", "%20");
+
+            // 🟢 2️⃣ Convertir la URL en un objeto URI
+            URI uri = new URI(encodedUrl);
+
+            // 🟢 3️⃣ Extraer el path (clave completa en S3) y decodificar caracteres especiales
+            String key = URLDecoder.decode(uri.getPath().substring(1), StandardCharsets.UTF_8.name());
+
+            //LOGGER.info("ESTA ES LA KEY CORRECTA: " + key);
+            return key;
+        } catch (URISyntaxException | UnsupportedEncodingException e) {
+            throw new RuntimeException("Error al procesar la URL de la imagen", e);
+        }
     }
 
 

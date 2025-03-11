@@ -283,6 +283,7 @@ export const UserForm = ({
  los cambios al enviar el formulario */
   const handleSubmit = async (event) => {
     event.preventDefault()
+    console.log("Errores antes de enviar:", errors);
     let formIsValid = true
     let newErrors = { ...initialErrorState }
     // 📌 Validar campos obligatorios
@@ -307,24 +308,28 @@ export const UserForm = ({
       formIsValid = false
     }
 
+  // 📌 🔴 Validar CONTRASEÑA solo si NO es ADMIN y está creando un usuario nuevo
+  if (!isUserAdmin && (!formData.idUser || formData.idUser === '')) {
     if (!formData.password) {
-      newErrors.password = '❌La contraseña es obligatoria'
-      formIsValid = false
+      newErrors.password = '❌La contraseña es obligatoria';
+      formIsValid = false;
     }
 
     if (!formData.repeatPassword) {
-      newErrors.repeatPassword = '❌Debes repetir la contraseña'
-      formIsValid = false
+      newErrors.repeatPassword = '❌Debes repetir la contraseña';
+      formIsValid = false;
     }
+
     if (formData.password !== formData.repeatPassword) {
-      newErrors.repeatPassword = '❌ Las contraseñas no coinciden'
-      formIsValid = false
+      newErrors.repeatPassword = '❌Las contraseñas no coinciden';
+      formIsValid = false;
     }
 
     if (!formData.telegramChatId) {
-      newErrors.telegramChatId = '❌El código de Telegram es obligatorio'
-      formIsValid = false
+      newErrors.telegramChatId = '❌El código de Telegram es obligatorio';
+      formIsValid = false;
     }
+  }
 
     // 📌 Validar dirección
     formData.addresses.forEach((address, index) => {
@@ -346,10 +351,11 @@ export const UserForm = ({
         newErrors[`phone_${index}`] = '❌El teléfono es obligatorio'
     })
 
-    if (!formData.idUser && !accept) {
-      newErrors.general = '❌Debes aceptar los términos y condiciones'
-      formIsValid = false
-    }
+    // 📌 🔴 Validar aceptación de términos solo si es un usuario normal y está registrándose
+  if (!isUserAdmin && !formData.idUser && !accept) {
+    newErrors.general = '❌Debes aceptar los términos y condiciones';
+    formIsValid = false;
+  }
 
     if (!formIsValid) {
       setErrors(newErrors)
@@ -886,7 +892,7 @@ export const UserForm = ({
                   </Grid>
                 )}
 
-                {!formData.idUser && (
+                {!isUserAdmin && (!formData.idUser || formData.idUser === '') && (
                   <>
                     {/* Campo de contraseña */}
                     <FormControl
@@ -1087,20 +1093,20 @@ export const UserForm = ({
             <CustomButton
               variant="contained"
               type="submit"
-              disabled={loading}
+           
               sx={{
                 minWidth: '150px',
                 minHeight: '50px',
-              gap: '10px'
+                gap: '10px'
               }}
             >
               {loading ? (
                 <>
-                Cargando...
-                <CircularProgress
-                  size={30}
-                  sx={{ color: 'var(--color-azul)' }}
-                />
+                  Cargando...
+                  <CircularProgress
+                    size={30}
+                    sx={{ color: 'var(--color-azul)' }}
+                  />
                 </>
               ) : (
                 buttonText

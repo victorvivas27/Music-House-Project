@@ -30,8 +30,8 @@ export const CustomButton = styled(Button)(({ theme }) => ({
   transition: '0.3s', // Agrega una transición suave
 
   '&:hover': {
-    backgroundColor: 'var(--color-primario-hover)', // Define un color de hover
-    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)' // Agrega un efecto de sombra al pasar el mouse
+    backgroundColor: 'var(--color-primario)', // Define un color de hover
+   
   },
   '&:active': {
     backgroundColor: 'var(--color-primario-active)' // Define un color cuando se presiona

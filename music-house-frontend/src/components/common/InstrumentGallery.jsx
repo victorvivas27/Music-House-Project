@@ -15,14 +15,16 @@ export const InstrumentGallery = ({ itemData }) => {
   return (
     <Box
       sx={{
-        marginTop: 50,
+        
         width: '100vw', // 100% del ancho de la ventana
         height: '100vh', // 100% del alto de la ventana
         display: 'flex', // Flexbox para manejar contenido
         flexDirection: 'column', // Organizar en columna
         justifyContent: 'center', // Centrar verticalmente
         alignItems: 'center', // Centrar horizontalmente
-        backgroundColor: '#F8F9FA' // Color de fondo opcional
+       marginTop:50,
+       marginBottom:40
+        
       }}
     >
       {/* ✅ Encabezado con imagen de fondo */}
@@ -38,7 +40,7 @@ export const InstrumentGallery = ({ itemData }) => {
               position: 'absolute',
               bottom: 20,
               left: 20,
-              textShadow: '2px 2px 8px rgba(0, 0, 0, 0.6)'
+             
             }}
           >
             🎵 Galería de Instrumentos 🎵
@@ -69,8 +71,6 @@ export const InstrumentGallery = ({ itemData }) => {
               sx={{
                 overflow: 'hidden',
                 borderRadius: '14px',
-
-                boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)',
                 transition:
                   'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
                 '&:hover': {
