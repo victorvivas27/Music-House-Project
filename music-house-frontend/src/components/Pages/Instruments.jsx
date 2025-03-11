@@ -23,7 +23,7 @@ import { Loader } from '../common/loader/Loader'
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
-  getLabelDisplayedRows,
+  //getLabelDisplayedRows,
   isSelected,
   handleSort,
   handleSelectAll,
@@ -287,7 +287,7 @@ export const Instruments = () => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Filas por página"
-          labelDisplayedRows={getLabelDisplayedRows}
+          
         />
       </Paper>
       <Box

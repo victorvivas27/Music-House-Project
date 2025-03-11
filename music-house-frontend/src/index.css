@@ -1,62 +1,172 @@
+/* 📌 Reseteo avanzado para mayor compatibilidad entre navegadores */
 :root {
-  /* 🗓️ Colores del calendario */
+  /* 🖌️ 🎨 Colores */
   --calendario-fondo-no-disponible: #EE4116;
-  --calendario-color-no-disponible: #B0B0B0; /* Ajustado para mejor contraste */
+  --calendario-color-no-disponible: #B0B0B0;
 
-  /* 🎯 Colores principales */
-  --color-primario: #FBC02D;  /* Amarillo dorado, más equilibrado */
-  --color-secundario: #5C5C5C; /* Gris oscuro, mayor contraste */
+  --color-primario: #FBC02D;
+  --color-secundario: #5C5C5C;
 
-  /* ✅ Estados */
-  --color-exito: #28A745; /* Verde para éxito */
-  --color-advertencia: #FFC107; /* Amarillo para alertas */
-  --color-error: #DC3545; /* Rojo para errores */
-  --color-azul: #1976D2;  /* Azul corporativo */
+  --color-exito: #28A745;
+  --color-advertencia: #FFC107;
+  --color-error: #DC3545;
+  --color-azul: #1976D2;
 
-  /* 🎭 Tonos de texto */
-  --texto-primario: #212121; /* Negro suave */
-  --texto-secundario: #616161; /* Gris medio para contraste */
-  --texto-inverso: #ffffff; /* Blanco */
-  --background-color:#f2f2f2
+  --texto-primario: #212121;
+  --texto-secundario: #616161;
+  --texto-inverso: #ffffff;
+  --background-color: #f2f2f2;
+
+  /* 🎨 Modo oscuro */
+  --background-dark: #ffffff;
+  --texto-primario-dark: #E0E0E0;
+  --texto-secundario-dark: #BDBDBD;
+  --color-primario-dark: #FFD700;
 }
 
-* {
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: var(--background-dark);
+    --texto-primario: var(--texto-primario-dark);
+    --texto-secundario: var(--texto-secundario-dark);
+    --color-primario: var(--color-primario-dark);
+  }
+} */
+
+/* ✅ Reseteo y normalización de estilos */
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
-  box-sizing: border-box !important;
+  box-sizing: border-box;
+}
+
+/* Evita errores en elementos multimedia */
+img,
+video,
+svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 🔠 Tipografía flexible */
+html {
+  font-size: 16px; /* Base */
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-size-adjust: 100%;
 }
 
 body {
-  overflow-y: scroll;
-  background-color: #f2f2f2 !important;
-}
-/* Hide scrollbar for Chrome, Safari and Opera */
-body::-webkit-scrollbar {
-  display: none;
-  scrollbar-width: 0;
+  font-family: "Inter", sans-serif;
+  color: var(--texto-primario);
+  background-color: var(--background-color);
+  min-height: 100vh;
+  overflow-x: hidden; /* Previene desbordamientos horizontales */
 }
 
-main {
-  min-height: 89vh;
+/* 🎭 Evita zoom involuntario en móviles */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
 }
-/* Hide scrollbar for IE, Edge and Firefox */
-body {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: 0; /* Firefox */
+
+/* 🖼️ Manejo de imágenes responsivas */
+img {
+  max-width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
 }
-/* Animación de "latido" */
+
+/* 🎯 Evita estilos heredados no deseados en formularios */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  border: none;
+  outline: none;
+}
+
+/* 🏗️ Mejora la accesibilidad en botones y enlaces */
+button,
+a {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 🚀 Optimización de animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 💓 Animación de "latido" */
 @keyframes pulse {
   0% {
-    transform: scale(1); /* Tamaño original */
+    transform: scale(1);
   }
   50% {
-    transform: scale(1.2); /* Aumenta el tamaño */
+    transform: scale(1.1);
   }
   100% {
-    transform: scale(1); /* Vuelve al tamaño original */
+    transform: scale(1);
   }
 }
 
 .pulse {
-  animation: pulse 2s infinite; /* Aplica la animación */
+  animation: pulse 2s infinite;
+}
+
+/* ✨ Mejora de rendimiento */
+[hidden] {
+  display: none !important;
+}
+
+/* 🧹 Elimina bordes predeterminados en todos los elementos de formulario */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border-radius: 4px;
+}
+
+/* 📌 Personalización de la barra de desplazamiento */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-secundario);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primario);
 }

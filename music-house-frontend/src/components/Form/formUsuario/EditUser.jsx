@@ -155,10 +155,10 @@ const EditUser = ({ onSwitch }) => {
       console.log('No hay nueva imagen, manteniendo la actual.')
     }
 
-    // 📌 6️⃣ Confirmar que `FormData` está bien antes de enviarlo
+   /*  // 📌 6️⃣ Confirmar que `FormData` está bien antes de enviarlo
     for (let pair of formDataToSend.entries()) {
       console.log(pair[0] + ':', pair[1])
-    }
+    } */
 
     // 📌 7️⃣ Enviar solicitud
     UsersApi.updateUser(formDataToSend)

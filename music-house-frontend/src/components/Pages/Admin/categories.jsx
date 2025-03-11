@@ -23,7 +23,7 @@ import { Loader } from '../../common/loader/Loader'
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
-  getLabelDisplayedRows,
+ // getLabelDisplayedRows,
   isSelected,
   handleSort,
   handleSelectAll,
@@ -177,14 +177,13 @@ export const Categories = () => {
   if (loading) return <Loader title="Cargando categorías" />
 
   return (
-    <MainWrapper>
+    <MainWrapper style={{border:"1px solid red"}}>
       <Paper
         sx={{
-          display: { xs: 'none', lg: 'initial' },
-          width: '100%',
-          mb: 2,
-          maxWidth: 1200,
-          minHeight: '50vh'
+         
+         
+          maxWidth:"90vw",
+          overflow: "hidden",
         }}
       >
         <EnhancedTableToolbar
@@ -192,10 +191,11 @@ export const Categories = () => {
           titleAdd="Agregar categoría"
           handleAdd={handleAdd}
           numSelected={selected.length}
+         
         />
         <TableContainer>
           <Table
-            sx={{ minWidth: 750 }}
+          
             aria-labelledby="tableTitle"
             size="medium"
           >
@@ -226,6 +226,7 @@ export const Categories = () => {
                     className={isRowEven ? 'table-row-even' : 'table-row-odd'}
                     sx={{ cursor: 'pointer' }}
                     onClick={(event) => handleClick(event, row.idCategory)}
+                    
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
@@ -264,7 +265,8 @@ export const Categories = () => {
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: 53 * emptyRows
+                    height: 53 * emptyRows,
+                   
                   }}
                 >
                   <TableCell colSpan={4} />
@@ -295,7 +297,13 @@ export const Categories = () => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Filas por página"
-          labelDisplayedRows={getLabelDisplayedRows}
+         // labelDisplayedRows={getLabelDisplayedRows}
+         sx={{
+          "& .MuiTablePagination-displayedRows": { display: "none" } ,
+          "& .MuiTablePagination-actions": { display: "none" } 
+        }}
+        
+         
         />
       </Paper>
       <Box

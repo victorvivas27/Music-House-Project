@@ -10,6 +10,7 @@ import {
 
 import '../styles/crearInstrumento.styles.css'
 import PropTypes from 'prop-types'
+import ArrowBack from '../utils/ArrowBack'
 
 export const ThemeForm = ({ initialFormData, onSubmit }) => {
   const [formData, setFormData] = useState({ ...initialFormData })
@@ -107,12 +108,13 @@ export const ThemeForm = ({ initialFormData, onSubmit }) => {
           sx={{
             width: '100%',
             display: 'flex',
-            justifyContent: 'flex-end',
+            justifyContent: 'space-evenly',
             alignItems: 'center',
-            paddingRight: '1rem',
-            paddingTop: '1rem'
+            //border: '1px solid red'
           }}
         >
+
+          <ArrowBack  />
           <Button variant="contained" color="primary" type="submit">
             Enviar
           </Button>

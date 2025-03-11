@@ -163,11 +163,11 @@ export const EnhancedTableToolbar = (props) => {
   )
 }
 
-export const getLabelDisplayedRows = ({ from, to, count }) => {
+/* export const getLabelDisplayedRows = ({ from, to, count }) => {
   {
-    return `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`
+    return `${from}–${to} deee ${count !== -1 ? count : `más de ${to}`}`
   }
-}
+} */
 
 export const isSelected = (id, selected) => selected.indexOf(id) !== -1
 

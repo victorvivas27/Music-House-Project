@@ -1,13 +1,16 @@
 import { styled } from '@mui/material/styles'
-import Container from '@mui/material/Container'
 
-export const MainWrapper = styled(Container)(() => ({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  marginTop:'400px' ,
-  marginBottom: '100px',
-  alignItems: 'center',
+import { Box } from '@mui/material'
+
+export const MainWrapper = styled(Box)(() => ({
+  display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh", // 🔹 Asegura que la tabla esté centrada verticalmente
+        width: "90vw",  // 🔹 Usa todo el ancho disponible
+             
+        marginTop:170,
+        marginBottom:50
  }))
 
 export default MainWrapper

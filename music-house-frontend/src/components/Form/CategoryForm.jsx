@@ -10,6 +10,7 @@ import {
 
 import '../styles/crearInstrumento.styles.css'
 import PropTypes from 'prop-types'
+import ArrowBack from '../utils/ArrowBack'
 
 export const CategoryForm = ({ initialFormData, onSubmit }) => {
   const [formData, setFormData] = useState({ ...initialFormData })
@@ -108,12 +109,13 @@ export const CategoryForm = ({ initialFormData, onSubmit }) => {
           sx={{
             width: '100%',
             display: 'flex',
-            justifyContent: 'flex-end',
+            justifyContent: 'space-evenly',
             alignItems: 'center',
-            paddingRight: '1rem',
-            paddingTop: '1rem'
+            //border: '1px solid red'
           }}
         >
+
+          <ArrowBack sx={{ border: '1px solid red' }} />
           <Button variant="contained" color="primary" type="submit">
             Enviar
           </Button>
@@ -127,7 +129,7 @@ CategoryForm.propTypes = {
   initialFormData: PropTypes.shape({
     idCategory: PropTypes.string,
     categoryName: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired
   }).isRequired,
-  onSubmit: PropTypes.func.isRequired,
-};
+  onSubmit: PropTypes.func.isRequired
+}

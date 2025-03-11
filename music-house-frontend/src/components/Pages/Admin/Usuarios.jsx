@@ -21,7 +21,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
-  getLabelDisplayedRows,
+ // getLabelDisplayedRows,
   isSelected,
   handleSort,
   handleSelectAll,
@@ -312,7 +312,11 @@ export const Usuarios = () => {
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
               labelRowsPerPage="Filas por página"
-              labelDisplayedRows={getLabelDisplayedRows}
+              //labelDisplayedRows={getLabelDisplayedRows}
+              sx={{
+                "& .MuiTablePagination-displayedRows": { display: "none" } ,
+                "& .MuiTablePagination-actions": { display: "none" } 
+              }}
             />
           </Paper>
           <Box

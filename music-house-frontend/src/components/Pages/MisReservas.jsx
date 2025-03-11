@@ -14,7 +14,7 @@ import MainWrapper from '../common/MainWrapper'
 
 import {
   EnhancedTableHead,
-  getLabelDisplayedRows,
+ // getLabelDisplayedRows,
   isSelected,
   handleSort,
   handleSelected,
@@ -232,7 +232,7 @@ const MisReservas = () => {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          labelDisplayedRows={getLabelDisplayedRows}
+         //labelDisplayedRows={getLabelDisplayedRows}
           labelRowsPerPage="Filas por página"
         />
       </Paper>

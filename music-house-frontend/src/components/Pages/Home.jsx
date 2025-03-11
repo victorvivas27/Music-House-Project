@@ -9,7 +9,7 @@ import ProductsWrapper from '../common/ProductsWrapper'
 import ProductCard from '../common/ProductCard'
 import { Loader } from '../common/loader/Loader'
 
-import '../styles/home.styles.css'
+
 
 export const Home = () => {
   const { state, dispatch } = useAppStates()
