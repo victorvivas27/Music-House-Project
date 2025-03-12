@@ -32,6 +32,7 @@ import {
   useVisibleRows
 } from '../Admin/common/tableHelper'
 import { useAppStates } from '../../utils/global.context'
+import ArrowBack from '../../utils/ArrowBack'
 
 const headCells = [
   {
@@ -176,11 +177,12 @@ export const Categories = () => {
     <MainWrapper >
       <Paper 
       sx={{
-        border: '7px solid rgb(225, 20, 221)',
+        
         margin:10,
         display: { xs: 'none', lg: 'initial' },
         
         }}>
+          <ArrowBack/>
         <EnhancedTableToolbar
           title="Categorías"
           titleAdd="Agregar categoría"

@@ -11,11 +11,13 @@
   --color-advertencia: #FFC107;
   --color-error: #DC3545;
   --color-azul: #1976D2;
+  --color-suave:#444;
+  --color-oscuro-suave:#333;
 
   --texto-primario: #212121;
   --texto-secundario: #616161;
   --texto-inverso: #ffffff;
-  --background-color: #f2f2f2;
+  --background-color: #f9f9f9
 
   /* 🎨 Modo oscuro */
   --background-dark: #ffffff;
@@ -66,7 +68,7 @@ body {
   background-color: var(--background-color);
   min-height: 100vh;
   overflow-x: hidden; /* Previene desbordamientos horizontales */
-  border:10px solid  #28A745;
+ 
 }
 
 /* 🎭 Evita zoom involuntario en móviles */
@@ -170,4 +172,49 @@ textarea {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-primario);
+}
+
+/* 📌 Animación de aparición suave */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 📌 Animación de desaparición suave con más niveles */
+@keyframes desaparecerSuave {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  30% {
+    opacity: 0.9;
+    transform: translateY(4px) scale(0.98);
+  }
+  60% {
+    opacity: 0.7;
+    transform: translateY(6px) scale(0.96);
+  }
+  80% {
+    opacity: 0.3;
+    transform: translateY(8px) scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.93);
+  }
+}
+
+/* 📌 Clases para aplicar animaciones */
+.fade-in-up {
+  animation: aparecer 0.8s ease-out forwards;
+}
+
+.fade-out-soft {
+  animation: desaparecerSuave 1s ease-in forwards;
 }

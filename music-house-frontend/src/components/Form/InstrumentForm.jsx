@@ -87,7 +87,7 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
 
     setErrors(newErrors)
 
-    // Si hay errores, hacer focus en el primero
+   
     const firstError = Object.keys(newErrors)[0]
     if (firstError) {
       fieldRefs[firstError]?.current?.focus()
@@ -102,17 +102,16 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
     if (!validateForm()) return
     setFormData((prev) => ({
       ...prev,
-      imageUrls: prev.imageUrlsText.split(/[\n,\s]+/) // Evita errores en separación de URLs
+      imageUrls: prev.imageUrlsText.split(/[\n,\s]+/) 
     }))
 
-    setSubmitData(true) // Activa el `useEffect` para enviar datos
+    setSubmitData(true) 
   }
 
   return (
     <Grid
       sx={{
         width: '80%',
-        border: '3px solid black',
         borderRadius: '10px',
         display: 'flex',
         alignItems: 'center',
@@ -288,7 +287,7 @@ export default InstrumentForm
 // **Aquí agregamos la validación de Props**
 InstrumentForm.propTypes = {
   initialFormData: PropTypes.shape({
-    idInstrument: PropTypes.number, // Puede ser `null` si es un nuevo instrumento
+    idInstrument: PropTypes.number, 
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     measures: PropTypes.string,
@@ -296,8 +295,8 @@ InstrumentForm.propTypes = {
     rentalPrice: PropTypes.number.isRequired,
     idCategory: PropTypes.number.isRequired,
     idTheme: PropTypes.number.isRequired,
-    imageUrlsText: PropTypes.string.isRequired, // Para evitar errores en `split`
-    characteristics: PropTypes.object // Un objeto con claves dinámicas de características
+    imageUrlsText: PropTypes.string.isRequired, 
+    characteristics: PropTypes.object 
   }).isRequired,
 
   onSubmit: PropTypes.func.isRequired

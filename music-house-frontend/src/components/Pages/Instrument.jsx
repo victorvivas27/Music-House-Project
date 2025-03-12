@@ -17,6 +17,7 @@ import '../styles/instrument.styles.css'
 import FavoriteIcon from '../common/favorito/FavoriteIcon'
 import MyCalendar from '../common/availability/MyCalendar'
 import CalendarReserva from '../common/availability/CalendarReseva'
+import { flexRowContainer, flexColumnContainer } from '../styles/styleglobal'
 export const Instrument = () => {
   const { id } = useParams()
   const { state } = useAppStates()
@@ -67,52 +68,35 @@ export const Instrument = () => {
         {!loading && (
           <>
             <InstrumentDetailWrapper>
-              {/*Imagen del instrumento  instrumento */}
+              {/*Contenedor de la imagen,de los datos y del iciono de favoritos */}
               <Box
                 sx={{
-                  display: 'flex',
-                  //flexDirection: { xs: 'column', md: 'row' }, // 📌 En móviles en columna, en desktop lado a lado
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '7px solid rgb(53, 203, 27)',
-                  borderRadius: '.625rem',
-
-                  minWidth: {
-                    xs: '95%',
-                    sm: '1000px',
-                    md: '1100px',
-                    lg: '1500px'
-                  }, // 📌 Ajusta en cada tamaño de pantalla
-                  width: '100%', // 📌 Permite que el ancho sea dinámico
-
-                  flexWrap: 'wrap' // 📌 Evita desbordamientos en pantallas medianas
+                  ...flexRowContainer,
+                  width: '100%',
+                  height: '100%'
                 }}
               >
                 {/* Datos del instrumento */}
                 <Box
                   sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: '12px', // 🔹 Bordes más suaves
-                    backgroundColor: 'rgba(245, 245, 245, 0.8)', // 🎨 Color neutro con ligera transparencia
-                    boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.1)', // 🔹 Sombra sutil para profundidad
-                    padding: '1.5rem',
+                    ...flexColumnContainer,
+                    padding: '1rem',
+                    margin: 'auto',
                     minHeight: {
                       xs: 'auto',
-                      sm: '160px',
-                      md: '190px',
-                      lg: '220px'
+                      sm: '180px',
+                      md: '210px',
+                      lg: '340px',
+                      xl: '460px'
                     },
+
                     maxWidth: {
-                      xs: '95%', // 📌 Se adapta mejor en móviles
-                      sm: '85%', // 📌 Más compacto en tablets
-                      md: '70%', // 📌 Mejor ajuste en laptops
-                      lg: '55%' // 📌 Tamaño ideal en pantallas grandes
-                    },
-                    width: '100%',
-                    margin: 'auto'
+                      xs: '100%',
+                      sm: '35%',
+                      md: '40%',
+                      lg: '45%',
+                      xl: '50%'
+                    }
                   }}
                 >
                   {/* Descripción */}
@@ -126,15 +110,15 @@ export const Instrument = () => {
                         md: '1.2rem',
                         lg: '1.3rem'
                       },
-                      color: '#333', // 🎨 Color oscuro suave
-                      lineHeight: '1.6', // 🔹 Mejora la legibilidad
-                      fontStyle: 'italic' // 🔹 Agrega un toque más refinado
+                      color: 'var(--color-oscuro-suave)',
+                      lineHeight: '1.6',
+                      fontStyle: 'italic'
                     }}
                   >
                     {instrumentSelected?.description}
                   </Typography>
 
-                  <Divider sx={{ width: '100%', my: 2, bgcolor: '#ccc' }} />
+                  <Divider sx={{ width: '100%', my: 2 }} />
 
                   {/* Otras características */}
                   {[
@@ -160,7 +144,7 @@ export const Instrument = () => {
                           sm: '1rem',
                           md: '1.1rem'
                         },
-                        color: '#444', // 🎨 Un tono más oscuro para mejor contraste
+                        color: 'var(--color-suave)',
                         padding: '0.3rem 0'
                       }}
                     >
@@ -173,12 +157,21 @@ export const Instrument = () => {
                 {/*Comienzo Imagen del instrumento */}
                 <Box
                   sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-
-                    maxWidth: 900,
-                    alignItems: 'center',
-                    border: '7px solid rgb(41, 167, 43)'
+                    ...flexColumnContainer,
+                    minHeight: {
+                      xs: 'auto',
+                      sm: '180px',
+                      md: '210px',
+                      lg: '240px',
+                      xl: '360px'
+                    },
+                    maxWidth: {
+                      xs: '100%',
+                      sm: '15%',
+                      md: '25%',
+                      lg: '20%',
+                      xl: '30%'
+                    }
                   }}
                 >
                   {/* Nombre del instrumento */}
@@ -186,25 +179,20 @@ export const Instrument = () => {
                     variant="h2"
                     sx={{
                       fontSize: {
-                        xs: '1rem',
-                        sm: '0.7rem',
-                        md: '0.9rem',
-                        lg: '1rem',
+                        xs: '0.7rem',
+                        sm: '0.8rem',
+                        md: '1rem',
+                        lg: '1.1rem',
                         xl: '1.5rem'
-                      }, // 📌 Tamaños más impactantes
+                      }, 
                       textAlign: 'center',
-                      fontWeight: 'bold', // 📌 Mayor impacto visual
-                      color: 'rgb(15, 15, 15)', // 🔥 Color llamativo
-                      textTransform: 'uppercase', // 🔹 Convierte en mayúsculas
-                      letterSpacing: '2px', // 🔹 Espaciado entre letras para más elegancia
-                      textShadow: '2px 2px 5px rgba(0,0,0,0.2)', // 🔹 Sombra para más profundidad
+                      fontWeight: 'bold', 
+                      textTransform: 'uppercase', 
+                      letterSpacing: '2px', 
+                      textShadow: '2px 2px 5px rgba(0,0,0,0.2)', 
                       padding: 1,
-                      borderRadius: '8px', // 🔹 Bordes redondeados
-                      // border: '4px solid rgba(240, 206, 14, 0.8)', // 🔹 Borde más fino y con transparencia
-                      // background:
-                      // 'linear-gradient(135deg, rgba(163, 203, 42, 0.2), rgba(246, 255, 69, 0.4))', // 🔥 Efecto degradado para hacerlo más atractivo
-                      width: 'fit-content', // 📌 Se ajusta al contenido
-                      margin: '0 auto' // 📌 Centra horizontalmente
+                      width: 'fit-content', 
+                      margin: '0 auto'
                     }}
                   >
                     {instrumentSelected?.name}
@@ -214,11 +202,8 @@ export const Instrument = () => {
                   <Tooltip title="Ver más imágenes">
                     <Button
                       onClick={() => setShowGallery(true)}
-                      sx={{
-                        backgroundColor: 'white',
-                        ':hover': { backgroundColor: 'white' },
-                        borderRadius: '.625rem'
-                      }}
+                      disableRipple
+                      disableElevation
                     >
                       <Box
                         component="img"
@@ -229,13 +214,11 @@ export const Instrument = () => {
                         }
                         alt={instrumentSelected?.name}
                         sx={{
-                          width: '100%', // 🔥 Ajusta dinámicamente
-                          maxWidth: { xs: '300px', md: '400px' }, // 🔥 Tamaño variable
-                          height: 'auto',
+                          width: '100%',
                           objectFit: 'cover',
                           borderRadius: '8px',
                           boxShadow: '3px 3px 10px rgba(0,0,0,0.2)',
-                          margin: 'auto' // Centra en móviles
+                          
                         }}
                       />
                     </Button>
@@ -243,13 +226,15 @@ export const Instrument = () => {
 
                   {/* 📌 Icono de favorito si el usuario está autenticado */}
                   {isUser && (
-                    <Box sx={{ position: 'relative' }}>
+                    <Box>
                       <FavoriteIcon />
                     </Box>
                   )}
+                  {/* 📌 Fin  Icono de favorito si el usuario está autenticado */}
                 </Box>
                 {/*Fin imagen de instrumento */}
               </Box>
+              {/* Fin Contenedor de la imagen,de los datos y del iciono de favoritos */}
 
               {/*Aqui comienzan las caracteristicas*/}
               <Box
@@ -258,11 +243,12 @@ export const Instrument = () => {
                     xs: 'auto',
                     sm: '70%',
                     md: '80%',
-                    lg: '98%'
+                    lg: '99%'
                   },
-                  display: 'flex',
-                  flexDirection: 'column',
-                  border: '7px solid rgb(18, 18, 18)'
+                  boxShadow:
+                    ' rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset',
+                  padding: 1,
+                  borderRadius: 2
                 }}
               >
                 <Divider />
@@ -270,19 +256,19 @@ export const Instrument = () => {
                   variant="h5"
                   sx={{
                     fontSize: {
-                      xs: '1rem',
-                      sm: '1.6rem',
+                      xs: '0.8rem',
+                      sm: '0.9rem',
                       md: '1rem',
-                      lg: '1.4rem',
-                      xl: '2rem'
+                      lg: '1.1rem',
+                      xl: '1.2rem'
                     },
                     fontWeight: 'bold',
-                    color: '#333', // 🎨 Color más elegante
-                    letterSpacing: '1px', // 🔹 Mejora la estética del título
-                    textTransform: 'uppercase', // 🔹 Hace que el título resalte más
-                    mb: 2, // 🔹 Espacio debajo del título
+
+                    letterSpacing: '1px', 
+                    textTransform: 'uppercase', 
+                    mb: 2, 
                     textAlign: 'center',
-                    fontStyle: 'italic' // 🔹 Agrega un toque más refinado
+                    fontStyle: 'italic' 
                   }}
                 >
                   Características
@@ -337,20 +323,20 @@ export const Instrument = () => {
                     justifyContent: 'center',
                     width: '100%',
                     maxWidth: {
-                      xs: '100%', // 📌 En móviles, ocupa todo el ancho disponible
-                      sm: '450px', // 📌 En tablets pequeñas
-                      md: '650px', // 📌 En tablets grandes
-                      lg: '1200px', // 📌 En pantallas grandes
-                      xl: '1400px' // 📌 En pantallas extra grandes
+                      xs: '100%', 
+                      sm: '450px', 
+                      md: '650px', 
+                      lg: '1200px', 
+                      xl: '1400px' 
                     },
                     padding: '2rem',
-                    borderRadius: '12px', // 🔹 Bordes más suaves
-                    backgroundColor: 'rgba(250, 250, 250, 0.9)', // 🔹 Color neutro con ligera transparencia
-                    boxShadow: '4px 4px 12px rgba(0,0,0,0.1)', // 🔹 Sombra sutil
+                    borderRadius: '12px',
+                    backgroundColor: 'var(--background-color)',
+                    boxShadow: '4px 4px 12px rgba(0,0,0,0.1)',
                     textAlign: 'center',
-                    transition: 'all 0.3s ease-in-out', // 🔹 Suaviza animaciones
+                    transition: 'all 0.3s ease-in-out', 
                     '&:hover': {
-                      boxShadow: '6px 6px 14px rgba(0,0,0,0.2)' // 🎨 Sombra más pronunciada al pasar el mouse
+                      boxShadow: '6px 6px 14px rgba(0,0,0,0.2)' 
                     }
                   }}
                 >
@@ -365,10 +351,10 @@ export const Instrument = () => {
                         xl: '2rem'
                       },
                       fontWeight: 'bold',
-                      color: '#333', // 🎨 Color más elegante
-                      letterSpacing: '1px', // 🔹 Mejora la estética del título
-                      textTransform: 'uppercase', // 🔹 Hace que el título resalte más
-                      mb: 2 // 🔹 Espacio debajo del título
+                      color: '#333', 
+                      letterSpacing: '1px', 
+                      textTransform: 'uppercase', 
+                      mb: 2 
                     }}
                   >
                     📅 Calendario de Disponibilidad
@@ -393,10 +379,10 @@ export const Instrument = () => {
                         xl: '550px'
                       },
                       borderRadius: '10px',
-                      border: '4px solid rgba(18, 18, 18, 0.7)',
+                     
                       overflow: 'hidden',
-                      backgroundColor: 'white', // 🔹 Fondo blanco para mejor contraste
-                      boxShadow: '2px 2px 8px rgba(0,0,0,0.15)' // 🔹 Sombra ligera
+                      backgroundColor: 'var(--background-color)',
+                      boxShadow: '2px 2px 8px rgba(0,0,0,0.15)' 
                     }}
                   >
                     <MyCalendar instrument={instrument} />
@@ -406,32 +392,25 @@ export const Instrument = () => {
               {/*Fin del calendario ADMIN*/}
 
               {/* 📌 Sección para el usuario */}
+              {/* 📌 Contenedor del Calendario */}
               {isUser && (
                 <Box
                   sx={{
                     width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
+
                     padding: '1.5rem',
                     gap: '1.5rem',
-                    backgroundColor: '#f9f9f9', // 🎨 Fondo sutil
-                    borderRadius: '12px', // 🔹 Bordes redondeados
-                    boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)', // 🔹 Sombra ligera
-                    border: '3px solid rgba(0, 0, 0, 0.2)',
-                    maxWidth: {
-                      xs: '100%',
-                      sm: '400px',
-                      md: '550px',
-                      lg: '850px',
-                      xl: '100%'
-                    },
+                    backgroundColor: 'var(--background-color)',
+                    borderRadius: '12px', 
+                    boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)', 
+                  
+
                     height: {
-                      xs: 'auto',
-                      sm: '420px',
-                      md: '460px',
-                      lg: '520px',
-                      xl: 'auto'
+                      xs: '800px',
+                      sm: '810px',
+                      md: '8100px',
+                      lg: '820px',
+                      xl: '850px'
                     }
                   }}
                 >
@@ -443,24 +422,31 @@ export const Instrument = () => {
                     sx={{
                       textAlign: 'center',
                       fontWeight: 'bold',
-                      color: '#333',
-                      marginBottom: '1rem'
+                      margin: 2
                     }}
                   >
                     Valor por día:{' '}
-                    <span style={{ color: '#1a73e8', fontWeight: 'bold' }}>
+                    <span
+                      style={{ color: 'var(--color-azul)', fontWeight: 'bold' }}
+                    >
                       $ {instrumentSelected?.rentalPrice}
                     </span>
                   </Typography>
-
-                  {/* 📌 Contenedor del Calendario */}
+                  {/* 🔹Fin  Precio por día */}
 
                   <CalendarReserva instrument={instrument} />
                 </Box>
               )}
+              {/* 📌 Fin Contenedor del Calendario */}
 
               {/* 📌 Términos del Instrumento */}
-              <Box sx={{ width: '100%' }}>
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                 
+                }}
+              >
                 <Divider sx={{ width: '100%' }} />
                 <InstrumentTerms />
               </Box>

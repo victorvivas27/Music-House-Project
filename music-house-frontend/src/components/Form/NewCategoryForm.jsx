@@ -36,7 +36,7 @@ export const NewCategoryForm = () => {
       .finally(() => {
         setShowMessage(true);
   
-        // Cerrar la ventana emergente automáticamente después de 3 segundos
+        
         setTimeout(() => {
           setShowMessage(false);
         }, 2000);

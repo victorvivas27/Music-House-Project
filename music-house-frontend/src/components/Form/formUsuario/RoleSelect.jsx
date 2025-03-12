@@ -46,19 +46,19 @@ export const RoleSelect = ({
 
   return (
     <Select
-      displayEmpty // Permite mostrar un placeholder cuando no se ha seleccionado nada
+      displayEmpty 
       value={selectedRole}
       onChange={handleRoleChange}
       label={label}
       color="secondary"
       sx={{
-        backgroundColor: '#D7D7D7D7', // Fondo claro
+        backgroundColor: 'var( --background-color)', 
         color: 'var(--color-secundario)', // Color del texto
         borderRadius: '5px', // Bordes redondeados
 
-        '&:hover': {
+        /*'&:hover': {
           backgroundColor: '#D7D7D7D7' // Efecto hover
-        }
+        }*/
       }}
     >
       {/* 📌 Placeholder */}
@@ -77,12 +77,12 @@ export const RoleSelect = ({
 }
 
 RoleSelect.propTypes = {
-  label: PropTypes.string, // Etiqueta para el Select
-  onChange: PropTypes.func.isRequired, // Función para manejar el cambio de rol
+  label: PropTypes.string, 
+  onChange: PropTypes.func.isRequired, 
   selectedRoleId: PropTypes.oneOfType([
-    // Valor del rol seleccionado
+   
     PropTypes.string,
     PropTypes.number
   ]),
-  sx: PropTypes.object // Estilos opcionales para el Select
+  sx: PropTypes.object 
 }

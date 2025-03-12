@@ -15,13 +15,13 @@ const CustomTypography = styled(Typography)(({ theme, bgColor }) => ({
   fontWeight: 'bold',
   width: 'fit-content',
   color: 'white',
-  backgroundColor: bgColor || theme.palette.secondary.main // Usa el color secundario por defecto
+  backgroundColor: bgColor || theme.palette.secondary.main 
 }))
 
 export const About = () => {
   const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md')) // < 900px
-  const isTablet = useMediaQuery('(max-width: 1240px) and (min-width: 900px)') // 900px - 1240px
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')) 
+  const isTablet = useMediaQuery('(max-width: 1240px) and (min-width: 900px)') 
   
 
   return (

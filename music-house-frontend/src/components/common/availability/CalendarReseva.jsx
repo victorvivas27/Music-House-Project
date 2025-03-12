@@ -13,7 +13,7 @@ import {
 } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import PropTypes from 'prop-types'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getAllAvailableDatesByInstrument } from '../../../api/availability'
 import dayjs from 'dayjs'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
@@ -24,12 +24,14 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { CustomButton } from '../../Form/formUsuario/CustomComponents'
 import Swal from 'sweetalert2'
+import { flexColumnContainer } from '../../styles/styleglobal'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 
 const CalendarReserva = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
-  const [selectedDates, setSelectedDates] = useState([]) // Lista de fechas seleccionadas
+  const [selectedDates, setSelectedDates] = useState([])
   const [error, setError] = useState('')
-  const [infoMessage, setInfoMessage] = useState('') // Para mensajes amigables
+  const [infoMessage, setInfoMessage] = useState('')
 
   const [openSnackbar, setOpenSnackbar] = useState(false)
 
@@ -37,7 +39,7 @@ const CalendarReserva = ({ instrument }) => {
   const idInstrument = instrument?.data?.idInstrument
   const { idUser } = useAuthContext()
   const [reservedDates, setReservedDates] = useState([])
-  const [loading, setLoading] = useState(false) // Estado para el loader
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -70,10 +72,10 @@ const CalendarReserva = ({ instrument }) => {
 
     setSelectedDates((prevDates) => {
       const newDates = prevDates.includes(formattedDate)
-        ? prevDates.filter((d) => d !== formattedDate) // Si ya está seleccionada, quitarla
-        : [...prevDates, formattedDate] // Si no está, agregarla
+        ? prevDates.filter((d) => d !== formattedDate)
+        : [...prevDates, formattedDate]
 
-      return newDates.sort() // Ordenar fechas seleccionadas
+      return newDates.sort()
     })
   }
 
@@ -83,38 +85,38 @@ const CalendarReserva = ({ instrument }) => {
       setOpenSnackbar(true)
       return
     }
-    setLoading(true) // Activar el loader
+    setLoading(true)
 
-    const startDate = selectedDates[0] // Primera fecha seleccionada
-    const endDate = selectedDates[selectedDates.length - 1] // Última fecha seleccionada
+    const startDate = selectedDates[0]
+    const endDate = selectedDates[selectedDates.length - 1]
 
     try {
       await createReservation(idUser, idInstrument, startDate, endDate)
 
-      // ✅ Mostrar SweetAlert2 en lugar de setSuccess
+      // ✅ Mostrar SweetAlert2
       Swal.fire({
         title: '¡Reserva realizada!',
         text: `Tu reserva ha sido confirmada del ${startDate} al ${endDate}.`,
         icon: 'success',
         confirmButtonText: 'OK',
-        timer: 3000, // ⏳ Se cierra automáticamente en 3 segundos
+        timer: 2000,
         timerProgressBar: true
       })
 
       setSelectedDates([])
       setTimeout(() => {
         navigate('/reservations')
-      }, 3100)
+      }, 2500)
     } catch (error) {
       setError(error.message)
       setOpenSnackbar(true)
     } finally {
-      setLoading(false) // Desactivar el loader al terminar
+      setLoading(false)
     }
   }
 
   // 👇 Modificación en `fetchReservedDates`
-  const fetchReservedDates = async () => {
+  const fetchReservedDates = useCallback(async () => {
     try {
       const reservations = await getReservationById(idUser)
 
@@ -169,19 +171,19 @@ const CalendarReserva = ({ instrument }) => {
         setOpenSnackbar(true)
       }
     }
-  }
+  }, [idInstrument, idUser])
 
   // Llamar al cargar el componente y después de una reserva exitosa
   useEffect(() => {
     if (idUser) fetchReservedDates()
-  }, [idUser]) // Se ejecuta nuevamente si hay una reserva exitosa
+  }, [fetchReservedDates, idUser])
 
   const CustomDayComponent = (props) => {
     const { day, ...other } = props
     const formattedDay = day.format('YYYY-MM-DD')
     const isAvailable = availableDates.includes(formattedDay)
     const isSelected = selectedDates.includes(formattedDay)
-    const isReserved = reservedDates.includes(formattedDay) // Nueva validación
+    const isReserved = reservedDates.includes(formattedDay)
 
     return (
       <PickersDay
@@ -190,13 +192,13 @@ const CalendarReserva = ({ instrument }) => {
         onClick={() => !isReserved && handleDateSelect(day)}
         sx={{
           bgcolor: isReserved
-            ? '#9E9E9E !important' // 🟠 Gris si la fecha está reservada
+            ? 'var(--color-primario) !important' //  Si la fecha está reservada
             : isSelected
-              ? '#2196F3 !important' // 🔵 Azul si está seleccionada
+              ? 'var(--color-azul) !important' // 🔵 Azul si está seleccionada
               : isAvailable
-                ? '#4CAF50 !important' // ✅ Verde si está disponible
-                : '#E57373 !important', // ❌ Rojo si no está disponible
-          color: '#fff !important',
+                ? 'var(--color-exito) !important' // ✅ Verde si está disponible
+                : 'var(--calendario-color-no-disponible) !important', // Si no está disponible
+          color: 'var( --texto-inverso) !important',
           borderRadius: '50%',
           pointerEvents: isReserved ? 'none' : 'auto' // Deshabilitar clic en fechas reservadas
         }}
@@ -210,70 +212,28 @@ const CalendarReserva = ({ instrument }) => {
   }
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs} >
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box
-      sx={{
-        width: '100%', // 📌 Asegura que no se desborde
-        maxWidth: '100%', // 📌 Evita que se pase del contenedor en móviles
-        mb: 3,
-        display: 'flex',
-        justifyContent: 'center', // 📌 Centra el contenido horizontalmente
-        flexDirection:"column",
-        alignItems: 'center',
-        overflow: 'hidden', // 📌 Previene el desbordamiento en pantallas pequeñas
-        border: '3px solid rgba(174, 23, 225, 0.2)', // 🎨 Borde más sutil
-    
-        minHeight: {
-          xs: 'auto',
-          sm: '70%',
-          md: '75%',
-          lg: '85%',
-          xl: '95%',
-        },
-        minWidth: {
-          xs: '90%', // 📌 En móviles, usa el 90% para evitar el desbordamiento
-          sm: '400px',
-          md: '550px',
-          lg: '850px',
-          xl: '90%',
-        },
-      }}
+        sx={{
+          ...flexColumnContainer,
+
+          minHeight: {
+            xs: '90%',
+            sm: '80%',
+            md: '80%',
+            lg: '85%',
+            xl: '90%'
+          },
+          minWidth: {
+            xs: '300px',
+            sm: '400px',
+            md: '500px',
+            lg: '600px',
+            xl: '800px'
+          }
+        }}
       >
- 
-  <DateCalendar slots={{ day: CustomDayComponent }} />
-
-
-        {selectedDates.length > 0 && (
-          <Tooltip title="Reservar">
-            <CustomButton
-              variant="contained"
-              sx={{
-                minWidth: '250px', // Asegura que el ancho no cambie
-
-                minHeight: '50px', // Altura fija
-                padding: '10px 20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px'
-              }}
-              onClick={handleConfirmReservation}
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  Cargando Reserva...
-                  <CircularProgress
-                    size={20}
-                    sx={{ color: 'var(--color-azul)' }}
-                  />
-                </>
-              ) : (
-                'Reservar'
-              )}
-            </CustomButton>
-          </Tooltip>
-        )}
+        <DateCalendar slots={{ day: CustomDayComponent }} />
 
         {/* Snackbar para errores reales (API falló) */}
         <Snackbar
@@ -286,14 +246,15 @@ const CalendarReserva = ({ instrument }) => {
             onClose={() => setOpenSnackbar(false)}
             severity="error"
             sx={{
-              backgroundColor: '#E57373', // 🔴 Rojo para errores reales
-              color: '#fff',
+              backgroundColor: 'var(--color-error)',
+              color: 'var(--texto-inverso)',
               fontWeight: 'bold',
               fontSize: '1rem',
               borderRadius: '8px',
               display: 'flex',
               alignItems: 'center'
             }}
+            icon={<ErrorOutlineIcon sx={{ color: 'var(--texto-inverso)' }} />}
           >
             {error}
           </Alert>
@@ -310,101 +271,163 @@ const CalendarReserva = ({ instrument }) => {
             onClose={() => setOpenSnackbarInfo(false)}
             severity="info"
             sx={{
-              backgroundColor: '#4A90E2', // 🔵 Azul para mensajes amigables
-              color: '#fff',
+              backgroundColor: 'var(--color-azul)',
+              color: 'var( --texto-inverso) !important',
               fontWeight: 'bold',
               fontSize: '1rem',
               borderRadius: '8px',
               display: 'flex',
               alignItems: 'center'
             }}
+            icon={<ErrorOutlineIcon sx={{ color: 'var(--texto-inverso)' }} />}
           >
             {infoMessage}
           </Alert>
         </Snackbar>
 
-       {/* Leyenda de colores mejor organizada */}
-<Box
-  sx={{
-    width: '100%',
-    maxWidth: {
-      xs: '100%', // 📌 Ocupa todo el ancho en móviles
-      sm: '70%',
-      md: '80%',
-      lg: '90%'
-    },
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 2,
-    padding: '1rem',
-    border: '3px solid rgba(0, 0, 0, 0.2)', // 🔹 Borde más sutil
-    borderRadius: '12px', // 🔹 Bordes redondeados
-    backgroundColor: '#f7f7f7', // 🔹 Fondo sutil
-    boxShadow: '2px 4px 8px rgba(0,0,0,0.1)' // 🔹 Sombra ligera para efecto 3D
-  }}
->
-  <Typography
-    variant="h6"
-    sx={{
-      fontWeight: 'bold',
-      textAlign: 'center',
-      color: '#333',
-      marginBottom: '0.5rem'
-    }}
-  >
-    🗓️ Estado de Disponibilidad
-  </Typography>
-
-  {/* Contenedor de colores */}
-  <Box
-    sx={{
-      display: 'grid',
-      gridTemplateColumns: {
-        xs: '1fr 1fr', // 📌 En móviles, 2 columnas
-        sm: '1fr 1fr 1fr 1fr' // 📌 En pantallas más grandes, 4 columnas
-      },
-      gap: 2,
-      width: '100%',
-      justifyContent: 'center'
-    }}
-  >
-    {[
-      { color: '#9E9E9E', label: 'Reservado' },
-      { color: '#4CAF50', label: 'Disponible' },
-      { color: '#E57373', label: 'No disponible' },
-      { color: '#2196F3', label: 'Seleccionado' }
-    ].map(({ color, label }) => (
-      <Box
-        key={label}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 1,
-          width: '100%',
-          padding: '8px',
-          backgroundColor: 'rgba(255, 255, 255, 0.7)', // 🔹 Fondo suave
-          borderRadius: '8px', // 🔹 Bordes suaves
-          boxShadow: '1px 2px 4px rgba(0,0,0,0.1)' // 🔹 Pequeña sombra
-        }}
-      >
+        {/* Leyenda de colores mejor organizada */}
         <Box
           sx={{
-            width: 20,
-            height: 20,
-            bgcolor: color,
-            borderRadius: '50%'
+            width: '100%',
+            maxWidth: {
+              xs: '100%',
+              sm: '70%',
+              md: '80%',
+              lg: '90%'
+            },
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 2,
+            padding: '1rem',
+            borderRadius: '12px',
+            backgroundColor: 'var(--background-color)',
+            boxShadow: '2px 4px 8px rgba(0,0,0,0.1)'
           }}
-        />
-        <Typography variant="body1" sx={{ fontSize: '0.9rem', color: '#333' }}>
-          {label}
-        </Typography>
-      </Box>
-    ))}
-  </Box>
-</Box>
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 'bold',
+              textAlign: 'center',
+              color: '#333',
+              marginBottom: '0.5rem'
+            }}
+          >
+            🗓️ Estado de Disponibilidad
+          </Typography>
+
+          {/* Contenedor de colores */}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr 1fr', // 📌 En móviles, 2 columnas
+                sm: '1fr 1fr 1fr 1fr' // 📌 En pantallas más grandes, 4 columnas
+              },
+              gap: 2,
+              width: '100%',
+              justifyContent: 'center'
+            }}
+          >
+            {[
+              {
+                color: 'var(--calendario-color-no-disponible)',
+                label: 'No Disponible'
+              },
+              {
+                color: 'var(--color-primario)',
+                label: 'Reservado Usuario Actual'
+              },
+              {
+                color: 'var(--color-exito)',
+                label: 'Disponible Para Alquilar'
+              },
+              {
+                color: 'var(--color-azul)',
+                label: 'Seleccionado'
+              }
+            ].map(({ color, label }) => (
+              <Box
+                key={label}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 2,
+                  width: '100%',
+                  padding: '8px',
+                  backgroundColor: 'var(--background-color)',
+                  borderRadius: '8px',
+                  boxShadow: '1px 2px 4px rgba(0,0,0,0.1)'
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 20,
+                    height: 20,
+                    bgcolor: color,
+                    borderRadius: '50%'
+                  }}
+                />
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: {
+                      xs: '0.6rem',
+                      sm: '0.7rem',
+                      md: '0.8rem',
+                      lg: '0.9rem',
+                      xl: '1rem'
+                    }
+                  }}
+                >
+                  {label}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+        {/*Button para reservar*/}
+        <Box
+          sx={{
+            height: '50px',
+            width: '270px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '60px'
+          }}
+        >
+          <Tooltip title="Reservar">
+            <CustomButton
+              variant="contained"
+              onClick={handleConfirmReservation}
+              disabled={loading}
+              sx={{
+                padding: '10px 100px',
+                visibility: selectedDates.length > 0 ? 'visible' : 'hidden'
+              }}
+              className={
+                selectedDates.length > 1 ? 'fade-in-up' : 'fade-out-soft'
+              }
+            >
+              {loading ? (
+                <>
+                  Cargando Reserva...
+                  <CircularProgress
+                    size={20}
+                    sx={{ color: 'var(--color-azul)' }}
+                  />
+                </>
+              ) : (
+                'Reservar'
+              )}
+            </CustomButton>
+          </Tooltip>
+        </Box>
+        {/*Fin button para reservar */}
       </Box>
     </LocalizationProvider>
   )

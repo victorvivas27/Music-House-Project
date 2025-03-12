@@ -45,7 +45,7 @@ export const ReservationRow = ({
             color="primary"
             checked={isItemSelected}
             onChange={(event) => {
-              event.stopPropagation() // 🔹 Evita que seleccione la fila al hacer clic en el checkbox
+              event.stopPropagation() 
               handleClick(event, row.idReservation)
             }}
           />
@@ -57,7 +57,7 @@ export const ReservationRow = ({
             aria-label="Expandir detalle"
             size="small"
             onClick={(event) => {
-              event.stopPropagation() // 🔹 Evita que seleccione la fila
+              event.stopPropagation() 
               setOpen(!open)
             }}
           >
@@ -72,7 +72,7 @@ export const ReservationRow = ({
             alt="Instrumento"
             width="100px"
             style={{
-              mixBlendMode: 'multiply', // Mezcla el fondo con el color de la tabla
+              mixBlendMode: 'multiply', 
               borderRadius: '8px',
               objectFit: 'contain',
               display: 'block',

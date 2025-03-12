@@ -3,7 +3,7 @@ import {
   LocalizationProvider,
   PickersDay
 } from '@mui/x-date-pickers'
-import './Calendar.css'
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useEffect, useState } from 'react'
 import {
@@ -33,61 +33,57 @@ const MyCalendar = ({ instrument }) => {
         setAvailableDates(filteredDates)
       } catch (error) {
         setError('Error al obtener las fechas. Intenta nuevamente.')
-        setOpenSnackbar(true) // Mostramos Snackbar al ocurrir un error
+        setOpenSnackbar(true) 
       }
     }
 
     fetchAvailableDates()
   }, [id])
 
-  // Cerrar Snackbar
+ 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false)
   }
 
-  // Manejar el clic en un día
   const handleDayClick = async (day) => {
     const formattedDay = day.format('YYYY-MM-DD')
 
     if (!id) return
 
-    // Verificamos si la fecha ya está en el estado
     const isAlreadyAvailable = availableDates.includes(formattedDay)
 
-    // 📌 Creamos la estructura del objeto a enviar
     const newDate = {
       idInstrument: id,
       dateAvailable: formattedDay,
-      available: !isAlreadyAvailable // 🔄 Cambia entre true/false
+      available: !isAlreadyAvailable 
     }
 
     try {
-      await addAvailableDates([newDate]) // Enviar al backend
+      await addAvailableDates([newDate]) 
 
-      // Actualizar el estado local
       setAvailableDates(
         (prevDates) =>
           isAlreadyAvailable
-            ? prevDates.filter((date) => date !== formattedDay) // Si estaba, lo quitamos
-            : [...prevDates, formattedDay] // Si no estaba, lo agregamos
+            ? prevDates.filter((date) => date !== formattedDay) 
+            : [...prevDates, formattedDay] 
       )
     } catch (error) {
       const errorMessage =
-        error?.message || // Intenta obtener el mensaje del backend
-        'Error inesperado. Intenta nuevamente.' // Fallback
+        error?.message || 
+        'Error inesperado. Intenta nuevamente.' 
 
       setError(errorMessage)
       setOpenSnackbar(true)
     }
   }
 
-  // Componente personalizado de días
+  
   const CustomDayComponent = (props) => {
     const { day, selected, ...other } = props
     const formattedDay = day.format('YYYY-MM-DD')
     const isAvailable = availableDates.includes(formattedDay)
-    const today = dayjs() // 🔥 Obtiene la fecha actual dinámica
-    const isPastDate = day.isBefore(today, 'day') // 🔹 Verifica si la fecha ya pasó
+    const today = dayjs() 
+    const isPastDate = day.isBefore(today, 'day') 
 
     return (
       <PickersDay
@@ -97,19 +93,19 @@ const MyCalendar = ({ instrument }) => {
         onClick={() => handleDayClick(day)}
         sx={{
           bgcolor: isPastDate
-            ? 'var(--calendario-color-no-disponible) !important' // 🔹 Fechas pasadas (gris claro)
+            ? 'var(--calendario-color-no-disponible) !important' 
             : isAvailable
-              ? 'var( --color-exito) !important' // 🔹 Fechas disponibles (verde llamativo)
-              : 'var( --calendario-fondo-no-disponible)!important', // 🔹 Fechas futuras no disponibles (naranja)
+              ? 'var( --color-exito) !important' 
+              : 'var( --calendario-fondo-no-disponible)!important', 
 
           color: isPastDate
-            ? '#7a7a7a !important' // 🔹 Texto gris oscuro en fechas pasadas
-            : '#ffffff !important', // 🔹 Texto blanco en fechas disponibles/no disponibles
+            ? '#7a7a7a !important' 
+            : '#ffffff !important',
 
           borderRadius: '50%',
-          opacity: isPastDate ? 0.6 : 1, // 🔹 Reduce opacidad en fechas pasadas
-          border: selected ? '3px solid var( --color-primario)' : 'none', // 🔥 Borde amarillo si está seleccionada
-          transition: 'all 0.3s ease' // 🔥 Agrega transición suave al cambio de color
+          opacity: isPastDate ? 0.6 : 1, 
+          border: selected ? '3px solid var( --color-primario)' : 'none', 
+          transition: 'all 0.3s ease' 
         }}
       />
     )
@@ -134,9 +130,9 @@ const MyCalendar = ({ instrument }) => {
           gap: '0.8rem',
           marginTop: '1rem',
           padding: '1rem',
-          backgroundColor: '#f5f5f5', // Fondo sutil
+          backgroundColor: 'var(--background-color)',
           borderRadius: '8px',
-          boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)' // Sombra ligera
+          boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)'
         }}
       >
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
@@ -211,7 +207,7 @@ const MyCalendar = ({ instrument }) => {
           onClose={handleCloseSnackbar}
           severity="warning"
           sx={{
-            backgroundColor: 'var(--color-advertencia)', // Amarillo
+            backgroundColor: 'var(--color-advertencia)', 
             color: 'rgb(0, 0, 0)',
             fontWeight: 'bold',
             fontSize: '1rem',

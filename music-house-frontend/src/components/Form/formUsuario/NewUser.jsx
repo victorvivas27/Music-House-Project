@@ -29,31 +29,24 @@ const NewUser = ({ onSwitch }) => {
     setLoading(true)
 
     try {
-      // 🔹 Crear `FormData`
       const formDataToSend = new FormData()
       const { picture, ...userWithoutPicture } = formData
-      // Eliminar `repeatPassword` del objeto `userWithoutPicture`
       delete userWithoutPicture.repeatPassword
-      // 🔹 Convertir el JSON a string y agregarlo a FormData
       formDataToSend.append('user', JSON.stringify(userWithoutPicture))
 
-      // 🔹 Solo agregar la imagen si el usuario seleccionó una
       if (picture instanceof File) {
         formDataToSend.append('file', picture)
       }
 
-      // 🔹 Llamamos a `UsersApi.registerUser()`
       const response = await UsersApi.registerUser(formDataToSend)
 
-      // 🔹 Verificar si la API devuelve `data.token`
       if (response && response.data && response.data.token) {
-        setAuthData(response.data) // Guardar usuario en el contexto
+        setAuthData(response.data)
         setMessage('Usuario registrado exitosamente.')
         setShowMessage(true)
 
         setTimeout(() => {
           navigate('/', { replace: true })
-          // window.location.reload()
         }, 1000)
       } else {
         throw new Error('Error al registrar usuario. No se recibió el token.')
@@ -94,5 +87,5 @@ const NewUser = ({ onSwitch }) => {
 export default NewUser
 
 NewUser.propTypes = {
-  onSwitch: PropTypes.func.isRequired
+  onSwitch: PropTypes.func
 }

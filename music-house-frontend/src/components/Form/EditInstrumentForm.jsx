@@ -146,10 +146,10 @@ const EditInstrumentForm = ({ id, onSaved }) => {
 
         setMessage('Instrumento guardado exitosamente')
         setShowMessage()
-         // 🚀 Cerrar automáticamente y volver atrás después de 2 segundos
+         
          setTimeout(() => {
           setShowMessage(false)
-          navigate("/instruments") // Volver a la página anterior
+          navigate("/instruments")
         }, 1000)
       })
       .catch(() => {

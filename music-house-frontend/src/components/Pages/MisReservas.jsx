@@ -31,6 +31,7 @@ import PropTypes from 'prop-types'
 import { headCells } from '../utils/types/HeadCells'
 import { ReservationRow } from './Admin/common/ReservationRow '
 import Swal from 'sweetalert2'
+import ArrowBack from '../utils/ArrowBack'
 
 const MisReservas = () => {
   const [reservations, setReservations] = useState([])
@@ -168,9 +169,10 @@ const MisReservas = () => {
           padding: 2,
           borderRadius: '10px',
           boxShadow:
-            'rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px'
+          'rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px'
         }}
-      >
+        >
+        <ArrowBack/>
         <TableContainer>
           <Table sx={{ boxShadow: 'none', minWidth: { xs: '100%', md: 750 } }}>
             <EnhancedTableHead
@@ -233,6 +235,10 @@ const MisReservas = () => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
          //labelDisplayedRows={getLabelDisplayedRows}
+         sx={{
+          '& .MuiTablePagination-displayedRows': { display: 'none' },
+          '& .MuiTablePagination-actions': { display: 'none' }
+        }}
           labelRowsPerPage="Filas por página"
         />
       </Paper>

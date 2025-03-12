@@ -25,14 +25,14 @@ import { UsersApi } from '../../../api/users'
 import Swal from 'sweetalert2'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import usePasswordValidation from '../../../hook/usePasswordValidation'
-import { inputStyles } from '../../styles/StyleGeneral'
+import { inputStyles } from '../../styles/styleglobal'
 import { countryCodes } from '../../utils/codepaises/CountryCodes'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   width: '100%',
-  //border: '5px solid green',
+ 
   justifyContent: 'center',
   [theme.breakpoints.up('md')]: {
     alignItems: 'flex-end !important',
@@ -283,7 +283,7 @@ export const UserForm = ({
  los cambios al enviar el formulario */
   const handleSubmit = async (event) => {
     event.preventDefault()
-    console.log("Errores antes de enviar:", errors);
+    
     let formIsValid = true
     let newErrors = { ...initialErrorState }
     // 📌 Validar campos obligatorios
@@ -448,7 +448,7 @@ export const UserForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      style={{ margin: 'auto', width: '100%' /*border: '5px solid blue'*/ }}
+      style={{ margin: 'auto', width: '100%' }}
     >
       <ContainerForm>
         <Grid
@@ -534,7 +534,7 @@ export const UserForm = ({
                           cursor: 'pointer',
                           color: 'var(--color-primario)',
                           margin: 2,
-                          border: '2px solid var(--color-primario)',
+                          
                           '&:hover': { opacity: 0.8 }
                         }}
                       >
@@ -575,7 +575,7 @@ export const UserForm = ({
                   margin="normal"
                   sx={{
                     minHeight: '60px'
-                    //border: '1px solid blue'
+                   
                   }}
                 >
                   <InputCustom
@@ -595,7 +595,7 @@ export const UserForm = ({
                   margin="normal"
                   sx={{
                     minHeight: '60px'
-                    //border: '1px solid blue'
+                   
                   }}
                 >
                   <InputCustom
@@ -640,7 +640,7 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           minHeight: '60px'
-                          //border: '1px solid blue'
+                         
                         }}
                       >
                         <InputCustom
@@ -664,7 +664,7 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           minHeight: '60px'
-                          //border: '1px solid blue'
+                        
                         }}
                       >
                         <InputCustom
@@ -688,7 +688,7 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           minHeight: '60px'
-                          //border: '1px solid blue'
+                         
                         }}
                       >
                         <InputCustom
@@ -712,7 +712,7 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           minHeight: '60px'
-                          // border: '1px solid blue'
+                          
                         }}
                       >
                         <InputCustom
@@ -752,12 +752,12 @@ export const UserForm = ({
                           )
                         }
                         sx={{
-                          backgroundColor: '#D7D7D7D7', // Fondo claro
-                          color: 'var(--color-secundario)', // Color del texto
-                          borderRadius: '5px', // Bordes redondeados
-                          '&:hover': {
+                          backgroundColor: 'var( --background-color)', 
+                          color: 'var(--color-secundario)', 
+                          borderRadius: '5px', 
+                          /*'&:hover': {
                             backgroundColor: '#D7D7D7D7' // Efecto hover
-                          }
+                          }*/
                         }}
                       >
                         {/* 📌 Opción Placeholder */}
@@ -777,12 +777,12 @@ export const UserForm = ({
                     {/* 📌 Input para el número de teléfono */}
                     <InputCustom
                       placeholder="Teléfono"
-                      value={phone.phoneNumber.replace(phone.countryCode, '')} // Evita la duplicación del código
+                      value={phone.phoneNumber.replace(phone.countryCode, '')} 
                       onChange={(e) =>
                         handlePhoneChange(index, 'phoneNumber', e.target.value)
                       }
                       error={Boolean(allErrors[`phone_${index}`])}
-                      helperText={errors[`phone_${index}`] || ' '} // Espacio reservado para evitar el movimiento de inputs
+                      helperText={errors[`phone_${index}`] || ' '} 
                       type="text"
                       sx={inputStyles}
                       InputProps={{
@@ -813,7 +813,7 @@ export const UserForm = ({
                   margin="normal"
                   sx={{
                     minHeight: '60px'
-                    //border: '1px solid blue'
+                   
                   }}
                 >
                   <InputCustom
@@ -901,18 +901,18 @@ export const UserForm = ({
                       error={Boolean(allErrors.password || '')}
                       sx={{
                         minHeight: '60px'
-                        // border: '1px solid blue'
+                       
                       }}
                     >
                       <OutlinedInput
                         sx={{
-                          backgroundColor: '#D7D7D7D7', // Fondo claro
+                          
                           color: 'var(--color-secundario)', // Color del texto
                           borderRadius: '5px', // Bordes redondeados
                           padding: '5px', // Espaciado interno
-                          '&:hover': {
+                          /*'&:hover': {
                             backgroundColor: '#D7D7D7D7' // Efecto hover
-                          }
+                          }*/
                         }}
                         placeholder="Contraseña"
                         name="password"
@@ -956,18 +956,18 @@ export const UserForm = ({
                       error={Boolean(allErrors.repeatPassword)}
                       sx={{
                         minHeight: '60px'
-                        //border: '1px solid blue'
+                      
                       }}
                     >
                       <OutlinedInput
                         sx={{
-                          backgroundColor: '#D7D7D7D7', // Fondo claro
-                          color: 'var(--color-secundario)', // Color del texto
-                          borderRadius: '5px', // Bordes redondeados
-                          padding: '5px', // Espaciado interno
-                          '&:hover': {
+                          
+                          color: 'var(--color-secundario)', 
+                          borderRadius: '5px',
+                          padding: '5px',
+                         /* '&:hover': {
                             backgroundColor: '#D7D7D7D7' // Efecto hover
-                          }
+                          }*/
                         }}
                         placeholder="Repetir Contraseña"
                         name="repeatPassword"
@@ -1024,8 +1024,8 @@ export const UserForm = ({
                         value={formData.telegramChatId}
                         error={Boolean(errors.telegramChatId)}
                         helperText={errors.telegramChatId}
-                        type="tel" // 🔹 "tel" en lugar de "text" para solo permitir números en móviles
-                        inputProps={{ maxLength: 15, pattern: '[0-9]*' }} // 🔹 Solo números permitidos
+                        type="tel" 
+                        inputProps={{ maxLength: 15, pattern: '[0-9]*' }} 
                         sx={inputStyles}
                       />
                     </FormControl>
@@ -1051,7 +1051,7 @@ export const UserForm = ({
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center'
-                  //border: '1px solid blue'
+                 
                 }}
               >
                 {/* 📌 Checkbox de términos y condiciones */}

@@ -18,11 +18,10 @@ import loginValidationSchema from './LoginValidation'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
 import PropTypes from 'prop-types'
-import { jwtDecode } from 'jwt-decode'
 
 import { useState } from 'react'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
-import { inputStyles } from '../../styles/StyleGeneral'
+import { inputStyles } from '../../styles/styleglobal'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -68,15 +67,14 @@ const Login = ({ onSwitch }) => {
     },
     validationSchema: loginValidationSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      setLoading(true) // 🔹 1️⃣ Activamos el loading en el botón
+      setLoading(true)
 
       setTimeout(async () => {
-        // 🔹 2️⃣ Esperamos 2s antes de llamar a la API
         try {
           const response = await UsersApi.loginUser(values)
 
           if (response && response.token) {
-            setAuthData(response) // ✅ Guardamos la data en el contexto
+            setAuthData(response)
             swal({
               title: '¡Inicio de sesión exitoso!',
               text: 'Redirigiendo en 2 segundos...',
@@ -87,7 +85,6 @@ const Login = ({ onSwitch }) => {
 
             setTimeout(() => {
               navigate('/', { replace: true })
-              // No recargamos la página manualmente, el contexto lo maneja
             }, 2000)
           } else {
             throw new Error(response.message || 'Credenciales incorrectas')
@@ -145,7 +142,6 @@ const Login = ({ onSwitch }) => {
                 margin="normal"
                 sx={{
                   minHeight: '60px'
-                  //border: '1px solid blue'
                 }}
               >
                 <InputCustom
@@ -169,18 +165,12 @@ const Login = ({ onSwitch }) => {
                 }
                 sx={{
                   minHeight: '60px'
-                  //border: '1px solid blue'
                 }}
               >
                 <OutlinedInput
                   sx={{
-                    backgroundColor: '#D7D7D7D7', // Fondo claro
-                    color: 'var(--color-secundario)', // Color del texto
-                    borderRadius: '5px', // Bordes redondeados
-                    padding: '5px', // Espaciado interno
-                    '&:hover': {
-                      backgroundColor: '#D7D7D7D7' // Efecto hover
-                    }
+                    borderRadius: '5px', 
+                    padding: '5px' 
                   }}
                   placeholder="Password"
                   name="password"

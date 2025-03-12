@@ -31,6 +31,7 @@ import {
 } from './common/tableHelper'
 import { MessageDialog } from '../../common/MessageDialog'
 import { Loader } from '../../common/loader/Loader'
+import ArrowBack from '../../utils/ArrowBack'
 
 const headCells = [
   {
@@ -189,11 +190,11 @@ export const Usuarios = () => {
           <Paper
             sx={{
               display: { xs: 'none', lg: 'initial' },
-              border: '7px solid rgb(225, 20, 221)',
               margin:10,
               minWidth:1700
             }}
           >
+            <ArrowBack/>
             <EnhancedTableToolbar
               title="Usuarios"
               titleAdd="Agregar usuario"

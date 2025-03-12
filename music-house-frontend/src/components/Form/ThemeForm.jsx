@@ -34,15 +34,13 @@ export const ThemeForm = ({ initialFormData, onSubmit }) => {
 
     setFormData(data)
     setSubmitData(true)
-
-        // Reiniciar el formulario después de enviar
   setTimeout(() => {
     setFormData({
       idTheme: '',
       themeName: '',
       description: ''
     });
-    setSubmitData(false); // Reiniciar el estado de envío
+    setSubmitData(false);
   }, 500);
   }
 
@@ -110,7 +108,7 @@ export const ThemeForm = ({ initialFormData, onSubmit }) => {
             display: 'flex',
             justifyContent: 'space-evenly',
             alignItems: 'center',
-            //border: '1px solid red'
+            
           }}
         >
 

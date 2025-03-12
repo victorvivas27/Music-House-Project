@@ -42,7 +42,7 @@ export const CategoryForm = ({ initialFormData, onSubmit }) => {
         categoryName: '',
         description: ''
       })
-      setSubmitData(false) // Reiniciar el estado de envío
+      setSubmitData(false) 
     }, 500)
   }
 
@@ -85,7 +85,8 @@ export const CategoryForm = ({ initialFormData, onSubmit }) => {
                 color="secondary"
                 multiline
                 minRows={1}
-                maxRows={5}
+                maxRows={8}
+                sx={{width:500}}
               />
             </FormControl>
 
@@ -101,6 +102,7 @@ export const CategoryForm = ({ initialFormData, onSubmit }) => {
                 multiline
                 minRows={3}
                 maxRows={10}
+                sx={{width:500}}
               />
             </FormControl>
           </Grid>
@@ -111,11 +113,11 @@ export const CategoryForm = ({ initialFormData, onSubmit }) => {
             display: 'flex',
             justifyContent: 'space-evenly',
             alignItems: 'center',
-            //border: '1px solid red'
+            
           }}
         >
 
-          <ArrowBack sx={{ border: '1px solid red' }} />
+          <ArrowBack  />
           <Button variant="contained" color="primary" type="submit">
             Enviar
           </Button>

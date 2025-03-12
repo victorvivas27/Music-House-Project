@@ -34,6 +34,7 @@ import {
 import { Code } from '../../api/constants'
 
 import '../styles/instruments.styles.css'
+import ArrowBack from '../utils/ArrowBack'
 
 const headCells = [
   {
@@ -173,12 +174,12 @@ export const Instruments = () => {
       <Paper
         sx={{
           display: { xs: 'none', lg: 'initial' },
-          border: '7px solid rgb(225, 20, 221)',
           margin: 10,
           
           minWidth:1700
         }}
       >
+        <ArrowBack/>
         <EnhancedTableToolbar
           title="Instrumentos"
           titleAdd="Agregar instrumento"
@@ -288,6 +289,10 @@ export const Instruments = () => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Filas por página"
+          sx={{
+            '& .MuiTablePagination-displayedRows': { display: 'none' },
+            '& .MuiTablePagination-actions': { display: 'none' }
+          }}
           
         />
       </Paper>

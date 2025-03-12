@@ -59,7 +59,7 @@ export const EditThemeForm = ({ id, onSaved }) => {
         setMessage("Temática guardada exitosamente");
         setShowMessage(true);
   
-        // Evitar que el formulario se vacíe antes de navegar
+      
         setTimeout(() => {
           navigate("/theme");
         }, 1000);
@@ -91,7 +91,7 @@ export const EditThemeForm = ({ id, onSaved }) => {
         title="Editar Tematica"
         message={message}
         isOpen={showMessage}
-        //buttonText="Ok"
+       
         onClose={onClose}
         onButtonPressed={onClose}
       />

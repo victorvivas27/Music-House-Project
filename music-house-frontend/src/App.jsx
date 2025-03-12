@@ -4,7 +4,7 @@ import { Home } from './components/Pages/Home'
 import { Instrument } from './components/Pages/Instrument'
 import { Instruments } from './components/Pages/Instruments'
 import { About } from './components/Pages/About'
-import { Contact } from './components/Pages/Contact'
+
 import { ContextProvider } from './components/utils/global.context'
 import { AgregarInstrumento } from './components/Pages/Admin/AgregarInstrumento'
 import { EditarInstrumento } from './components/Pages/Admin/EditarInstrumento'
@@ -15,7 +15,7 @@ import { Categories } from './components/Pages/Admin/categories'
 import { AgregarCategoria } from './components/Pages/Admin/AgregarCategoria'
 import { EditarCategoria } from './components/Pages/Admin/EditarCategoria'
 import { Favorites } from './components/Pages/Favorites'
-import { ConfirmBooking } from './components/Pages/ConfirmBooking'
+
 import { HeaderVisibilityProvider } from './components/utils/context/HeaderVisibilityGlobal'
 import { AuthContextProvider } from './components/utils/context/AuthGlobal'
 import AuthPage from './components/Pages/AuthPage'
@@ -51,15 +51,12 @@ export const App = () => {
                   <Route path="/" element={<Home />} />
                   <Route path="/perfil/:id" element={<Perfil />} />
                   <Route path="/about" element={<About />} />
-                  <Route path="/contact" element={<Contact />} />
+                 
                   <Route path="/instrument/:id" element={<Instrument />} />
                   <Route element={<ProtectedRoute />}>
                     <Route path="/favorites" element={<Favorites />} />
                     <Route path="/reservations" element={<MisReservas />} />
-                    <Route
-                      path="/confirmBooking"
-                      element={<ConfirmBooking />}
-                    />
+                    
                   </Route>
                 </Route>
                 <Route element={<AdminLayout />}>

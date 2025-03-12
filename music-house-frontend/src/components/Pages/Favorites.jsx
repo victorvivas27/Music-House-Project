@@ -16,7 +16,7 @@ export const Favorites = () => {
   const [favorites, setFavorites] = useState([])
   const { idUser } = useAuthContext()
 
-  // Obtener favoritos al cargar el componente
+ 
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
@@ -36,9 +36,9 @@ export const Favorites = () => {
     fetchFavorites()
   }, [idUser])
 
-  // Función para manejar la eliminación de un favorito con confirmación
+ 
   const handleRemoveFavorite = (favorite) => {
-    // Mostrar la confirmación usando Swal
+   
     Swal.fire({
       icon: 'warning',
       showCancelButton: true,
@@ -47,7 +47,7 @@ export const Favorites = () => {
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
-        // Eliminar favorito si el usuario confirma
+       
         removeFavorite(
           favorite.idFavorite,
           favorite.idUser,
@@ -60,7 +60,7 @@ export const Favorites = () => {
           Swal.fire({
             icon: 'success',
             title: 'Quitado de favoritos!',
-            timer: 1500, // Desaparece después de 1.5 segundos
+            timer: 1500, 
             showConfirmButton: false
           })
         }).catch(() => {
@@ -68,7 +68,7 @@ export const Favorites = () => {
             icon: 'error',
             title: 'Error!',
             text: 'Ocurrió un error al quitar de favoritos.',
-            timer: 1500, // Desaparece después de 1.5 segundos
+            timer: 1500, 
             showConfirmButton: false
           })
         })
@@ -100,7 +100,7 @@ export const Favorites = () => {
           <Box>
             <Typography
               gutterBottom
-              variant="h6"  // Reducir el tamaño de la fuente
+              variant="h6"
               component="h2"
               textAlign="center"
               sx={{ paddingBottom: 1, fontWeight: 'bold' }}
@@ -118,8 +118,8 @@ export const Favorites = () => {
                   id={favorite.instrument.idInstrument}
                   isFavorite={true}
                   onClickTrash={() => handleRemoveFavorite(favorite)} 
-                  sx={{ // Reducir el tamaño de los cards
-                    maxWidth: 250,  // Reducir tamaño máximo de los cards
+                  sx={{
+                    maxWidth: 250,  
                     height: 'auto',
                   }}
                 />
@@ -127,7 +127,7 @@ export const Favorites = () => {
             ) : (
               <Typography
                 gutterBottom
-                variant="subtitle2"  // Reducir tamaño del texto
+                variant="subtitle2"  
                 component="h6"
                 textAlign="center"
                 sx={{ paddingBottom: 1, fontWeight: 'bold' }}

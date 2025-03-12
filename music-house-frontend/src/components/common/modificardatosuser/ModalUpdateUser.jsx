@@ -157,7 +157,7 @@ const ModalUpdateUser = ({
                     cursor: 'pointer',
                     color: 'var(--color-primario)',
                     margin: 2,
-                    border: '2px solid var(--color-primario)',
+                   
                     '&:hover': { opacity: 0.8 }
                   }}
                 >
@@ -233,13 +233,12 @@ const ModalUpdateUser = ({
               type="submit"
               disabled={loading}
               sx={{
-                minWidth: '150px', // Ancho suficiente para acomodar el texto y el spinner
+                minWidth: '150px', 
                 minHeight: '40px',
-
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '10px' // Agrega un pequeño espacio entre el spinner y el texto
+                gap: '10px'
               }}
             >
               {loading ? (

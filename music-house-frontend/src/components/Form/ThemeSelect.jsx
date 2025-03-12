@@ -31,7 +31,7 @@ setLoading(false)
       onChange({
         target: { name: 'idTheme', value: selectedTheme.idTheme }
       })
-  }, [selectedTheme])
+  }, [loading, onChange, selectedTheme])
 
   if (loading) {
     return <Loader fullSize={false} />

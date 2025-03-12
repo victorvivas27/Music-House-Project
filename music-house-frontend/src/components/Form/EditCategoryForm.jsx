@@ -56,7 +56,7 @@ export const EditCategoryForm = ({ id, onSaved }) => {
 
         setShowMessage(true)
 
-        // Evitar que el formulario se vacíe antes de navegar
+       
         setTimeout(() => {
           navigate("/categories")
         }, 1000)
@@ -82,7 +82,10 @@ export const EditCategoryForm = ({ id, onSaved }) => {
       }}
     >
       {!loading && (
-        <CategoryForm initialFormData={initialFormData} onSubmit={onSubmit} />
+        <CategoryForm 
+        initialFormData={initialFormData}
+         onSubmit={onSubmit} 
+         />
       )}
       <MessageDialog
         title="Editar Categoría"

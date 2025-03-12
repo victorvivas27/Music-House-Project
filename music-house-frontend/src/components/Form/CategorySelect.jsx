@@ -40,7 +40,7 @@ const CategorySelect = ({label,onChange,selectedCategoryId = undefined}) => {
       onChange({
         target: { name: 'idCategory', value: selectedCategory.idCategory }
       })
-  }, [selectedCategory])
+  }, [loading, onChange, selectedCategory])
 
   if (loading) {
     return <Loader fullSize={false} />

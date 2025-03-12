@@ -5,7 +5,7 @@ import { Button } from '@mui/material'
 export const InputCustom = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-root': {
     color: 'black',
-    backgroundColor: '#D7D7D7D7'
+    backgroundColor: 'var(--background-color)',
   },
 
   '& .MuiOutlinedInput-root': {
@@ -15,7 +15,7 @@ export const InputCustom = styled(TextField)(({ theme }) => ({
   },
 
   [theme.breakpoints.up('md')]: {
-    backgroundColor: '#D7D7D73C'
+    backgroundColor: 'var(--background-color)',
   }
 }))
 
@@ -28,6 +28,7 @@ export const CustomButton = styled(Button)(({ theme }) => ({
   textTransform: 'none', // Evita que el texto esté en mayúsculas
   borderRadius: '8px', // Bordes redondeados para un diseño moderno
   transition: '0.3s', // Agrega una transición suave
+  
 
   '&:hover': {
     backgroundColor: 'var(--color-primario)', // Define un color de hover

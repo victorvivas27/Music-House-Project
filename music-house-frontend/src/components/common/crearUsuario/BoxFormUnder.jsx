@@ -8,7 +8,7 @@ export const BoxFormUnder = styled(Grid)(({ theme }) => ({
   justifyContent: 'center',
   margin: 'auto',
   padding: '10px',
-  //border: '5px solid yellow',
+  
 
   // Estilos para pantallas pequeñas
   [theme.breakpoints.down('sm')]: {

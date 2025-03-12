@@ -230,7 +230,7 @@ const Perfil = () => {
                                     p: 1,
                                     borderRadius: '8px',
                                     boxShadow: 3,
-                                    border: '1px solid black'
+                                   
                                   }}
                                 >
                                   <CardContent>
@@ -377,7 +377,7 @@ const Perfil = () => {
                                 p: 1,
                                 borderRadius: '8px',
                                 boxShadow: 3,
-                                border: '1px solid black'
+                               
                               }}
                             >
                               <CardContent>

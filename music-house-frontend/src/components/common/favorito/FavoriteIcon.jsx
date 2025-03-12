@@ -4,6 +4,7 @@ import { useAuthContext } from '../../utils/context/AuthGlobal'
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { addFavorite, getAllFavorites } from '../../../api/favorites'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined' // 📌 Importa el icono
 
 const FavoriteIcon = () => {
   const { idUser } = useAuthContext()
@@ -57,26 +58,48 @@ const FavoriteIcon = () => {
   }
 
   return (
-    <Box>
+    <Box
+      sx={{
+        position: 'relative',
+        bottom: {
+          xs: 7,
+          sm: 8,
+          md: 9,
+          lg: 10
+        },
+        right: {
+          xs: 150,
+          sm: 160,
+          md: 180,
+          lg: 190
+        },
+        zIndex: 2
+      }}
+    >
       <Tooltip
         title={isFavorite ? 'Ya está en favoritos' : 'Agregar a favoritos'}
+        arrow
       >
         <Button
           onClick={handleFavoriteClick}
+          disableRipple 
+          disableElevation 
           sx={{
-            position: 'absolute',
-            bottom: 10,
-            right: 10,
-            zIndex: 1,
-            padding: 0
+            padding: 0,
+            minWidth: 'auto', 
+            '&:hover': { backgroundColor: 'transparent' } 
           }}
-          disableRipple // Desactiva el efecto ripple
         >
           {isFavorite ? (
             <Favorite
               color="error"
               sx={{
-                fontSize: 60
+                fontSize: {
+                  xs: 30,
+                  sm: 35,
+                  md: 45,
+                  lg: 50
+                }
               }}
               className="pulse"
             />
@@ -84,29 +107,45 @@ const FavoriteIcon = () => {
             <FavoriteBorder
               color="action"
               sx={{
-                fontSize: 60
+                fontSize: {
+                  xs: 30,
+                  sm: 35,
+                  md: 45,
+                  lg: 50
+                },
+                transition: 'transform 0.2s ease-in-out',
+                '&:hover': { transform: 'scale(1.1)' }
               }}
             />
           )}
         </Button>
       </Tooltip>
 
-        {/* Snackbar para mostrar errores */}
-        <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
-  <Alert
-    onClose={handleCloseSnackbar}
-    severity="info" // Tipos: success | warning | info | error
-    sx={{
-      backgroundColor: 'blue', // Amarillo
-      color: 'white', // Texto oscuro
-      fontWeight: 'bold',
-      fontSize: '1rem',
-      borderRadius: '8px'
-    }}
-  >
-    {error}
-  </Alert>
-</Snackbar>
+      {/* Snackbar para mostrar errores */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="info"
+          sx={{
+            backgroundColor: 'var(--color-azul)', 
+            color: 'var(--texto-inverso)',
+            fontWeight: 'bold',
+            fontSize: '1rem',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1
+          }}
+          icon={<InfoOutlinedIcon sx={{ color: 'var(--texto-inverso)'}} />} 
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

@@ -32,6 +32,7 @@ import {
   useVisibleRows
 } from '../Admin/common/tableHelper'
 import { useAppStates } from '../../utils/global.context'
+import ArrowBack from '../../utils/ArrowBack'
 
 const headCells = [
   {
@@ -177,11 +178,10 @@ export const Theme = () => {
       <Paper
         sx={{
           display: { xs: 'none', lg: 'initial' },
-
-          border: '7px solid rgb(225, 20, 221)',
           margin: 10
         }}
-      >
+        >
+        <ArrowBack/>
         <EnhancedTableToolbar
           title="Tematica"
           titleAdd="Agregar tematica"

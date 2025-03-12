@@ -51,10 +51,10 @@ const NewInstrumentForm = () => {
       .finally(() => {
         setShowMessage(true);
   
-        // ⏳ Cierra el mensaje y redirige después de 3 segundos (3000ms)
+        
         setTimeout(() => {
           setShowMessage(false);
-          navigate(-1);  // 🔙 Regresa a la página anterior
+          navigate(-1);  
         }, 2000);
       });
   },[navigate])
