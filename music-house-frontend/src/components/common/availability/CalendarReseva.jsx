@@ -210,22 +210,38 @@ const CalendarReserva = ({ instrument }) => {
   }
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider dateAdapter={AdapterDayjs} >
       <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          p: 3,
-          width: '100%',
-          maxWidth: '600px',
-          mx: 'auto'
-        }}
+      sx={{
+        width: '100%', // 📌 Asegura que no se desborde
+        maxWidth: '100%', // 📌 Evita que se pase del contenedor en móviles
+        mb: 3,
+        display: 'flex',
+        justifyContent: 'center', // 📌 Centra el contenido horizontalmente
+        flexDirection:"column",
+        alignItems: 'center',
+        overflow: 'hidden', // 📌 Previene el desbordamiento en pantallas pequeñas
+        border: '3px solid rgba(174, 23, 225, 0.2)', // 🎨 Borde más sutil
+    
+        minHeight: {
+          xs: 'auto',
+          sm: '70%',
+          md: '75%',
+          lg: '85%',
+          xl: '95%',
+        },
+        minWidth: {
+          xs: '90%', // 📌 En móviles, usa el 90% para evitar el desbordamiento
+          sm: '400px',
+          md: '550px',
+          lg: '850px',
+          xl: '90%',
+        },
+      }}
       >
-        {/* Calendario con ancho completo */}
-        <Box sx={{ width: '100%', mb: 3 }}>
-          <DateCalendar slots={{ day: CustomDayComponent }} />
-        </Box>
+ 
+  <DateCalendar slots={{ day: CustomDayComponent }} />
+
 
         {selectedDates.length > 0 && (
           <Tooltip title="Reservar">
@@ -307,45 +323,88 @@ const CalendarReserva = ({ instrument }) => {
           </Alert>
         </Snackbar>
 
-        {/* Leyenda de colores más organizada */}
-        <Box sx={{ mt: 3, textAlign: 'center', width: '100%' }}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-              gap: 3,
-              width: '100%'
-            }}
-          >
-            {[
-              { color: '#9E9E9E', label: 'Reservado' },
-              { color: '#4CAF50', label: 'Disponible' },
-              { color: '#E57373', label: 'No disponible' },
-              { color: '#2196F3', label: 'Seleccionado' }
-            ].map(({ color, label }) => (
-              <Box
-                key={label}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1,
-                  minWidth: '50%'
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 25,
-                    height: 25,
-                    bgcolor: color,
-                    borderRadius: '50%'
-                  }}
-                />
-                <Typography variant="body1">{label}</Typography>
-              </Box>
-            ))}
-          </Box>
-        </Box>
+       {/* Leyenda de colores mejor organizada */}
+<Box
+  sx={{
+    width: '100%',
+    maxWidth: {
+      xs: '100%', // 📌 Ocupa todo el ancho en móviles
+      sm: '70%',
+      md: '80%',
+      lg: '90%'
+    },
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
+    padding: '1rem',
+    border: '3px solid rgba(0, 0, 0, 0.2)', // 🔹 Borde más sutil
+    borderRadius: '12px', // 🔹 Bordes redondeados
+    backgroundColor: '#f7f7f7', // 🔹 Fondo sutil
+    boxShadow: '2px 4px 8px rgba(0,0,0,0.1)' // 🔹 Sombra ligera para efecto 3D
+  }}
+>
+  <Typography
+    variant="h6"
+    sx={{
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#333',
+      marginBottom: '0.5rem'
+    }}
+  >
+    🗓️ Estado de Disponibilidad
+  </Typography>
+
+  {/* Contenedor de colores */}
+  <Box
+    sx={{
+      display: 'grid',
+      gridTemplateColumns: {
+        xs: '1fr 1fr', // 📌 En móviles, 2 columnas
+        sm: '1fr 1fr 1fr 1fr' // 📌 En pantallas más grandes, 4 columnas
+      },
+      gap: 2,
+      width: '100%',
+      justifyContent: 'center'
+    }}
+  >
+    {[
+      { color: '#9E9E9E', label: 'Reservado' },
+      { color: '#4CAF50', label: 'Disponible' },
+      { color: '#E57373', label: 'No disponible' },
+      { color: '#2196F3', label: 'Seleccionado' }
+    ].map(({ color, label }) => (
+      <Box
+        key={label}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 1,
+          width: '100%',
+          padding: '8px',
+          backgroundColor: 'rgba(255, 255, 255, 0.7)', // 🔹 Fondo suave
+          borderRadius: '8px', // 🔹 Bordes suaves
+          boxShadow: '1px 2px 4px rgba(0,0,0,0.1)' // 🔹 Pequeña sombra
+        }}
+      >
+        <Box
+          sx={{
+            width: 20,
+            height: 20,
+            bgcolor: color,
+            borderRadius: '50%'
+          }}
+        />
+        <Typography variant="body1" sx={{ fontSize: '0.9rem', color: '#333' }}>
+          {label}
+        </Typography>
+      </Box>
+    ))}
+  </Box>
+</Box>
       </Box>
     </LocalizationProvider>
   )
