@@ -1,58 +1,64 @@
 export const inputStyles = {
+  borderRadius: '8px', // Bordes redondeados
+  transition: 'all 0.3s ease-in-out', // Suaviza las transiciones
+  backgroundColor: 'var(--background-color)', // Fondo dinámico
+  color: 'var(--texto-inverso)', // Color del texto
+
+  border: 'none', // Elimina borde predeterminado
+  boxSizing: 'border-box', // Evita desbordes por bordes gruesos
+
   '& .MuiInputBase-input': {
-    color: 'var(--texto-primario)', // Color del texto
-    fontSize: '1rem', // Tamaño de la fuente más legible
-    
+    color: 'var(--color-azul)', // Color del texto principal
   },
+
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
-      borderColor: 'var(--color-secundario)', // Color del borde normal
-      borderWidth: '2px' // Grosor del borde
+      borderColor: 'var(--color-secundario)', // Borde normal
+      borderWidth: '2px', // Grosor inicial
     },
     '&:hover fieldset': {
-      borderColor: 'var(--color-primario-dark)', // Color más fuerte en hover
-      borderWidth: '2.5px' // Borde más grueso al pasar el mouse
+      borderColor: 'var(--color-primario)', // Color más fuerte en hover
+      borderWidth: '2.5px', // Borde más grueso en hover
     },
     '&.Mui-focused fieldset': {
-      borderColor: 'var(--color-azul)', // Color más fuerte al estar enfocado
-      borderWidth: '3px', // Borde más grueso al hacer foco
-      
+      borderColor: 'var(--color-azul)', // Color en foco
+      borderWidth: '3px', // Borde más grueso en foco
+
     },
-    borderRadius: '8px', // Bordes más redondeados
-    transition: 'all 0.3s ease-in-out' // Suaviza los cambios de estilo
   },
+
   '& .MuiInputLabel-root': {
-    color: 'var(--calendario-fondo-no-disponible)', // Color del label
-    fontSize: '1rem', // Tamaño del texto normal
-    fontWeight: 'bold', // Opcional: hacer el label más grueso
+    color: 'var(--texto-inverso)', // Color del label normal
+    fontSize: '1rem', // Tamaño base
+    fontWeight: 'bold', // Texto en negrita
     transition: 'all 0.3s ease-in-out', // Transición suave
   },
-  '& .MuiInputLabel-root.Mui-focused': {
-    color: 'var(--calendario-fondo-no-disponible)', // Color cuando el input está enfocado
-    fontSize: '1.1rem', // Opcional: agrandar al enfocar
-  }
-};
 
+  '& .MuiInputLabel-root.Mui-focused': {
+    color: 'var(--texto-inverso)', // Color al enfocar
+
+  },
+
+};
 
 export const flexRowContainer = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
- 
-  borderRadius: '.625rem',
+  borderRadius: '10px',
   flexWrap: 'wrap',
   boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.1)',
-}
+  padding: '10px', // Espaciado interno mejorado
+};
 
 export const flexColumnContainer = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  
-  justifyContent: "space-evenly",
+  justifyContent: 'space-evenly',
   backgroundColor: 'rgba(245, 245, 245, 0.8)',
   boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.1)',
   borderRadius: '12px',
-  
-
+  padding: '15px', // Mejora en espaciado interno
+  maxWidth: '100%', // Evita desbordes en pantallas pequeñas
 };

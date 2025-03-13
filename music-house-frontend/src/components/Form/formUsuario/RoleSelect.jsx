@@ -6,12 +6,7 @@ import PropTypes from 'prop-types'
 
 const roles = roleList()
 
-export const RoleSelect = ({
-  label,
-  onChange,
-  selectedRoleId = undefined,
-  
-}) => {
+export const RoleSelect = ({ label, onChange, selectedRoleId = undefined }) => {
   const [loading, setLoading] = useState(true)
   const [selectedRole, setSelectedRole] = useState('')
 
@@ -46,24 +41,14 @@ export const RoleSelect = ({
 
   return (
     <Select
-      displayEmpty 
+      displayEmpty
       value={selectedRole}
       onChange={handleRoleChange}
       label={label}
-      color="secondary"
-      sx={{
-        backgroundColor: 'var( --background-color)', 
-        color: 'var(--color-secundario)', // Color del texto
-        borderRadius: '5px', // Bordes redondeados
-
-        /*'&:hover': {
-          backgroundColor: '#D7D7D7D7' // Efecto hover
-        }*/
-      }}
     >
       {/* 📌 Placeholder */}
       <MenuItem value="" disabled>
-       <Typography variant="h6">Asignar Rol</Typography>
+        <Typography variant="h6">Asignar Rol</Typography>
       </MenuItem>
 
       {/* 📌 Lista de roles */}
@@ -77,12 +62,8 @@ export const RoleSelect = ({
 }
 
 RoleSelect.propTypes = {
-  label: PropTypes.string, 
-  onChange: PropTypes.func.isRequired, 
-  selectedRoleId: PropTypes.oneOfType([
-   
-    PropTypes.string,
-    PropTypes.number
-  ]),
-  sx: PropTypes.object 
+  label: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+  selectedRoleId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  sx: PropTypes.object
 }

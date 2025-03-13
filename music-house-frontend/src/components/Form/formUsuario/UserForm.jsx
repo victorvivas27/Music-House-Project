@@ -27,12 +27,13 @@ import { Visibility, VisibilityOff } from '@mui/icons-material'
 import usePasswordValidation from '../../../hook/usePasswordValidation'
 import { inputStyles } from '../../styles/styleglobal'
 import { countryCodes } from '../../utils/codepaises/CountryCodes'
+import { useAuthContext } from '../../utils/context/AuthGlobal'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   width: '100%',
- 
+
   justifyContent: 'center',
   [theme.breakpoints.up('md')]: {
     alignItems: 'flex-end !important',
@@ -100,6 +101,7 @@ export const UserForm = ({
   const { passwordErrors, success, validatePassword, validateRepeatPassword } =
     usePasswordValidation()
   const [preview, setPreview] = useState(null)
+  const { isUserAdmin } = useAuthContext()
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]
@@ -111,11 +113,16 @@ export const UserForm = ({
     }
   }
 
-  const isUserAdmin =
-    user?.data?.roles?.some((role) => role.rol === 'ADMIN') || false
-  const isUser = user?.data?.roles?.some((role) => role.rol === 'USER') || false
   const idUser = user?.data?.idUser || null
-  const isLoggedUser = idUser && idUser === Number(initialFormData?.idUser)
+  const userRoles = user?.data?.roles?.map((role) => role.rol) || []
+
+  //const isUserAdminDelUsuario = userRoles.includes("ADMIN"); // 🔹 Admin del usuario editado
+  //const isUser = userRoles.includes("USER"); // 🔹 Usuario normal del usuario editado
+  const isLoggedUser = idUser && idUser === Number(formData?.idUser)
+
+  useEffect(() => {
+    if (isUserAdmin) setAccept(true)
+  }, [isUserAdmin])
 
   const title = isLoggedUser
     ? 'Mi perfil'
@@ -124,10 +131,6 @@ export const UserForm = ({
       : 'Crear una cuenta'
 
   const buttonText = formData.idUser || isUserAdmin ? 'Guardar' : 'Registrar'
-
-  useEffect(() => {
-    if (isUserAdmin) setAccept(true)
-  }, [isUserAdmin])
 
   /*handleChange (manejarCambios) es una función que se encarga de manejar
  los cambios en los campos del formulario,en tiempo real */
@@ -283,7 +286,7 @@ export const UserForm = ({
  los cambios al enviar el formulario */
   const handleSubmit = async (event) => {
     event.preventDefault()
-    
+
     let formIsValid = true
     let newErrors = { ...initialErrorState }
     // 📌 Validar campos obligatorios
@@ -308,28 +311,28 @@ export const UserForm = ({
       formIsValid = false
     }
 
-  // 📌 🔴 Validar CONTRASEÑA solo si NO es ADMIN y está creando un usuario nuevo
-  if (!isUserAdmin && (!formData.idUser || formData.idUser === '')) {
-    if (!formData.password) {
-      newErrors.password = '❌La contraseña es obligatoria';
-      formIsValid = false;
-    }
+    // 📌 🔴 Validar CONTRASEÑA solo si NO es ADMIN y está creando un usuario nuevo
+    if (!isUserAdmin && (!formData.idUser || formData.idUser === '')) {
+      if (!formData.password) {
+        newErrors.password = '❌La contraseña es obligatoria'
+        formIsValid = false
+      }
 
-    if (!formData.repeatPassword) {
-      newErrors.repeatPassword = '❌Debes repetir la contraseña';
-      formIsValid = false;
-    }
+      if (!formData.repeatPassword) {
+        newErrors.repeatPassword = '❌Debes repetir la contraseña'
+        formIsValid = false
+      }
 
-    if (formData.password !== formData.repeatPassword) {
-      newErrors.repeatPassword = '❌Las contraseñas no coinciden';
-      formIsValid = false;
-    }
+      if (formData.password !== formData.repeatPassword) {
+        newErrors.repeatPassword = '❌Las contraseñas no coinciden'
+        formIsValid = false
+      }
 
-    if (!formData.telegramChatId) {
-      newErrors.telegramChatId = '❌El código de Telegram es obligatorio';
-      formIsValid = false;
+      if (!formData.telegramChatId) {
+        newErrors.telegramChatId = '❌El código de Telegram es obligatorio'
+        formIsValid = false
+      }
     }
-  }
 
     // 📌 Validar dirección
     formData.addresses.forEach((address, index) => {
@@ -352,10 +355,10 @@ export const UserForm = ({
     })
 
     // 📌 🔴 Validar aceptación de términos solo si es un usuario normal y está registrándose
-  if (!isUserAdmin && !formData.idUser && !accept) {
-    newErrors.general = '❌Debes aceptar los términos y condiciones';
-    formIsValid = false;
-  }
+    if (!isUserAdmin && !formData.idUser && !accept) {
+      newErrors.general = '❌Debes aceptar los términos y condiciones'
+      formIsValid = false
+    }
 
     if (!formIsValid) {
       setErrors(newErrors)
@@ -445,11 +448,9 @@ export const UserForm = ({
     }
   }, [formData.picture])
 
+  //console.log("isUserAdmin:", isUserAdmin);
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{ margin: 'auto', width: '100%' }}
-    >
+    <form onSubmit={handleSubmit} style={{ margin: 'auto', width: '100%' }}>
       <ContainerForm>
         <Grid
           sx={{
@@ -495,6 +496,7 @@ export const UserForm = ({
                 margin: 2
               }}
             >
+              {/*Comienzo contenedor formulario lado izquierdo*/}
               <Grid
                 sx={{
                   width: '90%',
@@ -505,6 +507,7 @@ export const UserForm = ({
                   margin: 2
                 }}
               >
+                {/* Contenedor del avatar y la subida de imagen */}
                 <FormControl
                   fullWidth
                   sx={{
@@ -514,7 +517,6 @@ export const UserForm = ({
                     margin: 2
                   }}
                 >
-                  {/* Contenedor del avatar y la subida de imagen */}
                   <Box
                     sx={{
                       display: 'flex',
@@ -534,7 +536,7 @@ export const UserForm = ({
                           cursor: 'pointer',
                           color: 'var(--color-primario)',
                           margin: 2,
-                          
+
                           '&:hover': { opacity: 0.8 }
                         }}
                       >
@@ -556,7 +558,12 @@ export const UserForm = ({
                     <Typography
                       variant="body2"
                       color="var(--text-primario)"
-                      sx={{ mt: 1, textAlign: 'center' }}
+                      sx={{
+                        mt: 1,
+                        textAlign: 'center',
+                        color: 'var(--texto-primario)',
+                        fontWeight: 'bold'
+                      }}
                     >
                       Máximo 5MB - Formatos permitidos: JPG, PNG
                     </Typography>
@@ -569,17 +576,19 @@ export const UserForm = ({
                     </Typography>
                   )}
                 </FormControl>
+                {/*Fin input avatar*/}
+
+                {/*Input Name*/}
 
                 <FormControl
                   fullWidth
                   margin="normal"
                   sx={{
                     minHeight: '60px'
-                   
                   }}
                 >
                   <InputCustom
-                    placeholder="Nombre"
+                    label="🏷️Nombre"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
@@ -595,11 +604,12 @@ export const UserForm = ({
                   margin="normal"
                   sx={{
                     minHeight: '60px'
-                   
                   }}
                 >
+                  {/*Fin input name*/}
+                  {/*Input last name*/}
                   <InputCustom
-                    placeholder="Apellido"
+                    label="👤Apellido"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
@@ -609,7 +619,9 @@ export const UserForm = ({
                     helperText={errors.lastName}
                   />
                 </FormControl>
+                {/*Fin input last name*/}
 
+                {/*Contenedor  direccion */}
                 {formData.addresses.map((address, index) => (
                   <Grid
                     key={index}
@@ -617,10 +629,11 @@ export const UserForm = ({
                     spacing={2}
                     sx={{ marginTop: '1px' }}
                   >
+                    {/*Input calle */}
                     <Grid item xs={12} sm={6}>
                       <FormControl key={index} fullWidth margin="normal">
                         <InputCustom
-                          placeholder="Calle"
+                          label="🏠Calle"
                           name="street"
                           value={address.street}
                           onChange={(e) => handleAddressChange(index, e)}
@@ -632,7 +645,9 @@ export const UserForm = ({
                         />
                       </FormControl>
                     </Grid>
+                    {/*Fin input calle */}
 
+                    {/*Input numero */}
                     <Grid item xs={12} sm={6}>
                       <FormControl
                         key={index}
@@ -640,11 +655,10 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           minHeight: '60px'
-                         
                         }}
                       >
                         <InputCustom
-                          placeholder="Número"
+                          label="🔢Número"
                           name="number"
                           value={address.number}
                           onChange={(e) => handleAddressChange(index, e)}
@@ -657,6 +671,8 @@ export const UserForm = ({
                       </FormControl>
                     </Grid>
 
+                    {/*Fin input numero */}
+                    {/*Input ciudad */}
                     <Grid item xs={12} sm={4}>
                       <FormControl
                         key={index}
@@ -664,11 +680,10 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           minHeight: '60px'
-                        
                         }}
                       >
                         <InputCustom
-                          placeholder="Ciudad"
+                          label="🌆Ciudad"
                           name="city"
                           value={address.city}
                           onChange={(e) => handleAddressChange(index, e)}
@@ -680,7 +695,8 @@ export const UserForm = ({
                         />
                       </FormControl>
                     </Grid>
-
+                    {/*Fin input ciudad */}
+                    {/*Input estado*/}
                     <Grid item xs={12} sm={4}>
                       <FormControl
                         key={index}
@@ -688,11 +704,10 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           minHeight: '60px'
-                         
                         }}
                       >
                         <InputCustom
-                          placeholder="Estado"
+                          label="🏛️Estado"
                           name="state"
                           value={address.state}
                           onChange={(e) => handleAddressChange(index, e)}
@@ -704,7 +719,9 @@ export const UserForm = ({
                         />
                       </FormControl>
                     </Grid>
+                    {/*Fin input estado*/}
 
+                    {/*Input país*/}
                     <Grid item xs={12} sm={4}>
                       <FormControl
                         key={index}
@@ -712,35 +729,42 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           minHeight: '60px'
-                          
                         }}
                       >
                         <InputCustom
-                          placeholder="País"
+                          label="🌍País"
                           name="country"
                           value={address.country}
                           onChange={(e) => handleAddressChange(index, e)}
                           error={Boolean(allErrors[`country_${index}`])}
                           helperText={errors[`country_${index}`] || ' '}
                           type="text"
-                          sx={inputStyles}
+                          sx={{ ...inputStyles }}
                           fullWidth
                         />
                       </FormControl>
                     </Grid>
+                    {/*Fin input país*/}
                   </Grid>
                 ))}
+                {/*Contenedor  direccion */}
 
+                {/*Contenedor  telefono */}
                 {formData.phones.map((phone, index) => (
-                  <FormControl
-                    key={index}
-                    fullWidth
-                    sx={{
-                      minHeight: '60px'
-                    }}
-                  >
+                  <FormControl key={index} fullWidth>
                     {/* 📌 Select para elegir el código de país */}
-                    <FormControl fullWidth margin="normal">
+                    <FormControl
+                      fullWidth
+                      margin="normal"
+                      sx={{
+                        ...inputStyles,
+                        '& .MuiInputBase-input': {
+                          color: phone.countryCode
+                            ? 'var(--color-azul)'
+                            : 'var(--texto-inverso)'
+                        }
+                      }}
+                    >
                       <Select
                         displayEmpty
                         value={phone.countryCode}
@@ -751,23 +775,24 @@ export const UserForm = ({
                             e.target.value
                           )
                         }
-                        sx={{
-                          backgroundColor: 'var( --background-color)', 
-                          color: 'var(--color-secundario)', 
-                          borderRadius: '5px', 
-                          /*'&:hover': {
-                            backgroundColor: '#D7D7D7D7' // Efecto hover
-                          }*/
-                        }}
                       >
                         {/* 📌 Opción Placeholder */}
                         <MenuItem value="" disabled>
-                          Código País
+                          <Typography variant="h6">🔢Código País</Typography>
                         </MenuItem>
 
                         {/* 📌 Lista de opciones */}
                         {countryCodes.map((country) => (
-                          <MenuItem key={country.code} value={country.code}>
+                          <MenuItem
+                            key={country.code}
+                            value={country.code}
+                            sx={{
+                              '&:hover': {
+                                backgroundColor: 'var(--color-primario)', // Cambio de color al pasar el mouse
+                                color: '#fff' // Texto blanco en hover
+                              }
+                            }}
+                          >
                             {country.country} ({country.code})
                           </MenuItem>
                         ))}
@@ -777,12 +802,12 @@ export const UserForm = ({
                     {/* 📌 Input para el número de teléfono */}
                     <InputCustom
                       placeholder="Teléfono"
-                      value={phone.phoneNumber.replace(phone.countryCode, '')} 
+                      value={phone.phoneNumber.replace(phone.countryCode, '')}
                       onChange={(e) =>
                         handlePhoneChange(index, 'phoneNumber', e.target.value)
                       }
                       error={Boolean(allErrors[`phone_${index}`])}
-                      helperText={errors[`phone_${index}`] || ' '} 
+                      helperText={errors[`phone_${index}`] || ''}
                       type="text"
                       sx={inputStyles}
                       InputProps={{
@@ -795,8 +820,11 @@ export const UserForm = ({
                     />
                   </FormControl>
                 ))}
+                {/*Fin contenedor  telefono */}
               </Grid>
+              {/*Fin  contenedor formulario lado izquierdo*/}
 
+              {/*Comienzo contenedor formulario lado derecho*/}
               <Grid
                 sx={{
                   width: '99%',
@@ -808,241 +836,228 @@ export const UserForm = ({
                   gap: 1
                 }}
               >
-                <FormControl
-                  fullWidth
-                  margin="normal"
-                  sx={{
-                    minHeight: '60px'
-                   
-                  }}
-                >
+                {/*Input email*/}
+                <FormControl fullWidth margin="normal">
                   <InputCustom
-                    placeholder="Email"
+                    label="📧 Email"
                     name="email"
                     onChange={handleChange}
                     value={formData.email}
                     type="email"
-                    sx={inputStyles}
+                    sx={{ ...inputStyles }}
                     error={Boolean(allErrors.email)}
                     helperText={errors.email}
                   />
                 </FormControl>
+                {/*Fin input email*/}
 
-                {formData.idUser && (
+                {/* 📌 Verificamos si `formData.idUser` es válido antes de renderizar */}
+
+                {/* ✅ Solo mostrar si hay usuario seleccionado */}
+                {formData?.idUser && (
                   <Grid
                     item
                     xs={12}
                     md={6}
                     sx={{ padding: 2, width: '100%', height: '100%' }}
                   >
-                    {/* 📌 Botón para eliminar el rol USER */}
-                    {isUser && (
-                      <Button
-                        onClick={() => {
-                          if (user.data.roles.length === 1) {
-                            // Mostrar alerta cuando solo queda un rol
-                            Swal.fire({
-                              title: 'Acción no permitida',
-                              text: 'No puedes eliminar el único rol del usuario.',
-                              icon: 'error',
-                              confirmButtonText: 'Entendido'
-                            })
-                          } else {
-                            handleRemoveRole('USER')
-                          }
-                        }}
-                        style={buttonStyle}
-                      >
-                        Eliminar rol USER
-                      </Button>
-                    )}
-
-                    {/* 📌 Botón para eliminar el rol ADMIN */}
+                    {/* ✅ Si soy admin, mostrar los botones de gestión de roles */}
                     {isUserAdmin && (
-                      <Button
-                        onClick={() => {
-                          if (user.data.roles.length === 1) {
-                            Swal.fire({
-                              title: 'Acción no permitida',
-                              text: 'No puedes eliminar el único rol del usuario.',
-                              icon: 'error',
-                              confirmButtonText: 'Entendido'
-                            })
-                          } else {
-                            handleRemoveRole('ADMIN')
-                          }
-                        }}
-                        style={buttonStyle}
-                      >
-                        Eliminar rol ADMIN
-                      </Button>
+                      <>
+                        {userRoles.length > 0 ? (
+                          ['USER', 'ADMIN'].map(
+                            (role) =>
+                              userRoles.includes(role) && (
+                                <Button
+                                  key={role}
+                                  onClick={() => {
+                                    if (userRoles.length === 1) {
+                                      Swal.fire({
+                                        title: 'Acción no permitida',
+                                        text: 'No puedes eliminar el único rol del usuario.',
+                                        icon: 'error',
+                                        confirmButtonText: 'Entendido'
+                                      })
+                                    } else {
+                                      handleRemoveRole(role)
+                                    }
+                                  }}
+                                  style={buttonStyle}
+                                >
+                                  Eliminar rol {role}
+                                </Button>
+                              )
+                          )
+                        ) : (
+                          <Typography color="error">
+                            No hay roles asignados.
+                          </Typography>
+                        )}
+
+                        {/* 📌 Select para asignar roles */}
+                        <FormControl
+                          fullWidth
+                          margin="normal"
+                          sx={{
+                            ...inputStyles, // 🔹 Mantiene los estilos base
+                            '& .MuiInputBase-input': {
+                              color: 'var(--color-azul)' // 🔹 Aplica el color al texto dentro del input
+                            }
+                          }}
+                        >
+                          <RoleSelect
+                            selectedRoleId={formData?.idRol}
+                            onChange={handleChange}
+                          />
+                        </FormControl>
+                      </>
                     )}
-
-                    {/*  <p>
-                      Recuerda que siempre debe existir un rol. El botón se
-                      desactiva si queda un único rol.
-                    </p> */}
-
-                    <FormControl fullWidth margin="normal">
-                      <RoleSelect
-                        selectedRoleId={formData?.idRol}
-                        onChange={handleChange}
-                      />
-                    </FormControl>
                   </Grid>
                 )}
 
-                {!isUserAdmin && (!formData.idUser || formData.idUser === '') && (
-                  <>
-                    {/* Campo de contraseña */}
-                    <FormControl
-                      fullWidth
-                      margin="normal"
-                      error={Boolean(allErrors.password || '')}
-                      sx={{
-                        minHeight: '60px'
-                       
-                      }}
-                    >
-                      <OutlinedInput
+                {!isUserAdmin &&
+                  (!formData.idUser || formData.idUser === '') && (
+                    <>
+                      {/* Campo de contraseña */}
+                      <FormControl
+                        fullWidth
+                        margin="normal"
+                        error={Boolean(allErrors.password || '')}
                         sx={{
-                          
-                          color: 'var(--color-secundario)', // Color del texto
-                          borderRadius: '5px', // Bordes redondeados
-                          padding: '5px', // Espaciado interno
-                          /*'&:hover': {
-                            backgroundColor: '#D7D7D7D7' // Efecto hover
-                          }*/
+                          minHeight: '60px'
                         }}
-                        placeholder="Contraseña"
-                        name="password"
-                        onChange={handleChange}
-                        value={formData.password}
-                        type={showPassword ? 'text' : 'password'}
-                        endAdornment={
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowPassword(!showPassword)}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <VisibilityOff
-                                  sx={{
-                                    color: 'var(--color-exito)',
-                                    fontSize: 40
-                                  }}
-                                />
-                              ) : (
-                                <Visibility
-                                  sx={{
-                                    color: 'var(--color-secundario)',
-                                    fontSize: 40
-                                  }}
-                                />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        }
-                      />
-                      {allErrors.password && (
-                        <FormHelperText>{allErrors.password}</FormHelperText>
-                      )}
-                    </FormControl>
-
-                    {/* Campo de repetir contraseña */}
-                    <FormControl
-                      fullWidth
-                      margin="normal"
-                      error={Boolean(allErrors.repeatPassword)}
-                      sx={{
-                        minHeight: '60px'
-                      
-                      }}
-                    >
-                      <OutlinedInput
-                        sx={{
-                          
-                          color: 'var(--color-secundario)', 
-                          borderRadius: '5px',
-                          padding: '5px',
-                         /* '&:hover': {
-                            backgroundColor: '#D7D7D7D7' // Efecto hover
-                          }*/
-                        }}
-                        placeholder="Repetir Contraseña"
-                        name="repeatPassword"
-                        onChange={handleChange}
-                        value={formData.repeatPassword}
-                        type={showPasswordRepeat ? 'text' : 'password'}
-                        endAdornment={
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() =>
-                                setShowPasswordRepeat(!showPasswordRepeat)
-                              }
-                              edge="end"
-                            >
-                              {showPasswordRepeat ? (
-                                <VisibilityOff
-                                  sx={{
-                                    color: 'var(--color-exito)',
-                                    fontSize: 40
-                                  }}
-                                />
-                              ) : (
-                                <Visibility
-                                  sx={{
-                                    color: 'var(--color-secundario)',
-                                    fontSize: 40
-                                  }}
-                                />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        }
-                      />
-                      {allErrors.repeatPassword ? (
-                        <FormHelperText>
-                          {allErrors.repeatPassword}
-                        </FormHelperText>
-                      ) : success.repeatPassword ? (
-                        <FormHelperText sx={{ color: 'var(--color-exit)' }}>
-                          {success.repeatPassword}
-                        </FormHelperText>
-                      ) : null}
-                    </FormControl>
-
-                    <FormControl
-                      fullWidth
-                      margin="normal"
-                      sx={{ minHeight: '60px' }}
-                    >
-                      <InputCustom
-                        placeholder="Código de Telegram"
-                        name="telegramChatId"
-                        onChange={handleChange}
-                        value={formData.telegramChatId}
-                        error={Boolean(errors.telegramChatId)}
-                        helperText={errors.telegramChatId}
-                        type="tel" 
-                        inputProps={{ maxLength: 15, pattern: '[0-9]*' }} 
-                        sx={inputStyles}
-                      />
-                    </FormControl>
-
-                    <Typography sx={{ fontSize: '14px', marginTop: '5px' }}>
-                      ¿No sabes tu código?{' '}
-                      <Link
-                        href="https://t.me/MyBotJva_bot"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{ fontWeight: 'bold', color: 'var(--color-azul)' }}
                       >
-                        Haz clic aquí para obtenerlo en Telegram
-                      </Link>
-                    </Typography>
-                  </>
-                )}
+                        <OutlinedInput
+                          placeholder="Contraseña"
+                          name="password"
+                          onChange={handleChange}
+                          value={formData.password}
+                          type={showPassword ? 'text' : 'password'}
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={() => setShowPassword(!showPassword)}
+                                edge="end"
+                              >
+                                {showPassword ? (
+                                  <VisibilityOff
+                                    sx={{
+                                      color: 'var(--color-exito)',
+                                      fontSize: 40
+                                    }}
+                                  />
+                                ) : (
+                                  <Visibility
+                                    sx={{
+                                      color: 'var(--color-secundario)',
+                                      fontSize: 40
+                                    }}
+                                  />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                        />
+                        {allErrors.password && (
+                          <FormHelperText>{allErrors.password}</FormHelperText>
+                        )}
+                      </FormControl>
+
+                      {/* Campo de repetir contraseña */}
+                      <FormControl
+                        fullWidth
+                        margin="normal"
+                        error={Boolean(allErrors.repeatPassword)}
+                        sx={{
+                          minHeight: '60px'
+                        }}
+                      >
+                        <OutlinedInput
+                          sx={{
+                            color: 'var(--color-secundario)',
+                            borderRadius: '5px',
+                            padding: '5px'
+                            /* '&:hover': {
+                            backgroundColor: '#D7D7D7D7' // Efecto hover
+                          }*/
+                          }}
+                          placeholder="Repetir Contraseña"
+                          name="repeatPassword"
+                          onChange={handleChange}
+                          value={formData.repeatPassword}
+                          type={showPasswordRepeat ? 'text' : 'password'}
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={() =>
+                                  setShowPasswordRepeat(!showPasswordRepeat)
+                                }
+                                edge="end"
+                              >
+                                {showPasswordRepeat ? (
+                                  <VisibilityOff
+                                    sx={{
+                                      color: 'var(--color-exito)',
+                                      fontSize: 40
+                                    }}
+                                  />
+                                ) : (
+                                  <Visibility
+                                    sx={{
+                                      color: 'var(--color-secundario)',
+                                      fontSize: 40
+                                    }}
+                                  />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                        />
+                        {allErrors.repeatPassword ? (
+                          <FormHelperText>
+                            {allErrors.repeatPassword}
+                          </FormHelperText>
+                        ) : success.repeatPassword ? (
+                          <FormHelperText sx={{ color: 'var(--color-exit)' }}>
+                            {success.repeatPassword}
+                          </FormHelperText>
+                        ) : null}
+                      </FormControl>
+
+                      <FormControl
+                        fullWidth
+                        margin="normal"
+                        sx={{ minHeight: '60px' }}
+                      >
+                        <InputCustom
+                          placeholder="Código de Telegram"
+                          name="telegramChatId"
+                          onChange={handleChange}
+                          value={formData.telegramChatId}
+                          error={Boolean(errors.telegramChatId)}
+                          helperText={errors.telegramChatId}
+                          type="tel"
+                          inputProps={{ maxLength: 15, pattern: '[0-9]*' }}
+                          sx={inputStyles}
+                        />
+                      </FormControl>
+
+                      <Typography sx={{ fontSize: '14px', marginTop: '5px' }}>
+                        ¿No sabes tu código?{' '}
+                        <Link
+                          href="https://t.me/MyBotJva_bot"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            fontWeight: 'bold',
+                            color: 'var(--color-azul)'
+                          }}
+                        >
+                          Haz clic aquí para obtenerlo en Telegram
+                        </Link>
+                      </Typography>
+                    </>
+                  )}
               </Grid>
             </Grid>
             {!formData.idUser && !isUserAdmin && (
@@ -1051,7 +1066,6 @@ export const UserForm = ({
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center'
-                 
                 }}
               >
                 {/* 📌 Checkbox de términos y condiciones */}
@@ -1093,7 +1107,6 @@ export const UserForm = ({
             <CustomButton
               variant="contained"
               type="submit"
-           
               sx={{
                 minWidth: '150px',
                 minHeight: '50px',
