@@ -15,6 +15,8 @@ import com.musichouse.api.music.util.ApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.validation.*;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,34 +32,53 @@ import java.util.Set;
 @AllArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
+    private final static Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
     private final UserService userService;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
-    @PostMapping("/create/admin")
+    @PostMapping(value = "/create/admin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<TokenDtoExit>> createUserAdmin(
-            @RequestBody @Valid UserAdminDtoEntrance userAdminDtoEntrance) {
+            @RequestParam("user") String userJson,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
-            TokenDtoExit tokenDtoExit = userService.createUserAdmin(userAdminDtoEntrance);
+            // Convertir userJson a objeto UserAdminDtoEntrance
+            UserAdminDtoEntrance userAdminDtoEntrance = objectMapper.readValue(userJson, UserAdminDtoEntrance.class);
 
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
+
+            TokenDtoExit tokenDtoExit = userService.createUserAdmin(file, userAdminDtoEntrance);
+
+            // Validación manual de la respuesta
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            Validator validator = factory.getValidator();
+            Set<ConstraintViolation<TokenDtoExit>> violations = validator.validate(tokenDtoExit);
+
+            if (!violations.isEmpty()) {
+                String errorMessage = violations.stream()
+                        .map(ConstraintViolation::getMessage)
+                        .findFirst()
+                        .orElse("Datos inválidos");
+                return ResponseEntity.badRequest().body(ApiResponse.<TokenDtoExit>builder()
+                        .message(errorMessage)
+                        .data(null)
+                        .build());
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.<TokenDtoExit>builder()
                             .message("Usuario admin creado con éxito.")
                             .data(tokenDtoExit)
                             .build());
-
         } catch (DataIntegrityViolationException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+            LOGGER.error("Error inesperado al crear usuario admin", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.<TokenDtoExit>builder()
                             .message("El correo electrónico ingresado ya está en uso.")
                             .data(null)
                             .build());
-
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            LOGGER.error("Error inesperado al procesar la solicitud", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.<TokenDtoExit>builder()
                             .message("Ocurrió un error al procesar la solicitud.")
                             .data(null)
@@ -65,10 +86,11 @@ public class AuthController {
         }
     }
 
+
     @PostMapping(value = "/create/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createUser(
-            @RequestParam("user") String userJson,  // Se recibe el JSON como String
-            @RequestPart(value="file", required = false) MultipartFile file // Se recibe el archivo como MultipartFile
+            @RequestParam("user") String userJson,
+            @RequestPart(value="file", required = false) MultipartFile file
     ) throws MessagingException {
         try {
             // 📌 1️⃣ Convertir el JSON String a un objeto UserDtoEntrance

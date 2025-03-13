@@ -125,7 +125,7 @@ public class UserService implements UserInterface {
 
     @Transactional
     @Override
-    public TokenDtoExit createUserAdmin(UserAdminDtoEntrance userAdminDtoEntrance)
+    public TokenDtoExit createUserAdmin(MultipartFile file,UserAdminDtoEntrance userAdminDtoEntrance)
             throws DataIntegrityViolationException, MessagingException {
 
         // Verificar si el usuario ya existe por su email
@@ -141,11 +141,14 @@ public class UserService implements UserInterface {
                 .orElseGet(() -> rolRepository.save(new Role(RoleConstants.ADMIN)));
 
         user.setRoles(Set.of(role));
+        String fileUrl = awss3Service.uploadFileToS3Admin(file,userAdminDtoEntrance);
+        user.setPicture(fileUrl);
 
+        User userSaved = userRepository.save(user);
         // Generar token antes de guardar el usuario
         String token = jwtService.generateToken(user);
 
-        User userSaved = userRepository.save(user);
+
 
         // Enviar correo de bienvenida
         boolean emailSent = true;

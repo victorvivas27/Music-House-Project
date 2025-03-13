@@ -16,7 +16,7 @@ import java.util.UUID;
 public interface UserInterface {
     TokenDtoExit createUser(UserDtoEntrance userDtoEntrance, MultipartFile file) throws MessagingException;
 
-    TokenDtoExit createUserAdmin(UserAdminDtoEntrance userAdminDtoEntrance) throws MessagingException;
+    TokenDtoExit createUserAdmin(MultipartFile file,UserAdminDtoEntrance userAdminDtoEntrance) throws MessagingException;
 
     List<UserDtoExit> getAllUser();
 

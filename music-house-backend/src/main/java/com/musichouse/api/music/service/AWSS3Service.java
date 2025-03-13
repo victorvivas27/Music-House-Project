@@ -2,6 +2,7 @@ package com.musichouse.api.music.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.musichouse.api.music.dto.dto_entrance.UserAdminDtoEntrance;
 import com.musichouse.api.music.dto.dto_entrance.UserDtoEntrance;
 import com.musichouse.api.music.dto.dto_modify.UserDtoModify;
 import com.musichouse.api.music.entity.User;
@@ -41,6 +42,28 @@ public class AWSS3Service implements AWSS3Interface {
         try {
             // Crear el path del usuario en S3
             String userFolder = userDtoEntrance.getName().toLowerCase() + "-" + userDtoEntrance.getLastName().toLowerCase();
+            String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(file.getSize());
+            metadata.setContentType(file.getContentType());
+
+            // Subir archivo a S3 con la estructura de path: {bucket}/usuarios/{nombre}/{archivo}
+            amazonS3.putObject(new PutObjectRequest(bucketName, newFilename, file.getInputStream(), metadata));
+
+            // Retornar la URL correcta con el path del usuario
+            return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + newFilename;
+        } catch (IOException e) {
+            LOGGER.error("Error al cargar el archivo a S3", e);
+            throw new RuntimeException("Error al cargar el archivo a S3", e);
+        }
+    }
+
+    @Override
+    public String uploadFileToS3Admin(MultipartFile file, UserAdminDtoEntrance userAdminDtoEntrance) {
+        try {
+            // Crear el path del usuario en S3
+            String userFolder = userAdminDtoEntrance.getName().toLowerCase() + "-" + userAdminDtoEntrance.getLastName().toLowerCase();
             String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
             ObjectMetadata metadata = new ObjectMetadata();

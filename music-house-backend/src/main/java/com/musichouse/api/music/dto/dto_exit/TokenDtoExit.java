@@ -15,7 +15,7 @@ public class TokenDtoExit {
 
     private UUID idUser;
 
-
+private String picture;
 
     private String name;
 
