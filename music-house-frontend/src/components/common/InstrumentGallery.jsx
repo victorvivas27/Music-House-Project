@@ -86,7 +86,7 @@ export const InstrumentGallery = ({ itemData }) => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backdropFilter: 'blur(10px)' // Fondo borroso
+                  backdropFilter: 'blur(10px)' 
                 }}
               >
                 <img

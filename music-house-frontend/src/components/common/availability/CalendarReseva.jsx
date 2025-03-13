@@ -238,9 +238,9 @@ const CalendarReserva = ({ instrument }) => {
         {/* Snackbar para errores reales (API falló) */}
         <Snackbar
           open={openSnackbar}
-          autoHideDuration={5000}
+          autoHideDuration={2000}
           onClose={() => setOpenSnackbar(false)}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'botton', horizontal: 'center' }}
         >
           <Alert
             onClose={() => setOpenSnackbar(false)}
@@ -263,9 +263,9 @@ const CalendarReserva = ({ instrument }) => {
         {/* Snackbar para mensaje amigable cuando no hay reservas */}
         <Snackbar
           open={openSnackbarInfo}
-          autoHideDuration={5000}
+          autoHideDuration={2000}
           onClose={() => setOpenSnackbarInfo(false)}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'botton', horizontal: 'center' }}
         >
           <Alert
             onClose={() => setOpenSnackbarInfo(false)}

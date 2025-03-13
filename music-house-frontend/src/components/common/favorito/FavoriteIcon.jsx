@@ -126,7 +126,7 @@ const FavoriteIcon = () => {
         open={openSnackbar}
         autoHideDuration={2000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'botton', horizontal: 'center' }}
       >
         <Alert
           onClose={handleCloseSnackbar}

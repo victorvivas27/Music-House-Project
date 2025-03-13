@@ -9,6 +9,7 @@ import { getAllFavorites } from '../../api/favorites'
 import { useAuthContext } from '../utils/context/AuthGlobal'
 import { removeFavorite } from '../../api/favorites'
 import Swal from 'sweetalert2'
+import ArrowBack from '../utils/ArrowBack'
 
 
 export const Favorites = () => {
@@ -87,6 +88,7 @@ export const Favorites = () => {
           minHeight: '90vh'
         }}
       >
+         <ArrowBack/>
         <CssBaseline />
         <Container
           sx={{

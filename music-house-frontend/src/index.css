@@ -65,7 +65,7 @@ html {
 body {
   font-family: "Inter", sans-serif;
   color: var(--texto-primario);
-  background-color: var(--background-color);
+  
   min-height: 100vh;
   overflow-x: hidden; /* Previene desbordamientos horizontales */
  
@@ -78,13 +78,7 @@ body {
   }
 }
 
-/* 🖼️ Manejo de imágenes responsivas */
-img {
-  max-width: 100%;
-  height: auto;
-  user-select: none;
-  -webkit-user-drag: none;
-}
+
 
 /* 🎯 Evita estilos heredados no deseados en formularios */
 input,
@@ -217,4 +211,18 @@ textarea {
 
 .fade-out-soft {
   animation: desaparecerSuave 1s ease-in forwards;
+}
+@keyframes pulse {
+  0% {
+      transform: scale(1);
+      box-shadow: 0 0 10px rgba(255, 223, 0, 0.4);
+  }
+  50% {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(255, 223, 0, 0.6);
+  }
+  100% {
+      transform: scale(1);
+      box-shadow: 0 0 10px rgba(255, 223, 0, 0.4);
+  }
 }

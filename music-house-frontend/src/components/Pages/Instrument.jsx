@@ -18,6 +18,7 @@ import FavoriteIcon from '../common/favorito/FavoriteIcon'
 import MyCalendar from '../common/availability/MyCalendar'
 import CalendarReserva from '../common/availability/CalendarReseva'
 import { flexRowContainer, flexColumnContainer } from '../styles/styleglobal'
+import ArrowBack from '../utils/ArrowBack'
 export const Instrument = () => {
   const { id } = useParams()
   const { state } = useAppStates()
@@ -68,6 +69,7 @@ export const Instrument = () => {
         {!loading && (
           <>
             <InstrumentDetailWrapper>
+              <ArrowBack/>
               {/*Contenedor de la imagen,de los datos y del iciono de favoritos */}
               <Box
                 sx={{
@@ -171,9 +173,11 @@ export const Instrument = () => {
                       md: '25%',
                       lg: '20%',
                       xl: '30%'
-                    }
+                    },
+                    margin:1
                   }}
                 >
+                  
                   {/* Nombre del instrumento */}
                   <Typography
                     variant="h2"
@@ -214,10 +218,14 @@ export const Instrument = () => {
                         }
                         alt={instrumentSelected?.name}
                         sx={{
-                          width: '100%',
-                          objectFit: 'cover',
+                          width: '100%', 
+                          height: 'auto',
+                          objectFit: 'contain',
+                          display: 'block',
                           borderRadius: '8px',
-                          boxShadow: '3px 3px 10px rgba(0,0,0,0.2)',
+                      
+                          mixBlendMode: 'multiply'
+                      
                           
                         }}
                       />
@@ -450,6 +458,7 @@ export const Instrument = () => {
                 <Divider sx={{ width: '100%' }} />
                 <InstrumentTerms />
               </Box>
+              <ArrowBack/>
             </InstrumentDetailWrapper>
           </>
         )}
