@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { UsersApi } from '../../../api/users'
 import { UserForm } from './UserForm'
 import { Box, Typography } from '@mui/material'
-import { MessageDialog } from '../../common/MessageDialog'
+
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { MainCrearUsuario } from '../../common/crearUsuario/MainCrearUsuario'
 import { Loader } from '../../common/loader/Loader'
@@ -15,202 +15,147 @@ import { useAuthContext } from '../../utils/context/AuthGlobal'
 import { updateAddress } from '../../../api/addresses'
 import { updatePhone } from '../../../api/phones'
 import PropTypes from 'prop-types'
+import Swal from 'sweetalert2'
 
 const EditUser = ({ onSwitch }) => {
   const { id } = useParams()
   const [user, setUser] = useState()
   const [formData, setFormData] = useState()
-  const [showMessage, setShowMessage] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [message, setMessage] = useState()
-  const [isUserUpdated, setIsUserUpdated] = useState()
-  const [isNewRoleAdded, setIsNewRoleAdded] = useState()
-  const [isAddressUpdated, setIsAddressUpdated] = useState()
-  const [isPhoneUpdated, setIsPhoneUpdated] = useState()
-  const { user: loggedUser, isUserAdmin } = useAuthContext()
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
+  const { user: loggedUser, isUserAdmin } = useAuthContext()
   const isLoggedUser = loggedUser?.idUser && loggedUser.idUser === Number(id)
   const canEditUser = !(isUserAdmin && !isLoggedUser)
 
   useEffect(() => {
-    if (!user) return
-    // console.log("Usuario cargado:", user.data);
-    const initialFormData = {
-      idUser: id,
-      picture: user.data.picture,
-      name: user.data.name,
-      lastName: user.data.lastName,
-      email: user.data.email,
-      addresses: user.data.addresses,
-      phones: user.data.phones,
-      roles: user.data.roles.map((role) => ({
-        idRol: role.idRol,
-        rol: role.rol
-      })) // Guarda todos los roles
-    }
-    setFormData(initialFormData)
-    setLoading(false)
-  }, [id, user])
-
-  useEffect(() => {
-    if (
-      isUserUpdated === undefined ||
-      isNewRoleAdded === undefined ||
-      isAddressUpdated === undefined ||
-      isPhoneUpdated === undefined
-    )
-      return
-
-    if (
-      (isLoggedUser &&
-        isUserUpdated === true &&
-        isAddressUpdated === true &&
-        isPhoneUpdated === true) ||
-      (isUserAdmin &&
-        isAddressUpdated === true &&
-        isPhoneUpdated === true &&
-        isUserUpdated === true &&
-        isNewRoleAdded === true)
-    ) {
-      setMessage('Usuario guardado exitosamente')
-    } else {
-      setMessage(
-        'No fue posible guardar el usuario. Por favor, inténtalo nuevamente'
-      )
-    }
-    setIsNewRoleAdded(undefined)
-    setIsAddressUpdated(undefined)
-    setIsPhoneUpdated(undefined)
-    setShowMessage(true)
-  }, [
-    isUserUpdated,
-    isNewRoleAdded,
-    isAddressUpdated,
-    isPhoneUpdated,
-    isLoggedUser,
-    isUserAdmin
-  ])
-
-  const getUserInfo = () => {
     UsersApi.getUserById(id)
       .then(([user, code]) => {
         if (code === Code.SUCCESS) {
           setUser(user)
+          setFormData({
+            idUser: id,
+            picture: user.data.picture,
+            name: user.data.name,
+            lastName: user.data.lastName,
+            email: user.data.email,
+            addresses: user.data.addresses,
+            phones: user.data.phones,
+            roles: user.data.roles.map((role) => ({
+              idRol: role.idRol,
+              rol: role.rol
+            }))
+          })
         }
       })
       .catch(([code]) => {
         if (code === Code.NOT_FOUND) {
-          setMessage('Usuario no encontrado')
-          setShowMessage(true)
+          Swal.fire({
+            title: 'Error',
+            text: 'Usuario no encontrado',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          })
+          navigate('/')
         }
       })
-  }
+      .finally(() => setLoading(false))
+  }, [id, navigate])
 
-  useEffect(() => {
-    getUserInfo()
-  }, [])
+  const handleSubmit = async (formData) => {
+    if (!formData) return
 
-  const onClose = () => {
-    setShowMessage(false)
+    setIsSubmitting(true)
 
-    if (isUserUpdated) {
-      navigate(-1)
-    }
-  }
+    setTimeout(async () => {
+      try {
+        const formDataToSend = new FormData()
+        const { picture, ...userWithoutPicture } = formData
 
-  const handleSubmit = (formData) => {
-    if (!formData) {
-      console.error('Error: No hay datos para enviar.')
-      return
-    }
+        if (
+          !picture ||
+          picture === '' ||
+          (typeof picture === 'object' && !(picture instanceof File))
+        ) {
+          userWithoutPicture.picture = user?.data?.picture || ''
+        }
 
-    const formDataToSend = new FormData()
-    const { picture, ...userWithoutPicture } = formData
+        if (Object.keys(userWithoutPicture).length === 0) {
+          console.error('Error: El objeto `userWithoutPicture` está vacío.')
+          setIsSubmitting(false)
+          return
+        }
 
-    // 📌 1️⃣ Verificar si `picture` es un archivo o si se mantiene la URL actual
-    if (
-      !picture ||
-      picture === '' ||
-      (typeof picture === 'object' && !(picture instanceof File))
-    ) {
-      userWithoutPicture.picture = user?.data?.picture || '' // Mantiene la URL si no hay nueva imagen
-    }
+        formDataToSend.append('user', JSON.stringify(userWithoutPicture))
 
-    // 📌 2️⃣ Validar el objeto antes de enviarlo
-    console.log('Datos antes de enviar:', userWithoutPicture)
+        if (picture instanceof File) {
+          formDataToSend.append('file', picture)
+        }
 
-    // 📌 3️⃣ Si el objeto está vacío, evitar la solicitud
-    if (Object.keys(userWithoutPicture).length === 0) {
-      console.error('Error: El objeto `userWithoutPicture` está vacío.')
-      return
-    }
+        await UsersApi.updateUser(formDataToSend)
 
-    // 📌 4️⃣ Agregar datos al FormData
-    formDataToSend.append('user', JSON.stringify(userWithoutPicture))
+        // ✅ Dirección
+        const address = formData.addresses[0]
+        await updateAddress({
+          idAddress: address.idAddress,
+          street: address.street,
+          number: address.number,
+          city: address.city,
+          state: address.state,
+          country: address.country
+        })
 
-    // 📌 5️⃣ Solo agregar `file` si hay una nueva imagen
-    if (picture instanceof File) {
-      formDataToSend.append('file', picture)
-    } else {
-      console.log('No hay nueva imagen, manteniendo la actual.')
-    }
+        // ✅ Teléfono
+        const phone = formData.phones[0]
+        await updatePhone({
+          idPhone: phone.idPhone,
+          phoneNumber: phone.phoneNumber
+        })
 
- 
+        // ✅ Manejo de roles
+        //const oldRol = (user.data.roles.length && user.data.roles[0].rol) || undefined
+        const newRol = roleById(formData.idRol)
 
-    // 📌 7️⃣ Enviar solicitud
-    UsersApi.updateUser(formDataToSend)
-      .then(() => {
-        setIsUserUpdated(true)
-      })
-      .catch((error) => {
+        if (
+          isUserAdmin &&
+          newRol &&
+          !user.data.roles.some((r) => r.rol === newRol)
+        ) {
+          await UsersApi.addUserRole(user.data.idUser, newRol)
+        }
+
+        // 🔹 Mostrar mensaje de éxito sin botón y cerrar automáticamente
+        Swal.fire({
+          title: 'Usuario actualizado',
+          text: 'Los cambios se guardaron correctamente.',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1000
+        })
+
+        // 🔹 Esperar 2 segundos y redirigir
+        setTimeout(() => {
+          navigate(-1)
+        }, 1100)
+      } catch (error) {
         console.error('Error al actualizar usuario:', error)
-        setMessage(
-          'No fue posible guardar usuario. Por favor, vuelve a intentarlo'
-        )
-        setIsUserUpdated(false)
-      })
-
-    // 📌 8️⃣ Actualizar dirección y teléfono
-    const address = formData.addresses[0]
-    const { idAddress, street, number, city, state, country } = address
-    updateAddress({ idAddress, street, number, city, state, country })
-      .then(() => setIsAddressUpdated(true))
-      .catch(() => setIsAddressUpdated(false))
-
-    const phone = formData.phones[0]
-    const { idPhone, phoneNumber } = phone
-    updatePhone({ idPhone, phoneNumber })
-      .then(() => setIsPhoneUpdated(true))
-      .catch(() => setIsPhoneUpdated(false))
-
-    // 📌 9️⃣ Manejo de roles
-    const oldRol =
-      (user.data.roles.length && user.data.roles[0].rol) || undefined
-    const newRol = roleById(formData.idRol)
-
-    if (!isUserAdmin || newRol === undefined) setIsNewRoleAdded(true)
-
-    if (oldRol === newRol) {
-      setIsNewRoleAdded(true)
-    }
-
-    if (
-      isUserAdmin &&
-      newRol &&
-      !user.data.roles.some((r) => r.rol === newRol)
-    ) {
-      UsersApi.addUserRole(user.data.idUser, newRol)
-        .then(() => {
-          setIsNewRoleAdded(true)
+        Swal.fire({
+          title: 'Error',
+          text: 'No fue posible guardar los cambios. Intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
         })
-        .catch(() => {
-          setIsNewRoleAdded(false)
-        })
-    }
+      } finally {
+        setIsSubmitting(false)
+      }
+    }, 1000) // 🔹 Pequeño retraso antes de iniciar la actualización
   }
 
   if (!(isLoggedUser || isUserAdmin)) {
-    navigate('/')
+    setTimeout(() => {
+      navigate('/')
+      setIsSubmitting(false)
+    }, 1100)
   }
 
   if (loading) {
@@ -235,14 +180,7 @@ const EditUser = ({ onSwitch }) => {
               onSubmit={handleSubmit}
               user={user}
               setUser={setUser}
-            />
-            <MessageDialog
-              title="Editar Usuario"
-              message={message}
-              isOpen={showMessage}
-              buttonText="Ok"
-              onClose={onClose}
-              onButtonPressed={onClose}
+              isSubmitting={isSubmitting}
             />
           </BoxFormUnder>
         )}
@@ -281,6 +219,7 @@ const EditUser = ({ onSwitch }) => {
 }
 
 export default EditUser
+
 EditUser.propTypes = {
-  onSwitch: PropTypes.func, // Si es opcional
-};
+  onSwitch: PropTypes.func
+}

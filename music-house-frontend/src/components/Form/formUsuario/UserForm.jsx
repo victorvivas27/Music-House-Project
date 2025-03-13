@@ -9,7 +9,7 @@ import {
   Button,
   InputAdornment,
   IconButton,
-  OutlinedInput,
+  
   FormHelperText,
   Box,
   Avatar,
@@ -70,6 +70,7 @@ export const UserForm = ({
   initialFormData,
   onSubmit,
   loading,
+  isSubmitting,
   user,
   setUser
 }) => {
@@ -129,8 +130,9 @@ export const UserForm = ({
     : formData.idUser
       ? 'Editar cuenta usuario'
       : 'Crear una cuenta'
-
+      const combinedLoading = loading || isSubmitting;
   const buttonText = formData.idUser || isUserAdmin ? 'Guardar' : 'Registrar'
+  const buttonTextLoading = formData.idUser || isUserAdmin ? 'Guardardando' : 'Registrando'
 
   /*handleChange (manejarCambios) es una función que se encarga de manejar
  los cambios en los campos del formulario,en tiempo real */
@@ -788,8 +790,8 @@ export const UserForm = ({
                             value={country.code}
                             sx={{
                               '&:hover': {
-                                backgroundColor: 'var(--color-primario)', // Cambio de color al pasar el mouse
-                                color: '#fff' // Texto blanco en hover
+                                backgroundColor: 'var(--color-primario)',
+                                color: 'var(--texto-inverso)'
                               }
                             }}
                           >
@@ -899,9 +901,9 @@ export const UserForm = ({
                           fullWidth
                           margin="normal"
                           sx={{
-                            ...inputStyles, // 🔹 Mantiene los estilos base
+                            ...inputStyles,
                             '& .MuiInputBase-input': {
-                              color: 'var(--color-azul)' // 🔹 Aplica el color al texto dentro del input
+                              color: 'var(--color-azul)'
                             }
                           }}
                         >
@@ -924,39 +926,41 @@ export const UserForm = ({
                         margin="normal"
                         error={Boolean(allErrors.password || '')}
                         sx={{
-                          minHeight: '60px'
+                          ...inputStyles
                         }}
                       >
-                        <OutlinedInput
-                          placeholder="Contraseña"
+                        <InputCustom
+                          label="🔒 Contraseña"
                           name="password"
                           onChange={handleChange}
                           value={formData.password}
                           type={showPassword ? 'text' : 'password'}
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={() => setShowPassword(!showPassword)}
-                                edge="end"
-                              >
-                                {showPassword ? (
-                                  <VisibilityOff
-                                    sx={{
-                                      color: 'var(--color-exito)',
-                                      fontSize: 40
-                                    }}
-                                  />
-                                ) : (
-                                  <Visibility
-                                    sx={{
-                                      color: 'var(--color-secundario)',
-                                      fontSize: 40
-                                    }}
-                                  />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          }
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={() => setShowPassword(!showPassword)}
+                                  edge="end"
+                                >
+                                  {showPassword ? (
+                                    <VisibilityOff
+                                      sx={{
+                                        color: 'var(--color-exito)',
+                                        fontSize: 40
+                                      }}
+                                    />
+                                  ) : (
+                                    <Visibility
+                                      sx={{
+                                        color: 'var(--color-secundario)',
+                                        fontSize: 40
+                                      }}
+                                    />
+                                  )}
+                                </IconButton>
+                              </InputAdornment>
+                            )
+                          }}
                         />
                         {allErrors.password && (
                           <FormHelperText>{allErrors.password}</FormHelperText>
@@ -969,49 +973,43 @@ export const UserForm = ({
                         margin="normal"
                         error={Boolean(allErrors.repeatPassword)}
                         sx={{
-                          minHeight: '60px'
+                          ...inputStyles
                         }}
                       >
-                        <OutlinedInput
-                          sx={{
-                            color: 'var(--color-secundario)',
-                            borderRadius: '5px',
-                            padding: '5px'
-                            /* '&:hover': {
-                            backgroundColor: '#D7D7D7D7' // Efecto hover
-                          }*/
-                          }}
-                          placeholder="Repetir Contraseña"
+                        <InputCustom
+                          label="🔓Repetir Contraseña"
                           name="repeatPassword"
                           onChange={handleChange}
                           value={formData.repeatPassword}
                           type={showPasswordRepeat ? 'text' : 'password'}
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={() =>
-                                  setShowPasswordRepeat(!showPasswordRepeat)
-                                }
-                                edge="end"
-                              >
-                                {showPasswordRepeat ? (
-                                  <VisibilityOff
-                                    sx={{
-                                      color: 'var(--color-exito)',
-                                      fontSize: 40
-                                    }}
-                                  />
-                                ) : (
-                                  <Visibility
-                                    sx={{
-                                      color: 'var(--color-secundario)',
-                                      fontSize: 40
-                                    }}
-                                  />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          }
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={() =>
+                                    setShowPasswordRepeat(!showPasswordRepeat)
+                                  }
+                                  edge="end"
+                                >
+                                  {showPasswordRepeat ? (
+                                    <VisibilityOff
+                                      sx={{
+                                        color: 'var(--color-exito)',
+                                        fontSize: 40
+                                      }}
+                                    />
+                                  ) : (
+                                    <Visibility
+                                      sx={{
+                                        color: 'var(--color-secundario)',
+                                        fontSize: 40
+                                      }}
+                                    />
+                                  )}
+                                </IconButton>
+                              </InputAdornment>
+                            )
+                          }}
                         />
                         {allErrors.repeatPassword ? (
                           <FormHelperText>
@@ -1027,10 +1025,10 @@ export const UserForm = ({
                       <FormControl
                         fullWidth
                         margin="normal"
-                        sx={{ minHeight: '60px' }}
+                        sx={{ ...inputStyles }}
                       >
                         <InputCustom
-                          placeholder="Código de Telegram"
+                          label="🔢Código de Telegram"
                           name="telegramChatId"
                           onChange={handleChange}
                           value={formData.telegramChatId}
@@ -1038,7 +1036,7 @@ export const UserForm = ({
                           helperText={errors.telegramChatId}
                           type="tel"
                           inputProps={{ maxLength: 15, pattern: '[0-9]*' }}
-                          sx={inputStyles}
+                         
                         />
                       </FormControl>
 
@@ -1113,9 +1111,9 @@ export const UserForm = ({
                 gap: '10px'
               }}
             >
-              {loading ? (
+              {combinedLoading ? (
                 <>
-                  Cargando...
+                  {buttonTextLoading}
                   <CircularProgress
                     size={30}
                     sx={{ color: 'var(--color-azul)' }}
