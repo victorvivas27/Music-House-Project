@@ -14,7 +14,7 @@
   --color-suave:#444;
   --color-oscuro-suave:#333;
 
-  --texto-primario: #212121;
+  --texto-primario: #000000;
   --texto-secundario: #616161;
   --texto-inverso: #ffffff;
   --background-color: #f9f9f9
@@ -140,7 +140,7 @@ a {
 }
 
 /* 🧹 Elimina bordes predeterminados en todos los elementos de formulario */
-input[type="text"],
+/* input[type="text"],
 input[type="email"],
 input[type="password"],
 textarea {
@@ -148,7 +148,7 @@ textarea {
   -webkit-appearance: none;
   -moz-appearance: none;
   border-radius: 4px;
-}
+}  */
 
 /* 📌 Personalización de la barra de desplazamiento */
 ::-webkit-scrollbar {

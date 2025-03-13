@@ -6,7 +6,8 @@ import {
   IconButton,
   OutlinedInput,
   FormHelperText,
-  CircularProgress
+  CircularProgress,
+  TextField
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import { styled } from '@mui/material/styles'
@@ -141,19 +142,23 @@ const Login = ({ onSwitch }) => {
                 fullWidth
                 margin="normal"
                 sx={{
-                  minHeight: '60px'
+                  minHeight: '60px',
+                  ...inputStyles,
+                 
                 }}
               >
-                <InputCustom
-                  placeholder="Email"
+                <TextField
+                  id="outlined-multiline-flexible"
+                  //placeholder="Email"
+                  label="📧 Email"
                   name="email"
                   onChange={formik.handleChange}
                   value={formik.values.email}
                   type="email"
-                  color="primary"
+                 
                   error={formik.touched.email && Boolean(formik.errors.email)}
                   helperText={formik.touched.email && formik.errors.email}
-                  sx={inputStyles}
+                  sx={{ color:'red'}}
                 />
               </FormControl>
 
@@ -164,45 +169,51 @@ const Login = ({ onSwitch }) => {
                   formik.touched.password && Boolean(formik.errors.password)
                 }
                 sx={{
-                  minHeight: '60px'
+                  minHeight: '60px',
+                  ...inputStyles
                 }}
               >
-                <OutlinedInput
+                <TextField
                   sx={{
-                    borderRadius: '5px', 
-                    padding: '5px' 
+                    borderRadius: '5px',
+                    padding: '5px'
                   }}
-                  placeholder="Password"
+                  label="🔒 Password"
                   name="password"
                   onChange={formik.handleChange}
                   value={formik.values.password}
                   type={showPassword ? 'text' : 'password'}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label={
-                          showPassword
-                            ? 'hide the password'
-                            : 'display the password'
-                        }
-                        onClick={handleClickShowPassword}
-                        edge="end"
-                      >
-                        {showPassword ? (
-                          <VisibilityOff
-                            sx={{ color: 'var(--color-exito)', fontSize: 40 }}
-                          />
-                        ) : (
-                          <Visibility
-                            sx={{
-                              color: 'var(--color-secundario)',
-                              fontSize: 40
-                            }}
-                          />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label={
+                            showPassword ? 'Hide password' : 'Show password'
+                          }
+                          onClick={handleClickShowPassword}
+                          edge="end"
+                        >
+                          {showPassword ? (
+                            <VisibilityOff
+                              sx={{
+                                color: 'var(--color-exito)',
+                                fontSize: 30,
+                                marginRight: 1
+                              }}
+                            />
+                          ) : (
+                            <Visibility
+                              sx={{
+                                color: 'var(--color-secundario)',
+                                fontSize: 30,
+                                marginRight: 1
+                              }}
+                            />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
                 />
                 {formik.touched.password && formik.errors.password && (
                   <FormHelperText>{formik.errors.password}</FormHelperText>
@@ -244,7 +255,12 @@ const Login = ({ onSwitch }) => {
                 }}
                 onClick={onSwitch}
               >
-                <Typography sx={{ fontWeight: '600' }}>
+                <Typography
+                  sx={{
+                    fontWeight: '600',
+                    color: 'var(--color-azul)'
+                  }}
+                >
                   No tienes una cuenta? Regístrate
                 </Typography>
               </Link>

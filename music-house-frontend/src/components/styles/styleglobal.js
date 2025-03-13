@@ -1,20 +1,37 @@
 export const inputStyles = {
   '& .MuiInputBase-input': {
-    color: 'var(--color-secundario)' // Color del texto
+    color: 'var(--texto-primario)', // Color del texto
+    fontSize: '1rem', // Tamaño de la fuente más legible
+    
   },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
-      borderColor: 'var(--color-secundario)' // Color del borde
+      borderColor: 'var(--color-secundario)', // Color del borde normal
+      borderWidth: '2px' // Grosor del borde
     },
     '&:hover fieldset': {
-      borderColor: 'var(--color-primario)' // Borde en hover
+      borderColor: 'var(--color-primario-dark)', // Color más fuerte en hover
+      borderWidth: '2.5px' // Borde más grueso al pasar el mouse
     },
     '&.Mui-focused fieldset': {
-      borderColor: 'var(--color-azul)' // Borde cuando está enfocado
+      borderColor: 'var(--color-azul)', // Color más fuerte al estar enfocado
+      borderWidth: '3px', // Borde más grueso al hacer foco
+      
     },
-    padding: '5px' // Espaciado interno
+    borderRadius: '8px', // Bordes más redondeados
+    transition: 'all 0.3s ease-in-out' // Suaviza los cambios de estilo
+  },
+  '& .MuiInputLabel-root': {
+    color: 'var(--calendario-fondo-no-disponible)', // Color del label
+    fontSize: '1rem', // Tamaño del texto normal
+    fontWeight: 'bold', // Opcional: hacer el label más grueso
+    transition: 'all 0.3s ease-in-out', // Transición suave
+  },
+  '& .MuiInputLabel-root.Mui-focused': {
+    color: 'var(--calendario-fondo-no-disponible)', // Color cuando el input está enfocado
+    fontSize: '1.1rem', // Opcional: agrandar al enfocar
   }
-}
+};
 
 
 export const flexRowContainer = {
