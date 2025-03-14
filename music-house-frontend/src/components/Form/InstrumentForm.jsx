@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   Box,
-  Button,
   FormControl,
   Typography,
   Grid,
   Divider,
   Tooltip,
   Checkbox,
-  FormHelperText
+  FormHelperText,
+  CircularProgress
 } from '@mui/material'
 import CategorySelect from './CategorySelect'
 import ThemeSelect from './ThemeSelect'
@@ -19,8 +19,10 @@ import PropTypes from 'prop-types'
 import ValidatedTextField from '../Pages/Admin/common/ValidatedTextField'
 import ImageUpload from '../common/ImageUpload '
 import { inputStyles } from '../styles/styleglobal'
+import ArrowBack from '../utils/ArrowBack'
+import { CustomButton } from './formUsuario/CustomComponents'
 
-const InstrumentForm = ({ initialFormData, onSubmit }) => {
+const InstrumentForm = ({ initialFormData, onSubmit, loading }) => {
   const [formData, setFormData] = useState({ ...initialFormData })
 
   const { state } = useAppStates()
@@ -103,11 +105,9 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
     event.preventDefault()
 
     if (!validateForm()) {
-      console.log('❌ El formulario tiene errores, no se envía.')
       return
     }
 
-    console.log('📌 Datos antes de enviar:', formData)
     onSubmit(formData)
   }
 
@@ -177,15 +177,6 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
                 gramos). 1 kg o más se mostrará como kilos y gramos (ej: 1.4 → 1
                 kilo 400 gramos).
               </FormHelperText>
-
-              <ValidatedTextField
-                label="Precio"
-                name="rentalPrice"
-                onChange={handleChange}
-                value={formData.rentalPrice}
-                inputRef={fieldRefs.rentalPrice}
-                error={errors.rentalPrice}
-              />
             </Grid>
             {/*---------------------Fin formulario lado izquierdo----------------*/}
 
@@ -249,6 +240,15 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
                   ⚠️ No olvides elegir una temática para tu instrumento.
                 </FormHelperText>
               </FormControl>
+
+              <ValidatedTextField
+                label="Precio"
+                name="rentalPrice"
+                onChange={handleChange}
+                value={formData.rentalPrice}
+                inputRef={fieldRefs.rentalPrice}
+                error={errors.rentalPrice}
+              />
             </Grid>
             {/*-----------------------Fin formulario lado derecho--------------*/}
           </Grid>
@@ -301,6 +301,7 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
           </Box>
 
           <Divider />
+          <ArrowBack />
 
           <Box
             sx={{
@@ -312,9 +313,33 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
               paddingTop: '1rem'
             }}
           >
-            <Button variant="contained" color="primary" type="submit">
-              Enviar
-            </Button>
+            <CustomButton
+              variant="contained"
+              type="submit"
+              disabled={loading}
+              sx={{
+                width: '280px',
+                height: '50px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px'
+              }}
+            >
+              <Box sx={{ width: '100%', textAlign: 'center' }}>
+                {loading ? (
+                  <>
+                    Creando........
+                    <CircularProgress
+                      size={25}
+                      sx={{ color: 'var(--color-azul)', ml: 1 }}
+                    />
+                  </>
+                ) : (
+                  'Enviar a crear Instrumento'
+                )}
+              </Box>
+            </CustomButton>
           </Box>
         </form>
       </Grid>
@@ -339,5 +364,6 @@ InstrumentForm.propTypes = {
     characteristics: PropTypes.object
   }).isRequired,
 
-  onSubmit: PropTypes.func
+  onSubmit: PropTypes.func,
+  loading: PropTypes.bool
 }

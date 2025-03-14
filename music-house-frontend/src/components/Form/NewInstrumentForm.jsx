@@ -2,23 +2,26 @@ import { useCallback, useState } from 'react'
 import InstrumentForm from './InstrumentForm'
 import { createInstrument } from '../../api/instruments'
 import { formDataToCharacteristics } from '../utils/editInstrument'
-import { MessageDialog } from '../common/MessageDialog'
+
 import ArrowBack from '../utils/ArrowBack'
+import Swal from 'sweetalert2'
+import { useNavigate } from 'react-router-dom'
 //import { useNavigate } from 'react-router-dom'
 
 const NewInstrumentForm = () => {
-  //const navigate = useNavigate(); 
-  const [showMessage, setShowMessage] = useState(false)
-  const [message, setMessage] = useState()
+  const navigate = useNavigate();
+ 
+  
+  const [loading, setLoading] = useState(false)
 
   const initialFormData = {
-    idInstrument: null,  
-    name: '',            
+    idInstrument: null,
+    name: '',
     description: '',
     measures: '',
-    weight: '',           
-    rentalPrice: '',      
-    idCategory: '',    
+    weight: '',
+    rentalPrice: '',
+    idCategory: '',
     idTheme: '',
     imageUrls: [],
     characteristics: {
@@ -28,75 +31,87 @@ const NewInstrumentForm = () => {
       microphone: false,
       phoneHolder: false
     }
-  };
-
-  const onClose = () => {
-    setShowMessage(false)
   }
 
+ 
+
   const onSubmit = useCallback(async (formData) => {
-   
-  
-    if (!formData) return;
-  
-    const formDataToSend = new FormData();
-  
+    setLoading(true)
+
+    if (!formData) return
+
+    const formDataToSend = new FormData()
+
     // 📌 Convertir JSON correctamente
     const instrumentJson = JSON.stringify({
-      name: formData.name || "",
-      description: formData.description || "",
-      rentalPrice: formData.rentalPrice || "",
-      weight: formData.weight || "",
-      measures: formData.measures || "",
-      idCategory: formData.idCategory || "",
-      idTheme: formData.idTheme || "",
-      characteristic: formDataToCharacteristics(formData),
-    });
-  
-    
-  
+      name: formData.name || '',
+      description: formData.description || '',
+      rentalPrice: formData.rentalPrice || '',
+      weight: formData.weight || '',
+      measures: formData.measures || '',
+      idCategory: formData.idCategory || '',
+      idTheme: formData.idTheme || '',
+      characteristic: formDataToCharacteristics(formData)
+    })
+
     // ✅ Agregar JSON correctamente como un Blob con application/json
-    formDataToSend.append("instrument", new Blob([instrumentJson], { type: "application/json" }));
-  
+    formDataToSend.append(
+      'instrument',
+      new Blob([instrumentJson], { type: 'application/json' })
+    )
+
     // ✅ Agregar imágenes correctamente
     if (formData.imageUrls && formData.imageUrls.length > 0) {
       for (let file of formData.imageUrls) {
         if (file instanceof File) {
-          formDataToSend.append("files", file);
+          formDataToSend.append('files', file)
         }
       }
     }
-  
-   
-  
-    try {
-      await createInstrument(formDataToSend);
-      setMessage("Instrumento registrado exitosamente");
-    } catch (error) {
-      setMessage(error.message || "No se pudo registrar instrumento");
-    } finally {
-      setShowMessage(true);
-      setTimeout(() => {
-        setShowMessage(false);
-        //navigate(-1);
-      }, 2000);
-    }
-  }, []);
 
+    try {
+      await createInstrument(formDataToSend)
+        // ✅ Éxito: Mostrar alerta y redirigir
+        Swal.fire({
+          icon: 'success',
+          title: 'Instrumento Creado',
+          text: 'El instrumento se ha registrado correctamente.',
+          confirmButtonText: 'Aceptar',
+          timer: 2000,
+          showConfirmButton: false
+        }).then(() => {
+          navigate(-1) // 🔹 Redirigir a la página anterior
+        })
+      
+    } catch (error) {
+       // ❌ Error: Mostrar mensaje con detalles
+       Swal.fire({
+        icon: 'error',
+        title: 'Error al Crear',
+        text: error.message || 'No se pudo registrar el instrumento.',
+        confirmButtonText: 'Intentar nuevamente'
+      })
+    } finally {
+     
+      setTimeout(() => {
+        
+        
+        setLoading(false)
+      }, 2000)
+    }
+  }, [navigate])
 
   return (
     <>
-     <ArrowBack/>
-      <InstrumentForm initialFormData={initialFormData} onSubmit={onSubmit} />
-      <MessageDialog
-        title="Registrar Instrumento"
-        message={message}
-        isOpen={showMessage}
-        onClose={onClose}
-        onButtonPressed={onClose}
+      <ArrowBack />
+      <InstrumentForm
+        initialFormData={initialFormData}
+        onSubmit={onSubmit}
+        loading={loading}
       />
+      
     </>
-  );
+  )
 }
 
-export default NewInstrumentForm;
+export default NewInstrumentForm
