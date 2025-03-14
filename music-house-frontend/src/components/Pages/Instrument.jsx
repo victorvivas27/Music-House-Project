@@ -125,7 +125,7 @@ export const Instrument = () => {
                   {/* Otras características */}
                   {[
                     { label: 'Medida', value: instrumentSelected?.measures },
-                    { label: 'Peso', value: instrumentSelected?.weight },
+                    { label: 'Peso', value: instrumentSelected?.formattedWeight },
                     {
                       label: 'Tipo',
                       value: instrumentSelected?.category?.categoryName

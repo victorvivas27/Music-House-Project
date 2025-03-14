@@ -9,7 +9,8 @@ export const MainWrapper = styled(Box)(() => ({
   minHeight: '100vh', // 🔹 Permite que el contenedor crezca si el contenido es mayor a la pantalla
   width: '99vw',
   marginTop: 300, // 🔹 Reduce margen superior si es necesario
-  marginBottom: 50
+  marginBottom: 50,
+  border:"7px solid red"
 }))
 
 export default MainWrapper

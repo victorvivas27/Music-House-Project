@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const ValidatedTextField = ({ name, label, value, onChange, error, inputRef, color = "secondary", ...props }) => {
     return (
-      <FormControl fullWidth margin="normal" error={!!error}>
+      <FormControl fullWidth margin="normal" error={!!error} >
         <TextField
           label={label}
           name={name}

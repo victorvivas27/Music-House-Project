@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import { PhotoCamera, Delete } from "@mui/icons-material";
+import PropTypes from "prop-types";
 
 const ImageUpload = ({ onImagesChange }) => {
   const [preview, setPreview] = useState([]);
@@ -108,3 +109,7 @@ const ImageUpload = ({ onImagesChange }) => {
 };
 
 export default ImageUpload;
+
+ImageUpload.propTypes = {
+    onImagesChange:PropTypes.func
+}

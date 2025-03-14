@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CssBaseline, Typography, Box, Container } from '@mui/material'
+import { CssBaseline, Typography, Container } from '@mui/material'
 import { useAppStates } from '../utils/global.context'
 import { getInstruments } from '../../api/instruments'
 import { actions } from '../utils/actions'
@@ -56,6 +56,7 @@ export const Home = () => {
       {!loading && (
         <>
           <CssBaseline />
+
           <MainWrapper>
             {state.tematics?.map((tematic, index) => (
               <TematicCard
@@ -65,26 +66,19 @@ export const Home = () => {
               />
             ))}
           </MainWrapper>
+
+
           <Container
             sx={{
               display: 'flex',
               flexDirection: 'column',
               paddingBottom: 5,
               paddingLeft: { xs: '0' },
-              paddingRight: { xs: '0' }
+              paddingRight: { xs: '0' },
+              border:" 2px solid blue"
             }}
           >
-            <Box>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="h2"
-                textAlign="center"
-                sx={{ paddingBottom: 1, fontWeight: 'bold' }}
-              >
-                Best Sellers
-              </Typography>
-            </Box>
+            
             <ProductsWrapper>
               {selectedInstruments.length > 0 ? (
                 selectedInstruments?.map((instrument, index) => (

@@ -9,7 +9,6 @@ import {
   Button,
   InputAdornment,
   IconButton,
-  
   FormHelperText,
   Box,
   Avatar,
@@ -130,9 +129,10 @@ export const UserForm = ({
     : formData.idUser
       ? 'Editar cuenta usuario'
       : 'Crear una cuenta'
-      const combinedLoading = loading || isSubmitting;
+  const combinedLoading = loading || isSubmitting
   const buttonText = formData.idUser || isUserAdmin ? 'Guardar' : 'Registrar'
-  const buttonTextLoading = formData.idUser || isUserAdmin ? 'Guardardando' : 'Registrando'
+  const buttonTextLoading =
+    formData.idUser || isUserAdmin ? 'Guardardando' : 'Registrando'
 
   /*handleChange (manejarCambios) es una función que se encarga de manejar
  los cambios en los campos del formulario,en tiempo real */
@@ -1036,7 +1036,6 @@ export const UserForm = ({
                           helperText={errors.telegramChatId}
                           type="tel"
                           inputProps={{ maxLength: 15, pattern: '[0-9]*' }}
-                         
                         />
                       </FormControl>
 
@@ -1176,6 +1175,7 @@ UserForm.propTypes = {
   }),
   loading: PropTypes.bool,
   onSubmit: PropTypes.func,
+  isSubmitting: PropTypes.func,
 
   // Agregar la validación de `user`
   user: PropTypes.shape({

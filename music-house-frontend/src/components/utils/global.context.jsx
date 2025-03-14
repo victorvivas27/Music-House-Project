@@ -3,7 +3,6 @@ import {
   useContext,
   useReducer,
   useMemo,
-  useEffect
 } from 'react'
 import { actions } from './actions'
 
@@ -16,6 +15,7 @@ import support from '../../assets/support.svg'
 import tuner from '../../assets/tuner.svg'
 import microphone from '../../assets/microphone.svg'
 import phoneHolder from '../../assets/phoneHolder.svg'
+import PropTypes from 'prop-types'
 
 const initialState = {
   instruments: [],
@@ -78,29 +78,21 @@ const appReducer = (state, action) => {
   }
 }
 
-const saveBookingInfoToStorage = (bookingInfo) => {
-  localStorage.setItem('bookingInfo', JSON.stringify(bookingInfo))
-}
 
-export const getBookingInfo = () => {
-  const data = localStorage.getItem('bookingInfo')
-  return data ? JSON.parse(data) : {}
-}
+
+
 
 export const ContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(appReducer, initialState)
-
-  useEffect(() => {
-    if (state.bookingInfo) {
-      saveBookingInfoToStorage(state.bookingInfo)
-    }
-  }, [state.bookingInfo])
-
-  const data = useMemo(() => ({ state, dispatch }), [state, dispatch])
+  const [state, dispatch] = useReducer(appReducer, initialState);
+  const data = useMemo(() => ({ state, dispatch }), [state, dispatch]);
 
   return (
     <ContextGlobal.Provider value={data}>{children}</ContextGlobal.Provider>
-  )
-}
+  );
+};
 
-export const useAppStates = () => useContext(ContextGlobal)
+ContextProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+export const useAppStates = () => useContext(ContextGlobal);

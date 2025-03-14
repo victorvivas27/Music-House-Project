@@ -8,7 +8,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Getter
@@ -33,13 +35,13 @@ public class InstrumentDtoEntrance {
     @PositiveOrZero(message = "El peso debe ser positivo o cero")
     private BigDecimal weight;
 
-    @NotBlank(message = "Las medidas  del instrumento es obligatorio")
+    @NotBlank(message = "Las medidas del instrumento son obligatorias")
     private String measures;
 
-    @NotNull(message = "el ID de la categoria no deve estar en blanco")
+    @NotNull(message = "El ID de la categoría no debe estar en blanco")
     private UUID idCategory;
 
-    @NotNull(message = "el ID de la tematica no deve estar en blanco")
+    @NotNull(message = "El ID de la temática no debe estar en blanco")
     private UUID idTheme;
 
     //@NotNull(message = "Debe cargar al menos una imagen al crear el instrumento")
@@ -49,4 +51,7 @@ public class InstrumentDtoEntrance {
     @NotNull(message = "Las características del instrumento deben estar presentes")
     @Valid
     private CharacteristicDtoEntrance characteristic;
+
+
+
 }

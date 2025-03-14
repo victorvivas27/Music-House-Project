@@ -17,6 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -134,21 +139,46 @@ public class InstrumentService implements InstrumentInterface {
         return instrumentDtoExit;
     }
 
+
+
+
     @Override
     @Transactional
     public void deleteInstrument(UUID idInstrument) throws ResourceNotFoundException {
+
         Instrument instrument = instrumentRepository.findById(idInstrument)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el instrumento con el ID proporcionado"));
 
-        boolean hasReservedDates = availableDateRepository.existsByInstrumentIdInstrumentAndAvailableFalse(idInstrument);
+        List<String> imageUrls = instrument.getImageUrls().stream()
+                .map(ImageUrls::getImageUrl)  // 📌 Obtener todas las URLs de las imágenes
+                .collect(Collectors.toList());
 
+        LOGGER.info("🟢 IMÁGENES A ELIMINAR: " + imageUrls);
+
+        // 🟢 1️⃣ ELIMINAR TODAS LAS IMÁGENES ASOCIADAS EN S3
+        for (String imageUrl : imageUrls) {
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                String key = extractKeyFromS3Url(imageUrl);
+                awss3Service.deleteFileFromS3(key);
+            }
+        }
+
+        // 🟢 2️⃣ VERIFICAR SI TIENE FECHAS RESERVADAS
+        boolean hasReservedDates = availableDateRepository.existsByInstrumentIdInstrumentAndAvailableFalse(idInstrument);
         if (hasReservedDates) {
             throw new IllegalArgumentException("No se puede eliminar el instrumento porque tiene fechas reservadas.");
         }
+
+        // 🟢 3️⃣ ELIMINAR TODAS LAS REFERENCIAS A FAVORITOS
         favoriteRepository.deleteByInstrumentIdInstrument(idInstrument);
-        // Si no tiene fechas reservadas, se elimina sin importar si está marcado como favorito
+
+        // 🟢 4️⃣ ELIMINAR EL INSTRUMENTO DE LA BASE DE DATOS
         instrumentRepository.delete(instrument);
+
+        LOGGER.info("✅ INSTRUMENTO ELIMINADO CON ÉXITO");
     }
+
+
 
     public List<InstrumentDtoExit> searchInstruments(String name) {
         List<Instrument> instruments = instrumentRepository.findByNameContainingIgnoreCase(name);
@@ -156,4 +186,29 @@ public class InstrumentService implements InstrumentInterface {
                 .map(instrument -> mapper.map(instrument, InstrumentDtoExit.class))
                 .collect(Collectors.toList());
     }
+
+
+
+    private String extractKeyFromS3Url(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return null;
+        }
+
+        try {
+            // 📌 Asegurar compatibilidad con espacios y caracteres especiales
+            String encodedUrl = imageUrl.replace(" ", "%20");
+            URI uri = new URI(encodedUrl);
+
+            // 📌 Obtener el path de la URL y remover la primera barra "/"
+            String key = URLDecoder.decode(uri.getPath().substring(1), StandardCharsets.UTF_8.name());
+
+            LOGGER.info("🟢 Clave de imagen extraída: " + key);
+            return key;
+        } catch (URISyntaxException | UnsupportedEncodingException e) {
+            throw new RuntimeException("Error al procesar la URL de la imagen", e);
+        }
+    }
+
+
+
 }

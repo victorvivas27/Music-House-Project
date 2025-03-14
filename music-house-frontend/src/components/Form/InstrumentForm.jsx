@@ -8,9 +8,7 @@ import {
   Divider,
   Tooltip,
   Checkbox,
-  MenuItem,
-  FormHelperText,
-  Avatar
+  FormHelperText
 } from '@mui/material'
 import CategorySelect from './CategorySelect'
 import ThemeSelect from './ThemeSelect'
@@ -20,13 +18,14 @@ import '../styles/crearInstrumento.styles.css'
 import PropTypes from 'prop-types'
 import ValidatedTextField from '../Pages/Admin/common/ValidatedTextField'
 import ImageUpload from '../common/ImageUpload '
+import { inputStyles } from '../styles/styleglobal'
 
 const InstrumentForm = ({ initialFormData, onSubmit }) => {
   const [formData, setFormData] = useState({ ...initialFormData })
 
   const { state } = useAppStates()
   const [errors, setErrors] = useState({})
-  const [preview, setPreview] = useState(null)
+
   // Refs para auto-focus en errores
   const fieldRefs = {
     name: useRef(),
@@ -42,27 +41,6 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
   const title = formData.idInstrument
     ? 'Editar Instrumento'
     : 'Registrar Instrumento'
-
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files) // 📌 Convertir FileList a array
-
-    if (files.length > 0) {
-      const validFiles = files.filter((file) => file.size <= 5 * 1024 * 1024) // Filtrar archivos de más de 5MB
-
-      if (validFiles.length !== files.length) {
-        alert('Algunas imágenes fueron rechazadas porque superan los 5MB.')
-      }
-
-      const previews = validFiles.map((file) => URL.createObjectURL(file))
-
-      setPreview(previews) // ✅ Mostrar todas las imágenes en previsualización
-
-      setFormData((prev) => ({
-        ...prev,
-        imageUrls: [...prev.imageUrls, ...validFiles] // ✅ Agregar nuevas imágenes a las existentes
-      }))
-    }
-  }
 
   useEffect(() => {
     if (!formData.name) {
@@ -101,18 +79,17 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
     if (!formData.weight) newErrors.weight = 'Este campo es obligatorio.'
     if (!formData.rentalPrice)
       newErrors.rentalPrice = 'Este campo es obligatorio.'
-    if (!formData.idCategory)
-      newErrors.idCategory = 'Debes seleccionar una categoría.'
-    if (!formData.idTheme) newErrors.idTheme = 'Debes seleccionar una temática.'
 
-    // ✅ Validar que se suba al menos una imagen
-    if (!formData.imageUrls || formData.imageUrls.length === 0) {
-      newErrors.imageUrlsText = 'Debes subir al menos una imagen.'
+    if (
+      !formData.idCategory ||
+      (typeof formData.idCategory === 'string' &&
+        formData.idCategory.trim() === '')
+    ) {
+      newErrors.idCategory = 'Debes seleccionar una categoría.'
     }
 
     setErrors(newErrors)
 
-    // 📌 Enfocar el primer campo con error
     const firstError = Object.keys(newErrors)[0]
     if (firstError) {
       fieldRefs[firstError]?.current?.focus()
@@ -195,6 +172,11 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
                 inputRef={fieldRefs.weight}
                 error={errors.weight}
               />
+              <FormHelperText>
+                ℹ️ Formato: Menos de 1 kg se mostrará en gramos (ej: 0.3 → 300
+                gramos). 1 kg o más se mostrará como kilos y gramos (ej: 1.4 → 1
+                kilo 400 gramos).
+              </FormHelperText>
 
               <ValidatedTextField
                 label="Precio"
@@ -207,7 +189,7 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
             </Grid>
             {/*---------------------Fin formulario lado izquierdo----------------*/}
 
-            {/*---------------------formulario lado derecho----------------*/}
+            {/*---------------------Formulario lado derecho----------------*/}
             <Grid
               item
               xs={12}
@@ -217,32 +199,54 @@ const InstrumentForm = ({ initialFormData, onSubmit }) => {
               <FormControl
                 fullWidth
                 margin="normal"
-                error={!!errors.idCategory}
+                sx={{
+                  ...inputStyles,
+                  '& .MuiInputBase-input': {
+                    color: 'var(--color-azul)'
+                  }
+                }}
               >
                 <CategorySelect
                   onChange={handleChange}
                   selectedCategoryId={formData?.idCategory}
-                  label="Categoría" // ✅ Asegurar que siempre haya un label
+                  label=""
                 />
-                <MenuItem value="" disabled>
-                  Selecciona una categoría
-                </MenuItem>
-                <FormHelperText sx={{ color: 'red' }}>
-                  {errors.idCategory}
+                {/* 📌 Leyenda debajo del select */}
+                <FormHelperText
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    color: 'orange'
+                  }}
+                >
+                  ⚠️ Recuerda seleccionar una categoría antes de continuar.
                 </FormHelperText>
               </FormControl>
 
-              <FormControl fullWidth margin="normal" error={!!errors.idTheme}>
+              <FormControl
+                fullWidth
+                margin="normal"
+                sx={{
+                  ...inputStyles,
+                  '& .MuiInputBase-input': {
+                    color: 'var(--color-azul)'
+                  }
+                }}
+              >
                 <ThemeSelect
                   onChange={handleChange}
                   selectedThemeId={formData?.idTheme}
-                  label="Temática" // ✅ Asegurar que siempre haya un label
+                  label=""
                 />
-                <MenuItem value="" disabled>
-                  Selecciona una temática
-                </MenuItem>
-                <FormHelperText sx={{ color: 'red' }}>
-                  {errors.idTheme}
+                {/* 📌 Leyenda debajo del select */}
+                <FormHelperText
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    color: 'orange'
+                  }}
+                >
+                  ⚠️ No olvides elegir una temática para tu instrumento.
                 </FormHelperText>
               </FormControl>
             </Grid>

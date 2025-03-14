@@ -1,4 +1,4 @@
-import { Select, MenuItem } from '@mui/material'
+import { Select, MenuItem, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { getThemes } from '../../api/instruments'
 import { Loader } from '../common/loader/Loader'
@@ -43,11 +43,17 @@ setLoading(false)
 
   return (
     <Select
+    displayEmpty
       value={selectedTheme}
       onChange={handleThemeChange}
       label={label}
       color="secondary"
     >
+       {/* 📌 Placeholder */}
+       <MenuItem value="" disabled>
+        <Typography variant="h6">🎭 Selecciona una temática</Typography>
+      </MenuItem>
+
       {themes?.data?.map((theme, index) => (
         <MenuItem key={`theme-select-${index}`} value={theme}>
           {theme.themeName}

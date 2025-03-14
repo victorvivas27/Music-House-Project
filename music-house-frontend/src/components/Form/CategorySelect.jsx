@@ -1,10 +1,14 @@
-import { Select, MenuItem } from '@mui/material'
+import { Select, MenuItem, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { getCategories } from '../../api/categories'
 import { Loader } from '../common/loader/Loader'
 import PropTypes from 'prop-types'
 
-const CategorySelect = ({label,onChange,selectedCategoryId = undefined}) => {
+const CategorySelect = ({
+  label,
+  onChange,
+  selectedCategoryId = undefined
+}) => {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('')
   const [categories, setCategories] = useState()
@@ -52,12 +56,17 @@ const CategorySelect = ({label,onChange,selectedCategoryId = undefined}) => {
 
   return (
     <Select
+      displayEmpty
       value={selectedCategory}
       onChange={handleCategoryChange}
-      placeholder='Categoria'
+      placeholder="Categoria"
       label={label}
       color="secondary"
     >
+      {/* 📌 Placeholder */}
+      <MenuItem value="" disabled>
+        <Typography variant="h6">🎸🎷Selecciona una Categoria🥁🪘</Typography>
+      </MenuItem>
       {!loading &&
         categories?.data?.map((category, index) => (
           <MenuItem key={`category-select-${index}`} value={category}>
@@ -69,8 +78,8 @@ const CategorySelect = ({label,onChange,selectedCategoryId = undefined}) => {
 }
 
 export default CategorySelect
-CategorySelect.propTypes={
-  label:PropTypes.string.isRequired,
-  onChange:PropTypes.func.isRequired,
-  selectedCategoryId:PropTypes.string
+CategorySelect.propTypes = {
+  label: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  selectedCategoryId: PropTypes.string
 }

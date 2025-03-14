@@ -3,10 +3,11 @@ import InstrumentForm from './InstrumentForm'
 import { createInstrument } from '../../api/instruments'
 import { formDataToCharacteristics } from '../utils/editInstrument'
 import { MessageDialog } from '../common/MessageDialog'
-import { useNavigate } from 'react-router-dom'
+import ArrowBack from '../utils/ArrowBack'
+//import { useNavigate } from 'react-router-dom'
 
 const NewInstrumentForm = () => {
-  const navigate = useNavigate(); 
+  //const navigate = useNavigate(); 
   const [showMessage, setShowMessage] = useState(false)
   const [message, setMessage] = useState()
 
@@ -77,14 +78,15 @@ const NewInstrumentForm = () => {
       setShowMessage(true);
       setTimeout(() => {
         setShowMessage(false);
-        navigate(-1);
+        //navigate(-1);
       }, 2000);
     }
-  }, [navigate]);
+  }, []);
 
 
   return (
     <>
+     <ArrowBack/>
       <InstrumentForm initialFormData={initialFormData} onSubmit={onSubmit} />
       <MessageDialog
         title="Registrar Instrumento"

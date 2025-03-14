@@ -8,6 +8,7 @@ import Container from '@mui/material/Container'
   flexWrap: 'wrap',
   gap: '1rem',
   paddingTop: 1,
+  border:"2px solid blue",
 
   [theme.breakpoints.up('sm')]: {
     flexDirection: 'row'
