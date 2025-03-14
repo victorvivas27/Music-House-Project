@@ -1,7 +1,8 @@
+import axios from 'axios';
 import {
   useGetFetch,
   getFetch,
-  postFetch,
+  
   putFetch,
   deleteFetch
 } from '../helpers/useFetch'
@@ -22,9 +23,22 @@ export const getThemes = () => {
   return useGetFetch(`${BASE_URL}/theme/all`)
 }
 
-export const createInstrument = (payload) => {
-  return postFetch(`${BASE_URL}/instrument/create`, payload)
-}
+export const createInstrument = async (formData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/instrument/create`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error al registrar el instrumento:", error.response?.data || error.message);
+
+    // 📌 Lanzar el mensaje de error correcto si existe en la respuesta
+    throw new Error(error.response?.data?.message || "No se pudo registrar el instrumento");
+  }
+};
 
 export const updateInstrument = (payload) => {
   return putFetch(`${BASE_URL}/instrument/update`, payload)

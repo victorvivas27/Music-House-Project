@@ -42,7 +42,7 @@ public class InstrumentDtoEntrance {
     @NotNull(message = "el ID de la tematica no deve estar en blanco")
     private UUID idTheme;
 
-    @NotNull(message = "Debe cargar al menos una imagen al crear el instrumento")
+    //@NotNull(message = "Debe cargar al menos una imagen al crear el instrumento")
     @Valid
     private List<String> imageUrls;
 

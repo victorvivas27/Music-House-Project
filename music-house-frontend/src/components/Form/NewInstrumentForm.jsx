@@ -9,16 +9,16 @@ const NewInstrumentForm = () => {
   const navigate = useNavigate(); 
   const [showMessage, setShowMessage] = useState(false)
   const [message, setMessage] = useState()
+
   const initialFormData = {
-    idInstrument: '',
-    name: '',
+    idInstrument: null,  
+    name: '',            
     description: '',
     measures: '',
-    weight: '',
-    rentalPrice: '',
-    idCategory: '',
+    weight: '',           
+    rentalPrice: '',      
+    idCategory: '',    
     idTheme: '',
-    imageUrlsText: '',
     imageUrls: [],
     characteristics: {
       instrumentCase: false,
@@ -27,37 +27,61 @@ const NewInstrumentForm = () => {
       microphone: false,
       phoneHolder: false
     }
-  }
+  };
 
   const onClose = () => {
     setShowMessage(false)
   }
 
-  const onSubmit = useCallback( (formData) => {
-    if (!formData) return
-
-    const data = {
-      ...formData,
-      characteristic: formDataToCharacteristics(formData)
-    }
-
-    createInstrument(data)
-      .then(() => {
-        setMessage('Instrumento registrado exitosamente')
-      })
-      .catch(() => {
-        setMessage('No se pudo registrar instrumento')
-      })
-      .finally(() => {
-        setShowMessage(true);
+  const onSubmit = useCallback(async (formData) => {
+   
   
-        
-        setTimeout(() => {
-          setShowMessage(false);
-          navigate(-1);  
-        }, 2000);
-      });
-  },[navigate])
+    if (!formData) return;
+  
+    const formDataToSend = new FormData();
+  
+    // 📌 Convertir JSON correctamente
+    const instrumentJson = JSON.stringify({
+      name: formData.name || "",
+      description: formData.description || "",
+      rentalPrice: formData.rentalPrice || "",
+      weight: formData.weight || "",
+      measures: formData.measures || "",
+      idCategory: formData.idCategory || "",
+      idTheme: formData.idTheme || "",
+      characteristic: formDataToCharacteristics(formData),
+    });
+  
+    
+  
+    // ✅ Agregar JSON correctamente como un Blob con application/json
+    formDataToSend.append("instrument", new Blob([instrumentJson], { type: "application/json" }));
+  
+    // ✅ Agregar imágenes correctamente
+    if (formData.imageUrls && formData.imageUrls.length > 0) {
+      for (let file of formData.imageUrls) {
+        if (file instanceof File) {
+          formDataToSend.append("files", file);
+        }
+      }
+    }
+  
+   
+  
+    try {
+      await createInstrument(formDataToSend);
+      setMessage("Instrumento registrado exitosamente");
+    } catch (error) {
+      setMessage(error.message || "No se pudo registrar instrumento");
+    } finally {
+      setShowMessage(true);
+      setTimeout(() => {
+        setShowMessage(false);
+        navigate(-1);
+      }, 2000);
+    }
+  }, [navigate]);
+
 
   return (
     <>
@@ -66,12 +90,11 @@ const NewInstrumentForm = () => {
         title="Registrar Instrumento"
         message={message}
         isOpen={showMessage}
-        //buttonText="Ok"
         onClose={onClose}
         onButtonPressed={onClose}
       />
     </>
-  )
+  );
 }
 
-export default NewInstrumentForm
+export default NewInstrumentForm;

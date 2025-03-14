@@ -1,19 +1,23 @@
 package com.musichouse.api.music.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musichouse.api.music.dto.dto_entrance.InstrumentDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.InstrumentDtoExit;
 import com.musichouse.api.music.dto.dto_modify.InstrumentDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.service.InstrumentService;
 import com.musichouse.api.music.util.ApiResponse;
-import jakarta.validation.Valid;
+import jakarta.validation.*;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -22,18 +26,47 @@ import java.util.UUID;
 public class InstrumentController {
 
     private final InstrumentService instrumentService;
+    private final ObjectMapper objectMapper;
 
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<InstrumentDtoExit>> createInstrument(@Valid @RequestBody InstrumentDtoEntrance instrumentDtoEntrance) {
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public HttpEntity<ApiResponse<?>> createInstrument(
+            @RequestPart("instrument") String instrumentJson,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+
         try {
-            InstrumentDtoExit instrumentDtoExit = instrumentService.createInstrument(instrumentDtoEntrance);
+            // 📌 Convertir JSON a Objeto
+            InstrumentDtoEntrance instrumentDtoEntrance = objectMapper.readValue(instrumentJson, InstrumentDtoEntrance.class);
+            System.out.println("📌 Instrumento convertido: " + instrumentDtoEntrance);
+
+            // 📌 Validación manual
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            Validator validator = factory.getValidator();
+            Set<ConstraintViolation<InstrumentDtoEntrance>> violations = validator.validate(instrumentDtoEntrance);
+
+            if (!violations.isEmpty()) {
+                Map<String, String> errors = new HashMap<>();
+                for (ConstraintViolation<InstrumentDtoEntrance> violation : violations) {
+                    errors.put(violation.getPropertyPath().toString(), violation.getMessage());
+                }
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("Errores de validación", errors));
+            }
+
+            // 📌 Llamar al servicio
+            InstrumentDtoExit instrumentDtoExit = instrumentService.createInstrument(files, instrumentDtoEntrance);
+
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ApiResponse<>("Instrumento creado exitosamente.", instrumentDtoExit));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("El idCategory o idTheme no se encuentra en la DB", null));
+
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("Error al procesar el JSON de entrada.", null));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Error inesperado al crear el instrumento", null));
         }
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<InstrumentDtoExit>>> allInstruments() {

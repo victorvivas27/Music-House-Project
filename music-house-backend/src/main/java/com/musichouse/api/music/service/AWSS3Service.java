@@ -2,8 +2,10 @@ package com.musichouse.api.music.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.musichouse.api.music.dto.dto_entrance.InstrumentDtoEntrance;
 import com.musichouse.api.music.dto.dto_entrance.UserAdminDtoEntrance;
 import com.musichouse.api.music.dto.dto_entrance.UserDtoEntrance;
+import com.musichouse.api.music.dto.dto_exit.InstrumentDtoExit;
 import com.musichouse.api.music.dto.dto_modify.UserDtoModify;
 import com.musichouse.api.music.entity.User;
 import com.musichouse.api.music.exception.FileNotFoundException;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -59,6 +62,38 @@ public class AWSS3Service implements AWSS3Interface {
         }
     }
 
+    public List<String> uploadFilesToS3Instrument(List<MultipartFile> files, InstrumentDtoEntrance instrumentDtoEntrance) {
+        List<String> imageUrls = new ArrayList<>();
+
+        if (files == null || files.isEmpty()) {
+            return imageUrls; // Si no hay archivos, devolver una lista vacía
+        }
+
+        for (MultipartFile file : files) {
+            try {
+                // Crear el path en S3
+                String userFolder = instrumentDtoEntrance.getName().toLowerCase();
+                String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(file.getSize());
+                metadata.setContentType(file.getContentType());
+
+                // Subir archivo a S3
+                amazonS3.putObject(new PutObjectRequest(bucketName, newFilename, file.getInputStream(), metadata));
+
+                // Agregar la URL generada a la lista
+                String imageUrl = "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + newFilename;
+                imageUrls.add(imageUrl);
+            } catch (IOException e) {
+                LOGGER.error("Error al cargar el archivo a S3", e);
+                throw new RuntimeException("Error al cargar el archivo a S3", e);
+            }
+        }
+
+        return imageUrls; // ✅ Retornar la lista de URLs generadas
+    }
+
     @Override
     public String uploadFileToS3Admin(MultipartFile file, UserAdminDtoEntrance userAdminDtoEntrance) {
         try {
@@ -80,6 +115,8 @@ public class AWSS3Service implements AWSS3Interface {
             throw new RuntimeException("Error al cargar el archivo a S3", e);
         }
     }
+
+   
 
     public String uploadUserModifyFileToS3(MultipartFile file, UserDtoModify userDtoModify) {
         try {

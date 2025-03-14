@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,15 +31,30 @@ public class InstrumentService implements InstrumentInterface {
     private final ThemeRepository themeRepository;
     private final AvailableDateRepository availableDateRepository;
     private final FavoriteRepository favoriteRepository;
+    private final AWSS3Service awss3Service;
 
     @Override
-    public InstrumentDtoExit createInstrument(InstrumentDtoEntrance instrumentsDtoEntrance) throws ResourceNotFoundException {
-        Category category = categoryRepository.findById(instrumentsDtoEntrance.getIdCategory())
+    public InstrumentDtoExit createInstrument(List<MultipartFile> files, InstrumentDtoEntrance instrumentDtoEntrance)
+            throws ResourceNotFoundException {
+
+        Category category = categoryRepository.findById(instrumentDtoEntrance.getIdCategory())
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró la categoría con el ID proporcionado"));
 
-        Theme theme = themeRepository.findById(instrumentsDtoEntrance.getIdTheme())
+        Theme theme = themeRepository.findById(instrumentDtoEntrance.getIdTheme())
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró la temática con el ID proporcionado"));
-        CharacteristicDtoEntrance characteristicsDtoEntrance = instrumentsDtoEntrance.getCharacteristic();
+
+        // Crear entidad Instrument
+        Instrument instrument = new Instrument();
+        instrument.setName(instrumentDtoEntrance.getName());
+        instrument.setDescription(instrumentDtoEntrance.getDescription());
+        instrument.setRentalPrice(instrumentDtoEntrance.getRentalPrice());
+        instrument.setWeight(instrumentDtoEntrance.getWeight());
+        instrument.setMeasures(instrumentDtoEntrance.getMeasures());
+        instrument.setCategory(category);
+        instrument.setTheme(theme);
+
+        // Guardar características
+        CharacteristicDtoEntrance characteristicsDtoEntrance = instrumentDtoEntrance.getCharacteristic();
         Characteristics characteristics = new Characteristics();
         characteristics.setInstrumentCase(characteristicsDtoEntrance.getInstrumentCase());
         characteristics.setSupport(characteristicsDtoEntrance.getSupport());
@@ -46,27 +62,25 @@ public class InstrumentService implements InstrumentInterface {
         characteristics.setMicrophone(characteristicsDtoEntrance.getMicrophone());
         characteristics.setPhoneHolder(characteristicsDtoEntrance.getPhoneHolder());
 
-        Instrument instrument = new Instrument();
-        instrument.setName(instrumentsDtoEntrance.getName());
-        instrument.setDescription(instrumentsDtoEntrance.getDescription());
-        instrument.setRentalPrice(instrumentsDtoEntrance.getRentalPrice());
-        instrument.setWeight(instrumentsDtoEntrance.getWeight());
-        instrument.setMeasures(instrumentsDtoEntrance.getMeasures());
-        instrument.setCategory(category);
-        instrument.setTheme(theme);
         instrument.setCharacteristics(characteristics);
 
-        List<ImageUrls> imageUrls = instrumentsDtoEntrance.getImageUrls().stream()
-                .map(url -> {
-                    ImageUrls imageUrl = new ImageUrls();
-                    imageUrl.setImageUrl(url);
-                    imageUrl.setInstrument(instrument);
-                    return imageUrl;
-                }).toList();
-        instrument.setImageUrls(imageUrls);
-        Instrument instrumentSave = instrumentRepository.save(instrument);
-        InstrumentDtoExit instrumentDtoExit = mapper.map(instrumentSave, InstrumentDtoExit.class);
-        return instrumentDtoExit;
+        // 📌 Subir imágenes a S3 y guardar URLs en la entidad
+        List<String> imageUrls = awss3Service.uploadFilesToS3Instrument(files, instrumentDtoEntrance);
+
+        List<ImageUrls> imageUrlEntities = imageUrls.stream().map(url -> {
+            ImageUrls imageUrlEntity = new ImageUrls();
+            imageUrlEntity.setImageUrl(url);
+            imageUrlEntity.setInstrument(instrument);
+            return imageUrlEntity;
+        }).toList();
+
+        instrument.setImageUrls(imageUrlEntities);
+
+        // Guardar el instrumento en la base de datos
+        Instrument savedInstrument = instrumentRepository.save(instrument);
+
+        // Convertir la entidad guardada a DTO para devolver la respuesta
+        return mapper.map(savedInstrument, InstrumentDtoExit.class);
     }
 
 
