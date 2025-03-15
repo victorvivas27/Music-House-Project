@@ -145,37 +145,42 @@ public class InstrumentService implements InstrumentInterface {
     @Override
     @Transactional
     public void deleteInstrument(UUID idInstrument) throws ResourceNotFoundException {
-
+        // 📌 Buscar el instrumento
         Instrument instrument = instrumentRepository.findById(idInstrument)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el instrumento con el ID proporcionado"));
 
-        List<String> imageUrls = instrument.getImageUrls().stream()
-                .map(ImageUrls::getImageUrl)  // 📌 Obtener todas las URLs de las imágenes
-                .collect(Collectors.toList());
-
-        LOGGER.info("🟢 IMÁGENES A ELIMINAR: " + imageUrls);
-
-        // 🟢 1️⃣ ELIMINAR TODAS LAS IMÁGENES ASOCIADAS EN S3
-        for (String imageUrl : imageUrls) {
-            if (imageUrl != null && !imageUrl.isEmpty()) {
-                String key = extractKeyFromS3Url(imageUrl);
-                awss3Service.deleteFileFromS3(key);
-            }
-        }
-
-        // 🟢 2️⃣ VERIFICAR SI TIENE FECHAS RESERVADAS
+        // 📌 Verificar si tiene fechas reservadas antes de eliminarlo
         boolean hasReservedDates = availableDateRepository.existsByInstrumentIdInstrumentAndAvailableFalse(idInstrument);
         if (hasReservedDates) {
             throw new IllegalArgumentException("No se puede eliminar el instrumento porque tiene fechas reservadas.");
         }
 
-        // 🟢 3️⃣ ELIMINAR TODAS LAS REFERENCIAS A FAVORITOS
+        // 📌 Eliminar todas las referencias en Favoritos antes de eliminar el instrumento
         favoriteRepository.deleteByInstrumentIdInstrument(idInstrument);
 
-        // 🟢 4️⃣ ELIMINAR EL INSTRUMENTO DE LA BASE DE DATOS
-        instrumentRepository.delete(instrument);
+        // 📌 Guardar las URLs de las imágenes antes de eliminar el instrumento
+        List<String> imageUrls = instrument.getImageUrls().stream()
+                .map(ImageUrls::getImageUrl)
+                .collect(Collectors.toList());
 
-        LOGGER.info("✅ INSTRUMENTO ELIMINADO CON ÉXITO");
+        LOGGER.info("🟢 IMÁGENES A ELIMINAR: " + imageUrls);
+
+        // 📌 Eliminar el instrumento de la base de datos primero
+        instrumentRepository.delete(instrument);
+        LOGGER.info("✅ INSTRUMENTO ELIMINADO CON ÉXITO DE LA BASE DE DATOS");
+
+        // 📌 Ahora que el instrumento se eliminó, proceder con la eliminación de imágenes en S3
+        for (String imageUrl : imageUrls) {
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                try {
+                    String key = extractKeyFromS3Url(imageUrl);
+                    awss3Service.deleteFileFromS3(key);
+                    LOGGER.info("✅ Imagen eliminada de S3: " + key);
+                } catch (Exception e) {
+                    LOGGER.warn("⚠️ No se pudo eliminar la imagen en S3: " + imageUrl + ". Error: " + e.getMessage());
+                }
+            }
+        }
     }
 
 

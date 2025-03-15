@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import {
-  Box,
   Table,
   TableBody,
   TableCell,
@@ -18,7 +17,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import { useNavigate } from 'react-router-dom'
 import { getInstruments, deleteInstrument } from '../../api/instruments'
 import MainWrapper from '../common/MainWrapper'
-import { MessageDialog } from '../common/MessageDialog'
+
 import { Loader } from '../common/loader/Loader'
 import {
   EnhancedTableHead,
@@ -31,10 +30,11 @@ import {
   getEmptyRows,
   useVisibleRows
 } from './Admin/common/tableHelper'
-import { Code } from '../../api/constants'
+
 
 import '../styles/instruments.styles.css'
 import ArrowBack from '../utils/ArrowBack'
+import Swal from 'sweetalert2'
 
 const headCells = [
   {
@@ -58,7 +58,7 @@ const headCells = [
 ]
 
 export const Instruments = () => {
-  const [instruments, setInstruments] = useState()
+  const [instruments, setInstruments] = useState({ data: [] })
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [order, setOrder] = useState('asc')
@@ -66,10 +66,6 @@ export const Instruments = () => {
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
-  const [showMessage, setShowMessage] = useState(false)
-  const [message, setMessage] = useState()
-  const [showCancelButton, setShowCancelButton] = useState(false)
-  const [onButtonPressed, setOnButtonPressed] = useState()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -77,121 +73,102 @@ export const Instruments = () => {
   }, [])
 
   useEffect(() => {
-    if (!instruments) return
-
     setRows(instruments.data)
     setLoading(false)
   }, [instruments])
 
-  const getAllInstruments = () => {
+  const getAllInstruments = async () => {
     setLoading(true)
-    getInstruments()
-      .then(([instruments]) => {
-        setInstruments(instruments)
+    try {
+      const [fetchedInstruments] = await getInstruments()
+      setInstruments(fetchedInstruments)
+    } catch {
+      setInstruments({ data: [] })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleAdd = () => navigate('/agregarInstrumento')
+
+  const handleSelectAllClick = (event) => handleSelectAll(event, rows, 'idInstrument', setSelected)
+
+  const handleClick = (event, id) => handleSelected(event, id, selected, setSelected)
+
+  const handleRequestSort = (event, property) => handleSort(event, property, orderBy, order, setOrderBy, setOrder)
+
+  const handleEdit = (id) => navigate(`/editarInstrumento/${id}`)
+
+  const handleConfirmDelete = async (idInstrument) => {
+    const selectedId = idInstrument || selected[0]
+    if (!selectedId) {
+      Swal.fire({
+        title: 'Error',
+        text: 'No hay un instrumento seleccionado para eliminar.',
+        icon: 'error',
+        confirmButtonColor: '#d33'
       })
-      .catch(() => {
-        setInstruments({ data: [] })
+      return
+    }
+
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    })
+
+    if (result.isConfirmed) {
+      handleDelete(selectedId)
+    }
+  }
+
+  const handleDelete = async (idInstrument) => {
+    try {
+      await deleteInstrument(idInstrument)
+      Swal.fire({
+        title: '¡Eliminado!',
+        text: 'El instrumento se eliminó correctamente.',
+        icon: 'success',
+        confirmButtonColor: '#3085d6'
       })
-  }
-
-  const handleAdd = () => {
-    navigate('/agregarInstrumento')
-  }
-
-  const handleSelectAllClick = (event) => {
-    handleSelectAll(event, rows, 'idInstrument', setSelected)
-  }
-
-  const handleClick = (event, id) => {
-    handleSelected(event, id, selected, setSelected)
-  }
-
-  const handleRequestSort = (event, property) => {
-    handleSort(event, property, orderBy, order, setOrderBy, setOrder)
-  }
-
-  const handleEdit = (id) => {
-    navigate(`/editarInstrumento/${id}`)
-  }
-
-  const handleConfirmDelete = () => {
-    setMessage('¿Desea eliminar este instrumento?')
-    setShowCancelButton(true)
-    setOnButtonPressed(true)
-    setShowMessage(true)
-  }
-
-  const handleDelete = () => {
-    deleteSelectedInstrument()
-  }
-
-  const deleteSelectedInstrument = () => {
-    const idInstrument = selected[0]
-  
-    deleteInstrument(idInstrument)
-      .then(() => {
-        setShowMessage(false) // Cerrar el mensaje después de la eliminación
-        setSelected([])
-        getAllInstruments() // Refrescar la lista
+      setSelected([])
+      getAllInstruments()
+    } catch {
+      Swal.fire({
+        title: 'Error',
+        text: 'No fue posible eliminar el instrumento.',
+        icon: 'error',
+        confirmButtonColor: '#d33'
       })
-      .catch(([code]) => {
-        setMessage(
-          code === Code.BAD_REQUEST
-            ? 'Existen reservas asociadas al instrumento, no es posible eliminarlo'
-            : 'No fue posible eliminar el instrumento.'
-        )
-        setShowCancelButton(false)
-        setOnButtonPressed(false)
-        setShowMessage(true) // Solo mostrar el mensaje en caso de error
-      })
+    }
   }
 
-  const handleClose = () => {
-    setShowMessage(false)
-    setSelected([])
-  }
-
-
-
-  const handleChangePage = (newPage) => {
-    setPage(newPage)
-  }
+  const handleChangePage = (event, newPage) => setPage(newPage)
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
   }
 
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = getEmptyRows(page, rowsPerPage, rows)
-
   const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
 
   if (loading) return <Loader title="Cargando instrumentos" />
 
   return (
     <MainWrapper>
-      <Paper
-        sx={{
-          display: { xs: 'none', lg: 'initial' },
-          margin: 10,
-          
-          minWidth:1700
-        }}
-      >
-        <ArrowBack/>
-        <EnhancedTableToolbar
-          title="Instrumentos"
-          titleAdd="Agregar instrumento"
-          handleAdd={handleAdd}
-          numSelected={selected.length}
-        />
-        <TableContainer>
-          <Table
-           
-            aria-labelledby="tableTitle"
-            size="medium"
-          >
+      <Paper sx={{ display: { xs: 'none', lg: 'initial' }, margin: 10, minWidth: 1700 }}>
+        <ArrowBack />
+        <EnhancedTableToolbar title="Instrumentos" titleAdd="Agregar instrumento" handleAdd={handleAdd} numSelected={selected.length} />
+        <TableContainer >
+
+          <Table aria-labelledby="tableTitle" size="medium" >
+
             <EnhancedTableHead
               headCells={headCells}
               numSelected={selected.length}
@@ -201,7 +178,9 @@ export const Instruments = () => {
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
               disableSelectAll
+             
             />
+
             <TableBody>
               {visibleRows.map((row, index) => {
                 const isItemSelected = isSelected(row.idInstrument, selected)
@@ -217,37 +196,29 @@ export const Instruments = () => {
                     key={row.idInstrument}
                     selected={isItemSelected}
                     className={isRowEven ? 'table-row-even' : 'table-row-odd'}
-                    sx={{ cursor: 'pointer' }}
-                    onClick={(event) => handleClick(event, row.idInstrument)}
+                    sx={{ cursor: 'pointer'}}
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
                         color="primary"
                         checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId
-                        }}
+                        onChange={(event) => handleClick(event, row.idInstrument)}
+                        inputProps={{ 'aria-labelledby': labelId }}
                       />
                     </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      align="center"
-                    >
+                    
+                    <TableCell component="th" id={labelId} scope="row" align="center">
                       {row.idInstrument}
                     </TableCell>
                     <TableCell align="left">{row.name}</TableCell>
                     <TableCell align="left" className="actions-cell">
                       <Tooltip title="Editar">
-                        <IconButton
-                          onClick={() => handleEdit(row.idInstrument)}
-                        >
+                        <IconButton onClick={() => handleEdit(row.idInstrument)}>
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Eliminar">
-                        <IconButton onClick={handleConfirmDelete}>
+                        <IconButton onClick={() => handleConfirmDelete(row.idInstrument)}>
                           <DeleteIcon />
                         </IconButton>
                       </Tooltip>
@@ -256,24 +227,14 @@ export const Instruments = () => {
                 )
               })}
               {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows
-                  }}
-                >
+                <TableRow style={{ height: 53 * emptyRows }}>
                   <TableCell colSpan={3} />
                 </TableRow>
               )}
               {page === 0 && rows.length === 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows
-                  }}
-                >
+                <TableRow style={{ height: 53 * emptyRows }}>
                   <TableCell colSpan={3}>
-                    <Typography align="center">
-                      {page === 0 ? 'No se encontraron instrumentos' : ''}
-                    </Typography>
+                    <Typography align="center">No se encontraron instrumentos</Typography>
                   </TableCell>
                 </TableRow>
               )}
@@ -288,44 +249,13 @@ export const Instruments = () => {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          labelRowsPerPage="Filas por página"
           sx={{
             '& .MuiTablePagination-displayedRows': { display: 'none' },
             '& .MuiTablePagination-actions': { display: 'none' }
           }}
-          
+          labelRowsPerPage="Filas por página"
         />
       </Paper>
-      <Box
-        sx={{
-          display: { xs: 'flex', lg: 'none' },
-          height: '100vh'
-        }}
-      >
-        <Typography
-          gutterBottom
-          variant="h6"
-          component="h6"
-          textAlign="center"
-          sx={{
-            paddingTop: 30,
-            fontWeight: 'bold'
-          }}
-        >
-          Funcionalidad no disponible en esta resolución
-        </Typography>
-      </Box>
-      <MessageDialog
-        title="Eliminar Instrumento"
-        message={message}
-        isOpen={showMessage}
-        buttonText="Ok"
-        onClose={handleClose}
-        onButtonPressed={() =>
-          onButtonPressed ? handleDelete() : handleClose()
-        }
-        showCancelButton={showCancelButton}
-      />
     </MainWrapper>
   )
 }

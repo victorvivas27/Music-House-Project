@@ -44,8 +44,14 @@ export const updateInstrument = (payload) => {
   return putFetch(`${BASE_URL}/instrument/update`, payload)
 }
 
-export const deleteInstrument = (idInstrument) => {
-  return deleteFetch(`${BASE_URL}/instrument/delete/${idInstrument}`)
+export const deleteInstrument = async (idInstrument) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/instrument/delete/${idInstrument}`)
+    return response.data // 📌 Devolver la respuesta si es necesario
+  } catch (error) {
+    console.error('❌ Error al eliminar el instrumento:', error.response?.data || error.message)
+    throw error // 📌 Lanzar el error para que el frontend pueda manejarlo
+  }
 }
 
 export const searchInstrumentsByName = (name) => {

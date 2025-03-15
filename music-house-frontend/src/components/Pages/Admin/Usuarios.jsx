@@ -168,6 +168,7 @@ export const Usuarios = () => {
             />
             <TableContainer>
               <Table aria-labelledby="tableTitle" size="medium">
+                
                 <EnhancedTableHead
                   headCells={headCells}
                   numSelected={selected.length}
@@ -263,7 +264,12 @@ export const Usuarios = () => {
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
+              labelRowsPerPage="Filas por página"
               onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{
+                '& .MuiTablePagination-displayedRows': { display: 'none' },
+                '& .MuiTablePagination-actions': { display: 'none' }
+              }}
             />
           </Paper>
         </MainWrapper>
