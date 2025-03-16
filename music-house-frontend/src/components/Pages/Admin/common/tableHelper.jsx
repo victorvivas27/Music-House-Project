@@ -32,7 +32,6 @@ const getComparator = (order, orderBy) => {
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-
 const stableSort = (array, comparator) => {
   const stabilizedThis = array.map((el, index) => [el, index])
   stabilizedThis.sort((a, b) => {
@@ -107,7 +106,7 @@ export const EnhancedTableHead = (props) => {
 }
 
 export const EnhancedTableToolbar = (props) => {
-  const { numSelected } = props
+  const { numSelected, handleConfirmDelete } = props
 
   return (
     <Toolbar
@@ -145,7 +144,7 @@ export const EnhancedTableToolbar = (props) => {
 
       {numSelected > 0 ? (
         <Tooltip title="Eliminar (Aún no implementado)">
-          <IconButton>
+          <IconButton onClick={handleConfirmDelete}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -159,8 +158,6 @@ export const EnhancedTableToolbar = (props) => {
     </Toolbar>
   )
 }
-
-
 
 export const isSelected = (id, selected) => selected.indexOf(id) !== -1
 

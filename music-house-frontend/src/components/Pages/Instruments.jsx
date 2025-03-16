@@ -31,7 +31,6 @@ import {
   useVisibleRows
 } from './Admin/common/tableHelper'
 
-
 import '../styles/instruments.styles.css'
 import ArrowBack from '../utils/ArrowBack'
 import Swal from 'sweetalert2'
@@ -66,6 +65,7 @@ export const Instruments = () => {
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -91,60 +91,84 @@ export const Instruments = () => {
 
   const handleAdd = () => navigate('/agregarInstrumento')
 
-  const handleSelectAllClick = (event) => handleSelectAll(event, rows, 'idInstrument', setSelected)
+  const handleSelectAllClick = (event) =>
+    handleSelectAll(event, rows, 'idInstrument', setSelected)
 
-  const handleClick = (event, id) => handleSelected(event, id, selected, setSelected)
+  const handleClick = (event, id) =>
+    handleSelected(event, id, selected, setSelected)
 
-  const handleRequestSort = (event, property) => handleSort(event, property, orderBy, order, setOrderBy, setOrder)
+  const handleRequestSort = (event, property) =>
+    handleSort(event, property, orderBy, order, setOrderBy, setOrder)
 
   const handleEdit = (id) => navigate(`/editarInstrumento/${id}`)
 
-  const handleConfirmDelete = async (idInstrument) => {
-    const selectedId = idInstrument || selected[0]
-    if (!selectedId) {
+  const handleConfirmDelete = async (idInstrument = null) => {
+    const selectedIds = idInstrument ? [idInstrument] : selected
+
+    if (selectedIds.length === 0) {
       Swal.fire({
         title: 'Error',
-        text: 'No hay un instrumento seleccionado para eliminar.',
+        text: 'No hay instrumentos seleccionados para eliminar.',
         icon: 'error',
         confirmButtonColor: '#d33'
       })
       return
     }
 
+    // Mostrar el modal de confirmación
     const result = await Swal.fire({
-      title: '¿Estás seguro?',
+      title: `¿Estás seguro de eliminar ${selectedIds.length} instrumento(s)?`,
       text: 'Esta acción no se puede deshacer.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
       confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
+      cancelButtonText: 'Cancelar',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        const confirmButton = Swal.getConfirmButton()
+        confirmButton.innerHTML = `<span id="confirm-text">Sí, eliminar</span>`
+      }
     })
 
     if (result.isConfirmed) {
-      handleDelete(selectedId)
-    }
-  }
+      // Modificar el botón para mostrar un loading spinner mientras se elimina
+      Swal.fire({
+        title: 'Eliminando...',
+        text: 'Por favor espera mientras se eliminan los instrumentos.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading() // Activamos el loading spinner de SweetAlert2
+        }
+      })
 
-  const handleDelete = async (idInstrument) => {
-    try {
-      await deleteInstrument(idInstrument)
-      Swal.fire({
-        title: '¡Eliminado!',
-        text: 'El instrumento se eliminó correctamente.',
-        icon: 'success',
-        confirmButtonColor: '#3085d6'
-      })
-      setSelected([])
-      getAllInstruments()
-    } catch {
-      Swal.fire({
-        title: 'Error',
-        text: 'No fue posible eliminar el instrumento.',
-        icon: 'error',
-        confirmButtonColor: '#d33'
-      })
+      try {
+        await Promise.all(selectedIds.map((id) => deleteInstrument(id)))
+
+        // Mostrar modal de éxito con cierre automático después de 2 segundos
+        Swal.fire({
+          title: '¡Eliminados!',
+          text: `${selectedIds.length} instrumento(s) eliminado(s) correctamente.`,
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+          showConfirmButton: false, // Ocultar el botón OK
+          timer: 2000, // El modal se cerrará automáticamente después de 2 segundos
+          timerProgressBar: true // Mostrar una barra de progreso mientras se cierra
+        })
+
+        setSelected([])
+        getAllInstruments()
+      } catch {
+        Swal.fire({
+          title: 'Error',
+          text: 'No fue posible eliminar los instrumentos.',
+          icon: 'error',
+          confirmButtonColor: '#d33'
+        })
+      }
     }
   }
 
@@ -162,13 +186,23 @@ export const Instruments = () => {
 
   return (
     <MainWrapper>
-      <Paper sx={{ display: { xs: 'none', lg: 'initial' }, margin: 10, minWidth: 1700 }}>
+      <Paper
+        sx={{
+          display: { xs: 'none', lg: 'initial' },
+          minWidth: 1400,
+          margin: 'auto'
+        }}
+      >
         <ArrowBack />
-        <EnhancedTableToolbar title="Instrumentos" titleAdd="Agregar instrumento" handleAdd={handleAdd} numSelected={selected.length} />
-        <TableContainer >
-
-          <Table aria-labelledby="tableTitle" size="medium" >
-
+        <EnhancedTableToolbar
+          title="Instrumentos"
+          titleAdd="Agregar instrumento"
+          handleAdd={handleAdd}
+          numSelected={selected.length}
+          handleConfirmDelete={() => handleConfirmDelete()}
+        />
+        <TableContainer>
+          <Table aria-labelledby="tableTitle" size="medium">
             <EnhancedTableHead
               headCells={headCells}
               numSelected={selected.length}
@@ -178,7 +212,6 @@ export const Instruments = () => {
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
               disableSelectAll
-             
             />
 
             <TableBody>
@@ -196,32 +229,49 @@ export const Instruments = () => {
                     key={row.idInstrument}
                     selected={isItemSelected}
                     className={isRowEven ? 'table-row-even' : 'table-row-odd'}
-                    sx={{ cursor: 'pointer'}}
+                    sx={{ cursor: 'pointer' }}
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
                         color="primary"
                         checked={isItemSelected}
-                        onChange={(event) => handleClick(event, row.idInstrument)}
+                        onChange={(event) =>
+                          handleClick(event, row.idInstrument)
+                        }
                         inputProps={{ 'aria-labelledby': labelId }}
                       />
                     </TableCell>
-                    
-                    <TableCell component="th" id={labelId} scope="row" align="center">
+
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      align="center"
+                    >
                       {row.idInstrument}
                     </TableCell>
                     <TableCell align="left">{row.name}</TableCell>
                     <TableCell align="left" className="actions-cell">
-                      <Tooltip title="Editar">
-                        <IconButton onClick={() => handleEdit(row.idInstrument)}>
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Eliminar">
-                        <IconButton onClick={() => handleConfirmDelete(row.idInstrument)}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
+                      {selected.length === 0 && ( // Oculta los botones si hay elementos seleccionados
+                        <>
+                          <Tooltip title="Editar">
+                            <IconButton
+                              onClick={() => handleEdit(row.idInstrument)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Eliminar">
+                            <IconButton
+                              onClick={() =>
+                                handleConfirmDelete(row.idInstrument)
+                              }
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </>
+                      )}
                     </TableCell>
                   </TableRow>
                 )
@@ -234,7 +284,9 @@ export const Instruments = () => {
               {page === 0 && rows.length === 0 && (
                 <TableRow style={{ height: 53 * emptyRows }}>
                   <TableCell colSpan={3}>
-                    <Typography align="center">No se encontraron instrumentos</Typography>
+                    <Typography align="center">
+                      No se encontraron instrumentos
+                    </Typography>
                   </TableCell>
                 </TableRow>
               )}
