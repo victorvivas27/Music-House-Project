@@ -21,7 +21,10 @@ const useAlert = () => {
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
         allowOutsideClick: false,
-        allowEscapeKey: false
+        allowEscapeKey: false,
+        customClass: {
+          popup: 'custom-swal'
+        },
       }).then((result) => {
         if (result.isConfirmed && onConfirm) {
           onConfirm();
@@ -49,12 +52,16 @@ const useAlert = () => {
         allowEscapeKey: false,
         background: "var(--color-secundario)",
         color: "var(--color-primario)",
+        borderRadius:"40px",
         showClass: {
             popup: "animate__animated animate__fadeInDown"
           },
           hideClass: {
             popup: "animate__animated animate__fadeOutUp"
-          }
+          },
+          customClass: {
+            popup: 'custom-swal'
+          },
       });
   
       return result.isConfirmed;
@@ -78,6 +85,10 @@ const useAlert = () => {
         didOpen: () => {
           Swal.showLoading();
         }
+        ,
+          customClass: {
+            popup: 'custom-swal'
+          },
       });
     };
   
@@ -98,7 +109,10 @@ const useAlert = () => {
           },
           hideClass: {
             popup: "animate__animated animate__fadeOutUp"
-          }
+          },
+          customClass: {
+            popup: 'custom-swal'
+          },
       });
     };
   
@@ -116,7 +130,10 @@ const useAlert = () => {
           },
           hideClass: {
             popup: "animate__animated animate__fadeOutUp"
-          }
+          },
+          customClass: {
+            popup: 'custom-swal'
+          },
       });
     };
   

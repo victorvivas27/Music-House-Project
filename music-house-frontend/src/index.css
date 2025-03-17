@@ -30,6 +30,11 @@
 * {
   font-family: var(--font-family);
   font-weight: 800;
+ 
+}
+.custom-swal {
+  border-radius: 50px 10PX !important; /* Aplica el border-radius a la alerta */
+  padding: 20px !important; /* Ajusta el padding si es necesario */
 }
 
 /* @media (prefers-color-scheme: dark) {
