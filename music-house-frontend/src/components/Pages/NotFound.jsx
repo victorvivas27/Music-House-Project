@@ -1,7 +1,8 @@
-import { PageWrapper } from '../common/PageWrapper'
+
 import { NotFound } from '../Images/NotFound'
 import { Logo } from '../Images/Logo'
 import { Box, Typography } from '@mui/material'
+import { PageWrapper } from '../common/PageWrapper'
 
 export const NotFoundPage = () => {
   return (
