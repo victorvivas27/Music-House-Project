@@ -1,23 +1,7 @@
 import { styled } from '@mui/system'
-import TextField from '@mui/material/TextField'
 import { Button } from '@mui/material'
 
-export const InputCustom = styled(TextField)(({ theme }) => ({
-  '& .MuiInputBase-root': {
-    color: 'black',
-    backgroundColor: 'var(--background-color)',
-  },
 
-  '& .MuiOutlinedInput-root': {
-    '&.Mui-focused fieldset': {
-      borderColor: '#F7E434'
-    }
-  },
-
-  [theme.breakpoints.up('md')]: {
-    backgroundColor: 'var(--background-color)',
-  }
-}))
 
 export const CustomButton = styled(Button)(({ theme }) => ({
   minWidth: '100px', // Asegura que tenga un ancho mínimo

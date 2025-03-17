@@ -1,7 +1,7 @@
 export const inputStyles = {
-  borderRadius: '8px', // Bordes redondeados
+  //borderRadius: '40px', // Bordes redondeados
   transition: 'all 0.3s ease-in-out', // Suaviza las transiciones
-  backgroundColor: 'var(--background-color)', // Fondo dinámico
+  //backgroundColor: 'var(--background-color)', // Fondo dinámico
   color: 'var(--texto-inverso)', // Color del texto
 
   border: 'none', // Elimina borde predeterminado
@@ -9,12 +9,14 @@ export const inputStyles = {
 
   '& .MuiInputBase-input': {
     color: 'var(--color-azul)', // Color del texto principal
+   
   },
 
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderColor: 'var(--color-secundario)', // Borde normal
       borderWidth: '2px', // Grosor inicial
+      borderRadius: '8px',
     },
     '&:hover fieldset': {
       borderColor: 'var(--color-primario)', // Color más fuerte en hover
@@ -22,7 +24,7 @@ export const inputStyles = {
     },
     '&.Mui-focused fieldset': {
       borderColor: 'var(--color-azul)', // Color en foco
-      borderWidth: '3px', // Borde más grueso en foco
+      borderWidth: '1px', // Borde más grueso en foco
 
     },
   },
@@ -30,7 +32,7 @@ export const inputStyles = {
   '& .MuiInputLabel-root': {
     color: 'var(--texto-inverso)', // Color del label normal
     fontSize: '1rem', // Tamaño base
-    fontWeight: 'bold', // Texto en negrita
+    
     transition: 'all 0.3s ease-in-out', // Transición suave
   },
 
@@ -56,7 +58,7 @@ export const flexColumnContainer = {
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'space-evenly',
-  backgroundColor: 'rgba(245, 245, 245, 0.8)',
+ // backgroundColor: 'rgba(245, 245, 245, 0.8)',
   boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.1)',
   borderRadius: '12px',
   padding: '15px', // Mejora en espaciado interno

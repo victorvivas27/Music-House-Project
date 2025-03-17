@@ -13,11 +13,12 @@ import {
   Box,
   Avatar,
   Select,
-  MenuItem
+  MenuItem,
+  TextField
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import { styled } from '@mui/material/styles'
-import { CustomButton, InputCustom } from './CustomComponents'
+import { CustomButton } from './CustomComponents'
 import { RoleSelect } from './RoleSelect'
 import PropTypes from 'prop-types'
 import { UsersApi } from '../../../api/users'
@@ -586,37 +587,38 @@ export const UserForm = ({
                   fullWidth
                   margin="normal"
                   sx={{
+                    ...inputStyles,
                     minHeight: '60px'
                   }}
                 >
-                  <InputCustom
+                  <TextField
                     label="🏷️Nombre"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     type="text"
-                    sx={inputStyles}
                     error={Boolean(allErrors.name)}
                     helperText={errors.name}
                   />
                 </FormControl>
+                {/*Fin input name*/}
 
+                {/*Input last name*/}
                 <FormControl
                   fullWidth
                   margin="normal"
                   sx={{
+                    ...inputStyles,
                     minHeight: '60px'
+                    
                   }}
                 >
-                  {/*Fin input name*/}
-                  {/*Input last name*/}
-                  <InputCustom
+                  <TextField
                     label="👤Apellido"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
                     type="text"
-                    sx={inputStyles}
                     error={Boolean(allErrors.lastName)}
                     helperText={errors.lastName}
                   />
@@ -633,8 +635,16 @@ export const UserForm = ({
                   >
                     {/*Input calle */}
                     <Grid item xs={12} sm={6}>
-                      <FormControl key={index} fullWidth margin="normal">
-                        <InputCustom
+                      <FormControl
+                       key={index} 
+                       fullWidth margin="normal"
+                       sx={{
+                        ...inputStyles,
+                        minHeight: '60px'
+                        
+                      }}
+                       >
+                        <TextField
                           label="🏠Calle"
                           name="street"
                           value={address.street}
@@ -642,7 +652,6 @@ export const UserForm = ({
                           error={Boolean(allErrors[`street_${index}`])}
                           helperText={errors[`street_${index}`] || ' '}
                           type="text"
-                          sx={inputStyles}
                           fullWidth
                         />
                       </FormControl>
@@ -656,10 +665,12 @@ export const UserForm = ({
                         fullWidth
                         margin="normal"
                         sx={{
+                          ...inputStyles,
                           minHeight: '60px'
+                          
                         }}
                       >
-                        <InputCustom
+                        <TextField
                           label="🔢Número"
                           name="number"
                           value={address.number}
@@ -667,7 +678,6 @@ export const UserForm = ({
                           error={Boolean(allErrors[`number_${index}`])}
                           helperText={errors[`number_${index}`] || ' '}
                           type="text"
-                          sx={inputStyles}
                           fullWidth
                         />
                       </FormControl>
@@ -681,10 +691,12 @@ export const UserForm = ({
                         fullWidth
                         margin="normal"
                         sx={{
+                          ...inputStyles,
                           minHeight: '60px'
+                          
                         }}
                       >
-                        <InputCustom
+                        <TextField
                           label="🌆Ciudad"
                           name="city"
                           value={address.city}
@@ -692,7 +704,6 @@ export const UserForm = ({
                           error={Boolean(allErrors[`city_${index}`])}
                           helperText={errors[`city_${index}`] || ' '}
                           type="text"
-                          sx={inputStyles}
                           fullWidth
                         />
                       </FormControl>
@@ -705,10 +716,12 @@ export const UserForm = ({
                         fullWidth
                         margin="normal"
                         sx={{
+                          ...inputStyles,
                           minHeight: '60px'
+                          
                         }}
                       >
-                        <InputCustom
+                        <TextField
                           label="🏛️Estado"
                           name="state"
                           value={address.state}
@@ -716,7 +729,6 @@ export const UserForm = ({
                           error={Boolean(allErrors[`state_${index}`])}
                           helperText={errors[`state_${index}`] || ' '}
                           type="text"
-                          sx={inputStyles}
                           fullWidth
                         />
                       </FormControl>
@@ -730,10 +742,12 @@ export const UserForm = ({
                         fullWidth
                         margin="normal"
                         sx={{
+                          ...inputStyles,
                           minHeight: '60px'
+                          
                         }}
                       >
-                        <InputCustom
+                        <TextField
                           label="🌍País"
                           name="country"
                           value={address.country}
@@ -741,7 +755,6 @@ export const UserForm = ({
                           error={Boolean(allErrors[`country_${index}`])}
                           helperText={errors[`country_${index}`] || ' '}
                           type="text"
-                          sx={{ ...inputStyles }}
                           fullWidth
                         />
                       </FormControl>
@@ -753,7 +766,10 @@ export const UserForm = ({
 
                 {/*Contenedor  telefono */}
                 {formData.phones.map((phone, index) => (
-                  <FormControl key={index} fullWidth>
+                  <FormControl
+                   key={index}
+                    fullWidth
+                    >
                     {/* 📌 Select para elegir el código de país */}
                     <FormControl
                       fullWidth
@@ -802,7 +818,7 @@ export const UserForm = ({
                     </FormControl>
 
                     {/* 📌 Input para el número de teléfono */}
-                    <InputCustom
+                    <TextField
                       placeholder="Teléfono"
                       value={phone.phoneNumber.replace(phone.countryCode, '')}
                       onChange={(e) =>
@@ -811,7 +827,7 @@ export const UserForm = ({
                       error={Boolean(allErrors[`phone_${index}`])}
                       helperText={errors[`phone_${index}`] || ''}
                       type="text"
-                      sx={inputStyles}
+                      sx={{...inputStyles}}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -839,14 +855,21 @@ export const UserForm = ({
                 }}
               >
                 {/*Input email*/}
-                <FormControl fullWidth margin="normal">
-                  <InputCustom
+                <FormControl
+                 fullWidth 
+                 margin="normal"
+                 sx={{
+                  ...inputStyles,
+                  minHeight: '60px'
+                  
+                }}
+                 >
+                  <TextField
                     label="📧 Email"
                     name="email"
                     onChange={handleChange}
                     value={formData.email}
                     type="email"
-                    sx={{ ...inputStyles }}
                     error={Boolean(allErrors.email)}
                     helperText={errors.email}
                   />
@@ -926,10 +949,11 @@ export const UserForm = ({
                         margin="normal"
                         error={Boolean(allErrors.password || '')}
                         sx={{
-                          ...inputStyles
+                          ...inputStyles,
+                           minHeight: '60px'
                         }}
                       >
-                        <InputCustom
+                        <TextField
                           label="🔒 Contraseña"
                           name="password"
                           onChange={handleChange}
@@ -973,10 +997,11 @@ export const UserForm = ({
                         margin="normal"
                         error={Boolean(allErrors.repeatPassword)}
                         sx={{
-                          ...inputStyles
+                          ...inputStyles,
+                           minHeight: '60px'
                         }}
                       >
-                        <InputCustom
+                        <TextField
                           label="🔓Repetir Contraseña"
                           name="repeatPassword"
                           onChange={handleChange}
@@ -1025,9 +1050,12 @@ export const UserForm = ({
                       <FormControl
                         fullWidth
                         margin="normal"
-                        sx={{ ...inputStyles }}
+                        sx={{
+                           ...inputStyles,
+                            minHeight: '60px'
+                          }}
                       >
-                        <InputCustom
+                        <TextField
                           label="🔢Código de Telegram"
                           name="telegramChatId"
                           onChange={handleChange}
