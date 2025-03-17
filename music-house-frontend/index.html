@@ -1,12 +1,28 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Music House</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<html lang="en"> <!-- Define el idioma de la página como inglés -->
+
+<head>
+  <meta charset="UTF-8" /> <!-- Define la codificación de caracteres para admitir caracteres especiales -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- Hace que la página sea responsive en dispositivos móviles -->
+
+  <!-- 📌 Librería animate.css para agregar animaciones a SweetAlert2 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+  <!-- 📌 Preconexión con Google Fonts para optimizar la carga de fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"> <!-- Optimiza la carga de fuentes desde Google Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <!-- Necesario para cargar fuentes de Google con seguridad -->
+
+  <!-- 📌 Importa la fuente "Playpen Sans" desde Google Fonts con diferentes pesos -->
+  <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet">
+
+  <title>Music House</title> <!-- Título de la página que aparece en la pestaña del navegador -->
+</head>
+
+<body>
+  <div id="root"></div> <!-- Contenedor principal donde React renderiza la aplicación -->
+
+  <!-- 📌 Importa el archivo principal de JavaScript que inicia la aplicación en React -->
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>

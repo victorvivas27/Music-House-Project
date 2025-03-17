@@ -5,9 +5,7 @@ export const LogoWrapper = styled(Typography)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   flexGrow: 1,
-  fontFamily: 'monospace',
-  fontWeight: 700,
-  letterSpacing: '.3rem',
+ letterSpacing: '.3rem',
   color: 'inherit',
   textDecoration: 'none',
 

@@ -11,19 +11,25 @@
   --color-advertencia: #FFC107;
   --color-error: #DC3545;
   --color-azul: #1976D2;
-  --color-suave:#444;
-  --color-oscuro-suave:#333;
+  --color-suave: #444;
+  --color-oscuro-suave: #333;
 
   --texto-primario: #000000;
   --texto-secundario: #616161;
   --texto-inverso: #ffffff;
-  --background-color: #f9f9f9
+  --background-color: #f9f9f9;
 
-  /* 🎨 Modo oscuro */
   --background-dark: #ffffff;
   --texto-primario-dark: #E0E0E0;
   --texto-secundario-dark: #BDBDBD;
   --color-primario-dark: #FFD700;
+  --font-family: "Big Shoulders", sans-serif;
+
+}
+
+* {
+  font-family: var(--font-family);
+  font-weight: 800;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -42,6 +48,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+
 }
 
 /* Evita errores en elementos multimedia */
@@ -51,24 +58,26 @@ svg {
   max-width: 100%;
   height: auto;
   display: block;
+
 }
 
 /* 🔠 Tipografía flexible */
 html {
-  font-size: 16px; /* Base */
+
+  /* Base */
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-size-adjust: 100%;
+  color: var(--texto-primario);
+
 }
 
 body {
-  font-family: "Inter", sans-serif;
-  color: var(--texto-primario);
-  
+
   min-height: 100vh;
-  overflow-x: hidden; /* Previene desbordamientos horizontales */
- 
+  overflow-x: hidden;
+
 }
 
 /* 🎭 Evita zoom involuntario en móviles */
@@ -107,6 +116,7 @@ a {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -122,9 +132,11 @@ a {
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.1);
   }
+
   100% {
     transform: scale(1);
   }
@@ -174,6 +186,7 @@ textarea {
     opacity: 0;
     transform: translateY(20px) scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -186,18 +199,22 @@ textarea {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+
   30% {
     opacity: 0.9;
     transform: translateY(4px) scale(0.98);
   }
+
   60% {
     opacity: 0.7;
     transform: translateY(6px) scale(0.96);
   }
+
   80% {
     opacity: 0.3;
     transform: translateY(8px) scale(0.95);
   }
+
   100% {
     opacity: 0;
     transform: translateY(10px) scale(0.93);
@@ -212,17 +229,20 @@ textarea {
 .fade-out-soft {
   animation: desaparecerSuave 1s ease-in forwards;
 }
+
 @keyframes pulse {
   0% {
-      transform: scale(1);
-      box-shadow: 0 0 10px rgba(255, 223, 0, 0.4);
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 223, 0, 0.4);
   }
+
   50% {
-      transform: scale(1.1);
-      box-shadow: 0 0 15px rgba(255, 223, 0, 0.6);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 223, 0, 0.6);
   }
+
   100% {
-      transform: scale(1);
-      box-shadow: 0 0 10px rgba(255, 223, 0, 0.4);
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 223, 0, 0.4);
   }
 }

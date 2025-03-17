@@ -30,31 +30,10 @@ import {
   getEmptyRows,
   useVisibleRows
 } from './Admin/common/tableHelper'
-
 import '../styles/instruments.styles.css'
 import ArrowBack from '../utils/ArrowBack'
-import Swal from 'sweetalert2'
-
-const headCells = [
-  {
-    id: 'idInstrument',
-    numeric: true,
-    disablePadding: false,
-    label: 'ID'
-  },
-  {
-    id: 'name',
-    numeric: false,
-    disablePadding: false,
-    label: 'Nombre'
-  },
-  {
-    id: 'actions',
-    numeric: false,
-    disablePadding: false,
-    label: 'Acciones'
-  }
-]
+import useAlert from '../../hook/useAlert'
+import { headCellsInstrument } from '../utils/types/HeadCells'
 
 export const Instruments = () => {
   const [instruments, setInstruments] = useState({ data: [] })
@@ -65,6 +44,7 @@ export const Instruments = () => {
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
+  const { showConfirm, showLoading, showSuccess, showError } = useAlert()
 
   const navigate = useNavigate()
 
@@ -106,74 +86,31 @@ export const Instruments = () => {
     const selectedIds = idInstrument ? [idInstrument] : selected
 
     if (selectedIds.length === 0) {
-      Swal.fire({
-        title: 'Error',
-        text: 'No hay instrumentos seleccionados para eliminar.',
-        icon: 'error',
-        confirmButtonColor: '#d33'
-      })
+      showError('Error', 'No hay instrumentos seleccionados para eliminar.')
       return
     }
 
     // Mostrar el modal de confirmación
-    const result = await Swal.fire({
-      title: `¿Estás seguro de eliminar ${selectedIds.length} instrumento(s)?`,
-      text: 'Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      didOpen: () => {
-        const confirmButton = Swal.getConfirmButton()
-        confirmButton.innerHTML = `<span id="confirm-text">Sí, eliminar</span>`
-      }
+    const isConfirmed = await showConfirm({
+      title: `¿Eliminar ${selectedIds.length} instrumento(s)?`,
+      text: 'Esta acción no se puede deshacer.'
     })
-
-    if (result.isConfirmed) {
-      // Modificar el botón para mostrar un loading spinner mientras se elimina
-      Swal.fire({
-        title: 'Eliminando...',
-        text: 'Por favor espera mientras se eliminan los instrumentos.',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        didOpen: () => {
-          Swal.showLoading() // Activamos el loading spinner de SweetAlert2
-        }
-      })
-
-      try {
-        await Promise.all(selectedIds.map((id) => deleteInstrument(id)))
-
-        // Mostrar modal de éxito con cierre automático después de 2 segundos
-        Swal.fire({
-          title: '¡Eliminados!',
-          text: `${selectedIds.length} instrumento(s) eliminado(s) correctamente.`,
-          icon: 'success',
-          confirmButtonColor: '#3085d6',
-          showConfirmButton: false, // Ocultar el botón OK
-          timer: 2000, // El modal se cerrará automáticamente después de 2 segundos
-          timerProgressBar: true // Mostrar una barra de progreso mientras se cierra
-        })
-
-        setSelected([])
-        getAllInstruments()
-      } catch {
-        Swal.fire({
-          title: 'Error',
-          text: 'No fue posible eliminar los instrumentos.',
-          icon: 'error',
-          confirmButtonColor: '#d33'
-        })
-      }
+    if (!isConfirmed) return
+    showLoading('Eliminando...', 'Por favor espera.')
+    try {
+      await Promise.all(selectedIds.map((id) => deleteInstrument(id)))
+      showSuccess(
+        '¡Eliminados!',
+        `${selectedIds.length} instrumento(s) eliminado(s) correctamente.`
+      )
+      setSelected([])
+      getAllInstruments()
+    } catch {
+      showError('Error', 'No fue posible eliminar los instrumentos.')
     }
   }
 
-  const handleChangePage = (event, newPage) => setPage(newPage)
-
+  const handleChangePage = (newPage) => setPage(newPage)
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
@@ -204,7 +141,7 @@ export const Instruments = () => {
         <TableContainer>
           <Table aria-labelledby="tableTitle" size="medium">
             <EnhancedTableHead
-              headCells={headCells}
+              headCells={headCellsInstrument}
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}

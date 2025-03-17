@@ -66,3 +66,24 @@ export const headCells = [
     sx: { display: { xs: 'none', md: 'table-cell' } }
   }
 ]
+
+ export const headCellsInstrument = [
+  {
+    id: 'idInstrument',
+    numeric: true,
+    disablePadding: false,
+    label: 'ID'
+  },
+  {
+    id: 'name',
+    numeric: false,
+    disablePadding: false,
+    label: 'Nombre'
+  },
+  {
+    id: 'actions',
+    numeric: false,
+    disablePadding: false,
+    label: 'Acciones'
+  }
+]
