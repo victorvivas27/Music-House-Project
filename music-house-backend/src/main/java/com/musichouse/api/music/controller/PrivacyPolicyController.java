@@ -8,6 +8,8 @@ import com.musichouse.api.music.service.PrivacyPolicyService;
 import com.musichouse.api.music.util.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,56 +22,64 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequestMapping("/api/privacy-policy")
 public class PrivacyPolicyController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrivacyPolicyController.class);
     private final PrivacyPolicyService privacyPolicyService;
 
+    // 🔹 CREAR POLÍTICA DE PRIVACIDAD
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<?>> addPhone(@Valid @RequestBody PrivacyPolicyDtoEntrance privacyPolicyDtoEntrance) throws ResourceNotFoundException {
-        try {
-            PrivacyPolicyDtoExit privacyPolicyDtoExit = privacyPolicyService.createPrivacyPolicy(privacyPolicyDtoEntrance);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>
-                    ("Politica de privacidadad creada con éxito.", privacyPolicyDtoExit));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Ocurrió un error al procesar la solicitud.", null));
-        }
+    public ResponseEntity<ApiResponse<PrivacyPolicyDtoExit>> createPrivacyPolicy(@Valid @RequestBody PrivacyPolicyDtoEntrance privacyPolicyDtoEntrance) {
+        PrivacyPolicyDtoExit createdPrivacyPolicy = privacyPolicyService.createPrivacyPolicy(privacyPolicyDtoEntrance);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<PrivacyPolicyDtoExit>builder()
+                        .status(HttpStatus.CREATED)
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Política de privacidad creada con éxito.")
+                        .data(createdPrivacyPolicy)
+                        .error(null)
+                        .build());
     }
 
+    // 🔹 OBTENER TODAS LAS POLÍTICAS DE PRIVACIDAD
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<PrivacyPolicyDtoExit>>> allPrivacyPolicy() {
-        List<PrivacyPolicyDtoExit> privacyPolicyDtoExits = privacyPolicyService.getAllPrivacyPolicy();
-        ApiResponse<List<PrivacyPolicyDtoExit>> response =
-                new ApiResponse<>("Lista de Politica de Privacidad exitosa.", privacyPolicyDtoExits);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    public ResponseEntity<ApiResponse<List<PrivacyPolicyDtoExit>>> getAllPrivacyPolicies() {
+        List<PrivacyPolicyDtoExit> privacyPolicies = privacyPolicyService.getAllPrivacyPolicy();
+
+        return ResponseEntity.ok(ApiResponse.<List<PrivacyPolicyDtoExit>>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Lista de políticas de privacidad obtenida con éxito.")
+                .data(privacyPolicies)
+                .error(null)
+                .build());
     }
 
+    // 🔹 ACTUALIZAR POLÍTICA DE PRIVACIDAD
     @PutMapping("/update")
-    public ResponseEntity<?> updatePrivacyPolicy(@RequestBody @Valid PrivacyPolicyDtoModify privacyPolicyDtoModify) {
-        try {
-            PrivacyPolicyDtoExit privacyPolicyDtoExit = privacyPolicyService.updatePrivacyPolicy(privacyPolicyDtoModify);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse<>("Politica de Privacidad actualizada con éxito.", privacyPolicyDtoExit));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>
-                            ("No se encontró la politica de privacidad  con el ID proporcionado.", null));
-        }
+    public ResponseEntity<ApiResponse<PrivacyPolicyDtoExit>> updatePrivacyPolicy(@Valid @RequestBody PrivacyPolicyDtoModify privacyPolicyDtoModify) throws ResourceNotFoundException {
+        PrivacyPolicyDtoExit updatedPrivacyPolicy = privacyPolicyService.updatePrivacyPolicy(privacyPolicyDtoModify);
+
+        return ResponseEntity.ok(ApiResponse.<PrivacyPolicyDtoExit>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Política de privacidad actualizada con éxito.")
+                .data(updatedPrivacyPolicy)
+                .error(null)
+                .build());
     }
 
+    // 🔹 ELIMINAR POLÍTICA DE PRIVACIDAD
     @DeleteMapping("/delete/{idPrivacyPolicy}")
-    public ResponseEntity<?> deleteTheme(@PathVariable UUID idPrivacyPolicy) {
-        try {
-            privacyPolicyService.deleteidPrivacyPolicy(idPrivacyPolicy);
-            return ResponseEntity.ok(new ApiResponse<>
-                    ("Politica de privacidad con ID " +
-                            idPrivacyPolicy + " eliminada exitosamente.", null));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>
-                            ("La politica de privacidad con el ID "
-                                    + idPrivacyPolicy + " no se encontró.", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse<Void>> deletePrivacyPolicy(@PathVariable UUID idPrivacyPolicy) throws ResourceNotFoundException {
+        privacyPolicyService.deleteidPrivacyPolicy(idPrivacyPolicy);
+
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Política de privacidad eliminada exitosamente.")
+                .data(null)
+                .error(null)
+                .build());
     }
 }

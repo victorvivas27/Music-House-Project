@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Representa un rol en la aplicación de Music House.
@@ -22,7 +23,7 @@ public class Role {
      */
     @Id
     @GeneratedValue(generator = "UUID")
-    private Long idRol;
+    private UUID idRol;
 
     /**
      * El nombre del rol.

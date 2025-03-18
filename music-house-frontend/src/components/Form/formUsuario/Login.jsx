@@ -5,7 +5,7 @@ import {
   InputAdornment,
   IconButton,
   
-  FormHelperText,
+ 
   CircularProgress,
   TextField
 } from '@mui/material'
@@ -14,7 +14,7 @@ import { styled } from '@mui/material/styles'
 import { CustomButton } from './CustomComponents'
 import { useFormik } from 'formik'
 import { UsersApi } from '../../../api/users'
-import swal from 'sweetalert'
+
 import loginValidationSchema from './LoginValidation'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
@@ -23,6 +23,7 @@ import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { inputStyles } from '../../styles/styleglobal'
+import useAlert from '../../../hook/useAlert'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -60,49 +61,49 @@ const Login = ({ onSwitch }) => {
   const [showPassword, setShowPassword] = useState(false)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
   const [loading, setLoading] = useState(false)
+   const { showSuccess, showError } = useAlert()
 
-  const formik = useFormik({
+   const formik = useFormik({
     initialValues: {
       email: '',
       password: ''
     },
     validationSchema: loginValidationSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      setLoading(true)
-
-      setTimeout(async () => {
-        try {
-          const response = await UsersApi.loginUser(values)
-
-          if (response && response.token) {
-            setAuthData(response)
-            swal({
-              title: '¡Inicio de sesión exitoso!',
-              text: 'Redirigiendo en 2 segundos...',
-              icon: 'success',
-              buttons: false,
-              timer: 2000
-            })
-
-            setTimeout(() => {
-              navigate('/', { replace: true })
-            }, 2000)
-          } else {
-            throw new Error(response.message || 'Credenciales incorrectas')
-          }
-        } catch (error) {
-          swal(
-            'Error al iniciar sesión',
-            error.message || 'Ocurrió un error',
-            'error'
-          )
-        } finally {
-          setSubmitting(false)
-          setLoading(false)
+      setLoading(true);
+    
+      try {
+        const response = await UsersApi.loginUser(values);
+    
+        if (response && response.data && response.data.token) {
+          
+          setAuthData(response.data);
+          showSuccess('¡Inicio de sesión exitoso!');
+          setTimeout(() => {
+            navigate('/');
+          }, 2000);
+        } else {
+          showError('❌Credenciales incorrectas');
         }
-      }, 2000)
+      } catch (error) {
+       
+    
+        if (error.data && error.data.message) {
+          // ✅ Ahora sí capturamos el mensaje que envía el backend
+          showError(`❌ ${error.data.message}`);
+         
+          
+        } else if (error.request) {
+          showError('⚠️No se pudo conectar con el servidor.');
+        } else {
+          showError('❌Error inesperado. Intenta nuevamente.');
+        }
+      } finally {
+        setSubmitting(false);
+        setLoading(false);
+      }
     }
-  })
+  });
 
   return (
     <>
@@ -142,7 +143,7 @@ const Login = ({ onSwitch }) => {
                 fullWidth
                 margin="normal"
                 sx={{
-                  minHeight: '60px',
+                  //minHeight: '60px',
                   ...inputStyles,
                  
                 }}
@@ -157,7 +158,7 @@ const Login = ({ onSwitch }) => {
                   type="email"
                  
                   error={formik.touched.email && Boolean(formik.errors.email)}
-                  helperText={formik.touched.email && formik.errors.email}
+                  helperText={formik.touched.email && formik.errors.email||' '}
                   sx={{ color:'red'}}
                 />
               </FormControl>
@@ -165,11 +166,9 @@ const Login = ({ onSwitch }) => {
               <FormControl
                 fullWidth
                 margin="normal"
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
+                
                 sx={{
-                  minHeight: '60px',
+                 // minHeight: '60px',
                   ...inputStyles
                 }}
               >
@@ -183,6 +182,8 @@ const Login = ({ onSwitch }) => {
                   onChange={formik.handleChange}
                   value={formik.values.password}
                   type={showPassword ? 'text' : 'password'}
+                  error={ formik.touched.password && Boolean(formik.errors.password) }
+                  helperText={ formik.touched.password && formik.errors.password||' ' }
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -215,9 +216,7 @@ const Login = ({ onSwitch }) => {
                     )
                   }}
                 />
-                {formik.touched.password && formik.errors.password && (
-                  <FormHelperText>{formik.errors.password}</FormHelperText>
-                )}
+              
               </FormControl>
             </Grid>
             <ContainerBottom>

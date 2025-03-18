@@ -9,6 +9,8 @@ import com.musichouse.api.music.service.FavoriteService;
 import com.musichouse.api.music.util.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,57 +23,65 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequestMapping("/api/favorite")
 public class FavoriteController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FavoriteController.class);
     private final FavoriteService favoriteService;
 
+    // 🔹 AGREGAR FAVORITO
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse<?>> addAvailableDate(@RequestBody @Valid FavoriteDtoEntrance favoriteDtoEntrance) {
-        try {
-            FavoriteDtoExit favoriteDtoExit = favoriteService.addFavorite(favoriteDtoEntrance);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse<>("Instrumento Agregado a favoritos exitosamente.", favoriteDtoExit));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>(e.getMessage(), null));
-        } catch (FavoriteAlreadyExistsException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new ApiResponse<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse<FavoriteDtoExit>> addFavorite(@RequestBody @Valid FavoriteDtoEntrance favoriteDtoEntrance) throws ResourceNotFoundException {
+        FavoriteDtoExit favoriteDtoExit = favoriteService.addFavorite(favoriteDtoEntrance);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<FavoriteDtoExit>builder()
+                        .status(HttpStatus.CREATED)
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Instrumento agregado a favoritos con éxito.")
+                        .data(favoriteDtoExit)
+                        .error(null)
+                        .build());
     }
 
+    // 🔹 OBTENER TODOS LOS FAVORITOS
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<FavoriteDtoExit>>> getAllFavorite() {
+    public ResponseEntity<ApiResponse<List<FavoriteDtoExit>>> getAllFavorites() {
         List<FavoriteDtoExit> favoriteDtoExits = favoriteService.getAllFavorite();
-        ApiResponse<List<FavoriteDtoExit>> response =
-                new ApiResponse<>("Lista de Favoritos disponibles exitosa.", favoriteDtoExits);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        return ResponseEntity.ok(ApiResponse.<List<FavoriteDtoExit>>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Lista de favoritos obtenida con éxito.")
+                .data(favoriteDtoExits)
+                .error(null)
+                .build());
     }
 
+    // 🔹 BUSCAR FAVORITOS POR ID DE USUARIO
     @GetMapping("/search/{userId}")
-    public ResponseEntity<?> searchFavoritesByUserId(@PathVariable UUID userId) {
-        try {
-            List<FavoriteDtoExit> favoriteDtoExits = favoriteService.getFavoritesByUserId(userId);
-            return ResponseEntity.ok(new ApiResponse<>("Favoritos encontrados con éxito para el usuario con ID: " + userId, favoriteDtoExits));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("No se encontraron favoritos para el usuario con id: " + userId, null));
-        }
+    public ResponseEntity<ApiResponse<List<FavoriteDtoExit>>> getFavoritesByUserId(@PathVariable UUID userId) throws ResourceNotFoundException {
+        List<FavoriteDtoExit> favoriteDtoExits = favoriteService.getFavoritesByUserId(userId);
+
+        return ResponseEntity.ok(ApiResponse.<List<FavoriteDtoExit>>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Favoritos encontrados con éxito para el usuario con ID: " + userId)
+                .data(favoriteDtoExits)
+                .error(null)
+                .build());
     }
 
+    // 🔹 ELIMINAR FAVORITO
     @DeleteMapping("/delete/{idInstrument}/{idUser}/{idFavorite}")
-    public ResponseEntity<ApiResponse<IsFavoriteExit>> deleteAvailableDate(
-            @PathVariable UUID idInstrument, @PathVariable UUID idUser, @PathVariable UUID idFavorite) {
-        try {
-            ApiResponse<IsFavoriteExit> response = favoriteService.deleteFavorite(idInstrument, idUser, idFavorite);
-            return ResponseEntity.ok(response);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>(e.getMessage(), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Ocurrió un error al procesar la solicitud.", null));
-        }
+    public ResponseEntity<ApiResponse<IsFavoriteExit>> deleteFavorite(
+            @PathVariable UUID idInstrument, @PathVariable UUID idUser, @PathVariable UUID idFavorite) throws ResourceNotFoundException {
+        ApiResponse<IsFavoriteExit> response = favoriteService.deleteFavorite(idInstrument, idUser, idFavorite);
+
+        return ResponseEntity.ok(ApiResponse.<IsFavoriteExit>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Instrumento eliminado de favoritos con éxito.")
+                .data(response.getData())
+                .error(null)
+                .build());
     }
 }

@@ -7,6 +7,8 @@ import com.musichouse.api.music.service.CharacteristicService;
 import com.musichouse.api.music.util.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,36 +22,50 @@ import java.util.UUID;
 @RequestMapping("/api/characteristic")
 public class CharacteristicController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CharacteristicController.class);
     private final CharacteristicService characteristicService;
 
+    // 🔹 OBTENER TODAS LAS CARACTERÍSTICAS
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<CharacteristicDtoExit>>> allCharacteristics() {
-        List<CharacteristicDtoExit> characteristicDtoExits = characteristicService.getAllCharacteristic();
-        ApiResponse<List<CharacteristicDtoExit>> response =
-                new ApiResponse<>("Lista de Carcateristicas exitosa.", characteristicDtoExits);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    public ResponseEntity<ApiResponse<List<CharacteristicDtoExit>>> getAllCharacteristics() {
+        List<CharacteristicDtoExit> characteristics = characteristicService.getAllCharacteristic();
+
+        return ResponseEntity.ok(ApiResponse.<List<CharacteristicDtoExit>>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Lista de características obtenida con éxito.")
+                .data(characteristics)
+                .error(null)
+                .build());
     }
 
+    // 🔹 BUSCAR CARACTERÍSTICA POR ID
     @GetMapping("/search/{idCharacteristics}")
-    public ResponseEntity<ApiResponse<?>> searchCharacteristicById(@PathVariable UUID idCharacteristics) {
-        try {
-            CharacteristicDtoExit foundCharacteristic = characteristicService.getCharacteristicById(idCharacteristics);
-            return ResponseEntity.ok(new ApiResponse<>("Caracteristica encontrado.", foundCharacteristic));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("No se encontró la caracteristica con el ID proporcionado.", null));
-        }
+    public ResponseEntity<ApiResponse<CharacteristicDtoExit>> getCharacteristicById(@PathVariable UUID idCharacteristics) throws ResourceNotFoundException {
+        CharacteristicDtoExit foundCharacteristic = characteristicService.getCharacteristicById(idCharacteristics);
+
+        return ResponseEntity.ok(ApiResponse.<CharacteristicDtoExit>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Característica encontrada con éxito.")
+                .data(foundCharacteristic)
+                .error(null)
+                .build());
     }
 
+    // 🔹 ACTUALIZAR CARACTERÍSTICA
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse<?>> updateUser(@Valid @RequestBody CharacteristicDtoModify characteristicDtoModify) {
-        try {
-            CharacteristicDtoExit characteristicDtoExit = characteristicService.updateCharacteristic(characteristicDtoModify);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse<>("Caracteristicas actualizadas con éxito.", characteristicDtoExit));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("No se encontro la caracteristica con el ID proporcionado.", null));
-        }
+    public ResponseEntity<ApiResponse<CharacteristicDtoExit>> updateCharacteristic(
+            @Valid @RequestBody CharacteristicDtoModify characteristicDtoModify) throws ResourceNotFoundException {
+
+        CharacteristicDtoExit updatedCharacteristic = characteristicService.updateCharacteristic(characteristicDtoModify);
+
+        return ResponseEntity.ok(ApiResponse.<CharacteristicDtoExit>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Característica actualizada con éxito.")
+                .data(updatedCharacteristic)
+                .error(null)
+                .build());
     }
 }

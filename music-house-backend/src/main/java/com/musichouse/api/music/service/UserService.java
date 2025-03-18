@@ -68,7 +68,7 @@ public class UserService implements UserInterface {
 
         // 1️⃣ **Verificar si el usuario ya existe antes de subir la imagen o enviar mensaje**
         if (userRepository.existsByEmail(userDtoEntrance.getEmail())) {
-            throw new DataIntegrityViolationException("El correo electrónico ingresado ya está en uso.");
+            throw new DataIntegrityViolationException("El correo electrónico: "+userDtoEntrance.getEmail());
         }
 
         // 2️⃣ **Si el usuario no existe, continuar con el registro**
@@ -100,7 +100,8 @@ public class UserService implements UserInterface {
         try {
             sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName());
         } catch (MessagingException e) {
-            LOGGER.warn("No se pudo enviar el correo de bienvenida a {}", userSaved.getEmail(), e);
+            String errorMessage = String.format("No se pudo enviar el correo de bienvenida a %s", userSaved.getEmail());
+            throw new MessagingException(errorMessage, e);
         }
 
         // 8️⃣ **Enviar mensaje de bienvenida en Telegram**
@@ -130,7 +131,7 @@ public class UserService implements UserInterface {
 
         // Verificar si el usuario ya existe por su email
         if (userRepository.existsByEmail(userAdminDtoEntrance.getEmail())) {
-            throw new DataIntegrityViolationException("El correo electrónico ingresado ya está en uso.");
+            throw new DataIntegrityViolationException("El correo electrónico: "+userAdminDtoEntrance.getEmail());
         }
 
         User user = modelMapper.map(userAdminDtoEntrance, User.class);
@@ -150,13 +151,11 @@ public class UserService implements UserInterface {
 
 
 
-        // Enviar correo de bienvenida
-        boolean emailSent = true;
         try {
             sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName());
         } catch (MessagingException e) {
-            emailSent = false;
-            LOGGER.warn("No se pudo enviar el correo de bienvenida a {}", userSaved.getEmail(), e);
+            String errorMessage = String.format("No se pudo enviar el correo de bienvenida a %s", userSaved.getEmail());
+            throw new MessagingException(errorMessage, e);
         }
 
 
@@ -174,7 +173,7 @@ public class UserService implements UserInterface {
     public TokenDtoExit loginUserAndCheckEmail(LoginDtoEntrance loginDtoEntrance) throws ResourceNotFoundException, AuthenticationException {
         Optional<User> userOptional = userRepository.findByEmail(loginDtoEntrance.getEmail());
         if (userOptional.isEmpty()) {
-            throw new ResourceNotFoundException("Usuario no encontrado con el correo electrónico proporcionado.");
+            throw new ResourceNotFoundException("Usuario no encontrado con el correo electrónico: "+loginDtoEntrance.getEmail());
         }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDtoEntrance.getEmail(), loginDtoEntrance.getPassword())

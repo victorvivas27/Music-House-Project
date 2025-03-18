@@ -14,6 +14,7 @@ import org.modelmapper.MappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,47 +34,87 @@ public class UserController {
     private final UserService userService;
     private final ObjectMapper objectMapper;
 
-
+    // 🔹 OBTENER TODOS LOS USUARIOS
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<UserDtoExit>>> allPhone() {
+    public ResponseEntity<ApiResponse<List<UserDtoExit>>> getAllUsers() {
         try {
             List<UserDtoExit> userDtoExits = userService.getAllUser();
-            ApiResponse<List<UserDtoExit>> response =
-                    new ApiResponse<>("Lista de Usuarios exitosa.", userDtoExits);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.ok(ApiResponse.<List<UserDtoExit>>builder()
+                    .status(HttpStatus.OK)
+                    .statusCode(HttpStatus.OK.value())
+                    .message("Lista de usuarios obtenida con éxito.")
+                    .data(userDtoExits)
+                    .error(null)
+                    .build());
+
         } catch (MappingException e) {
             LOGGER.error("Error al obtener la lista de usuarios: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(e.getMessage(), null));
+                    .body(ApiResponse.<List<UserDtoExit>>builder()
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                            .message("Error interno al obtener usuarios.")
+                            .data(null)
+                            .error(e.getMessage())
+                            .build());
         }
     }
 
+    // 🔹 OBTENER USUARIO POR ID
     @GetMapping("/search/{idUser}")
-    public ResponseEntity<ApiResponse<UserDtoExit>> searchUserById(@PathVariable UUID idUser) {
+    public ResponseEntity<ApiResponse<UserDtoExit>> getUserById(@PathVariable UUID idUser) {
         try {
+            if (idUser == null) {
+                throw new IllegalArgumentException("El ID del usuario no puede ser nulo.");
+            }
+
             UserDtoExit foundUser = userService.getUserById(idUser);
-            return ResponseEntity.ok(new ApiResponse<>("Usuario encontrado.", foundUser));
+            return ResponseEntity.ok(ApiResponse.<UserDtoExit>builder()
+                    .status(HttpStatus.OK)
+                    .statusCode(HttpStatus.OK.value())
+                    .message("Usuario encontrado con éxito.")
+                    .data(foundUser)
+                    .error(null)
+                    .build());
+
         } catch (ResourceNotFoundException e) {
+            LOGGER.warn("Intento de búsqueda con ID no encontrado: {}", idUser);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("No se encontró el usuario con el ID proporcionado.", null));
+                    .body(ApiResponse.<UserDtoExit>builder()
+                            .status(HttpStatus.NOT_FOUND)
+                            .statusCode(HttpStatus.NOT_FOUND.value())
+                            .message("No se encontró el usuario con el ID proporcionado.")
+                            .data(null)
+                            .error(e.getMessage())
+                            .build());
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Error en el parámetro de búsqueda: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.<UserDtoExit>builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .statusCode(HttpStatus.BAD_REQUEST.value())
+                            .message(e.getMessage())
+                            .data(null)
+                            .error(null)
+                            .build());
         }
     }
 
+    // 🔹 ACTUALIZAR USUARIO
     @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<UserDtoExit>> updateUser(
-            @RequestParam("user") String userJson, // Se recibe el JSON como String
-            @RequestPart(value = "file", required = false) MultipartFile file // Se permite que el archivo sea opcional
-    ) {
+    public HttpEntity<ApiResponse<?>> updateUser(
+            @RequestParam("user") String userJson,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
-            // 📌 1️⃣ Convertir el JSON String a un objeto UserDtoModify
+            // 📌 Convertir el JSON String a un objeto UserDtoModify
             UserDtoModify userDtoModify = objectMapper.readValue(userJson, UserDtoModify.class);
 
-            // 📌 2️⃣ Obtener una instancia del Validator manualmente
+            // 📌 Validación manual
             ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
             Validator validator = factory.getValidator();
-
-            // 📌 3️⃣ Aplicar validación manualmente
             Set<ConstraintViolation<UserDtoModify>> violations = validator.validate(userDtoModify);
+
             if (!violations.isEmpty()) {
                 String errorMessage = violations.stream()
                         .map(ConstraintViolation::getMessage)
@@ -81,39 +122,99 @@ public class UserController {
                         .orElse("Datos inválidos");
 
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ApiResponse<>(errorMessage, null));
+                        .body(ApiResponse.<Void>builder()
+                                .status(HttpStatus.BAD_REQUEST)
+                                .statusCode(HttpStatus.BAD_REQUEST.value())
+                                .message("Error en la validación de los datos enviados.")
+                                .data(null)
+                                .error(errorMessage)
+                                .build());
             }
 
-            // 📌 4️⃣ Llamar al servicio para actualizar el usuario
+            // 📌 Llamar al servicio para actualizar
             UserDtoExit userDtoExit = userService.updateUser(userDtoModify, file);
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse<>("Usuario actualizado con éxito.", userDtoExit));
+            return ResponseEntity.ok(ApiResponse.<UserDtoExit>builder()
+                    .status(HttpStatus.OK)
+                    .statusCode(HttpStatus.OK.value())
+                    .message("Usuario actualizado con éxito.")
+                    .data(userDtoExit)
+                    .error(null)
+                    .build());
 
         } catch (DataIntegrityViolationException e) {
+            LOGGER.error("Error de integridad: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>("El correo electrónico ingresado ya está en uso. Por favor, elija otro correo electrónico.", null));
+                    .body(ApiResponse.<Void>builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .statusCode(HttpStatus.BAD_REQUEST.value())
+                            .message("El correo ingresado ya está en uso. Por favor, elija otro.")
+                            .data(null)
+                            .error(e.getMessage())
+                            .build());
+
         } catch (ResourceNotFoundException e) {
+            LOGGER.warn("Intento de actualización de usuario no encontrado: {}", userJson);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("No se encontró el usuario con el ID proporcionado.", null));
+                    .body(ApiResponse.<Void>builder()
+                            .status(HttpStatus.NOT_FOUND)
+                            .statusCode(HttpStatus.NOT_FOUND.value())
+                            .message("No se encontró el usuario con el ID proporcionado.")
+                            .data(null)
+                            .error(e.getMessage())
+                            .build());
+
         } catch (JsonProcessingException e) {
+            LOGGER.error("Error en JSON de entrada: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>("Error al procesar el JSON de entrada.", null));
+                    .body(ApiResponse.<Void>builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .statusCode(HttpStatus.BAD_REQUEST.value())
+                            .message("Error al procesar el JSON de entrada.")
+                            .data(null)
+                            .error(e.getMessage())
+                            .build());
         }
     }
 
-
+    // 🔹 ELIMINAR USUARIO
     @DeleteMapping("/delete/{idUser}")
-    public ResponseEntity<?> deleteUser(@PathVariable UUID idUser) {
+    public ResponseEntity<ApiResponse<?>> deleteUser(@PathVariable UUID idUser) {
         try {
+            if (idUser == null) {
+                throw new IllegalArgumentException("El ID del usuario no puede ser nulo.");
+            }
+
             userService.deleteUser(idUser);
-            return ResponseEntity.ok(new ApiResponse<>("Usuario con ID " + idUser + " eliminado exitosamente.", null));
+            return ResponseEntity.ok(ApiResponse.<Void>builder()
+                    .status(HttpStatus.OK)
+                    .statusCode(HttpStatus.OK.value())
+                    .message("Usuario con ID " + idUser + " eliminado exitosamente.")
+                    .data(null)
+                    .error(null)
+                    .build());
+
         } catch (ResourceNotFoundException e) {
+            LOGGER.warn("Intento de eliminar usuario no encontrado: {}", idUser);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("El Usuario con el ID " + idUser + " no se encontró.", null));
+                    .body(ApiResponse.<Void>builder()
+                            .status(HttpStatus.NOT_FOUND)
+                            .statusCode(HttpStatus.NOT_FOUND.value())
+                            .message("El usuario con el ID proporcionado no se encontró.")
+                            .data(null)
+                            .error(e.getMessage())
+                            .build());
+
         } catch (Exception e) {
+            LOGGER.error("Error inesperado al eliminar usuario: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(e.getMessage(), null));
+                    .body(ApiResponse.<Void>builder()
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                            .message("Ocurrió un error al procesar la solicitud.")
+                            .data(null)
+                            .error(e.getMessage())
+                            .build());
         }
     }
 }

@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class FavoriteService implements FavoriteInterface {
-    private final static Logger LOGGER = LoggerFactory.getLogger(FavoriteService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FavoriteService.class);
     private final ModelMapper mapper;
     private final FavoriteRepository favoriteRepository;
     private final InstrumentRepository instrumentRepository;
@@ -46,8 +47,7 @@ public class FavoriteService implements FavoriteInterface {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario con el ID proporcionado"));
 
-        Favorite existingFavorite = favoriteRepository.findByUserAndInstrument(user, instrument);
-        if (existingFavorite != null) {
+        if (favoriteRepository.findByUserAndInstrument(user, instrument) != null) {
             throw new FavoriteAlreadyExistsException("El instrumento ya está agregado como favorito para este usuario");
         }
 
@@ -57,21 +57,18 @@ public class FavoriteService implements FavoriteInterface {
         favorite.setIsFavorite(true);
         Favorite favoriteSaved = favoriteRepository.save(favorite);
 
-        String imageUrl = "";
-        List<ImageUrls> imageUrls = instrument.getImageUrls();
-        if (imageUrls != null && !imageUrls.isEmpty()) {
-            imageUrl = imageUrls.get(0).getImageUrl();
-        }
+        String imageUrl = instrument.getImageUrls() != null && !instrument.getImageUrls().isEmpty()
+                ? instrument.getImageUrls().get(0).getImageUrl()
+                : "";
 
-        FavoriteDtoExit favoriteDtoExit = new FavoriteDtoExit();
-        favoriteDtoExit.setIdFavorite(favoriteSaved.getIdFavorite());
-        favoriteDtoExit.setInstrument(favoriteSaved.getInstrument());
-        favoriteDtoExit.setImageUrl(imageUrl);
-        favoriteDtoExit.setIdUser(favoriteSaved.getUser().getIdUser());
-        favoriteDtoExit.setRegistDate(favoriteSaved.getRegistDate());
-        favoriteDtoExit.setIsFavorite(favoriteSaved.getIsFavorite());
-
-        return favoriteDtoExit;
+        return FavoriteDtoExit.builder()
+                .idFavorite(favoriteSaved.getIdFavorite())
+                .instrument(favoriteSaved.getInstrument())
+                .imageUrl(imageUrl)
+                .idUser(favoriteSaved.getUser().getIdUser())
+                .registDate(favoriteSaved.getRegistDate())
+                .isFavorite(favoriteSaved.getIsFavorite())
+                .build();
     }
 
     @Override
@@ -79,12 +76,10 @@ public class FavoriteService implements FavoriteInterface {
         return favoriteRepository.findAll().stream()
                 .map(favorite -> {
                     FavoriteDtoExit favoriteDtoExit = mapper.map(favorite, FavoriteDtoExit.class);
-                    String imageUrl = "";
-                    Instrument instrument = favorite.getInstrument();
-                    List<ImageUrls> imageUrls = instrument.getImageUrls();
-                    if (imageUrls != null && !imageUrls.isEmpty()) {
-                        imageUrl = imageUrls.get(0).getImageUrl();
-                    }
+                    String imageUrl = favorite.getInstrument().getImageUrls() != null &&
+                            !favorite.getInstrument().getImageUrls().isEmpty()
+                            ? favorite.getInstrument().getImageUrls().get(0).getImageUrl()
+                            : "";
                     favoriteDtoExit.setImageUrl(imageUrl);
                     favoriteDtoExit.setIsFavorite(favorite.getIsFavorite());
                     return favoriteDtoExit;
@@ -96,41 +91,51 @@ public class FavoriteService implements FavoriteInterface {
     public List<FavoriteDtoExit> getFavoritesByUserId(UUID userId) throws ResourceNotFoundException {
         List<Favorite> favorites = favoriteRepository.findByUserId(userId);
         if (favorites.isEmpty()) {
-            throw new ResourceNotFoundException("No favorites found for user id: " + userId);
+            throw new ResourceNotFoundException("No se encontraron favoritos para el usuario con ID: " + userId);
         }
+
         return favorites.stream()
                 .map(favorite -> {
                     FavoriteDtoExit favoriteDtoExit = mapper.map(favorite, FavoriteDtoExit.class);
-                    String imageUrl = "";
-                    Instrument instrument = favorite.getInstrument();
-                    List<ImageUrls> imageUrls = instrument.getImageUrls();
-                    if (imageUrls != null && !imageUrls.isEmpty()) {
-                        imageUrl = imageUrls.get(0).getImageUrl();
-                    }
+                    String imageUrl = favorite.getInstrument().getImageUrls() != null &&
+                            !favorite.getInstrument().getImageUrls().isEmpty()
+                            ? favorite.getInstrument().getImageUrls().get(0).getImageUrl()
+                            : "";
                     favoriteDtoExit.setImageUrl(imageUrl);
                     return favoriteDtoExit;
                 })
                 .collect(Collectors.toList());
     }
 
-
     @Override
-    public ApiResponse deleteFavorite(UUID idInstrument, UUID idUser, UUID idFavorite) throws ResourceNotFoundException {
+    public ApiResponse<IsFavoriteExit> deleteFavorite(UUID idInstrument, UUID idUser, UUID idFavorite) throws ResourceNotFoundException {
         User user = userRepository.findById(idUser)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID " + idUser));
+
         Instrument instrument = instrumentRepository.findById(idInstrument)
                 .orElseThrow(() -> new ResourceNotFoundException("Instrumento no encontrado con ID " + idInstrument));
+
         Favorite favorite = favoriteRepository.findById(idFavorite)
                 .orElseThrow(() -> new ResourceNotFoundException("Favorito no encontrado con ID " + idFavorite));
+
         if (!favorite.getUser().getIdUser().equals(idUser) || !favorite.getInstrument().getIdInstrument().equals(idInstrument)) {
             throw new ResourceNotFoundException("Favorito no encontrado para el usuario con ID " + idUser +
                     " y el instrumento con ID " + idInstrument);
         }
+
+        // ** Eliminar favorito **
+        favoriteRepository.delete(favorite);
         IsFavoriteExit isFavoriteExit = new IsFavoriteExit();
         isFavoriteExit.setIsFavorite(false);
-        favoriteRepository.delete(favorite);
-        ApiResponse<IsFavoriteExit> response = new ApiResponse<>("Favorito eliminado exitosamente.", isFavoriteExit);
 
-        return response;
+        LOGGER.info("Favorito eliminado con éxito: ID Usuario {}, ID Instrumento {}", idUser, idInstrument);
+
+        return ApiResponse.<IsFavoriteExit>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Favorito eliminado exitosamente.")
+                .data(isFavoriteExit)
+                .error(null)
+                .build();
     }
 }

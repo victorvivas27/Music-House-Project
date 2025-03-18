@@ -75,7 +75,16 @@ export const UsersApi = {
       const respuesta = await axios.post(URL_BASE_LOGIN, user);
       return respuesta.data;
     } catch (error) {
-      throw new Error('Error de login', error);
+      if (error.response) {
+        // ⚠️ Si el backend responde con un error (ejemplo: 404, 401, 500)
+        throw error.response; // ✅ Reenvía el error con los detalles del backend
+      } else if (error.request) {
+        // ⚠️ La solicitud se hizo pero no hubo respuesta del servidor
+        throw new Error('No se pudo conectar con el servidor');
+      } else {
+        // ❌ Error inesperado (ejemplo: problema con axios)
+        throw new Error(`Error inesperado: ${error.message}`);
+      }
     }
   }
 };

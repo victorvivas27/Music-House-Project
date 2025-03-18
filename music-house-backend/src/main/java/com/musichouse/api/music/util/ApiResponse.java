@@ -1,6 +1,7 @@
 package com.musichouse.api.music.util;
 
 import lombok.*;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
@@ -9,9 +10,11 @@ import lombok.*;
 @NoArgsConstructor
 public class ApiResponse<T> {
 
-    private String message;
-
-    private T data;
+    private HttpStatus status;  // Código de estado HTTP completo (ej. HttpStatus.BAD_REQUEST)
+    private int statusCode;     // Código numérico (ej. 400, 404, 500)
+    private String message;     // Mensaje descriptivo
+    private T data;             // Datos de respuesta (puede ser cualquier objeto)
+    private String error;       // Mensaje de error opcional (puede ser null)
 
 
 }

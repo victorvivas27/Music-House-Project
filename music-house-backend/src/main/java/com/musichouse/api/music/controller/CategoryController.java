@@ -9,6 +9,8 @@ import com.musichouse.api.music.service.CategoryService;
 import com.musichouse.api.music.util.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,80 +24,108 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequestMapping("/api/category")
 public class CategoryController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryController.class);
     private final CategoryService categoryService;
 
+    // 🔹 CREAR CATEGORÍA
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<CategoryDtoExit>> createCategory(@RequestBody @Valid CategoryDtoEntrance categoryDtoEntrance) {
+    public ResponseEntity<ApiResponse<CategoryDtoExit>> createCategory(
+            @RequestBody @Valid CategoryDtoEntrance categoryDtoEntrance) {
+
         try {
             CategoryDtoExit categoryDtoExit = categoryService.createCategory(categoryDtoEntrance);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse<>("Categoría creada exitosamente.", categoryDtoExit));
+                    .body(ApiResponse.<CategoryDtoExit>builder()
+                            .status(HttpStatus.CREATED)
+                            .statusCode(HttpStatus.CREATED.value())
+                            .message("Categoría creada exitosamente.")
+                            .data(categoryDtoExit)
+                            .error(null)
+                            .build());
         } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>("La categoría ya existe en la base de datos.", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>("Ocurrió un error al procesar la solicitud.", null));
+            LOGGER.error("Error: Categoría ya existe", e);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ApiResponse.<CategoryDtoExit>builder()
+                            .status(HttpStatus.CONFLICT)
+                            .statusCode(HttpStatus.CONFLICT.value())
+                            .message("La categoría ya existe en la base de datos.")
+                            .data(null)
+                            .error(e.getMessage())
+                            .build());
         }
     }
 
+    // 🔹 OBTENER TODAS LAS CATEGORÍAS
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<CategoryDtoExit>>> allCategorys() {
-        List<CategoryDtoExit> categoryDtoExits = categoryService.getAllCategories();
-        ApiResponse<List<CategoryDtoExit>> response =
-                new ApiResponse<>("Lista de Categorias exitosa.", categoryDtoExits);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    public ResponseEntity<ApiResponse<List<CategoryDtoExit>>> getAllCategories() {
+        List<CategoryDtoExit> categories = categoryService.getAllCategories();
+
+        return ResponseEntity.ok(ApiResponse.<List<CategoryDtoExit>>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Lista de categorías obtenida con éxito.")
+                .data(categories)
+                .error(null)
+                .build());
     }
 
+    // 🔹 BUSCAR CATEGORÍA POR ID
     @GetMapping("/search/{idCategory}")
-    public ResponseEntity<?> searchCategoryById(@PathVariable UUID idCategory) {
-        try {
-            CategoryDtoExit foundCategory = categoryService.getCategoryById(idCategory);
-            return ResponseEntity.ok(new ApiResponse<>("Categoria encontrada.", foundCategory));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("No se encontró la categoria con el ID proporcionado.", null));
-        }
+    public ResponseEntity<ApiResponse<CategoryDtoExit>> searchCategoryById(@PathVariable UUID idCategory) throws ResourceNotFoundException {
+        CategoryDtoExit foundCategory = categoryService.getCategoryById(idCategory);
+
+        return ResponseEntity.ok(ApiResponse.<CategoryDtoExit>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Categoría encontrada con éxito.")
+                .data(foundCategory)
+                .error(null)
+                .build());
     }
 
+    // 🔹 ACTUALIZAR CATEGORÍA
     @PutMapping("/update")
-    public ResponseEntity<?> updateCategory(@RequestBody @Valid CategoryDtoModify categoryDtoModify) {
-        try {
-            CategoryDtoExit categoryDtoExit = categoryService.updateCategory(categoryDtoModify);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse<>("Categoria actualizada con éxito.", categoryDtoExit));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("No se encontró la categoria con el ID proporcionado.", null));
-        }
+    public ResponseEntity<ApiResponse<CategoryDtoExit>> updateCategory(
+            @RequestBody @Valid CategoryDtoModify categoryDtoModify) throws ResourceNotFoundException {
+
+        CategoryDtoExit updatedCategory = categoryService.updateCategory(categoryDtoModify);
+
+        return ResponseEntity.ok(ApiResponse.<CategoryDtoExit>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Categoría actualizada con éxito.")
+                .data(updatedCategory)
+                .error(null)
+                .build());
     }
 
+    // 🔹 ELIMINAR CATEGORÍA
     @DeleteMapping("/delete/{idCategory}")
-    public ResponseEntity<?> deleteCategory(@PathVariable UUID idCategory) {
-        try {
-            categoryService.deleteCategory(idCategory);
-            return ResponseEntity.ok(new ApiResponse<>("Categoria con ID " + idCategory + " eliminada exitosamente.", null));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("La categoria con el ID " + idCategory + " no se encontró.", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(e.getMessage(), null));
-        }
+    public ResponseEntity<ApiResponse<String>> deleteCategory(@PathVariable UUID idCategory) throws ResourceNotFoundException {
+
+        categoryService.deleteCategory(idCategory);
+
+        return ResponseEntity.ok(ApiResponse.<String>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Categoría eliminada exitosamente.")
+                .data(null)
+                .error(null)
+                .build());
     }
 
+    // 🔹 BUSCAR CATEGORÍAS POR NOMBRE
     @GetMapping("/find/nameCategory/{categoryName}")
-    public ResponseEntity<?> searchTheme(@PathVariable String categoryName) {
-        try {
-            List<Category> categories = categoryService.searchCategory(categoryName);
-            if (categories.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse<>("No se encontraron las categorias con el nombre proporcionado.", null));
-            }
-            return ResponseEntity.ok(categories);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>("Parámetro de búsqueda inválido.", null));
-        }
+    public ResponseEntity<ApiResponse<List<Category>>> searchCategoryByName(@PathVariable String categoryName) {
+        List<Category> categories = categoryService.searchCategory(categoryName);
+
+        return ResponseEntity.ok(ApiResponse.<List<Category>>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Búsqueda de categorías exitosa.")
+                .data(categories)
+                .error(null)
+                .build());
     }
 }
