@@ -87,3 +87,68 @@ export const headCells = [
     label: 'Acciones'
   }
 ]
+
+ export const headCellsUser = [
+  { id: 'idUser', numeric: true, disablePadding: false, label: 'ID' },
+  { id: 'rol', numeric: false, disablePadding: false, label: 'Rol' },
+  { id: 'name', numeric: false, disablePadding: false, label: 'Nombre' },
+  { id: 'lastName', numeric: false, disablePadding: false, label: 'Apellido' },
+  { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
+  { id: 'actions', numeric: false, disablePadding: false, label: 'Acciones' }
+]
+
+
+export const headCellsCategory = [
+  {
+    id: 'idCategory',
+    numeric: true,
+    disablePadding: false,
+    label: 'ID'
+  },
+  {
+    id: 'categoryName',
+    numeric: false,
+    disablePadding: false,
+    label: 'Nombre'
+  },
+  {
+    id: 'description',
+    numeric: false,
+    disablePadding: false,
+    label: 'Descripción'
+  },
+  {
+    id: 'actions',
+    numeric: false,
+    disablePadding: false,
+    label: 'Acciones'
+  }
+]
+
+
+export const headCellsTheme = [
+  {
+    id: 'idTheme',
+    numeric: true,
+    disablePadding: false,
+    label: 'ID'
+  },
+  {
+    id: 'themeName',
+    numeric: false,
+    disablePadding: false,
+    label: 'Nombre'
+  },
+  {
+    id: 'description',
+    numeric: false,
+    disablePadding: false,
+    label: 'Descripción'
+  },
+  {
+    id: 'actions',
+    numeric: false,
+    disablePadding: false,
+    label: 'Acciones'
+  }
+]

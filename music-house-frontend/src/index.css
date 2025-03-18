@@ -24,17 +24,25 @@
   --texto-secundario-dark: #BDBDBD;
   --color-primario-dark: #FFD700;
   --font-family: "Big Shoulders", sans-serif;
+  --box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px,
+    rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px,
+    rgba(0, 0, 0, 0.09) 0px -3px 5px;
 
 }
 
 * {
   font-family: var(--font-family);
   font-weight: 800;
- 
+
 }
+
 .custom-swal {
-  border-radius: 50px 10PX !important; /* Aplica el border-radius a la alerta */
-  padding: 20px !important; /* Ajusta el padding si es necesario */
+  border-radius: 50px 10PX !important;
+  /* Aplica el border-radius a la alerta */
+  padding: 20px !important;
+  /* Ajusta el padding si es necesario */
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -75,6 +83,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-size-adjust: 100%;
   color: var(--texto-primario);
+
 
 }
 

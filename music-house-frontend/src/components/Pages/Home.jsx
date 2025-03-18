@@ -14,28 +14,39 @@ import { Loader } from '../common/loader/Loader'
 export const Home = () => {
   const { state, dispatch } = useAppStates()
   const { searchOptions } = state
+
   const [selectedInstruments, setSelectedInstruments] = useState([])
   const [loading, setLoading] = useState(true)
-  const [instruments, setInstruments] = useState()
+  const [instruments, setInstruments] = useState({ data: [] }) // ✅ Inicializar correctamente
 
   useEffect(() => {
-    getInstruments().then(([instruments]) => {
-      setInstruments(instruments)
-    })
+    const fetchInstruments = async () => {
+      setLoading(true)
+      try {
+        const [fetchedInstruments] = await getInstruments()
+        setInstruments(fetchedInstruments || { data: [] }) // ✅ Asegurar estructura correcta
+      } catch (error) {
+        console.error("Error al obtener los instrumentos:", error)
+        setInstruments({ data: [] }) // ✅ Evitar undefined
+      } finally {
+        setTimeout(() => setLoading(false), 500) // ✅ Pequeño delay para transición suave
+      }
+    }
+
+    fetchInstruments()
   }, [])
 
   useEffect(() => {
-    if (instruments && instruments.data) {
+    if (instruments.data.length > 0) {
       dispatch({ type: actions.UPDATE_INSTRUMENTS, payload: instruments })
       setSelectedInstruments(instruments.data)
-      setLoading(false)
     }
   }, [instruments])
 
   useEffect(() => {
-    if (instruments && instruments.data) {
+    if (instruments.data.length > 0) {
       const found = searchOptions.found
-        ? instruments?.data?.filter((instrument) =>
+        ? instruments.data.filter((instrument) =>
             searchOptions.found.some(
               (instrumentFound) =>
                 instrument.idInstrument === instrumentFound.idInstrument
@@ -43,6 +54,7 @@ export const Home = () => {
           )
         : instruments.data
       setSelectedInstruments(found)
+
       if (searchOptions.found && window) {
         window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
       }
@@ -67,7 +79,6 @@ export const Home = () => {
             ))}
           </MainWrapper>
 
-
           <Container
             sx={{
               display: 'flex',
@@ -75,17 +86,20 @@ export const Home = () => {
               paddingBottom: 5,
               paddingLeft: { xs: '0' },
               paddingRight: { xs: '0' },
-              border:" 2px solid blue"
+              border: "2px solid blue"
             }}
           >
-            
             <ProductsWrapper>
               {selectedInstruments.length > 0 ? (
-                selectedInstruments?.map((instrument, index) => (
+                selectedInstruments.map((instrument, index) => (
                   <ProductCard
                     key={`product-card-${index}`}
                     name={instrument.name}
-                    imageUrl={instrument.imageUrls[0].imageUrl}
+                    imageUrl={
+                      instrument.imageUrls?.length > 0
+                        ? instrument.imageUrls[0].imageUrl
+                        : "/default-image.jpg" // ✅ Imagen por defecto
+                    }
                     id={instrument.idInstrument}
                   />
                 ))

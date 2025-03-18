@@ -22,11 +22,17 @@ import { inputStyles } from '../styles/styleglobal'
 import ArrowBack from '../utils/ArrowBack'
 import { CustomButton } from './formUsuario/CustomComponents'
 
-const InstrumentForm = ({ initialFormData, onSubmit, loading }) => {
+const InstrumentForm = ({
+  initialFormData,
+  onSubmit,
+  loading,
+  isEditing = false
+}) => {
   const [formData, setFormData] = useState({ ...initialFormData })
-
   const { state } = useAppStates()
   const [errors, setErrors] = useState({})
+  const title = isEditing ? 'Editar Instrumento' : 'Registrar Instrumento'
+  const titleDelLoader = isEditing ? 'Editando...' : 'Creando...'
 
   // Refs para auto-focus en errores
   const fieldRefs = {
@@ -39,10 +45,6 @@ const InstrumentForm = ({ initialFormData, onSubmit, loading }) => {
     idTheme: useRef(),
     imageUrlsText: useRef()
   }
-
-  const title = formData.idInstrument
-    ? 'Editar Instrumento'
-    : 'Registrar Instrumento'
 
   useEffect(() => {
     if (!formData.name) {
@@ -116,22 +118,23 @@ const InstrumentForm = ({ initialFormData, onSubmit, loading }) => {
       {/*Contenedor formulario carga de nuevo instrumento*/}
       <Grid
         sx={{
-          width: '80%',
+          width: '100%',
           borderRadius: '10px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          boxShadow: 'var(--box-shadow)'
         }}
       >
         <form onSubmit={handleSubmit} className="formulario">
-          <Grid sx={{ display: 'flex', flexDirection: 'row' }}>
+          <Grid
+            sx={{
+              display: 'flex',
+              flexDirection: 'row'
+            }}
+          >
             {/*-----------------------Formulario lado izquierdo------------------------ */}
-            <Grid
-              item
-              xs={12}
-              md={6}
-              sx={{ padding: 2, width: '60%', height: '100%' }}
-            >
+            <Grid item xs={12} md={6} sx={{ padding: 2, width: '90%' }}>
               <Typography variant="h6">{title}</Typography>
 
               <ValidatedTextField
@@ -181,12 +184,7 @@ const InstrumentForm = ({ initialFormData, onSubmit, loading }) => {
             {/*---------------------Fin formulario lado izquierdo----------------*/}
 
             {/*---------------------Formulario lado derecho----------------*/}
-            <Grid
-              item
-              xs={12}
-              md={6}
-              sx={{ padding: 2, width: '50%', height: '100%' }}
-            >
+            <Grid item xs={12} md={6} sx={{ padding: 2, width: '90%' }}>
               <FormControl
                 fullWidth
                 margin="normal"
@@ -254,19 +252,21 @@ const InstrumentForm = ({ initialFormData, onSubmit, loading }) => {
           </Grid>
 
           {/*-----------------------Input imagen--------------*/}
-          <Grid item xs={12} md={6} sx={{ padding: 2, width: '100%' }}>
-            <ImageUpload
-              onImagesChange={(files) =>
-                setFormData((prev) => ({ ...prev, imageUrls: files }))
-              }
-            />
-            {/* 📌 Mensaje de error si el usuario no sube una imagen */}
-            {errors.imageUrlsText && (
-              <Typography color="var(--color-error)" variant="body1">
-                {errors.imageUrlsText}
-              </Typography>
-            )}
-          </Grid>
+          {!isEditing && (
+            <Grid item xs={12} md={6} sx={{ padding: 2, width: '100%' }}>
+              <ImageUpload
+                onImagesChange={(files) =>
+                  setFormData((prev) => ({ ...prev, imageUrls: files }))
+                }
+              />
+              {/* 📌 Mensaje de error si el usuario no sube una imagen */}
+              {errors.imageUrlsText && (
+                <Typography color="var(--color-error)" variant="body1">
+                  {errors.imageUrlsText}
+                </Typography>
+              )}
+            </Grid>
+          )}
           {/*-----------------------Fin input imagen--------------*/}
 
           <Divider />
@@ -274,7 +274,12 @@ const InstrumentForm = ({ initialFormData, onSubmit, loading }) => {
           <Box>
             <Typography variant="h6">Características</Typography>
             <Box
-              sx={{ display: 'flex', flexWrap: 'wrap', paddingBottom: '1rem' }}
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                paddingBottom: '1rem',
+                justifyContent: 'space-evenly'
+              }}
             >
               {state?.characteristics?.map((characteristic) => (
                 <Box
@@ -329,14 +334,14 @@ const InstrumentForm = ({ initialFormData, onSubmit, loading }) => {
               <Box sx={{ width: '100%', textAlign: 'center' }}>
                 {loading ? (
                   <>
-                    Creando........
+                    {titleDelLoader}
                     <CircularProgress
                       size={25}
                       sx={{ color: 'var(--color-azul)', ml: 1 }}
                     />
                   </>
                 ) : (
-                  'Enviar a crear Instrumento'
+                  title
                 )}
               </Box>
             </CustomButton>
@@ -351,19 +356,8 @@ export default InstrumentForm
 
 // **Aquí agregamos la validación de Props**
 InstrumentForm.propTypes = {
-  initialFormData: PropTypes.shape({
-    idInstrument: PropTypes.string,
-    name: PropTypes.string,
-    description: PropTypes.string,
-    measures: PropTypes.string,
-    weight: PropTypes.string,
-    rentalPrice: PropTypes.string,
-    idCategory: PropTypes.string,
-    idTheme: PropTypes.string,
-    imageUrlsText: PropTypes.string,
-    characteristics: PropTypes.object
-  }).isRequired,
-
+  initialFormData: PropTypes.object,
   onSubmit: PropTypes.func,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  isEditing: PropTypes.bool
 }

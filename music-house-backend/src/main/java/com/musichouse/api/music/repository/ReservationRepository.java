@@ -27,4 +27,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
     List<Reservation> findByInstrumentIdAndDateRange(@Param("instrumentId") UUID instrumentId,
                                                      @Param("startDate") LocalDate startDate,
                                                      @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT COUNT(r) > 0 FROM Reservation r WHERE r.instrument.id = :idInstrument")
+    boolean existsByIdInstrument(@Param("idInstrument") UUID idInstrument);
 }

@@ -48,26 +48,29 @@ export const Instruments = () => {
 
   const navigate = useNavigate()
 
-  useEffect(() => {
-    getAllInstruments()
-  }, [])
-
-  useEffect(() => {
-    setRows(instruments.data)
-    setLoading(false)
-  }, [instruments])
-
+  
   const getAllInstruments = async () => {
     setLoading(true)
     try {
       const [fetchedInstruments] = await getInstruments()
       setInstruments(fetchedInstruments)
+      setRows(fetchedInstruments.data || [])
     } catch {
       setInstruments({ data: [] })
     } finally {
-      setLoading(false)
+      setTimeout(() => setLoading(false), 500)
     }
   }
+
+  useEffect(() => {
+      setRows(instruments.data)
+      setLoading(false)
+    }, [instruments])
+
+
+  useEffect(() => {
+    getAllInstruments()
+  }, [])
 
   const handleAdd = () => navigate('/agregarInstrumento')
 
@@ -100,7 +103,7 @@ export const Instruments = () => {
     try {
       await Promise.all(selectedIds.map((id) => deleteInstrument(id)))
       showSuccess(
-        '¡Eliminados!',
+        '¡Eliminado(s)!',
         `${selectedIds.length} instrumento(s) eliminado(s) correctamente.`
       )
       setSelected([])
@@ -119,18 +122,26 @@ export const Instruments = () => {
   const emptyRows = getEmptyRows(page, rowsPerPage, rows)
   const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
 
-  if (loading) return <Loader title="Cargando instrumentos" />
+  if (loading) return <Loader title="Cargando instrumentos..." />
 
   return (
+    <>
+    {!loading &&(
     <MainWrapper>
       <Paper
         sx={{
           display: { xs: 'none', lg: 'initial' },
-          minWidth: 1400,
-          margin: 'auto'
+          width: '90%',
+          margin: 'auto',
+          boxShadow: 'var(--box-shadow)',
+          borderRadius: 4
         }}
       >
         <ArrowBack />
+        {/* Contador de instrumentos */}
+        <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
+          Total de Instrumentos: {rows.length} 
+        </Typography>
         <EnhancedTableToolbar
           title="Instrumentos"
           titleAdd="Agregar instrumento"
@@ -220,8 +231,11 @@ export const Instruments = () => {
               )}
               {page === 0 && rows.length === 0 && (
                 <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={3}>
-                    <Typography align="center">
+                  <TableCell 
+                  colSpan={7}
+                  align="center"
+                  >
+                    <Typography >
                       No se encontraron instrumentos
                     </Typography>
                   </TableCell>
@@ -246,6 +260,8 @@ export const Instruments = () => {
         />
       </Paper>
     </MainWrapper>
+    )}
+    </>
   )
 }
 

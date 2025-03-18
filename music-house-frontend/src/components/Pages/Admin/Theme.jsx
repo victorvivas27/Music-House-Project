@@ -33,33 +33,7 @@ import {
 } from '../Admin/common/tableHelper'
 import { useAppStates } from '../../utils/global.context'
 import ArrowBack from '../../utils/ArrowBack'
-
-const headCells = [
-  {
-    id: 'idTheme',
-    numeric: true,
-    disablePadding: false,
-    label: 'ID'
-  },
-  {
-    id: 'themeName',
-    numeric: false,
-    disablePadding: false,
-    label: 'Nombre'
-  },
-  {
-    id: 'description',
-    numeric: false,
-    disablePadding: false,
-    label: 'Descripción'
-  },
-  {
-    id: 'actions',
-    numeric: false,
-    disablePadding: false,
-    label: 'Acciones'
-  }
-]
+import { headCellsTheme } from '../../utils/types/HeadCells'
 
 export const Theme = () => {
   const [loading, setLoading] = useState(true)
@@ -78,10 +52,6 @@ export const Theme = () => {
   const { themeCreated } = state
   const navigate = useNavigate()
 
-  useEffect(() => {
-    getAllTheme()
-  }, [])
-
   const getAllTheme = () => {
     setLoading(true)
     getTheme()
@@ -89,10 +59,15 @@ export const Theme = () => {
         setTheme(theme)
       })
       .catch(() => {
-        setTheme([])
+        setTheme({ data: [] })
       })
-      .finally(() => setLoading(false))
+      .finally(() => {
+        setTimeout(() => setLoading(false), 500)
+      })
   }
+  useEffect(() => {
+    getAllTheme()
+  }, [])
 
   useEffect(() => {
     if (state.categoryCreated) {
@@ -171,17 +146,23 @@ export const Theme = () => {
 
   const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
 
-  if (loading) return <Loader title="Cargando tematica" />
+  if (loading) return <Loader title="Cargando tematica..." />
 
   return (
     <MainWrapper>
       <Paper
         sx={{
+          width: '90%',
           display: { xs: 'none', lg: 'initial' },
-          margin: 10
+          margin: 10,
+          boxShadow: 'var(--box-shadow)'
         }}
-        >
-        <ArrowBack/>
+      >
+        <ArrowBack />
+        {/* Contador */}
+        <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
+          Total de Tematica: {rows.length}
+        </Typography>
         <EnhancedTableToolbar
           title="Tematica"
           titleAdd="Agregar tematica"
@@ -195,7 +176,7 @@ export const Theme = () => {
             size="medium"
           >
             <EnhancedTableHead
-              headCells={headCells}
+              headCells={headCellsTheme}
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
@@ -266,17 +247,10 @@ export const Theme = () => {
                   <TableCell colSpan={4} />
                 </TableRow>
               )}
-              {page === 0 && rows === 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows
-                  }}
-                >
-                  <TableCell colSpan={4}>
-                    <Typography align="center">
-                      {page === 0 ? 'No se encontraro la tematica' : ''}
-                    </Typography>
-                  </TableCell>
+              {page === 0 && rows.length === 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={7} align="center" />
+                  <Typography>No se encontraron tematicas</Typography>
                 </TableRow>
               )}
             </TableBody>

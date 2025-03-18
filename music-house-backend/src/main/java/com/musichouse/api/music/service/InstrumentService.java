@@ -37,6 +37,7 @@ public class InstrumentService implements InstrumentInterface {
     private final AvailableDateRepository availableDateRepository;
     private final FavoriteRepository favoriteRepository;
     private final AWSS3Service awss3Service;
+    private final ReservationRepository reservationRepository;
 
     @Override
     public InstrumentDtoExit createInstrument(List<MultipartFile> files, InstrumentDtoEntrance instrumentDtoEntrance)
@@ -150,7 +151,7 @@ public class InstrumentService implements InstrumentInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el instrumento con el ID proporcionado"));
 
         // 📌 Verificar si tiene fechas reservadas antes de eliminarlo
-        boolean hasReservedDates = availableDateRepository.existsByInstrumentIdInstrumentAndAvailableFalse(idInstrument);
+        boolean hasReservedDates = reservationRepository.existsByIdInstrument(idInstrument);
         if (hasReservedDates) {
             throw new IllegalArgumentException("No se puede eliminar el instrumento porque tiene fechas reservadas.");
         }

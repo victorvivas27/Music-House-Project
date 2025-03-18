@@ -2,17 +2,14 @@ import { useCallback, useState } from 'react'
 import InstrumentForm from './InstrumentForm'
 import { createInstrument } from '../../api/instruments'
 import { formDataToCharacteristics } from '../utils/editInstrument'
-
 import ArrowBack from '../utils/ArrowBack'
-import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
-//import { useNavigate } from 'react-router-dom'
+import useAlert from '../../hook/useAlert'
 
 const NewInstrumentForm = () => {
-  const navigate = useNavigate();
- 
-  
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const { showSuccess, showError } = useAlert()
 
   const initialFormData = {
     idInstrument: null,
@@ -33,73 +30,61 @@ const NewInstrumentForm = () => {
     }
   }
 
- 
+  const onSubmit = useCallback(
+    async (formData) => {
+      setLoading(true)
 
-  const onSubmit = useCallback(async (formData) => {
-    setLoading(true)
+      if (!formData) return
 
-    if (!formData) return
+      const formDataToSend = new FormData()
 
-    const formDataToSend = new FormData()
+      // 📌 Convertir JSON correctamente
+      const instrumentJson = JSON.stringify({
+        name: formData.name || '',
+        description: formData.description || '',
+        rentalPrice: formData.rentalPrice || '',
+        weight: formData.weight || '',
+        measures: formData.measures || '',
+        idCategory: formData.idCategory || '',
+        idTheme: formData.idTheme || '',
+        characteristic: formDataToCharacteristics(formData)
+      })
 
-    // 📌 Convertir JSON correctamente
-    const instrumentJson = JSON.stringify({
-      name: formData.name || '',
-      description: formData.description || '',
-      rentalPrice: formData.rentalPrice || '',
-      weight: formData.weight || '',
-      measures: formData.measures || '',
-      idCategory: formData.idCategory || '',
-      idTheme: formData.idTheme || '',
-      characteristic: formDataToCharacteristics(formData)
-    })
+      // ✅ Agregar JSON correctamente como un Blob con application/json
+      formDataToSend.append(
+        'instrument',
+        new Blob([instrumentJson], { type: 'application/json' })
+      )
 
-    // ✅ Agregar JSON correctamente como un Blob con application/json
-    formDataToSend.append(
-      'instrument',
-      new Blob([instrumentJson], { type: 'application/json' })
-    )
-
-    // ✅ Agregar imágenes correctamente
-    if (formData.imageUrls && formData.imageUrls.length > 0) {
-      for (let file of formData.imageUrls) {
-        if (file instanceof File) {
-          formDataToSend.append('files', file)
+      // ✅ Agregar imágenes correctamente
+      if (formData.imageUrls && formData.imageUrls.length > 0) {
+        for (let file of formData.imageUrls) {
+          if (file instanceof File) {
+            formDataToSend.append('files', file)
+          }
         }
       }
-    }
 
-    try {
-      await createInstrument(formDataToSend)
+      try {
+        await createInstrument(formDataToSend)
         // ✅ Éxito: Mostrar alerta y redirigir
-        Swal.fire({
-          icon: 'success',
-          title: 'Instrumento Creado',
-          text: 'El instrumento se ha registrado correctamente.',
-          confirmButtonText: 'Aceptar',
-          timer: 2000,
-          showConfirmButton: false
-        }).then(() => {
-          navigate(-1) // 🔹 Redirigir a la página anterior
-        })
-      
-    } catch (error) {
-       // ❌ Error: Mostrar mensaje con detalles
-       Swal.fire({
-        icon: 'error',
-        title: 'Error al Crear',
-        text: error.message || 'No se pudo registrar el instrumento.',
-        confirmButtonText: 'Intentar nuevamente'
-      })
-    } finally {
-     
-      setTimeout(() => {
-        
-        
-        setLoading(false)
-      }, 2000)
-    }
-  }, [navigate])
+        setTimeout(() => {
+          showSuccess('El instrumento se ha registrado correctamente.')
+        }, 1000)
+        setTimeout(() => {
+          navigate('/instruments') // ✅ Redirigir después de 4s
+        }, 1000)
+      } catch (error) {
+        // ❌ Error: Mostrar mensaje con detalles
+        showError('No se pudo registrar el instrumento.')
+      } finally {
+        setTimeout(() => {
+          setLoading(false)
+        }, 1000)
+      }
+    },
+    [navigate, showError, showSuccess]
+  )
 
   return (
     <>
@@ -109,7 +94,6 @@ const NewInstrumentForm = () => {
         onSubmit={onSubmit}
         loading={loading}
       />
-      
     </>
   )
 }

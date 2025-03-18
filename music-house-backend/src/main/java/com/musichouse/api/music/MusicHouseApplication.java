@@ -26,6 +26,7 @@ public class MusicHouseApplication {
         SpringApplication.run(MusicHouseApplication.class, args);
         LOGGER.info("🎹 Let's hit the keys and start the musical journey with MusicHouseApplication! 🎵🌟");
 
+
     }
 
 

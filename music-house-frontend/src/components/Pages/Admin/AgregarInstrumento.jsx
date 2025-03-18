@@ -9,8 +9,9 @@ export const AgregarInstrumento = () => {
   const { isHeaderVisible } = useHeaderVisibility()
 
   return (
-    <main>
-      <CreateWrapper isHeaderVisible={isHeaderVisible}>
+    <>
+      <CreateWrapper 
+      isHeaderVisible={isHeaderVisible}>
         <Typography sx={{ fontSize: '35px' }}>Crear Instrumento</Typography>
         <NewInstrumentForm />
       </CreateWrapper>
@@ -19,8 +20,8 @@ export const AgregarInstrumento = () => {
           display: { xs: 'flex', lg: 'none' },
           justifyContent: 'center',
           alignItems: 'center',
-          width: '100%',
-          height: '100vh'
+         
+         
         }}
       >
         <Typography
@@ -36,6 +37,6 @@ export const AgregarInstrumento = () => {
           Funcionalidad no disponible en esta resolución
         </Typography>
       </Box>
-    </main>
+    </>
   )
 }

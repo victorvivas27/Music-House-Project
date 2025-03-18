@@ -33,33 +33,7 @@ import {
 } from '../Admin/common/tableHelper'
 import { useAppStates } from '../../utils/global.context'
 import ArrowBack from '../../utils/ArrowBack'
-
-const headCells = [
-  {
-    id: 'idCategory',
-    numeric: true,
-    disablePadding: false,
-    label: 'ID'
-  },
-  {
-    id: 'categoryName',
-    numeric: false,
-    disablePadding: false,
-    label: 'Nombre'
-  },
-  {
-    id: 'description',
-    numeric: false,
-    disablePadding: false,
-    label: 'Descripción'
-  },
-  {
-    id: 'actions',
-    numeric: false,
-    disablePadding: false,
-    label: 'Acciones'
-  }
-]
+import { headCellsCategory } from '../../utils/types/HeadCells'
 
 export const Categories = () => {
   const [loading, setLoading] = useState(true)
@@ -78,20 +52,41 @@ export const Categories = () => {
   const { categoryCreated } = state
   const navigate = useNavigate()
 
-  useEffect(() => {
-    getAllGategories()
-  }, [])
-
   const getAllGategories = () => {
     setLoading(true)
     getCategories()
       .then(([categories]) => {
-        setCategories(categories)
+        setCategories(categories || [])
       })
       .catch(() => {
-        setCategories([])
+        setCategories({ data: [] })
       })
-      .finally(() => setLoading(false))
+      .finally(() => {
+        setTimeout(() => setLoading(false), 500)
+      })
+  }
+
+  useEffect(() => {
+    getAllGategories()
+  }, [])
+
+  const handleAdd = () => {
+    navigate('/agregarCategoria')
+  }
+  const handleRequestSort = (event, property) => {
+    handleSort(event, property, orderBy, order, setOrderBy, setOrder)
+  }
+
+  const handleSelectAllClick = (event) => {
+    handleSelectAll(event, rows, 'idCategory', setSelected)
+  }
+
+  const handleClick = (event, id) => {
+    handleSelected(event, id, selected, setSelected)
+  }
+
+  const handleEdit = (id) => {
+    navigate(`/editarCategoria/${id}`)
   }
 
   useEffect(() => {
@@ -105,26 +100,6 @@ export const Categories = () => {
 
     setRows(categories.data)
   }, [categories])
-
-  const handleAdd = () => {
-    navigate('/agregarCategoria')
-  }
-
-  const handleSelectAllClick = (event) => {
-    handleSelectAll(event, rows, 'idCategory', setSelected)
-  }
-
-  const handleClick = (event, id) => {
-    handleSelected(event, id, selected, setSelected)
-  }
-
-  const handleRequestSort = (event, property) => {
-    handleSort(event, property, orderBy, order, setOrderBy, setOrder)
-  }
-
-  const handleEdit = (id) => {
-    navigate(`/editarCategoria/${id}`)
-  }
 
   const handleConfirmDelete = () => {
     setMessage('¿Desea eliminar esta categoría?')
@@ -171,29 +146,32 @@ export const Categories = () => {
 
   const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
 
-  if (loading) return <Loader title="Cargando categorías" />
+  if (loading) return <Loader title="Cargando categorías..." />
 
   return (
-    <MainWrapper >
-      <Paper 
-      sx={{
-        
-        margin:10,
-        display: { xs: 'none', lg: 'initial' },
-        
-        }}>
-          <ArrowBack/>
+    <MainWrapper>
+      <Paper
+        sx={{
+          width: '90%',
+          margin: 10,
+          display: { xs: 'none', lg: 'initial' },
+          boxShadow: 'var(--box-shadow)'
+        }}
+      >
+        <ArrowBack />
+        <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
+          Total de Categorias:{rows.length}
+        </Typography>
         <EnhancedTableToolbar
           title="Categorías"
           titleAdd="Agregar categoría"
           handleAdd={handleAdd}
           numSelected={selected.length}
-          
         />
         <TableContainer>
           <Table aria-labelledby="tableTitle" size="medium">
             <EnhancedTableHead
-              headCells={headCells}
+              headCells={headCellsCategory}
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
@@ -263,17 +241,10 @@ export const Categories = () => {
                   <TableCell colSpan={4} />
                 </TableRow>
               )}
-              {page === 0 && rows === 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows
-                  }}
-                >
-                  <TableCell colSpan={4}>
-                    <Typography align="center">
-                      {page === 0 ? 'No se encontraron categorías' : ''}
-                    </Typography>
-                  </TableCell>
+              {page === 0 && rows.length === 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={7} align="center" />
+                  <Typography>No se encontraron categorías</Typography>
                 </TableRow>
               )}
             </TableBody>

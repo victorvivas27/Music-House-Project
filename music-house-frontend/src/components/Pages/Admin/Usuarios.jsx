@@ -9,7 +9,8 @@ import {
   Paper,
   Checkbox,
   IconButton,
-  Tooltip
+  Tooltip,
+  Typography
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
@@ -31,15 +32,7 @@ import {
 import { Loader } from '../../common/loader/Loader'
 import ArrowBack from '../../utils/ArrowBack'
 import Swal from 'sweetalert2'
-
-const headCells = [
-  { id: 'idUser', numeric: true, disablePadding: false, label: 'ID' },
-  { id: 'rol', numeric: false, disablePadding: false, label: 'Rol' },
-  { id: 'name', numeric: false, disablePadding: false, label: 'Nombre' },
-  { id: 'lastName', numeric: false, disablePadding: false, label: 'Apellido' },
-  { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'actions', numeric: false, disablePadding: false, label: 'Acciones' }
-]
+import { headCellsUser } from '../../utils/types/HeadCells'
 
 export const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([])
@@ -48,12 +41,11 @@ export const Usuarios = () => {
   const [orderBy, setOrderBy] = useState('idUser')
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
+
   const [rowsPerPage, setRowsPerPage] = useState(5)
   const navigate = useNavigate()
 
-  useEffect(() => {
-    getUsuarios()
-  }, [])
+
 
   const getUsuarios = () => {
     setLoading(true)
@@ -63,15 +55,15 @@ export const Usuarios = () => {
       })
       .catch(() => {
         setUsuarios([])
-        Swal.fire({
-          title: 'Error',
-          text: 'No se pudieron cargar los usuarios',
-          icon: 'error',
-          confirmButtonText: 'Entendido'
-        })
       })
-      .finally(() => setLoading(false))
+      .finally(() => {
+        setTimeout(() => setLoading(false), 500)
+      })
   }
+
+  useEffect(() => {
+    getUsuarios()
+  }, [])
 
   const handleAdd = () => {
     navigate('/agregarUsuario')
@@ -146,7 +138,7 @@ export const Usuarios = () => {
     rowsPerPage
   )
 
-  if (loading) return <Loader title="Cargando usuarios" />
+  if (loading) return <Loader title="Cargando usuarios..." />
 
   return (
     <>
@@ -156,10 +148,16 @@ export const Usuarios = () => {
             sx={{
               display: { xs: 'none', lg: 'initial' },
               margin: 10,
-              minWidth: 1700
+              width: '95%',
+              boxShadow: 'var(--box-shadow)'
             }}
           >
             <ArrowBack />
+            {/* Contador */}
+            <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
+              Total de Usuarios: {usuarios.length}
+            </Typography>
+
             <EnhancedTableToolbar
               title="Usuarios"
               titleAdd="Agregar usuario"
@@ -168,9 +166,8 @@ export const Usuarios = () => {
             />
             <TableContainer>
               <Table aria-labelledby="tableTitle" size="medium">
-                
                 <EnhancedTableHead
-                  headCells={headCells}
+                  headCells={headCellsUser}
                   numSelected={selected.length}
                   order={order}
                   orderBy={orderBy}
@@ -251,7 +248,13 @@ export const Usuarios = () => {
                   })}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={5} />
+                      <TableCell colSpan={3} />
+                    </TableRow>
+                  )}
+                  {page === 0 && usuarios.length === 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={7} align="center" />
+                      <Typography>No se encontraron usuarios</Typography>
                     </TableRow>
                   )}
                 </TableBody>
