@@ -155,6 +155,7 @@ export const Categories = () => {
           width: '90%',
           margin: 10,
           display: { xs: 'none', lg: 'initial' },
+          borderRadius: 4,
           boxShadow: 'var(--box-shadow)'
         }}
       >

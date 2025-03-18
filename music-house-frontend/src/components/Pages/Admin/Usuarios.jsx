@@ -149,6 +149,7 @@ export const Usuarios = () => {
               display: { xs: 'none', lg: 'initial' },
               margin: 10,
               width: '95%',
+              borderRadius: 4,
               boxShadow: 'var(--box-shadow)'
             }}
           >

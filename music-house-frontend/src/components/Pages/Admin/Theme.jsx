@@ -155,6 +155,7 @@ export const Theme = () => {
           width: '90%',
           display: { xs: 'none', lg: 'initial' },
           margin: 10,
+          borderRadius: 4,
           boxShadow: 'var(--box-shadow)'
         }}
       >
