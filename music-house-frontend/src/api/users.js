@@ -25,7 +25,7 @@ export const UsersApi = {
 
   getUserById: (id) => getFetch(`${URL_GET_USER}${id}`),
 
-  // ✅ MODIFICADO: Ahora usa `axios.post()` en lugar de `postFetch`
+
   registerUser: async (formData) => {
     try {
       const response = await axios.post(URL_CREATE_USER, formData, {
@@ -36,10 +36,18 @@ export const UsersApi = {
 
       return response.data;
     } catch (error) {
+      if (error.response) {
+        throw error.response
+      } else if (error.request) {
+        throw new Error('No se pudo conectar con el servidor');
+      } else {
+        // ❌ Error inesperado (ejemplo: problema con axios)
+        throw new Error(`Error inesperado: ${error.message}`);
+      }
 
-      throw new Error("Error al registrar usuario", error);
     }
   },
+
   updateUser: async (formData) => {
     try {
       const response = await axios.put(URL_UPDATE_USER, formData, {
@@ -74,6 +82,7 @@ export const UsersApi = {
     try {
       const respuesta = await axios.post(URL_BASE_LOGIN, user);
       return respuesta.data;
+
     } catch (error) {
       if (error.response) {
         // ⚠️ Si el backend responde con un error (ejemplo: 404, 401, 500)

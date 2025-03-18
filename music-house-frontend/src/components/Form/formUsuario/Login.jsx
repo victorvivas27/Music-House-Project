@@ -4,8 +4,6 @@ import {
   Grid,
   InputAdornment,
   IconButton,
-  
- 
   CircularProgress,
   TextField
 } from '@mui/material'
@@ -61,49 +59,45 @@ const Login = ({ onSwitch }) => {
   const [showPassword, setShowPassword] = useState(false)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
   const [loading, setLoading] = useState(false)
-   const { showSuccess, showError } = useAlert()
+  const { showSuccess, showError } = useAlert()
 
-   const formik = useFormik({
+  const formik = useFormik({
     initialValues: {
       email: '',
       password: ''
     },
     validationSchema: loginValidationSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      setLoading(true);
-    
+      setLoading(true)
+
       try {
-        const response = await UsersApi.loginUser(values);
-    
+        const response = await UsersApi.loginUser(values)
+
         if (response && response.data && response.data.token) {
-          
-          setAuthData(response.data);
-          showSuccess('¡Inicio de sesión exitoso!');
+          setAuthData(response.data)
+          showSuccess('¡Inicio de sesión exitoso!')
+
           setTimeout(() => {
-            navigate('/');
-          }, 2000);
+            navigate('/')
+          }, 2000)
         } else {
-          showError('❌Credenciales incorrectas');
+          showError('❌Credenciales incorrectas')
         }
       } catch (error) {
-       
-    
         if (error.data && error.data.message) {
           // ✅ Ahora sí capturamos el mensaje que envía el backend
-          showError(`❌ ${error.data.message}`);
-         
-          
+          showError(`❌ ${error.data.message}`)
         } else if (error.request) {
-          showError('⚠️No se pudo conectar con el servidor.');
+          showError('⚠️No se pudo conectar con el servidor.')
         } else {
-          showError('❌Error inesperado. Intenta nuevamente.');
+          showError('❌Error inesperado. Intenta nuevamente.')
         }
       } finally {
-        setSubmitting(false);
-        setLoading(false);
+        setSubmitting(false)
+        setLoading(false)
       }
     }
-  });
+  })
 
   return (
     <>
@@ -144,8 +138,7 @@ const Login = ({ onSwitch }) => {
                 margin="normal"
                 sx={{
                   //minHeight: '60px',
-                  ...inputStyles,
-                 
+                  ...inputStyles
                 }}
               >
                 <TextField
@@ -156,19 +149,19 @@ const Login = ({ onSwitch }) => {
                   onChange={formik.handleChange}
                   value={formik.values.email}
                   type="email"
-                 
                   error={formik.touched.email && Boolean(formik.errors.email)}
-                  helperText={formik.touched.email && formik.errors.email||' '}
-                  sx={{ color:'red'}}
+                  helperText={
+                    (formik.touched.email && formik.errors.email) || ' '
+                  }
+                  sx={{ color: 'red' }}
                 />
               </FormControl>
 
               <FormControl
                 fullWidth
                 margin="normal"
-                
                 sx={{
-                 // minHeight: '60px',
+                  // minHeight: '60px',
                   ...inputStyles
                 }}
               >
@@ -182,8 +175,12 @@ const Login = ({ onSwitch }) => {
                   onChange={formik.handleChange}
                   value={formik.values.password}
                   type={showPassword ? 'text' : 'password'}
-                  error={ formik.touched.password && Boolean(formik.errors.password) }
-                  helperText={ formik.touched.password && formik.errors.password||' ' }
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                  helperText={
+                    (formik.touched.password && formik.errors.password) || ' '
+                  }
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -216,7 +213,6 @@ const Login = ({ onSwitch }) => {
                     )
                   }}
                 />
-              
               </FormControl>
             </Grid>
             <ContainerBottom>

@@ -51,7 +51,14 @@ const NewUser = ({ onSwitch }) => {
         showError('Error al registrar usuario. No se recibió el token.')
       }
     } catch (error) {
-      showError('No se pudo registrar usuario. Intenta de nuevo.')
+      if (error.data && error.data.message) {
+        // ✅ Ahora sí capturamos el mensaje que envía el backend
+        showError(`❌ ${error.data.message}`)
+      } else if (error.request) {
+        showError('⚠️No se pudo conectar con el servidor.')
+      } else {
+        showError('❌Error inesperado. Intenta nuevamente.')
+      }
     } finally {
       setLoading(false)
     }
