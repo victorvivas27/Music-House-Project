@@ -133,7 +133,7 @@ export const UserForm = ({
   const combinedLoading = loading || isSubmitting
   const buttonText = formData.idUser || isUserAdmin ? 'Guardar' : 'Registrar'
   const buttonTextLoading =
-    formData.idUser || isUserAdmin ? 'Guardardando' : 'Registrando'
+    formData.idUser || isUserAdmin ? 'Guardardando...' : 'Registrando...'
 
   /*handleChange (manejarCambios) es una función que se encarga de manejar
  los cambios en los campos del formulario,en tiempo real */
@@ -332,7 +332,11 @@ export const UserForm = ({
       }
 
       if (!formData.telegramChatId) {
-        newErrors.telegramChatId = '❌El código de Telegram es obligatorio'
+        newErrors.telegramChatId = '❌ El código de Telegram es obligatorio'
+        formIsValid = false
+      } else if (formData.telegramChatId.length <= 4) {
+        newErrors.telegramChatId =
+          '❌ El código de Telegram debe tener 5 dígitos'
         formIsValid = false
       }
     }
@@ -451,7 +455,6 @@ export const UserForm = ({
     }
   }, [formData.picture])
 
-  //console.log("isUserAdmin:", isUserAdmin);
   return (
     <form onSubmit={handleSubmit} style={{ margin: 'auto', width: '100%' }}>
       <ContainerForm>
@@ -463,8 +466,7 @@ export const UserForm = ({
             alignItems: 'center',
             gap: '10px',
             width: '90%',
-            boxShadow:
-              ' rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;',
+            boxShadow: 'var(--box-shadow)',
             borderRadius: '8px',
             padding: '20px'
           }}
@@ -495,8 +497,7 @@ export const UserForm = ({
                 justifyContent: 'center',
                 alignItems: { xs: 'center', md: 'flex-end' },
                 flexDirection: { md: 'row', xs: 'column' },
-                gap: '10px',
-                margin: 2
+                gap: '10px'
               }}
             >
               {/*Comienzo contenedor formulario lado izquierdo*/}
@@ -506,18 +507,15 @@ export const UserForm = ({
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'center',
-                  alignItems: 'center',
-                  margin: 2
+                  alignItems: 'center'
                 }}
               >
                 {/* Contenedor del avatar y la subida de imagen */}
                 <FormControl
-                  fullWidth
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    minHeight: '60px',
-                    margin: 2
+                    height: '160px'
                   }}
                 >
                   <Box
@@ -538,7 +536,6 @@ export const UserForm = ({
                           fontSize: 40,
                           cursor: 'pointer',
                           color: 'var(--color-primario)',
-                          margin: 2,
 
                           '&:hover': { opacity: 0.8 }
                         }}
@@ -562,7 +559,6 @@ export const UserForm = ({
                       variant="body2"
                       color="var(--text-primario)"
                       sx={{
-                        mt: 1,
                         textAlign: 'center',
                         color: 'var(--texto-primario)',
                         fontWeight: 'bold'
@@ -574,7 +570,11 @@ export const UserForm = ({
 
                   {/* Mensaje de error si existe */}
                   {errors.picture && (
-                    <Typography color="var(--color-error)" variant="body1">
+                    <Typography
+                      color="var(--color-error)"
+                      variant="body1"
+                      sx={{ minHeight: '30px' }}
+                    >
                       {errors.picture}
                     </Typography>
                   )}
@@ -587,8 +587,8 @@ export const UserForm = ({
                   fullWidth
                   margin="normal"
                   sx={{
-                    ...inputStyles,
-                    minHeight: '60px'
+                    ...inputStyles
+                    //minHeight: '60px'
                   }}
                 >
                   <TextField
@@ -598,19 +598,17 @@ export const UserForm = ({
                     onChange={handleChange}
                     type="text"
                     error={Boolean(allErrors.name)}
-                    helperText={errors.name}
+                    helperText={errors.name || ' '}
                   />
                 </FormControl>
                 {/*Fin input name*/}
 
                 {/*Input last name*/}
                 <FormControl
-                  fullWidth
                   margin="normal"
                   sx={{
-                    ...inputStyles,
-                    minHeight: '60px'
-                    
+                    ...inputStyles
+                    //minHeight: '60px'
                   }}
                 >
                   <TextField
@@ -620,7 +618,7 @@ export const UserForm = ({
                     onChange={handleChange}
                     type="text"
                     error={Boolean(allErrors.lastName)}
-                    helperText={errors.lastName}
+                    helperText={errors.lastName || ' '}
                   />
                 </FormControl>
                 {/*Fin input last name*/}
@@ -636,14 +634,13 @@ export const UserForm = ({
                     {/*Input calle */}
                     <Grid item xs={12} sm={6}>
                       <FormControl
-                       key={index} 
-                       fullWidth margin="normal"
-                       sx={{
-                        ...inputStyles,
-                        minHeight: '60px'
-                        
-                      }}
-                       >
+                        key={index}
+                        margin="normal"
+                        sx={{
+                          ...inputStyles
+                          // minHeight: '60px'
+                        }}
+                      >
                         <TextField
                           label="🏠Calle"
                           name="street"
@@ -652,7 +649,6 @@ export const UserForm = ({
                           error={Boolean(allErrors[`street_${index}`])}
                           helperText={errors[`street_${index}`] || ' '}
                           type="text"
-                          fullWidth
                         />
                       </FormControl>
                     </Grid>
@@ -662,12 +658,10 @@ export const UserForm = ({
                     <Grid item xs={12} sm={6}>
                       <FormControl
                         key={index}
-                        fullWidth
                         margin="normal"
                         sx={{
-                          ...inputStyles,
-                          minHeight: '60px'
-                          
+                          ...inputStyles
+                          // minHeight: '60px'
                         }}
                       >
                         <TextField
@@ -678,7 +672,6 @@ export const UserForm = ({
                           error={Boolean(allErrors[`number_${index}`])}
                           helperText={errors[`number_${index}`] || ' '}
                           type="text"
-                          fullWidth
                         />
                       </FormControl>
                     </Grid>
@@ -688,12 +681,10 @@ export const UserForm = ({
                     <Grid item xs={12} sm={4}>
                       <FormControl
                         key={index}
-                        fullWidth
                         margin="normal"
                         sx={{
-                          ...inputStyles,
-                          minHeight: '60px'
-                          
+                          ...inputStyles
+                          //minHeight: '60px'
                         }}
                       >
                         <TextField
@@ -704,7 +695,6 @@ export const UserForm = ({
                           error={Boolean(allErrors[`city_${index}`])}
                           helperText={errors[`city_${index}`] || ' '}
                           type="text"
-                          fullWidth
                         />
                       </FormControl>
                     </Grid>
@@ -713,12 +703,10 @@ export const UserForm = ({
                     <Grid item xs={12} sm={4}>
                       <FormControl
                         key={index}
-                        fullWidth
                         margin="normal"
                         sx={{
                           ...inputStyles,
                           minHeight: '60px'
-                          
                         }}
                       >
                         <TextField
@@ -729,7 +717,6 @@ export const UserForm = ({
                           error={Boolean(allErrors[`state_${index}`])}
                           helperText={errors[`state_${index}`] || ' '}
                           type="text"
-                          fullWidth
                         />
                       </FormControl>
                     </Grid>
@@ -739,12 +726,10 @@ export const UserForm = ({
                     <Grid item xs={12} sm={4}>
                       <FormControl
                         key={index}
-                        fullWidth
                         margin="normal"
                         sx={{
-                          ...inputStyles,
-                          minHeight: '60px'
-                          
+                          ...inputStyles
+                          // minHeight: '60px'
                         }}
                       >
                         <TextField
@@ -755,7 +740,6 @@ export const UserForm = ({
                           error={Boolean(allErrors[`country_${index}`])}
                           helperText={errors[`country_${index}`] || ' '}
                           type="text"
-                          fullWidth
                         />
                       </FormControl>
                     </Grid>
@@ -766,16 +750,11 @@ export const UserForm = ({
 
                 {/*Contenedor  telefono */}
                 {formData.phones.map((phone, index) => (
-                  <FormControl
-                   key={index}
-                    fullWidth
-                    >
+                  <FormControl key={index} sx={{ ...inputStyles }}>
                     {/* 📌 Select para elegir el código de país */}
                     <FormControl
-                      fullWidth
                       margin="normal"
                       sx={{
-                        ...inputStyles,
                         '& .MuiInputBase-input': {
                           color: phone.countryCode
                             ? 'var(--color-azul)'
@@ -825,9 +804,9 @@ export const UserForm = ({
                         handlePhoneChange(index, 'phoneNumber', e.target.value)
                       }
                       error={Boolean(allErrors[`phone_${index}`])}
-                      helperText={errors[`phone_${index}`] || ''}
+                      helperText={errors[`phone_${index}`] || ' '}
                       type="text"
-                      sx={{...inputStyles}}
+                      sx={{ ...inputStyles }}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -856,14 +835,12 @@ export const UserForm = ({
               >
                 {/*Input email*/}
                 <FormControl
-                 fullWidth 
-                 margin="normal"
-                 sx={{
-                  ...inputStyles,
-                  minHeight: '60px'
-                  
-                }}
-                 >
+                  margin="normal"
+                  sx={{
+                    ...inputStyles
+                    // minHeight: '60px'
+                  }}
+                >
                   <TextField
                     label="📧 Email"
                     name="email"
@@ -871,7 +848,7 @@ export const UserForm = ({
                     value={formData.email}
                     type="email"
                     error={Boolean(allErrors.email)}
-                    helperText={errors.email}
+                    helperText={errors.email || ' '}
                   />
                 </FormControl>
                 {/*Fin input email*/}
@@ -921,7 +898,6 @@ export const UserForm = ({
 
                         {/* 📌 Select para asignar roles */}
                         <FormControl
-                          fullWidth
                           margin="normal"
                           sx={{
                             ...inputStyles,
@@ -945,12 +921,9 @@ export const UserForm = ({
                     <>
                       {/* Campo de contraseña */}
                       <FormControl
-                        fullWidth
                         margin="normal"
-                        error={Boolean(allErrors.password || '')}
                         sx={{
-                          ...inputStyles,
-                           minHeight: '60px'
+                          ...inputStyles
                         }}
                       >
                         <TextField
@@ -959,6 +932,8 @@ export const UserForm = ({
                           onChange={handleChange}
                           value={formData.password}
                           type={showPassword ? 'text' : 'password'}
+                          error={Boolean(allErrors.password)}
+                          helperText={allErrors.password || ' '}
                           InputProps={{
                             endAdornment: (
                               <InputAdornment position="end">
@@ -986,27 +961,22 @@ export const UserForm = ({
                             )
                           }}
                         />
-                        {allErrors.password && (
-                          <FormHelperText>{allErrors.password}</FormHelperText>
-                        )}
                       </FormControl>
 
                       {/* Campo de repetir contraseña */}
-                      <FormControl
-                        fullWidth
-                        margin="normal"
-                        error={Boolean(allErrors.repeatPassword)}
-                        sx={{
-                          ...inputStyles,
-                           minHeight: '60px'
-                        }}
-                      >
+                      <FormControl margin="normal" sx={{ ...inputStyles }}>
                         <TextField
-                          label="🔓Repetir Contraseña"
+                          label="🔓 Repetir Contraseña"
                           name="repeatPassword"
                           onChange={handleChange}
                           value={formData.repeatPassword}
                           type={showPasswordRepeat ? 'text' : 'password'}
+                          error={Boolean(allErrors.repeatPassword)} // ✅ Muestra error solo aquí
+                          helperText={
+                            allErrors.repeatPassword ||
+                            success.repeatPassword ||
+                            ' '
+                          } // ✅ Muestra mensaje de éxito si no hay error
                           InputProps={{
                             endAdornment: (
                               <InputAdornment position="end">
@@ -1036,24 +1006,14 @@ export const UserForm = ({
                             )
                           }}
                         />
-                        {allErrors.repeatPassword ? (
-                          <FormHelperText>
-                            {allErrors.repeatPassword}
-                          </FormHelperText>
-                        ) : success.repeatPassword ? (
-                          <FormHelperText sx={{ color: 'var(--color-exit)' }}>
-                            {success.repeatPassword}
-                          </FormHelperText>
-                        ) : null}
                       </FormControl>
 
                       <FormControl
-                        fullWidth
                         margin="normal"
                         sx={{
-                           ...inputStyles,
-                            minHeight: '60px'
-                          }}
+                          ...inputStyles
+                          //minHeight: '60px'
+                        }}
                       >
                         <TextField
                           label="🔢Código de Telegram"
@@ -1061,7 +1021,7 @@ export const UserForm = ({
                           onChange={handleChange}
                           value={formData.telegramChatId}
                           error={Boolean(errors.telegramChatId)}
-                          helperText={errors.telegramChatId}
+                          helperText={errors.telegramChatId || ' '}
                           type="tel"
                           inputProps={{ maxLength: 15, pattern: '[0-9]*' }}
                         />

@@ -33,7 +33,7 @@ export const AuthContextProvider = ({ children }) => {
         const name = decoded.name || null
         const lastName = decoded.lastName || null
 
-        console.log(roles);
+       
         
 
         setAuthGlobal(true)

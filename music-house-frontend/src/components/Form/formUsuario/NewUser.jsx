@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { UsersApi } from '../../../api/users'
 import { UserForm } from './UserForm'
-import { MessageDialog } from '../../common/MessageDialog'
+
 import { useAuthContext } from '../../utils/context/AuthGlobal'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
+import useAlert from '../../../hook/useAlert'
 
 const NewUser = ({ onSwitch }) => {
   const initialFormData = {
@@ -19,11 +20,10 @@ const NewUser = ({ onSwitch }) => {
     phones: [{ phoneNumber: '', countryCode: '' }]
   }
 
-  const [showMessage, setShowMessage] = useState(false)
-  const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const { setAuthData } = useAuthContext()
   const navigate = useNavigate()
+  const { showSuccess, showError } = useAlert()
 
   const handleSubmit = async (formData) => {
     setLoading(true)
@@ -42,24 +42,16 @@ const NewUser = ({ onSwitch }) => {
 
       if (response && response.data && response.data.token) {
         setAuthData(response.data)
-        setMessage('Usuario registrado exitosamente.')
-        setShowMessage(true)
+        showSuccess('Usuario registrado exitosamente.')
 
         setTimeout(() => {
-          navigate('/', { replace: true })
-        }, 1000)
+          navigate('/')
+        }, 1700)
       } else {
-        throw new Error('Error al registrar usuario. No se recibió el token.')
+        showError('Error al registrar usuario. No se recibió el token.')
       }
     } catch (error) {
-      let errorMessage = 'No se pudo registrar usuario. Intenta de nuevo.'
-
-      if (error.response) {
-        errorMessage = error.response.data.message || errorMessage
-      }
-
-      setMessage(errorMessage)
-      setShowMessage(true)
+      showError('No se pudo registrar usuario. Intenta de nuevo.')
     } finally {
       setLoading(false)
     }
@@ -72,13 +64,6 @@ const NewUser = ({ onSwitch }) => {
         initialFormData={initialFormData}
         onSubmit={handleSubmit}
         loading={loading}
-      />
-      <MessageDialog
-        title="Registrar Usuario"
-        message={message}
-        isOpen={showMessage}
-        key={message}
-        onClose={() => setShowMessage(false)}
       />
     </>
   )
