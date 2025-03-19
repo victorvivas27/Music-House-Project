@@ -154,7 +154,7 @@ export const EnhancedTableToolbar = (props) => {
       )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Eliminar (Aún no implementado)">
+        <Tooltip title="Eliminar EL Total Seleccionado">
           <IconButton onClick={handleConfirmDelete}>
             <DeleteIcon />
           </IconButton>
@@ -253,5 +253,5 @@ EnhancedTableToolbar.propTypes = {
   handleConfirmDelete: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   titleAdd: PropTypes.string,
-  handleAdd: PropTypes.func.isRequired
+  handleAdd: PropTypes.func
 };

@@ -122,20 +122,23 @@ const EditUser = ({ onSwitch }) => {
       }
 
       if (response && response.message) {
-        showSuccess(`✅ ${response.message}`)
+        setTimeout(() => {
+          showSuccess(`✅ ${response.message}`)
+          navigate(-1)
+        }, 1100)
       }
 
-      setTimeout(() => {
-        navigate(-1)
-      }, 1100)
+     
     } catch (error) {
       if (error.data) {
-        // ✅ Ahora sí capturamos el mensaje que envía el backend
+     
         showError(`❌ ${error.data.message||
            '⚠️ No se pudo conectar con el servidor.'}`)
       } 
     } finally {
-      setIsSubmitting(false)
+      setTimeout(() => {
+        setIsSubmitting(false) 
+      }, 1100)
     }
   }
 

@@ -139,10 +139,14 @@ export const UserForm = ({
  los cambios en los campos del formulario,en tiempo real */
   const handleChange = (event) => {
     const { name, value } = event.target
-
+     // 📌 Convierte a mayúsculas solo los campos específicos
+  const upperCaseFields = ['name', 'lastName']
+  // 📌 Convierte a mayúsculas solo si el campo está en la lista
+  const transformedValue = upperCaseFields.includes(name) ? value.toUpperCase() : value
+  
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: transformedValue
     }))
 
     setErrors((prev) => ({
@@ -211,9 +215,13 @@ export const UserForm = ({
  los cambios en los campos del formulario,en tiempo real */
   const handleAddressChange = (index, event) => {
     const { name, value } = event.target
+     // 📌 Lista de campos de dirección a convertir a mayúsculas
+  const upperCaseFields = ['street', 'city', 'state', 'country']
+    // 📌 Convertir el valor si el campo es de dirección
+    const transformedValue = upperCaseFields.includes(name) ? value.toUpperCase() : value
 
     const updatedAddresses = formData.addresses.map((address, i) =>
-      i === index ? { ...address, [name]: value } : address
+      i === index ? { ...address, [name]: transformedValue } : address
     )
 
     setFormData((prevState) => ({

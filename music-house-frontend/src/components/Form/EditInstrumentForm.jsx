@@ -64,23 +64,23 @@ const EditInstrumentForm = ({ id }) => {
     try {
       const response = await updateInstrument(data)
       if (response && response.data) {
-        showSuccess(`✅${response.message}`) // ✅ Mostrar éxito después de 2s
         setTimeout(() => {
+          showSuccess(`✅${response.message}`) // ✅ Mostrar éxito después de 2s
           navigate('/instruments')
-        }, 2000)
+        }, 1100)
       } else {
         showError(`${response.message}`)
       }
     } catch (error) {
       if (error.data) {
-        // ✅ Ahora sí capturamos el mensaje que envía el backend
+       
         showError(`❌ ${error.data.message||
            '⚠️ No se pudo conectar con el servidor.'}`)
       } 
     } finally {
       setTimeout(() => {
-        setIsSubmitting(false) // ✅ Apagar el loader después de 4s
-      }, 2000)
+        setIsSubmitting(false) 
+      }, 1100)
     }
   }
 
@@ -102,7 +102,7 @@ const EditInstrumentForm = ({ id }) => {
         <InstrumentForm
           initialFormData={initialFormData}
           onSubmit={onSubmit}
-          loading={isSubmitting} // ✅ Pasar estado al formulario
+          loading={isSubmitting}
           isEditing={true}
         />
       )}

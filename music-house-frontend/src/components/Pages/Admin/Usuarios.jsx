@@ -10,7 +10,8 @@ import {
   Checkbox,
   IconButton,
   Tooltip,
-  Typography
+  Typography,
+  Box
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
@@ -219,27 +220,36 @@ export const Usuarios = () => {
                         <TableCell align="left">{row.lastName}</TableCell>
                         <TableCell align="left">{row.email}</TableCell>
                         <TableCell align="left">
-                          <Tooltip title="Editar">
-                            <IconButton
-                              onClick={(event) => {
-                                event.stopPropagation() // Evita que se seleccione la fila
-                                handleEdit(row.idUser)
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
+                          <Box
+                            style={{
+                              opacity: selected.length > 0 ? 0 : 1,
+                              pointerEvents:
+                                selected.length > 0 ? 'none' : 'auto',
+                              transition: 'opacity 0.5s ease-in-out'
+                            }}
+                          >
+                            <Tooltip title="Editar">
+                              <IconButton
+                                onClick={(event) => {
+                                  event.stopPropagation()
+                                  handleEdit(row.idUser)
+                                }}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
 
-                          <Tooltip title="Eliminar">
-                            <IconButton
-                              onClick={(event) => {
-                                event.stopPropagation() // Evita que se seleccione la fila
-                                handleDelete(row.idUser)
-                              }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Tooltip>
+                            <Tooltip title="Eliminar">
+                              <IconButton
+                                onClick={(event) => {
+                                  event.stopPropagation()
+                                  handleDelete(row.idUser)
+                                }}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
                         </TableCell>
                       </TableRow>
                     )

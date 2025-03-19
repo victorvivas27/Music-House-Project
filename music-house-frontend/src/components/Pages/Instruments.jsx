@@ -10,7 +10,8 @@ import {
   Paper,
   IconButton,
   Tooltip,
-  Checkbox
+  Checkbox,
+  Box
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
@@ -48,7 +49,6 @@ export const Instruments = () => {
 
   const navigate = useNavigate()
 
-  
   const getAllInstruments = async () => {
     setLoading(true)
     try {
@@ -63,10 +63,9 @@ export const Instruments = () => {
   }
 
   useEffect(() => {
-      setRows(instruments.data)
-      setLoading(false)
-    }, [instruments])
-
+    setRows(instruments.data)
+    setLoading(false)
+  }, [instruments])
 
   useEffect(() => {
     getAllInstruments()
@@ -108,11 +107,14 @@ export const Instruments = () => {
       )
       setSelected([])
       getAllInstruments()
-    } catch(error) {
+    } catch (error) {
       if (error.data) {
         // ✅ Ahora sí capturamos el mensaje que envía el backend
-        showError(`❌ ${error.data.message||
-           '⚠️ No se pudo conectar con el servidor.'}`)
+        showError(
+          `❌ ${
+            error.data.message || '⚠️ No se pudo conectar con el servidor.'
+          }`
+        )
       }
     }
   }
@@ -130,144 +132,149 @@ export const Instruments = () => {
 
   return (
     <>
-    {!loading &&(
-    <MainWrapper>
-      <Paper
-        sx={{
-          display: { xs: 'none', lg: 'initial' },
-          width: '90%',
-          margin: 'auto',
-          boxShadow: 'var(--box-shadow)',
-          borderRadius: 4
-        }}
-      >
-        <ArrowBack />
-        {/* Contador de instrumentos */}
-        <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
-          Total de Instrumentos: {rows.length} 
-        </Typography>
-        {/* Fin Contador de instrumentos */}
+      {!loading && (
+        <MainWrapper>
+          <Paper
+            sx={{
+              display: { xs: 'none', lg: 'initial' },
+              width: '90%',
+              margin: 'auto',
+              boxShadow: 'var(--box-shadow)',
+              borderRadius: 4
+            }}
+          >
+            <ArrowBack />
+            {/* Contador de instrumentos */}
+            <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
+              Total de Instrumentos: {rows.length}
+            </Typography>
+            {/* Fin Contador de instrumentos */}
 
-        <EnhancedTableToolbar
-          title="Instrumentos"
-          titleAdd="Agregar instrumento"
-          handleAdd={handleAdd}
-          numSelected={selected.length}
-          handleConfirmDelete={() => handleConfirmDelete()}
-        />
-
-        <TableContainer>
-          <Table aria-labelledby="tableTitle" size="medium">
-            <EnhancedTableHead
-              headCells={headCellsInstrument}
+            <EnhancedTableToolbar
+              title="Instrumentos"
+              titleAdd="Agregar instrumento"
+              handleAdd={handleAdd}
               numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-              disableSelectAll
+              handleConfirmDelete={() => handleConfirmDelete()}
             />
 
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.idInstrument, selected)
-                const labelId = `enhanced-table-checkbox-${index}`
-                const isRowEven = index % 2 === 0
+            <TableContainer>
+              <Table aria-labelledby="tableTitle" size="medium">
+                <EnhancedTableHead
+                  headCells={headCellsInstrument}
+                  numSelected={selected.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onSelectAllClick={handleSelectAllClick}
+                  onRequestSort={handleRequestSort}
+                  rowCount={rows.length}
+                  disableSelectAll
+                />
 
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.idInstrument}
-                    selected={isItemSelected}
-                    className={isRowEven ? 'table-row-even' : 'table-row-odd'}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        onChange={(event) =>
-                          handleClick(event, row.idInstrument)
+                <TableBody>
+                  {visibleRows.map((row, index) => {
+                    const isItemSelected = isSelected(
+                      row.idInstrument,
+                      selected
+                    )
+                    const labelId = `enhanced-table-checkbox-${index}`
+                    const isRowEven = index % 2 === 0
+
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.idInstrument}
+                        selected={isItemSelected}
+                        className={
+                          isRowEven ? 'table-row-even' : 'table-row-odd'
                         }
-                        inputProps={{ 'aria-labelledby': labelId }}
-                      />
-                    </TableCell>
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            onChange={(event) =>
+                              handleClick(event, row.idInstrument)
+                            }
+                            inputProps={{ 'aria-labelledby': labelId }}
+                          />
+                        </TableCell>
 
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      align="center"
-                    >
-                      {row.idInstrument}
-                    </TableCell>
-                    <TableCell align="left">{row.name}</TableCell>
-                    <TableCell align="left" className="actions-cell">
-                      {selected.length === 0 && ( // Oculta los botones si hay elementos seleccionados
-                        <>
-                          <Tooltip title="Editar">
-                            <IconButton
-                              onClick={() => handleEdit(row.idInstrument)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Eliminar">
-                            <IconButton
-                              onClick={() =>
-                                handleConfirmDelete(row.idInstrument)
-                              }
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={3} />
-                </TableRow>
-              )}
-              {page === 0 && rows.length === 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell 
-                  colSpan={7}
-                  align="center"
-                  >
-                    <Typography >
-                      No se encontraron instrumentos
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{
-            '& .MuiTablePagination-displayedRows': { display: 'none' },
-            '& .MuiTablePagination-actions': { display: 'none' }
-          }}
-          labelRowsPerPage="Filas por página"
-        />
-      </Paper>
-    </MainWrapper>
-    )}
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          align="center"
+                        >
+                          {row.idInstrument}
+                        </TableCell>
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">
+                          <Box
+                            style={{
+                              opacity: selected.length > 0 ? 0 : 1,
+                              pointerEvents:
+                                selected.length > 0 ? 'none' : 'auto',
+                              transition: 'opacity 0.5s ease-in-out'
+                            }}
+                          >
+                            <Tooltip title="Editar">
+                              <IconButton
+                                onClick={() => handleEdit(row.idInstrument)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Eliminar">
+                              <IconButton
+                                onClick={() =>
+                                  handleConfirmDelete(row.idInstrument)
+                                }
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={3} />
+                    </TableRow>
+                  )}
+                  {page === 0 && rows.length === 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={7} align="center">
+                        <Typography>No se encontraron instrumentos</Typography>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{
+                '& .MuiTablePagination-displayedRows': { display: 'none' },
+                '& .MuiTablePagination-actions': { display: 'none' }
+              }}
+              labelRowsPerPage="Filas por página"
+            />
+          </Paper>
+        </MainWrapper>
+      )}
     </>
   )
 }
