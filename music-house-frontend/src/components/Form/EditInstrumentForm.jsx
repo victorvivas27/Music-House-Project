@@ -17,12 +17,11 @@ const EditInstrumentForm = ({ id }) => {
   const [instrument, setInstrument] = useState(0)
   const [initialFormData, setInitialFormData] = useState()
   const [loading, setLoading] = useState(true)
- const navigate =useNavigate()
- const { showSuccess, showError } = useAlert()
- const [isSubmitting, setIsSubmitting] = useState(false)
- 
+  const navigate = useNavigate()
+  const { showSuccess, showError } = useAlert()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-const getInstrument = useCallback(() => {
+  const getInstrument = useCallback(() => {
     setLoading(true)
     getInstrumentById(id)
       .then(([instrument]) => {
@@ -31,9 +30,7 @@ const getInstrument = useCallback(() => {
       .catch(() => {
         setInstrument({})
       })
-  },[id])
-
-
+  }, [id])
 
   useEffect(() => {
     getInstrument()
@@ -51,39 +48,35 @@ const getInstrument = useCallback(() => {
       rentalPrice: instrument.data.rentalPrice || '',
       idCategory: instrument.data.category?.idCategory || '',
       idTheme: instrument.data.theme?.idTheme || '',
-      characteristics: characteristicsToFormData(instrument),
-    };
+      characteristics: characteristicsToFormData(instrument)
+    }
     setInitialFormData(data)
     setLoading(false)
   }, [instrument])
-
-
-
-
-
-   // Enviar actualización del instrumento sin imágenes
-   const onSubmit = async (formData) => {
+  // Enviar actualización del instrumento sin imágenes
+  const onSubmit = async (formData) => {
     if (!formData) return
-
     const data = {
       ...formData,
       characteristic: formDataToCharacteristics(formData)
     }
-
     setIsSubmitting(true) // ✅ Activar el loader del botón inmediatamente
-
     try {
-      await updateInstrument(data)
-
-      setTimeout(() => {
-        showSuccess('Instrumento actualizado correctamente.') // ✅ Mostrar éxito después de 2s
-      }, 2000)
-
-      setTimeout(() => {
-        navigate('/instruments') // ✅ Redirigir después de 4s
-      }, 2000)
+      const response = await updateInstrument(data)
+      if (response && response.data) {
+        showSuccess(`✅${response.message}`) // ✅ Mostrar éxito después de 2s
+        setTimeout(() => {
+          navigate('/instruments')
+        }, 2000)
+      } else {
+        showError(`${response.message}`)
+      }
     } catch (error) {
-      showError('No se pudo actualizar el instrumento.')
+      if (error.data) {
+        // ✅ Ahora sí capturamos el mensaje que envía el backend
+        showError(`❌ ${error.data.message||
+           '⚠️ No se pudo conectar con el servidor.'}`)
+      } 
     } finally {
       setTimeout(() => {
         setIsSubmitting(false) // ✅ Apagar el loader después de 4s
@@ -107,20 +100,19 @@ const getInstrument = useCallback(() => {
     >
       {!loading && (
         <InstrumentForm
-         initialFormData={initialFormData} 
-         onSubmit={onSubmit} 
-         loading={isSubmitting} // ✅ Pasar estado al formulario
-         isEditing={true}
-         />
+          initialFormData={initialFormData}
+          onSubmit={onSubmit}
+          loading={isSubmitting} // ✅ Pasar estado al formulario
+          isEditing={true}
+        />
       )}
-     
     </Box>
   )
 }
 
 export default EditInstrumentForm
 
- EditInstrumentForm.propTypes={
-  id:PropTypes.string.isRequired,
-  onSaved:PropTypes.func
- }
+EditInstrumentForm.propTypes = {
+  id: PropTypes.string.isRequired,
+  onSaved: PropTypes.func
+}

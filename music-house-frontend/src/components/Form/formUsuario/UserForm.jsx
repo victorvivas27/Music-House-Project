@@ -27,6 +27,7 @@ import usePasswordValidation from '../../../hook/usePasswordValidation'
 import { inputStyles } from '../../styles/styleglobal'
 import { countryCodes } from '../../utils/codepaises/CountryCodes'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
+import useAlert from '../../../hook/useAlert'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -56,9 +57,8 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
 const buttonStyle = {
   backgroundColor: 'var(--color-error)',
   color: 'var(--texto-inverso)',
-  padding: '8px 15px',
+  padding: '10px 15px',
   borderRadius: '5px',
-  border: 'none',
   cursor: 'pointer',
   fontSize: '12px',
   margin: '2px'
@@ -102,6 +102,7 @@ export const UserForm = ({
     usePasswordValidation()
   const [preview, setPreview] = useState(null)
   const { isUserAdmin } = useAuthContext()
+  const { showConfirm, showSuccess, showError } = useAlert()
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]
@@ -399,52 +400,43 @@ export const UserForm = ({
 
   /*handleRemoveRole (manejarEliminarRol) es una función que se encarga de manejar
   la eliminación de roles */
-  const handleRemoveRole = (roleToRemove) => {
+  const handleRemoveRole = async (roleToRemove) => {
     if (!isUserAdmin) return
     if (user.data.roles.length <= 1) return
 
     const role = user.data.roles.find((r) => r.rol === roleToRemove)
-    if (role) {
-      Swal.fire({
-        title: '¿Estás seguro?',
-        text: `Estás a punto de eliminar el rol ${roleToRemove}. ¿Deseas continuar?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          UsersApi.deleteUserRole(idUser, roleToRemove)
-            .then(() => {
-              const updatedRoles = user.data.roles.filter(
-                (r) => r.rol !== roleToRemove
-              )
-              setUser((prevUser) => ({
-                ...prevUser,
-                data: {
-                  ...prevUser.data,
-                  roles: updatedRoles
-                }
-              }))
-              Swal.fire({
-                title: 'Rol eliminado!',
-                text: `El rol ${roleToRemove} ha sido eliminado exitosamente.`,
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 2000
-              })
-            })
-            .catch(() => {
-              Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al eliminar el rol. Por favor, intenta nuevamente.',
-                icon: 'error',
-                showConfirmButton: false,
-                timer: 2000
-              })
-            })
+    if (!role) return
+
+    // ✅ Usar `showConfirm` en lugar de duplicar código
+    const isConfirmed = await showConfirm({
+      title: '¿Estás seguro?',
+      text: `Estás a punto de eliminar el rol ${roleToRemove}. ¿Deseas continuar?`,
+      confirmText: 'Sí, eliminar',
+      cancelText: 'Cancelar'
+    })
+
+    if (!isConfirmed) return // ❌ Si el usuario cancela, no hacemos nada
+
+    try {
+      await UsersApi.deleteUserRole(idUser, roleToRemove)
+
+      // ✅ Actualizar el estado después de eliminar el rol
+      const updatedRoles = user.data.roles.filter((r) => r.rol !== roleToRemove)
+      setUser((prevUser) => ({
+        ...prevUser,
+        data: {
+          ...prevUser.data,
+          roles: updatedRoles
         }
-      })
+      }))
+
+      // ✅ Mostrar alerta de éxito
+      showSuccess(`El rol ${roleToRemove} ha sido eliminado exitosamente.`)
+    } catch (error) {
+      // ❌ Manejo de errores si la API falla
+      showError(
+        `Hubo un problema al eliminar el rol ${roleToRemove}. Por favor, intenta nuevamente.`
+      )
     }
   }
 
@@ -856,11 +848,12 @@ export const UserForm = ({
 
                 {/* ✅ Solo mostrar si hay usuario seleccionado */}
                 {formData?.idUser && (
-                  <Grid
-                    item
-                    xs={12}
-                    md={6}
-                    sx={{ padding: 2, width: '100%', height: '100%' }}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      justifyContent: 'space-evenly'
+                    }}
                   >
                     {/* ✅ Si soy admin, mostrar los botones de gestión de roles */}
                     {isUserAdmin && (
@@ -871,19 +864,16 @@ export const UserForm = ({
                               userRoles.includes(role) && (
                                 <Button
                                   key={role}
+                                  style={buttonStyle}
                                   onClick={() => {
                                     if (userRoles.length === 1) {
-                                      Swal.fire({
-                                        title: 'Acción no permitida',
-                                        text: 'No puedes eliminar el único rol del usuario.',
-                                        icon: 'error',
-                                        confirmButtonText: 'Entendido'
-                                      })
+                                      showError(
+                                        'No puedes eliminar el único rol del usuario.'
+                                      )
                                     } else {
                                       handleRemoveRole(role)
                                     }
                                   }}
-                                  style={buttonStyle}
                                 >
                                   Eliminar rol {role}
                                 </Button>
@@ -899,10 +889,7 @@ export const UserForm = ({
                         <FormControl
                           margin="normal"
                           sx={{
-                            ...inputStyles,
-                            '& .MuiInputBase-input': {
-                              color: 'var(--color-azul)'
-                            }
+                            ...inputStyles
                           }}
                         >
                           <RoleSelect
@@ -912,7 +899,7 @@ export const UserForm = ({
                         </FormControl>
                       </>
                     )}
-                  </Grid>
+                  </Box>
                 )}
 
                 {!isUserAdmin &&
@@ -1162,7 +1149,7 @@ UserForm.propTypes = {
   }),
   loading: PropTypes.bool,
   onSubmit: PropTypes.func,
-  isSubmitting: PropTypes.func,
+  isSubmitting: PropTypes.bool,
 
   // Agregar la validación de `user`
   user: PropTypes.shape({

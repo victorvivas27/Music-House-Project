@@ -108,8 +108,15 @@ export const Instruments = () => {
       )
       setSelected([])
       getAllInstruments()
-    } catch {
-      showError('Error', 'No fue posible eliminar los instrumentos.')
+    } catch(error) {
+      if (error.data && error.data.message) {
+        // ✅ Ahora sí capturamos el mensaje que envía el backend
+        showError(`❌ ${error.data.message}`)
+      } else if (error.request) {
+        showError('⚠️No se pudo conectar con el servidor.')
+      } else {
+        showError('❌Error inesperado. Intenta nuevamente.')
+      }
     }
   }
 

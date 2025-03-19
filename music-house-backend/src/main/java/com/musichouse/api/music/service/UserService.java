@@ -206,7 +206,7 @@ public class UserService implements UserInterface {
         if (user != null) {
             userDtoExit = modelMapper.map(user, UserDtoExit.class);
         } else {
-            throw new ResourceNotFoundException("User not found with id: " + idUser);
+            throw new ResourceNotFoundException("Usuario id: " + idUser);
         }
 
         return userDtoExit;

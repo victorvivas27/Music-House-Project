@@ -64,9 +64,6 @@ public class UserController {
     @GetMapping("/search/{idUser}")
     public ResponseEntity<ApiResponse<UserDtoExit>> getUserById(@PathVariable UUID idUser) {
         try {
-            if (idUser == null) {
-                throw new IllegalArgumentException("El ID del usuario no puede ser nulo.");
-            }
 
             UserDtoExit foundUser = userService.getUserById(idUser);
             return ResponseEntity.ok(ApiResponse.<UserDtoExit>builder()

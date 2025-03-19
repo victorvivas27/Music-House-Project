@@ -42,22 +42,18 @@ const NewUser = ({ onSwitch }) => {
 
       if (response && response.data && response.data.token) {
         setAuthData(response.data)
-        showSuccess('Usuario registrado exitosamente.')
-
+        showSuccess(`✅${response.message}`)
         setTimeout(() => {
           navigate('/')
         }, 1700)
       } else {
-        showError('Error al registrar usuario. No se recibió el token.')
+        showError(`${response.message}`)
       }
     } catch (error) {
-      if (error.data && error.data.message) {
+      if (error.data) {
         // ✅ Ahora sí capturamos el mensaje que envía el backend
-        showError(`❌ ${error.data.message}`)
-      } else if (error.request) {
-        showError('⚠️No se pudo conectar con el servidor.')
-      } else {
-        showError('❌Error inesperado. Intenta nuevamente.')
+        showError(`❌ ${error.data.message||
+           '⚠️ No se pudo conectar con el servidor.'}`)
       }
     } finally {
       setLoading(false)

@@ -75,23 +75,20 @@ const Login = ({ onSwitch }) => {
 
         if (response && response.data && response.data.token) {
           setAuthData(response.data)
-          showSuccess('¡Inicio de sesión exitoso!')
+          showSuccess(`✅${response.message}`)
 
           setTimeout(() => {
             navigate('/')
           }, 2000)
         } else {
-          showError('❌Credenciales incorrectas')
+          showError(`❌${response.message}`)
         }
       } catch (error) {
-        if (error.data && error.data.message) {
+        if (error.data) {
           // ✅ Ahora sí capturamos el mensaje que envía el backend
-          showError(`❌ ${error.data.message}`)
-        } else if (error.request) {
-          showError('⚠️No se pudo conectar con el servidor.')
-        } else {
-          showError('❌Error inesperado. Intenta nuevamente.')
-        }
+          showError(`❌ ${error.data.message||
+             '⚠️ No se pudo conectar con el servidor.'}`)
+        } 
       } finally {
         setSubmitting(false)
         setLoading(false)
@@ -153,7 +150,7 @@ const Login = ({ onSwitch }) => {
                   helperText={
                     (formik.touched.email && formik.errors.email) || ' '
                   }
-                  sx={{ color: 'red' }}
+                 
                 />
               </FormControl>
 

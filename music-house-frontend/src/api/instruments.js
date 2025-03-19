@@ -2,8 +2,6 @@ import axios from 'axios';
 import {
   useGetFetch,
   getFetch,
-  putFetch,
-
 } from '../helpers/useFetch'
 
 /* const URL_INSTRUMENTS = 'https://music-house.up.railway.app/api/instrument'
@@ -33,18 +31,23 @@ export const createInstrument = async (formData) => {
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw error.response
-    } else if (error.request) {
-      throw new Error('No se pudo conectar con el servidor');
-    } else {
-      // ❌ Error inesperado (ejemplo: problema con axios)
-      throw new Error(`Error inesperado: ${error.message}`);
-    }
+      throw (error.response || "No se pudo conectar con el servidor");
+    } 
   }
 };
 
-export const updateInstrument = (payload) => {
-  return putFetch(`${BASE_URL}/instrument/update`, payload)
+export const updateInstrument = async (payload) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/instrument/update`, payload)
+    return response.data
+
+  } catch (error) {
+    if (error.response) {
+      throw (error.response || "No se pudo conectar con el servidor");
+    } 
+
+  }
+
 }
 
 export const deleteInstrument = async (idInstrument) => {
@@ -52,8 +55,9 @@ export const deleteInstrument = async (idInstrument) => {
     const response = await axios.delete(`${BASE_URL}/instrument/delete/${idInstrument}`)
     return response.data // 📌 Devolver la respuesta si es necesario
   } catch (error) {
-    console.error('❌ Error al eliminar el instrumento:', error.response?.data || error.message)
-    throw error // 📌 Lanzar el error para que el frontend pueda manejarlo
+    if (error.response) {
+      throw (error.response || "No se pudo conectar con el servidor");
+    } 
   }
 }
 

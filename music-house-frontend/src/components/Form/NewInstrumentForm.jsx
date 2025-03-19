@@ -70,23 +70,18 @@ const NewInstrumentForm = () => {
       }
 
       try {
-        await createInstrument(formDataToSend)
-
-        // ✅ Éxito: Mostrar alerta y redirigir
-        showSuccess('El instrumento se ha registrado correctamente.')
+        const response = await createInstrument(formDataToSend)
+        showSuccess(`✅ ${response.message}`) // Mostrar mensaje de éxito del backend
 
         setTimeout(() => {
           navigate('/instruments') // ✅ Redirigir después de 1s
         }, 1000)
       } catch (error) {
-        if (error.response?.data?.message) {
-          // ✅ Capturar mensaje del backend
-          showError(`❌ ${error.response.data.message}`)
-        } else if (error.request) {
-          showError('⚠️ No se pudo conectar con el servidor.')
-        } else {
-          showError('❌ Error inesperado. Intenta nuevamente.')
-        }
+        if (error.data) {
+          // ✅ Ahora sí capturamos el mensaje que envía el backend
+          showError(`❌ ${error.data.message||
+             '⚠️ No se pudo conectar con el servidor.'}`)
+        } 
       } finally {
         setLoading(false)
       }
