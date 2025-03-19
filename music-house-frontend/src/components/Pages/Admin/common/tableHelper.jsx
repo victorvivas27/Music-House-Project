@@ -15,7 +15,9 @@ import {
 import { visuallyHidden } from '@mui/utils'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import PropTypes from 'prop-types'
 
+/*Funcion -------------------------------*/
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
     return -1
@@ -26,12 +28,17 @@ const descendingComparator = (a, b, orderBy) => {
   return 0
 }
 
+/* Fin  Funcion -------------------------------*/
+
+/*Funcion -------------------------------*/
 const getComparator = (order, orderBy) => {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
+/* Fin  Funcion -------------------------------*/
 
+/*Funcion -------------------------------*/
 const stableSort = (array, comparator) => {
   const stabilizedThis = array.map((el, index) => [el, index])
   stabilizedThis.sort((a, b) => {
@@ -43,7 +50,9 @@ const stableSort = (array, comparator) => {
   })
   return stabilizedThis.map((el) => el[0])
 }
+/* Fin  Funcion -------------------------------*/
 
+/*  Funcion -------------------------------*/
 export const EnhancedTableHead = (props) => {
   const {
     headCells,
@@ -104,7 +113,9 @@ export const EnhancedTableHead = (props) => {
     </TableHead>
   )
 }
+/* Fin  Funcion -------------------------------*/
 
+/* Funcion -------------------------------*/
 export const EnhancedTableToolbar = (props) => {
   const { numSelected, handleConfirmDelete } = props
 
@@ -158,6 +169,7 @@ export const EnhancedTableToolbar = (props) => {
     </Toolbar>
   )
 }
+/* Fin  Funcion -------------------------------*/
 
 export const isSelected = (id, selected) => selected.indexOf(id) !== -1
 
@@ -214,3 +226,32 @@ export const useVisibleRows = (rows, order, orderBy, page, rowsPerPage) =>
       ),
     [rows, order, orderBy, page, rowsPerPage]
   )
+// ✅ Validación para `EnhancedTableHead`
+EnhancedTableHead.propTypes = {
+  headCells: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      numeric: PropTypes.bool,
+      disablePadding: PropTypes.bool,
+      label: PropTypes.string.isRequired,
+      hidden: PropTypes.bool,
+      sx: PropTypes.object
+    })
+  ).isRequired,
+  onSelectAllClick: PropTypes.func.isRequired,
+  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  orderBy: PropTypes.string.isRequired,
+  numSelected: PropTypes.number.isRequired,
+  rowCount: PropTypes.number.isRequired,
+  onRequestSort: PropTypes.func.isRequired,
+  disableSelectAll: PropTypes.bool
+};
+
+// ✅ Validación para `EnhancedTableToolbar`
+EnhancedTableToolbar.propTypes = {
+  numSelected: PropTypes.number.isRequired,
+  handleConfirmDelete: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  titleAdd: PropTypes.string,
+  handleAdd: PropTypes.func.isRequired
+};

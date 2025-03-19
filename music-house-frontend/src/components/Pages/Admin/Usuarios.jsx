@@ -28,12 +28,10 @@ import {
   getEmptyRows,
   useVisibleRows
 } from './common/tableHelper'
-
 import { Loader } from '../../common/loader/Loader'
 import ArrowBack from '../../utils/ArrowBack'
-import Swal from 'sweetalert2'
 import { headCellsUser } from '../../utils/types/HeadCells'
-
+import useAlert from '../../../hook/useAlert'
 export const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([])
   const [loading, setLoading] = useState(true)
@@ -41,11 +39,9 @@ export const Usuarios = () => {
   const [orderBy, setOrderBy] = useState('idUser')
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
-
   const [rowsPerPage, setRowsPerPage] = useState(5)
   const navigate = useNavigate()
-
-
+  const { showConfirm, showLoading, showSuccess, showError } = useAlert()
 
   const getUsuarios = () => {
     setLoading(true)
@@ -65,9 +61,9 @@ export const Usuarios = () => {
     getUsuarios()
   }, [])
 
-  const handleAdd = () => {
+  /*  const handleAdd = () => {
     navigate('/agregarUsuario')
-  }
+  } */
 
   const handleRequestSort = (event, property) => {
     handleSort(event, property, orderBy, order, setOrderBy, setOrder)
@@ -85,39 +81,36 @@ export const Usuarios = () => {
     navigate(`/editarUsuario/${idUser}`)
   }
 
-  const handleDelete = (idUser) => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Esta acción eliminará permanentemente al usuario.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        UsersApi.deleteUser(idUser)
-          .then(() => {
-            Swal.fire({
-              title: 'Usuario eliminado',
-              text: 'El usuario fue eliminado con éxito.',
-              icon: 'success',
-              timer: 2000,
-              showConfirmButton: false
-            })
-            getUsuarios()
-          })
-          .catch(() => {
-            Swal.fire({
-              title: 'Error',
-              text: 'No se pudo eliminar el usuario.',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          })
-      }
+  const handleDelete = async (idUser = null) => {
+    const selectedIds = idUser ? [idUser] : selected
+    if (selectedIds.length === 0) {
+      showError('Error', 'No hay usuario seleccionados para eliminar.')
+      return
+    }
+    const isConfirmed = await showConfirm({
+      title: `¿Eliminar ${selectedIds.length} usuario(s)?`,
+      text: 'Esta acción no se puede deshacer.'
     })
+    if (!isConfirmed) return
+    showLoading('Eliminando...', 'Por favor espera.')
+    try {
+      await Promise.all(selectedIds.map((id) => UsersApi.deleteUser(id)))
+      showSuccess(
+        '¡Eliminado(s)!',
+        `${selectedIds.length} usuario(s) eliminado(s) correctamente.`
+      )
+      setSelected([])
+      getUsuarios()
+    } catch (error) {
+      if (error.data) {
+        // ✅ Ahora sí capturamos el mensaje que envía el backend
+        showError(
+          `❌ ${
+            error.data.message || '⚠️ No se pudo conectar con el servidor.'
+          }`
+        )
+      }
+    }
   }
 
   const handleChangePage = (newPage) => {
@@ -158,13 +151,16 @@ export const Usuarios = () => {
             <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
               Total de Usuarios: {usuarios.length}
             </Typography>
+            {/*Fin Contador */}
 
             <EnhancedTableToolbar
               title="Usuarios"
               titleAdd="Agregar usuario"
-              handleAdd={handleAdd}
+              //handleAdd={handleAdd}
               numSelected={selected.length}
+              handleConfirmDelete={() => handleDelete()}
             />
+
             <TableContainer>
               <Table aria-labelledby="tableTitle" size="medium">
                 <EnhancedTableHead
@@ -177,6 +173,7 @@ export const Usuarios = () => {
                   rowCount={usuarios.length}
                   disableSelectAll
                 />
+
                 <TableBody>
                   {visibleRows.map((row, index) => {
                     const isItemSelected = isSelected(row.idUser, selected)

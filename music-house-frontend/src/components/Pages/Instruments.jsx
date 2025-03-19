@@ -109,13 +109,10 @@ export const Instruments = () => {
       setSelected([])
       getAllInstruments()
     } catch(error) {
-      if (error.data && error.data.message) {
+      if (error.data) {
         // ✅ Ahora sí capturamos el mensaje que envía el backend
-        showError(`❌ ${error.data.message}`)
-      } else if (error.request) {
-        showError('⚠️No se pudo conectar con el servidor.')
-      } else {
-        showError('❌Error inesperado. Intenta nuevamente.')
+        showError(`❌ ${error.data.message||
+           '⚠️ No se pudo conectar con el servidor.'}`)
       }
     }
   }
@@ -149,6 +146,8 @@ export const Instruments = () => {
         <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
           Total de Instrumentos: {rows.length} 
         </Typography>
+        {/* Fin Contador de instrumentos */}
+
         <EnhancedTableToolbar
           title="Instrumentos"
           titleAdd="Agregar instrumento"
@@ -156,6 +155,7 @@ export const Instruments = () => {
           numSelected={selected.length}
           handleConfirmDelete={() => handleConfirmDelete()}
         />
+
         <TableContainer>
           <Table aria-labelledby="tableTitle" size="medium">
             <EnhancedTableHead
