@@ -48,6 +48,7 @@ const Perfil = () => {
   const [selectedDireccion, setSelectedDireccion] = useState(null)
   // 📌 Media Query para detectar si estamos en pantallas pequeñas
   const isMobile = useMediaQuery('(max-width:600px)')
+ 
 
   const handleOpenModal = () => setOpenModal(true)
   const handleCloseModal = () => setOpenModal(false)
@@ -85,8 +86,10 @@ const Perfil = () => {
     try {
       const response = await UsersApi.getUserById(idUser)
 
-      if (response?.[0]?.data) {
-        setUserData(response[0].data)
+      if (response?.data) {
+        setUserData(response.data)
+        
+        
       } else {
         setError('Estructura de datos inesperada')
         setOpenSnackbar(true)
