@@ -1,16 +1,12 @@
 export const inputStyles = {
   width: "100%", // ✅ Se asegura de que ocupe todo el ancho disponible
   maxWidth: "500px", // 🔹 Opcional: limita el ancho máximo si es necesario
-
   transition: 'all 0.3s ease-in-out', // Suaviza las transiciones
-  color: 'var(--texto-inverso)', // Color del texto
-
+  color: 'var(--color-azul)', // Color del texto
   boxSizing: 'border-box', // Evita desbordes por bordes gruesos
-
   '& .MuiInputBase-input': {
     color: 'var(--color-azul)', // Color del texto principal
   },
-
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderColor: 'var(--color-secundario)', // Borde normal
@@ -22,19 +18,19 @@ export const inputStyles = {
       borderWidth: '2.5px',
     },
     '&.Mui-focused fieldset': {
-      borderColor: 'var(--color-azul)', // Color en foco
+      borderColor: 'var(--color-exito)', // Color en foco
       borderWidth: '1px',
     },
   },
 
   '& .MuiInputLabel-root': {
-    color: 'var(--texto-inverso)', // Color del label normal
+    color: 'var(--color--azul)', // Color del label normal
     fontSize: '1rem',
     transition: 'all 0.3s ease-in-out',
   },
 
   '& .MuiInputLabel-root.Mui-focused': {
-    color: 'var(--texto-inverso)', // Color al enfocar
+    color: 'var(--color-azul)', // Color al enfocar
   },
 };
 
@@ -53,7 +49,7 @@ export const flexColumnContainer = {
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'space-evenly',
- // backgroundColor: 'rgba(245, 245, 245, 0.8)',
+  // backgroundColor: 'rgba(245, 245, 245, 0.8)',
   boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.1)',
   borderRadius: '12px',
   padding: '15px', // Mejora en espaciado interno

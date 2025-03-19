@@ -9,15 +9,14 @@ import ProductsWrapper from '../common/ProductsWrapper'
 import ProductCard from '../common/ProductCard'
 import { Loader } from '../common/loader/Loader'
 
-
-
 export const Home = () => {
   const { state, dispatch } = useAppStates()
   const { searchOptions } = state
-
   const [selectedInstruments, setSelectedInstruments] = useState([])
   const [loading, setLoading] = useState(true)
   const [instruments, setInstruments] = useState({ data: [] }) // ✅ Inicializar correctamente
+
+  
 
   useEffect(() => {
     const fetchInstruments = async () => {
@@ -26,7 +25,7 @@ export const Home = () => {
         const [fetchedInstruments] = await getInstruments()
         setInstruments(fetchedInstruments || { data: [] }) // ✅ Asegurar estructura correcta
       } catch (error) {
-        console.error("Error al obtener los instrumentos:", error)
+        console.error('Error al obtener los instrumentos:', error)
         setInstruments({ data: [] }) // ✅ Evitar undefined
       } finally {
         setTimeout(() => setLoading(false), 500) // ✅ Pequeño delay para transición suave
@@ -41,7 +40,7 @@ export const Home = () => {
       dispatch({ type: actions.UPDATE_INSTRUMENTS, payload: instruments })
       setSelectedInstruments(instruments.data)
     }
-  }, [instruments])
+  }, [dispatch, instruments])
 
   useEffect(() => {
     if (instruments.data.length > 0) {
@@ -59,7 +58,7 @@ export const Home = () => {
         window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
       }
     }
-  }, [searchOptions])
+  }, [instruments.data, searchOptions])
 
   if (loading) return <Loader title="Un momento por favor..." />
 
@@ -86,7 +85,7 @@ export const Home = () => {
               paddingBottom: 5,
               paddingLeft: { xs: '0' },
               paddingRight: { xs: '0' },
-              border: "2px solid blue"
+              border: '2px solid blue'
             }}
           >
             <ProductsWrapper>
@@ -98,7 +97,7 @@ export const Home = () => {
                     imageUrl={
                       instrument.imageUrls?.length > 0
                         ? instrument.imageUrls[0].imageUrl
-                        : "/default-image.jpg" // ✅ Imagen por defecto
+                        : '/default-image.jpg' // ✅ Imagen por defecto
                     }
                     id={instrument.idInstrument}
                   />

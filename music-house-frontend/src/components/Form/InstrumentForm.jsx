@@ -118,7 +118,7 @@ const InstrumentForm = ({
       {/*Contenedor formulario carga de nuevo instrumento*/}
       <Grid
         sx={{
-          width: '100%',
+          width: '80%',
           borderRadius: '10px',
           display: 'flex',
           alignItems: 'center',
@@ -134,7 +134,12 @@ const InstrumentForm = ({
             }}
           >
             {/*-----------------------Formulario lado izquierdo------------------------ */}
-            <Grid item xs={12} md={6} sx={{ padding: 2, width: '90%' }}>
+            <Grid 
+            item xs={12} md={6}
+             sx={{
+               padding: 2,
+              width: '90%' 
+              }}>
               <Typography variant="h6">{title}</Typography>
 
               <ValidatedTextField
@@ -165,6 +170,7 @@ const InstrumentForm = ({
                 value={formData.measures}
                 inputRef={fieldRefs.measures}
                 error={errors.measures}
+               
               />
 
               <ValidatedTextField
@@ -186,7 +192,7 @@ const InstrumentForm = ({
             {/*---------------------Formulario lado derecho----------------*/}
             <Grid item xs={12} md={6} sx={{ padding: 2, width: '90%' }}>
               <FormControl
-                fullWidth
+              
                 margin="normal"
                 sx={{
                   ...inputStyles,
@@ -213,7 +219,7 @@ const InstrumentForm = ({
               </FormControl>
 
               <FormControl
-                fullWidth
+              
                 margin="normal"
                 sx={{
                   ...inputStyles,
@@ -246,6 +252,8 @@ const InstrumentForm = ({
                 value={formData.rentalPrice}
                 inputRef={fieldRefs.rentalPrice}
                 error={errors.rentalPrice}
+                
+                
               />
             </Grid>
             {/*-----------------------Fin formulario lado derecho--------------*/}

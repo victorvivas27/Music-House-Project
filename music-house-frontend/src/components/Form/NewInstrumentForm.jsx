@@ -34,7 +34,11 @@ const NewInstrumentForm = () => {
     async (formData) => {
       setLoading(true)
 
-      if (!formData) return
+      if (!formData) {
+        showError('⚠️ Formulario inválido.')
+        setLoading(false)
+        return
+      }
 
       const formDataToSend = new FormData()
 
@@ -67,20 +71,24 @@ const NewInstrumentForm = () => {
 
       try {
         await createInstrument(formDataToSend)
+
         // ✅ Éxito: Mostrar alerta y redirigir
+        showSuccess('El instrumento se ha registrado correctamente.')
+
         setTimeout(() => {
-          showSuccess('El instrumento se ha registrado correctamente.')
-        }, 1000)
-        setTimeout(() => {
-          navigate('/instruments') // ✅ Redirigir después de 4s
+          navigate('/instruments') // ✅ Redirigir después de 1s
         }, 1000)
       } catch (error) {
-        // ❌ Error: Mostrar mensaje con detalles
-        showError('No se pudo registrar el instrumento.')
+        if (error.response?.data?.message) {
+          // ✅ Capturar mensaje del backend
+          showError(`❌ ${error.response.data.message}`)
+        } else if (error.request) {
+          showError('⚠️ No se pudo conectar con el servidor.')
+        } else {
+          showError('❌ Error inesperado. Intenta nuevamente.')
+        }
       } finally {
-        setTimeout(() => {
-          setLoading(false)
-        }, 1000)
+        setLoading(false)
       }
     },
     [navigate, showError, showSuccess]

@@ -2,9 +2,8 @@ import axios from 'axios';
 import {
   useGetFetch,
   getFetch,
-  
   putFetch,
-  deleteFetch
+
 } from '../helpers/useFetch'
 
 /* const URL_INSTRUMENTS = 'https://music-house.up.railway.app/api/instrument'
@@ -33,10 +32,14 @@ export const createInstrument = async (formData) => {
 
     return response.data;
   } catch (error) {
-    console.error("Error al registrar el instrumento:", error.response?.data || error.message);
-
-    // 📌 Lanzar el mensaje de error correcto si existe en la respuesta
-    throw new Error(error.response?.data?.message || "No se pudo registrar el instrumento");
+    if (error.response) {
+      throw error.response
+    } else if (error.request) {
+      throw new Error('No se pudo conectar con el servidor');
+    } else {
+      // ❌ Error inesperado (ejemplo: problema con axios)
+      throw new Error(`Error inesperado: ${error.message}`);
+    }
   }
 };
 

@@ -1,23 +1,25 @@
 import { TextField, FormControl, FormHelperText } from "@mui/material";
 import PropTypes from "prop-types";
+import { inputStyles } from "../../../styles/styleglobal";
 
-const ValidatedTextField = ({ name, label, value, onChange, error, inputRef, color = "secondary", ...props }) => {
+const ValidatedTextField = ({ name, label, value, onChange, error, inputRef,  ...props }) => {
     return (
-      <FormControl fullWidth margin="normal" error={!!error} >
+      <FormControl  margin="normal" error={!!error} sx={{ ...inputStyles}}>
         <TextField
           label={label}
           name={name}
           value={value}
           onChange={onChange}
           inputRef={inputRef}
-          color={color}
+          
           {...props}
-          sx={{
+        sx={{
             '& .MuiOutlinedInput-root': {
               '& fieldset': { borderColor: error ? 'red' : '' },
               '&:hover fieldset': { borderColor: error ? 'red' : '' },
               '&.Mui-focused fieldset': { borderColor: error ? 'red' : '' },
             },
+           
           }}
         />
         <FormHelperText>{error}</FormHelperText>
