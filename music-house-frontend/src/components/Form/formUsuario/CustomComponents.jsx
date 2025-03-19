@@ -4,8 +4,8 @@ import { Button } from '@mui/material'
 
 
 export const CustomButton = styled(Button)(({ theme }) => ({
-  minWidth: '100px', // Asegura que tenga un ancho mínimo
-  minHeight: '30px', // Asegura que tenga una altura mínima
+  minWidth: '170px', // Asegura que tenga un ancho mínimo
+  minHeight: '50px', // Asegura que tenga una altura mínima
   color: 'var(--color-secundario)', // Texto con color secundario
   backgroundColor: 'var(--color-primario)', // Fondo con color primario
   fontWeight: 'bold', // Hace que el texto sea más llamativo

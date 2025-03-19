@@ -1,58 +1,63 @@
-import { useCallback, useState } from 'react'
+import { useCallback} from 'react'
 import { CategoryForm } from './CategoryForm'
 import { createCategory } from '../../api/categories'
-import { MessageDialog } from '../common/MessageDialog'
+
 import { useAppStates } from '../utils/global.context'
 import { actions } from '../utils/actions'
+import useAlert from '../../hook/useAlert'
 
 export const NewCategoryForm = () => {
-  const [showMessage, setShowMessage] = useState(false)
-  const [message, setMessage] = useState()
-  const { dispatch } = useAppStates()
+  const {state, dispatch } = useAppStates()
+  const { showSuccess, showError } = useAlert()
+ 
+
   const initialFormData = {
     idCategory: '',
     categoryName: '',
     description: ''
   }
 
-  const onClose = () => {
-    setShowMessage(false)
-  }
+  const onSubmit = useCallback(
+    async (formData) => {
+      if (!formData) return
 
-  const onSubmit = useCallback( (formData) => {
-    if (!formData) return
+      dispatch({ type: actions.SET_LOADING, payload: true }); // ✅ Activar loading
 
-    createCategory({
-      categoryName: formData.categoryName,
-      description: formData.description
-    })
-      .then(() => {
-        setMessage('Categoría registrada exitosamente')
-        dispatch({ type: actions.CATEGORY_CREATED, payload: { created: true } })
-      })
-      .catch(() => {
-        setMessage('No se pudo registrar categoría')
-      })
-      .finally(() => {
-        setShowMessage(true);
-  
-        
+      try {
+        const response = await createCategory({
+          categoryName: formData.categoryName,
+          description: formData.description
+        })
+
+        if (response?.message) {
+          setTimeout(() => {
+            showSuccess(`✅ ${response.message}`)
+          }, 1100)
+
+          dispatch({
+            type: actions.CATEGORY_CREATED,
+            payload: { created: true }
+          })
+        }
+      } catch (error) {
+        showError(
+          `❌ ${error?.data?.message || '⚠️ No se pudo conectar con el servidor.'}`
+        )
+      } finally {
         setTimeout(() => {
-          setShowMessage(false);
-        }, 2000);
-      });
-  },[dispatch])
+          dispatch({ type: actions.SET_LOADING, payload: false }); // ✅ Desactivar loading
+        }, 1000)
+      }
+    },
+    [dispatch, showSuccess, showError]
+  )
 
   return (
     <>
-      <CategoryForm initialFormData={initialFormData} onSubmit={onSubmit} />
-      <MessageDialog
-        title="Registrar Categoría"
-        message={message}
-        isOpen={showMessage}
-        //buttonText="Ok"
-        onClose={onClose}
-        onButtonPressed={onClose}
+      <CategoryForm
+        initialFormData={initialFormData}
+        onSubmit={onSubmit}
+        loading={state.loading} 
       />
     </>
   )

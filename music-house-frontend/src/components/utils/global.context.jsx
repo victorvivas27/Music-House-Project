@@ -20,6 +20,7 @@ import PropTypes from 'prop-types'
 const initialState = {
   instruments: [],
   favorites: [],
+  loading: false, // ✅ Agregar loading al estado global
   tematics: [
     { name: 'Alternativo', image: alternative },
     { name: 'Clásico', image: classic },
@@ -44,6 +45,10 @@ const ContextGlobal = createContext()
 
 const appReducer = (state, action) => {
   switch (action.type) {
+
+    case actions.SET_LOADING:
+      return { ...state, loading: action.payload };
+      
     case actions.UPDATE_INSTRUMENTS:
       return { ...state, instruments: action.payload }
     case actions.FIND_INSTRUMENT:

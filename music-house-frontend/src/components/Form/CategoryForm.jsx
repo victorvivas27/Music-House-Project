@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import {
   Box,
-  Button,
   FormControl,
   TextField,
   Typography,
-  Grid
+  Grid,
+  CircularProgress
 } from '@mui/material'
 
 import '../styles/crearInstrumento.styles.css'
 import PropTypes from 'prop-types'
 import ArrowBack from '../utils/ArrowBack'
+import { CustomButton } from './formUsuario/CustomComponents'
+import { flexRowContainer,inputStyles  } from '../styles/styleglobal'
 
-export const CategoryForm = ({ initialFormData, onSubmit }) => {
+export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
   const [formData, setFormData] = useState({ ...initialFormData })
   const [submitData, setSubmitData] = useState(false)
   const title = formData.idCategory ? 'Editar Categoría' : 'Registrar Categoría'
@@ -42,7 +44,7 @@ export const CategoryForm = ({ initialFormData, onSubmit }) => {
         categoryName: '',
         description: ''
       })
-      setSubmitData(false) 
+      setSubmitData(false)
     }, 500)
   }
 
@@ -57,15 +59,12 @@ export const CategoryForm = ({ initialFormData, onSubmit }) => {
     <Grid
       sx={{
         width: '80%',
-        border: '3px solid black',
         borderRadius: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+        ...flexRowContainer
       }}
     >
-      <form onSubmit={handleSubmit} className="formulario">
-        <Grid sx={{ display: 'flex', flexDirection: 'row' }}>
+      <form onSubmit={handleSubmit}>
+        <Grid sx={{ ...flexRowContainer }}>
           <Grid
             item
             xs={12}
@@ -86,7 +85,7 @@ export const CategoryForm = ({ initialFormData, onSubmit }) => {
                 multiline
                 minRows={1}
                 maxRows={8}
-                sx={{width:500}}
+                sx={{...inputStyles,width:"900px" }}
               />
             </FormControl>
 
@@ -102,7 +101,7 @@ export const CategoryForm = ({ initialFormData, onSubmit }) => {
                 multiline
                 minRows={3}
                 maxRows={10}
-                sx={{width:500}}
+                sx={{ ...inputStyles,width:"900px" }}
               />
             </FormControl>
           </Grid>
@@ -112,15 +111,24 @@ export const CategoryForm = ({ initialFormData, onSubmit }) => {
             width: '100%',
             display: 'flex',
             justifyContent: 'space-evenly',
-            alignItems: 'center',
-            
+            alignItems: 'center'
           }}
         >
+          <ArrowBack />
 
-          <ArrowBack  />
-          <Button variant="contained" color="primary" type="submit">
-            Enviar
-          </Button>
+          <CustomButton variant="contained" type="submit">
+            {loading ? (
+              <>
+                Enviando...
+                <CircularProgress
+                  size={30}
+                  sx={{ color: 'var(--color-azul)' }}
+                />
+              </>
+            ) : (
+              'Enviar'
+            )}
+          </CustomButton>
         </Box>
       </form>
     </Grid>
