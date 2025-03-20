@@ -24,7 +24,6 @@ import { Loader } from '../../common/loader/Loader'
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
-  // getLabelDisplayedRows,
   isSelected,
   handleSort,
   handleSelectAll,
@@ -32,7 +31,6 @@ import {
   getEmptyRows,
   useVisibleRows
 } from '../Admin/common/tableHelper'
-//import { useAppStates } from '../../utils/global.context'
 import ArrowBack from '../../utils/ArrowBack'
 import { headCellsCategory } from '../../utils/types/HeadCells'
 import useAlert from '../../../hook/useAlert'
@@ -46,20 +44,20 @@ export const Categories = () => {
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
-
-  /*  const { state } = useAppStates()
-  const { categoryCreated } = state */
-  const navigate = useNavigate()
+const navigate = useNavigate()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
 
   const getAllCategories = async () => {
+
     setLoading(true)
+
     try {
       const [fetchedCategory] = await getCategories()
-      setCategories(fetchedCategory)
+      setCategories(fetchedCategory || {data:[]})
       setRows(fetchedCategory.data || [])
     } catch {
       setCategories({ data: [] })
+      setRows([]) 
     } finally {
       setTimeout(() => setLoading(false), 500)
     }
@@ -97,7 +95,6 @@ export const Categories = () => {
       return
     }
 
-    // ✅ Mostrar el modal de confirmación
     const isConfirmed = await showConfirm({
       title: `¿Eliminar ${selectedIds.length} categoría(s)?`,
       text: 'Esta acción no se puede deshacer.'
@@ -154,7 +151,12 @@ export const Categories = () => {
               handleConfirmDelete={() => handleConfirmDelete()}
             />
             <TableContainer>
-              <Table aria-labelledby="tableTitle" size="medium">
+              <Table
+              sx={{ minWidth: 750 }}
+               aria-labelledby="tableTitle" 
+               size="medium"
+               
+               >
                 <EnhancedTableHead
                   headCells={headCellsCategory}
                   numSelected={selected.length}
@@ -265,11 +267,11 @@ export const Categories = () => {
               page={Math.min(
                 page,
                 Math.max(0, Math.ceil(rows.length / rowsPerPage) - 1)
-              )} // Evita errores cuando cambia la cantidad de filas
+              )} 
               onPageChange={(event, newPage) => setPage(newPage)}
               onRowsPerPageChange={(event) => {
                 setRowsPerPage(parseInt(event.target.value, 10))
-                setPage(0) // Reinicia la paginación al cambiar el número de filas
+                setPage(0) 
               }}
               labelRowsPerPage="Filas por página"
               sx={{

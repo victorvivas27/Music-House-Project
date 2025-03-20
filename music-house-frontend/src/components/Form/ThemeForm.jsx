@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import {
   Box,
-  Button,
-  FormControl,
+ FormControl,
   TextField,
   Typography,
   Grid,
+  CircularProgress
 } from '@mui/material'
 
 import '../styles/crearInstrumento.styles.css'
 import PropTypes from 'prop-types'
 import ArrowBack from '../utils/ArrowBack'
+import { flexRowContainer, inputStyles } from '../styles/styleglobal'
+import { CustomButton } from './formUsuario/CustomComponents'
 
-export const ThemeForm = ({ initialFormData, onSubmit }) => {
+export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
   const [formData, setFormData] = useState({ ...initialFormData })
   const [submitData, setSubmitData] = useState(false)
   const title = formData.idTheme ? 'Editar Tematica' : 'Registrar Tematica'
@@ -34,35 +36,34 @@ export const ThemeForm = ({ initialFormData, onSubmit }) => {
 
     setFormData(data)
     setSubmitData(true)
-  setTimeout(() => {
-    setFormData({
-      idTheme: '',
-      themeName: '',
-      description: ''
-    });
-    setSubmitData(false);
-  }, 500);
+
+    setTimeout(() => {
+      setFormData({
+        idTheme: '',
+        themeName: '',
+        description: ''
+      })
+      setSubmitData(false)
+    }, 500)
   }
 
   useEffect(() => {
     if (!submitData) return
 
     if (typeof onSubmit === 'function') onSubmit(formData)
+      setSubmitData(false)
   }, [formData, onSubmit, submitData])
 
   return (
     <Grid
       sx={{
         width: '80%',
-        border: '3px solid black',
         borderRadius: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+        ...flexRowContainer
       }}
     >
-      <form onSubmit={handleSubmit} className="formulario">
-        <Grid sx={{ display: 'flex', flexDirection: 'row' }}>
+      <form onSubmit={handleSubmit}>
+        <Grid sx={{ ...flexRowContainer }}>
           <Grid
             item
             xs={12}
@@ -83,9 +84,10 @@ export const ThemeForm = ({ initialFormData, onSubmit }) => {
                 multiline
                 minRows={1}
                 maxRows={5}
-
+                sx={{ ...inputStyles, width: '900px' }}
               />
             </FormControl>
+
             <FormControl fullWidth margin="normal">
               <TextField
                 label="Descripción"
@@ -98,6 +100,7 @@ export const ThemeForm = ({ initialFormData, onSubmit }) => {
                 multiline
                 minRows={3}
                 maxRows={10}
+                sx={{ ...inputStyles, width: '900px' }}
               />
             </FormControl>
           </Grid>
@@ -107,26 +110,35 @@ export const ThemeForm = ({ initialFormData, onSubmit }) => {
             width: '100%',
             display: 'flex',
             justifyContent: 'space-evenly',
-            alignItems: 'center',
-            
+            alignItems: 'center'
           }}
         >
-
-          <ArrowBack  />
-          <Button variant="contained" color="primary" type="submit">
-            Enviar
-          </Button>
+          <ArrowBack />
+          <CustomButton variant="contained" type="submit">
+            {loading ? (
+              <>
+                Enviando...
+                <CircularProgress
+                  size={30}
+                  sx={{ color: 'var(--color-azul)' }}
+                />
+              </>
+            ) : (
+              'Enviar'
+            )}
+          </CustomButton>
         </Box>
       </form>
     </Grid>
   )
 }
-// **Aquí agregamos la validación de Props**
+
 ThemeForm.propTypes = {
   initialFormData: PropTypes.shape({
     idTheme: PropTypes.string,
     themeName: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired
   }).isRequired,
   onSubmit: PropTypes.func.isRequired,
-};
+  loading: PropTypes.bool.isRequired
+}

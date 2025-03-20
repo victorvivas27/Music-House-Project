@@ -13,7 +13,6 @@ export const EditCategoryForm = ({ id }) => {
   const [initialFormData, setInitialFormData] = useState(null)
   const [loading, setLoading] = useState(true) 
   const { state, dispatch } = useAppStates() 
-
   const navigate = useNavigate()
   const { showSuccess, showError } = useAlert()
 

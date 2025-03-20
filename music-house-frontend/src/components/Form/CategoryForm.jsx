@@ -37,7 +37,6 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
     setFormData(data)
     setSubmitData(true)
 
-    // Reiniciar el formulario después de enviar
     setTimeout(() => {
       setFormData({
         idCategory: '',
@@ -134,12 +133,13 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
     </Grid>
   )
 }
-// **Aquí agregamos la validación de Props**
+
 CategoryForm.propTypes = {
   initialFormData: PropTypes.shape({
     idCategory: PropTypes.string,
     categoryName: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired
   }).isRequired,
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired
 }

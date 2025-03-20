@@ -1,9 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useReducer,
-  useMemo,
-} from 'react'
+import { createContext, useContext, useReducer, useMemo } from 'react'
 import { actions } from './actions'
 
 import alternative from '../../assets/alternative.svg'
@@ -20,7 +15,7 @@ import PropTypes from 'prop-types'
 const initialState = {
   instruments: [],
   favorites: [],
-  loading: false, // ✅ Agregar loading al estado global
+  loading: false, 
   tematics: [
     { name: 'Alternativo', image: alternative },
     { name: 'Clásico', image: classic },
@@ -38,6 +33,7 @@ const initialState = {
   },
   categoryCreated: undefined,
   categoryUpdated: undefined,
+  themeCreated: undefined,
   bookingInfo: undefined
 }
 
@@ -45,12 +41,12 @@ const ContextGlobal = createContext()
 
 const appReducer = (state, action) => {
   switch (action.type) {
-
     case actions.SET_LOADING:
-      return { ...state, loading: action.payload };
-      
+      return { ...state, loading: action.payload }
+
     case actions.UPDATE_INSTRUMENTS:
       return { ...state, instruments: action.payload }
+
     case actions.FIND_INSTRUMENT:
       return {
         ...state,
@@ -58,46 +54,52 @@ const appReducer = (state, action) => {
           found: action.payload.found
         }
       }
+
     case actions.CATEGORY_CREATED:
       return {
         ...state,
         categoryCreated: action.payload.created
       }
+
     case actions.CATEGORY_UPDATED:
       return {
         ...state,
         categoryUpdated: action.payload.updated
       }
+    case actions.THEME_CREATED:
+      return {
+        ...state,
+        themeCreated: action.payload.created
+      }
+
     case actions.BOOKING_CONFIRM:
       return {
         ...state,
         bookingInfo: action.payload
       }
+
     case actions.BOOKING_UPDATE:
       return {
         ...state,
         bookingInfo: action.payload
       }
+
     default:
       return state
   }
 }
 
-
-
-
-
 export const ContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(appReducer, initialState);
-  const data = useMemo(() => ({ state, dispatch }), [state, dispatch]);
+  const [state, dispatch] = useReducer(appReducer, initialState)
+  const data = useMemo(() => ({ state, dispatch }), [state, dispatch])
 
   return (
     <ContextGlobal.Provider value={data}>{children}</ContextGlobal.Provider>
-  );
-};
+  )
+}
 
 ContextProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
+  children: PropTypes.node.isRequired
+}
 
-export const useAppStates = () => useContext(ContextGlobal);
+export const useAppStates = () => useContext(ContextGlobal)
