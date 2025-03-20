@@ -55,3 +55,37 @@ export const flexColumnContainer = {
   padding: '15px', // Mejora en espaciado interno
   maxWidth: '100%', // Evita desbordes en pantallas pequeñas
 };
+
+export const paginationStyles = {
+  '& .MuiTablePagination-toolbar': { 
+    backgroundColor: 'lightgray', // Fondo gris en la barra de paginación
+    //borderRadius: '8px',
+    padding: '10px' // Espaciado interno mejorado
+  },
+  '& .MuiTablePagination-selectLabel': { 
+    fontWeight: 'bold', // Texto "Filas por página" en negrita
+    color: 'var(--color-azul)'
+  },
+  '& .MuiTablePagination-input': { 
+    fontSize: '16px', // Aumentar el tamaño del input
+    color: 'var(--color-error)' // Cambiar color del texto del input
+  },
+  '& .MuiTablePagination-displayedRows': { 
+    fontStyle: 'italic', // Poner en itálica el "1–10 of 24"
+    fontSize:15,
+    color: 'var(--color-exito)'
+  },
+  '& .MuiTablePagination-actions': { 
+    color: 'var(--color-secundario)', // Color azul en los botones de navegación
+    '& button': {
+      borderRadius: '50%', // Hacer los botones redondos
+      margin:1,
+      backgroundColor: 'var(--color-primario)',
+      transition: '0.3s',
+      '&:hover': {
+        backgroundColor: 'var(--color-secundario)',
+        color: 'var(--color-primario)'
+      }
+    }
+  }
+}

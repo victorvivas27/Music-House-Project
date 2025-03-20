@@ -217,15 +217,16 @@ export const handleSelected = (event, id, selected, setSelected) => {
 export const getEmptyRows = (page, rowsPerPage, rows) =>
   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
-export const useVisibleRows = (rows, order, orderBy, page, rowsPerPage) =>
-  useMemo(
-    () =>
-      stableSort(rows, getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage
-      ),
-    [rows, order, orderBy, page, rowsPerPage]
-  )
+export const useVisibleRows = (rows, order, orderBy, page, rowsPerPage) => {
+  return useMemo(() => {
+    return stableSort(rows, getComparator(order, orderBy)).slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    )
+  }, [rows, order, orderBy, page, rowsPerPage])
+}
+
+
 // ✅ Validación para `EnhancedTableHead`
 EnhancedTableHead.propTypes = {
   headCells: PropTypes.arrayOf(

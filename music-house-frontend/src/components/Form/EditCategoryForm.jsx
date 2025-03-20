@@ -2,76 +2,79 @@ import { useState, useEffect, useCallback } from 'react'
 import { Box } from '@mui/material'
 import { CategoryForm } from './CategoryForm'
 import { getCategoryById, updateCategory } from '../../api/categories'
-import { MessageDialog } from '../common/MessageDialog'
 import { Loader } from '../common/loader/Loader'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
+import useAlert from '../../hook/useAlert'
+import { useAppStates } from '../utils/global.context'
+import { actions } from '../utils/actions'
 
-export const EditCategoryForm = ({ id, onSaved }) => {
-  const [category, setCategory] = useState()
-  const [initialFormData, setInitialFormData] = useState()
-  const [loading, setLoading] = useState(true)
-  const [showMessage, setShowMessage] = useState(false)
-  const [message, setMessage] = useState()
+export const EditCategoryForm = ({ id }) => {
+  const [initialFormData, setInitialFormData] = useState(null)
+  const [loading, setLoading] = useState(true) 
+  const { state, dispatch } = useAppStates() 
+
   const navigate = useNavigate()
+  const { showSuccess, showError } = useAlert()
 
-  const getCategory = useCallback(() => {
+  const getCategory = useCallback(async () => {
     setLoading(true)
-    getCategoryById(id)
-      .then(([category]) => {
-        setCategory(category)
-      })
-      .catch(() => {
-        setCategory({})
-      })
+  
+    try {
+      const [category] = await getCategoryById(id)
+  
+      if (category?.data) {
+        setTimeout(() => {
+          setInitialFormData({
+            idCategory: category.data.idCategory,
+            categoryName: category.data.categoryName,
+            description: category.data.description
+          })
+          setLoading(false)
+        }, 100) 
+      } else {
+        setInitialFormData(null)
+        setLoading(false)
+      }
+    } catch (error) {
+       setInitialFormData(null)
+      setLoading(false)
+    }
   }, [id])
 
   useEffect(() => {
     getCategory()
   }, [getCategory])
 
-  useEffect(() => {
-    if (!(category && category.data?.idCategory)) return
-
-    const data = {
-      idCategory: category.data.idCategory,
-      categoryName: category.data.categoryName,
-      description: category.data.description
-    }
-    setInitialFormData(data)
-    setLoading(false)
-  }, [category])
-
-  const onClose = () => {
-    setShowMessage(false)
-    if (typeof onSaved === 'function') onSaved()
-  }
-
-  const onSubmit = (formData) => {
+ 
+  const onSubmit = async (formData) => {
     if (!formData) return
+    dispatch({ type: actions.SET_LOADING, payload: true }) 
 
-    updateCategory(formData)
-      .then(() => {
-        setMessage('Categoría guardada exitosamente')
+    try {
+      const response = await updateCategory(formData)
 
-        setShowMessage(true)
-
-       
+      if (response?.message) {
         setTimeout(() => {
-          navigate("/categories")
-        }, 1000)
-      })
-      .catch(() => {
-        setMessage('No se pudo guardar categoría')
-        setShowMessage(true)
-      })
+          showSuccess(`✅ ${response.message}`)
+          navigate('/categories')
+        }, 1100)
+      }
+    } catch (error) {
+      showError(
+        `❌ ${error?.data?.message || '⚠️ Error al conectar con el servidor.'}`
+      )
+    } finally {
+      setTimeout(() => {
+        dispatch({ type: actions.SET_LOADING, payload: false })
+      }, 1000)
+    }
   }
-
-  if (loading) {
+if (loading) {
     return <Loader title="Un momento por favor" />
   }
 
-  return (
+return (
     <Box
       sx={{
         width: '100%',
@@ -81,24 +84,17 @@ export const EditCategoryForm = ({ id, onSaved }) => {
         alignItems: 'center'
       }}
     >
-      {!loading && (
-        <CategoryForm 
-        initialFormData={initialFormData}
-         onSubmit={onSubmit} 
-         />
+      {initialFormData && ( 
+        <CategoryForm
+          initialFormData={initialFormData}
+          onSubmit={onSubmit}
+          loading={state.loading} 
+        />
       )}
-      <MessageDialog
-        title="Editar Categoría"
-        message={message}
-        isOpen={showMessage}
-        //buttonText="Ok"
-        onClose={onClose}
-        onButtonPressed={onClose}
-      />
     </Box>
   )
 }
+
 EditCategoryForm.propTypes = {
-  id: PropTypes.string.isRequired,
-  onSaved: PropTypes.func
+  id: PropTypes.string.isRequired
 }

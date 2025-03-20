@@ -53,7 +53,7 @@ export const updateInstrument = async (payload) => {
 export const deleteInstrument = async (idInstrument) => {
   try {
     const response = await axios.delete(`${BASE_URL}/instrument/delete/${idInstrument}`)
-    return response.data // 📌 Devolver la respuesta si es necesario
+    return response.data 
   } catch (error) {
     if (error.response) {
       throw (error.response || "No se pudo conectar con el servidor");

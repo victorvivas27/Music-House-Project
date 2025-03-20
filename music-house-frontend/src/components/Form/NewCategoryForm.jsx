@@ -1,4 +1,4 @@
-import { useCallback} from 'react'
+import { useCallback } from 'react'
 import { CategoryForm } from './CategoryForm'
 import { createCategory } from '../../api/categories'
 
@@ -7,9 +7,8 @@ import { actions } from '../utils/actions'
 import useAlert from '../../hook/useAlert'
 
 export const NewCategoryForm = () => {
-  const {state, dispatch } = useAppStates()
+  const { state, dispatch } = useAppStates()
   const { showSuccess, showError } = useAlert()
- 
 
   const initialFormData = {
     idCategory: '',
@@ -21,7 +20,7 @@ export const NewCategoryForm = () => {
     async (formData) => {
       if (!formData) return
 
-      dispatch({ type: actions.SET_LOADING, payload: true }); // ✅ Activar loading
+      dispatch({ type: actions.SET_LOADING, payload: true })
 
       try {
         const response = await createCategory({
@@ -45,7 +44,7 @@ export const NewCategoryForm = () => {
         )
       } finally {
         setTimeout(() => {
-          dispatch({ type: actions.SET_LOADING, payload: false }); // ✅ Desactivar loading
+          dispatch({ type: actions.SET_LOADING, payload: false })
         }, 1000)
       }
     },
@@ -57,7 +56,7 @@ export const NewCategoryForm = () => {
       <CategoryForm
         initialFormData={initialFormData}
         onSubmit={onSubmit}
-        loading={state.loading} 
+        loading={state.loading}
       />
     </>
   )

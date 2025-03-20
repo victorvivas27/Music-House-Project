@@ -33,6 +33,7 @@ import { Loader } from '../../common/loader/Loader'
 import ArrowBack from '../../utils/ArrowBack'
 import { headCellsUser } from '../../utils/types/HeadCells'
 import useAlert from '../../../hook/useAlert'
+import { paginationStyles } from '../../styles/styleglobal'
 export const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([])
   const [loading, setLoading] = useState(true)
@@ -269,17 +270,27 @@ export const Usuarios = () => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[
+                5,
+                10,
+                25,
+                { label: 'Todos', value: usuarios.length }
+              ]}
               component="div"
               count={usuarios.length}
               rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
+              page={Math.min(
+                page,
+                Math.max(0, Math.ceil(usuarios.length / rowsPerPage) - 1)
+              )} // Evita errores cuando cambia la cantidad de filas
+              onPageChange={(event, newPage) => setPage(newPage)}
+              onRowsPerPageChange={(event) => {
+                setRowsPerPage(parseInt(event.target.value, 10))
+                setPage(0) // Reinicia la paginación al cambiar el número de filas
+              }}
               labelRowsPerPage="Filas por página"
-              onRowsPerPageChange={handleChangeRowsPerPage}
               sx={{
-                '& .MuiTablePagination-displayedRows': { display: 'none' },
-                '& .MuiTablePagination-actions': { display: 'none' }
+                ...paginationStyles
               }}
             />
           </Paper>

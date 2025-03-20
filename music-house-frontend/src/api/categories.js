@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getFetch, putFetch, deleteFetch } from '../helpers/useFetch'
+import { getFetch,} from '../helpers/useFetch'
 
 //const URL_CATEGORIES = 'https://music-house.up.railway.app/api/category'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -24,14 +24,24 @@ export const createCategory  = async({ categoryName, description }) => {
   
 }
 
-export const updateCategory = ({ idCategory, categoryName, description }) => {
-  return putFetch(`${BASE_URL}/category/update`, {
-    idCategory,
-    categoryName,
-    description
-  })
+export const updateCategory = async({ idCategory, categoryName, description }) => {
+  try{
+    const respuesta = await axios.put(`${BASE_URL}/category/update`, {idCategory,categoryName, description})
+    return respuesta.data
+  }catch(error){
+    if (error.response) {
+      throw (error.response || "No se pudo conectar con el servidor");
+    }
+  }
 }
 
-export const deleteCategory = (idCategory) => {
-  return deleteFetch(`${BASE_URL}/category/delete/${idCategory}`)
+export const deleteCategory = async (idCategory) => {
+  try{
+    const respuesta = await axios.delete(`${BASE_URL}/category/delete/${idCategory}`)
+    return respuesta.data
+  }catch(error){
+    if (error.response) {
+      throw (error.response || "No se pudo conectar con el servidor");
+    }
+  }
 }

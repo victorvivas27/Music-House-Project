@@ -35,6 +35,7 @@ import '../styles/instruments.styles.css'
 import ArrowBack from '../utils/ArrowBack'
 import useAlert from '../../hook/useAlert'
 import { headCellsInstrument } from '../utils/types/HeadCells'
+import { paginationStyles } from '../styles/styleglobal'
 
 export const Instruments = () => {
   const [instruments, setInstruments] = useState({ data: [] })
@@ -46,7 +47,6 @@ export const Instruments = () => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
-
   const navigate = useNavigate()
 
   const getAllInstruments = async () => {
@@ -98,6 +98,7 @@ export const Instruments = () => {
       text: 'Esta acción no se puede deshacer.'
     })
     if (!isConfirmed) return
+
     showLoading('Eliminando...', 'Por favor espera.')
     try {
       await Promise.all(selectedIds.map((id) => deleteInstrument(id)))
@@ -119,11 +120,7 @@ export const Instruments = () => {
     }
   }
 
-  const handleChangePage = (newPage) => setPage(newPage)
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
+ 
 
   const emptyRows = getEmptyRows(page, rowsPerPage, rows)
   const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
@@ -259,18 +256,28 @@ export const Instruments = () => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[
+                5,
+                10,
+                25,
+                { label: 'Todos', value: rows.length }
+              ]}
               component="div"
               count={rows.length}
               rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              sx={{
-                '& .MuiTablePagination-displayedRows': { display: 'none' },
-                '& .MuiTablePagination-actions': { display: 'none' }
+              page={Math.min(
+                page,
+                Math.max(0, Math.ceil(rows.length / rowsPerPage) - 1)
+              )} // Evita errores cuando cambia la cantidad de filas
+              onPageChange={(event, newPage) => setPage(newPage)}
+              onRowsPerPageChange={(event) => {
+                setRowsPerPage(parseInt(event.target.value, 10))
+                setPage(0) // Reinicia la paginación al cambiar el número de filas
               }}
               labelRowsPerPage="Filas por página"
+              sx={{
+                ...paginationStyles
+              }}
             />
           </Paper>
         </MainWrapper>
