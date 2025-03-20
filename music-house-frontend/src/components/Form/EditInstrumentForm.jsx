@@ -53,6 +53,7 @@ const EditInstrumentForm = ({ id }) => {
     setInitialFormData(data)
     setLoading(false)
   }, [instrument])
+  
   // Enviar actualización del instrumento sin imágenes
   const onSubmit = async (formData) => {
     if (!formData) return
@@ -60,12 +61,12 @@ const EditInstrumentForm = ({ id }) => {
       ...formData,
       characteristic: formDataToCharacteristics(formData)
     }
-    setIsSubmitting(true) // ✅ Activar el loader del botón inmediatamente
+    setIsSubmitting(true) 
     try {
       const response = await updateInstrument(data)
       if (response && response.data) {
         setTimeout(() => {
-          showSuccess(`✅${response.message}`) // ✅ Mostrar éxito después de 2s
+          showSuccess(`✅${response.message}`)
           navigate('/instruments')
         }, 1100)
       } else {

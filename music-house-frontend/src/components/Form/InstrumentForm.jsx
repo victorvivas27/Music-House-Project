@@ -47,10 +47,10 @@ const InstrumentForm = ({
   }
 
   useEffect(() => {
-    if (!formData.name) {
+    if (!formData) {
       setFormData(initialFormData)
     }
-  }, [formData.name, initialFormData])
+  }, [formData, initialFormData])
 
   const handleChange = (event) => {
     const { name, value } = event.target
