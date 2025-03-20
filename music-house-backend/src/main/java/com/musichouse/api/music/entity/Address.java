@@ -89,6 +89,26 @@ public class Address {
     @CreationTimestamp
     @Temporal(TemporalType.DATE)
     private Date registDate;
+
+    // 📌 Normalizar a mayúsculas antes de guardar o actualizar
+    @PrePersist
+    @PreUpdate
+    private void normalizeData() {
+        if (this.street != null) {
+            this.street = this.street.replaceAll("\\s+", " ").trim().toUpperCase();
+        }
+
+        if (this.city != null){
+            this.city = this.city.replaceAll("\\s+", " ").trim().toUpperCase();
+        }
+        if (this.state != null){
+            this.state = this.state.replaceAll("\\s+", " ").trim().toUpperCase();
+        }
+        if (this.country != null){
+            this.country = this.country.replaceAll("\\s+", " ").trim().toUpperCase();
+        }
+
+    }
 }
 
 

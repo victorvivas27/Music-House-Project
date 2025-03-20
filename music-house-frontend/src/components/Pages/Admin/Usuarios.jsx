@@ -21,7 +21,6 @@ import { useNavigate } from 'react-router-dom'
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
-  // getLabelDisplayedRows,
   isSelected,
   handleSort,
   handleSelectAll,
@@ -63,9 +62,6 @@ export const Usuarios = () => {
     getUsuarios()
   }, [])
 
-  /*  const handleAdd = () => {
-    navigate('/agregarUsuario')
-  } */
 
   const handleRequestSort = (event, property) => {
     handleSort(event, property, orderBy, order, setOrderBy, setOrder)
@@ -105,7 +101,6 @@ export const Usuarios = () => {
       getUsuarios()
     } catch (error) {
       if (error.data) {
-        // ✅ Ahora sí capturamos el mensaje que envía el backend
         showError(
           `❌ ${
             error.data.message || '⚠️ No se pudo conectar con el servidor.'
@@ -113,15 +108,6 @@ export const Usuarios = () => {
         )
       }
     }
-  }
-
-  const handleChangePage = (newPage) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
   }
 
   const emptyRows = getEmptyRows(page, rowsPerPage, usuarios)
@@ -158,7 +144,6 @@ export const Usuarios = () => {
             <EnhancedTableToolbar
               title="Usuarios"
               titleAdd="Agregar usuario"
-              //handleAdd={handleAdd}
               numSelected={selected.length}
               handleConfirmDelete={() => handleDelete()}
             />
@@ -282,11 +267,11 @@ export const Usuarios = () => {
               page={Math.min(
                 page,
                 Math.max(0, Math.ceil(usuarios.length / rowsPerPage) - 1)
-              )} // Evita errores cuando cambia la cantidad de filas
+              )} 
               onPageChange={(event, newPage) => setPage(newPage)}
               onRowsPerPageChange={(event) => {
                 setRowsPerPage(parseInt(event.target.value, 10))
-                setPage(0) // Reinicia la paginación al cambiar el número de filas
+                setPage(0) 
               }}
               labelRowsPerPage="Filas por página"
               sx={{

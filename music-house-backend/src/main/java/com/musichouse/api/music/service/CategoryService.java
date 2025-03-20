@@ -30,7 +30,7 @@ public class CategoryService implements CategoryInterface {
     @Override
     public CategoryDtoExit createCategory(CategoryDtoEntrance categoryDtoEntrance) {
 
-        categoryDtoEntrance.setCategoryName(categoryDtoEntrance.getCategoryName().toUpperCase());
+        categoryDtoEntrance.setCategoryName(categoryDtoEntrance.getCategoryName());
 
         Category category = mapper.map(categoryDtoEntrance, Category.class);
 
@@ -77,7 +77,7 @@ public class CategoryService implements CategoryInterface {
     public CategoryDtoExit updateCategory(CategoryDtoModify categoryDtoModify)
             throws ResourceNotFoundException {
 
-        categoryDtoModify.setCategoryName(categoryDtoModify.getCategoryName().toUpperCase());
+        categoryDtoModify.setCategoryName(categoryDtoModify.getCategoryName());
 
         Category categoryToUpdate = categoryRepository.findById(categoryDtoModify.getIdCategory())
                 .orElseThrow(() ->

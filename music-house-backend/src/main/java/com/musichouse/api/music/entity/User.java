@@ -143,6 +143,19 @@ public class User implements UserDetails {
     @Column(name = "chat_id", nullable = true)
     private Long telegramChatId;
 
+
+    // 📌 Normalizar a mayúsculas y eliminar espacios extra antes de guardar o actualizar
+    @PrePersist
+    @PreUpdate
+    private void normalizeData() {
+        if (this.name != null) {
+            this.name = this.name.replaceAll("\\s+", " ").trim().toUpperCase();
+        }
+        if (this.lastName != null) {
+            this.lastName = this.lastName.replaceAll("\\s+", " ").trim().toUpperCase();
+        }
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles

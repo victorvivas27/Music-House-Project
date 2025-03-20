@@ -42,4 +42,12 @@ public class Category {
     @CreationTimestamp
     @Temporal(TemporalType.DATE)
     private Date registDate;
+
+    // 📌 Normalizar a mayúsculas antes de guardar o actualizar
+    @PrePersist
+    @PreUpdate
+    private void normalizeData() {
+        if (this.categoryName != null) this.categoryName = this.categoryName.toUpperCase();
+
+    }
 }

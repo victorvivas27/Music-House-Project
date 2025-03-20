@@ -30,7 +30,7 @@ public class ThemeService implements ThemeInterface {
     @Override
     public ThemeDtoExit createTheme(ThemeDtoEntrance themeDtoEntrance) {
 
-        themeDtoEntrance.setThemeName(themeDtoEntrance.getThemeName().toUpperCase());
+        themeDtoEntrance.setThemeName(themeDtoEntrance.getThemeName());
 
         Theme theme = mapper.map(themeDtoEntrance, Theme.class);
 
@@ -70,7 +70,7 @@ public class ThemeService implements ThemeInterface {
     @Override
     public ThemeDtoExit updateTheme(ThemeDtoModify themeDtoModify) throws ResourceNotFoundException {
 
-        themeDtoModify.setThemeName(themeDtoModify.getThemeName().toUpperCase());
+        themeDtoModify.setThemeName(themeDtoModify.getThemeName());
 
         Theme themeToUpdate = themeRepository.findById(themeDtoModify.getIdTheme())
                 .orElseThrow(() ->

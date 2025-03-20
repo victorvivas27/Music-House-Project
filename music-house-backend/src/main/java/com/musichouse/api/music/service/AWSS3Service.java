@@ -44,7 +44,10 @@ public class AWSS3Service implements AWSS3Interface {
     public String uploadFileToS3(MultipartFile file,UserDtoEntrance userDtoEntrance) {
         try {
             // Crear el path del usuario en S3
-            String userFolder = userDtoEntrance.getName().toLowerCase() + "-" + userDtoEntrance.getLastName().toLowerCase();
+            String userFolder = (userDtoEntrance.getName() + "-" + userDtoEntrance.getLastName())
+                    .toLowerCase()
+                    .replaceAll("\\s+", "-");  // ✅ Reemplaza espacios por guiones
+
             String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
             ObjectMetadata metadata = new ObjectMetadata();
@@ -72,7 +75,10 @@ public class AWSS3Service implements AWSS3Interface {
         for (MultipartFile file : files) {
             try {
                 // Crear el path en S3
-                String userFolder = instrumentDtoEntrance.getName().toLowerCase();
+                String userFolder = (instrumentDtoEntrance.getName() )
+                        .toLowerCase()
+                        .replaceAll("\\s+", "-");  // ✅ Reemplaza espacios por guiones
+
                 String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
                 ObjectMetadata metadata = new ObjectMetadata();
@@ -98,7 +104,10 @@ public class AWSS3Service implements AWSS3Interface {
     public String uploadFileToS3Admin(MultipartFile file, UserAdminDtoEntrance userAdminDtoEntrance) {
         try {
             // Crear el path del usuario en S3
-            String userFolder = userAdminDtoEntrance.getName().toLowerCase() + "-" + userAdminDtoEntrance.getLastName().toLowerCase();
+            String userFolder = (userAdminDtoEntrance.getName() + "-" + userAdminDtoEntrance.getLastName())
+                    .toLowerCase()
+                    .replaceAll("\\s+", "-");  // ✅ Reemplaza espacios por guiones
+
             String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
             ObjectMetadata metadata = new ObjectMetadata();
@@ -121,7 +130,10 @@ public class AWSS3Service implements AWSS3Interface {
     public String uploadUserModifyFileToS3(MultipartFile file, UserDtoModify userDtoModify) {
         try {
             // Crear el path del usuario en S3
-            String userFolder = userDtoModify.getName().toLowerCase() + "-" + userDtoModify.getLastName().toLowerCase();
+            String userFolder = (userDtoModify.getName() + "-" + userDtoModify.getLastName())
+                    .toLowerCase()
+                    .replaceAll("\\s+", "-");  // ✅ Reemplaza espacios por guiones
+
             String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
             ObjectMetadata metadata = new ObjectMetadata();

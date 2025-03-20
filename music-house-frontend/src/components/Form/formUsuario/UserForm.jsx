@@ -117,8 +117,7 @@ export const UserForm = ({
   const idUser = user?.data?.idUser || null
   const userRoles = user?.data?.roles?.map((role) => role.rol) || []
 
-  //const isUserAdminDelUsuario = userRoles.includes("ADMIN"); // 🔹 Admin del usuario editado
-  //const isUser = userRoles.includes("USER"); // 🔹 Usuario normal del usuario editado
+
   const isLoggedUser = idUser && idUser === Number(formData?.idUser)
 
   useEffect(() => {
@@ -135,18 +134,15 @@ export const UserForm = ({
   const buttonTextLoading =
     formData.idUser || isUserAdmin ? 'Guardardando...' : 'Registrando...'
 
-  /*handleChange (manejarCambios) es una función que se encarga de manejar
- los cambios en los campos del formulario,en tiempo real */
+
   const handleChange = (event) => {
     const { name, value } = event.target
-     // 📌 Convierte a mayúsculas solo los campos específicos
-  const upperCaseFields = ['name', 'lastName']
-  // 📌 Convierte a mayúsculas solo si el campo está en la lista
-  const transformedValue = upperCaseFields.includes(name) ? value.toUpperCase() : value
+    
+  
   
     setFormData((prev) => ({
       ...prev,
-      [name]: transformedValue
+      [name]:value
     }))
 
     setErrors((prev) => ({
@@ -154,7 +150,7 @@ export const UserForm = ({
       general: ''
     }))
 
-    // 📌 Validaciones en tiempo real (solo formato)
+   
     setErrors((prev) => ({
       ...prev,
       [name]:
@@ -165,7 +161,7 @@ export const UserForm = ({
             : ''
     }))
 
-    // 📌 Validación de email en tiempo real
+   
     if (name === 'email') {
       setErrors((prev) => ({
         ...prev,
@@ -190,7 +186,7 @@ export const UserForm = ({
     }
 
     if (name === 'telegramChatId') {
-      const numericValue = value.replace(/\D/g, '') // 🔹 Solo números
+      const numericValue = value.replace(/\D/g, '') 
 
       setFormData((prev) => ({
         ...prev,
@@ -199,9 +195,7 @@ export const UserForm = ({
     }
   }
 
-  /*Fin de manejador de  erorres de nombre,apellido,email y contraseña y codigo de telegram */
 
-  // Fusionamos errores
   const allErrors = { ...errors, ...passwordErrors }
 
   const handleCheckBoxChange = (e) => {
@@ -211,17 +205,13 @@ export const UserForm = ({
     }
   }
 
-  /*handleChange (manejarCambios) es una función que se encarga de manejar
- los cambios en los campos del formulario,en tiempo real */
+ 
   const handleAddressChange = (index, event) => {
     const { name, value } = event.target
-     // 📌 Lista de campos de dirección a convertir a mayúsculas
-  const upperCaseFields = ['street', 'city', 'state', 'country']
-    // 📌 Convertir el valor si el campo es de dirección
-    const transformedValue = upperCaseFields.includes(name) ? value.toUpperCase() : value
+   
 
     const updatedAddresses = formData.addresses.map((address, i) =>
-      i === index ? { ...address, [name]: transformedValue } : address
+      i === index ? { ...address, [name]:value } : address
     )
 
     setFormData((prevState) => ({
@@ -229,7 +219,7 @@ export const UserForm = ({
       addresses: updatedAddresses
     }))
 
-    // 📌 Validaciones en tiempo real (solo formato)
+   
     setErrors((prev) => ({
       ...prev,
       [`${name}_${index}`]:
@@ -246,15 +236,13 @@ export const UserForm = ({
                   : ''
     }))
   }
-  /*Fin de manejador de  erorres de dirección:calle,numero,ciudad,estado,pais*/
+ 
 
-  /*handleChange (manejarCambios) es una función que se encarga de manejar
- los cambios en los campos del formulario,en tiempo real */
   const handlePhoneChange = (index, field, value) => {
     const updatedPhones = formData.phones.map((phone, i) => {
       if (i === index) {
         let newPhoneNumber = phone.phoneNumber
-        const validValue = value.replace(/[^0-9+]/g, '') // Solo números y "+"
+        const validValue = value.replace(/[^0-9+]/g, '') 
 
         if (field === 'countryCode') {
           newPhoneNumber = `${validValue}${phone.phoneNumber.replace(phone.countryCode, '')}`
@@ -276,7 +264,7 @@ export const UserForm = ({
       phones: updatedPhones
     }))
 
-    // 📌 Validaciones de longitud
+   
     const minLength = 7
     const maxLength = 15
 
@@ -291,22 +279,19 @@ export const UserForm = ({
     }))
   }
 
-  /*Fin de manejador de  erorres del telefono*/
-
-  /*handleSubmtit (manejarEnviar) es una función que se encarga de manejar
- los cambios al enviar el formulario */
+ 
   const handleSubmit = async (event) => {
     event.preventDefault()
 
     let formIsValid = true
     let newErrors = { ...initialErrorState }
-    // 📌 Validar campos obligatorios
+  
     if (!formData.picture || formData.name.trim() === '') {
       newErrors.picture = '❌El avatar es obligatorio'
       formIsValid = false
     }
 
-    // 📌 Validar campos obligatorios
+   
     if (!formData.name || formData.name.trim() === '') {
       newErrors.name = '❌El nombre es obligatorio'
       formIsValid = false
@@ -322,7 +307,7 @@ export const UserForm = ({
       formIsValid = false
     }
 
-    // 📌 🔴 Validar CONTRASEÑA solo si NO es ADMIN y está creando un usuario nuevo
+  
     if (!isUserAdmin && (!formData.idUser || formData.idUser === '')) {
       if (!formData.password) {
         newErrors.password = '❌La contraseña es obligatoria'
@@ -349,7 +334,7 @@ export const UserForm = ({
       }
     }
 
-    // 📌 Validar dirección
+   
     formData.addresses.forEach((address, index) => {
       if (!address.street)
         newErrors[`street_${index}`] = '❌La calle es obligatoria'
@@ -363,13 +348,13 @@ export const UserForm = ({
         newErrors[`country_${index}`] = '❌El país es obligatorio'
     })
 
-    // 📌 Validar teléfonos
+    
     formData.phones.forEach((phone, index) => {
       if (!phone.phoneNumber)
         newErrors[`phone_${index}`] = '❌El teléfono es obligatorio'
     })
 
-    // 📌 🔴 Validar aceptación de términos solo si es un usuario normal y está registrándose
+    
     if (!isUserAdmin && !formData.idUser && !accept) {
       newErrors.general = '❌Debes aceptar los términos y condiciones'
       formIsValid = false
@@ -383,7 +368,7 @@ export const UserForm = ({
     try {
       await onSubmit(formData)
     } catch (error) {
-      // 🔹 Captura errores del backend y los muestra en los inputs
+    
       if (error.response && error.response.data) {
         const backendErrors = error.response.data
         setErrors((prev) => ({
@@ -404,10 +389,7 @@ export const UserForm = ({
       }
     }
   }
-  /*Fin de handleSubmit(manejarEnviar)*/
 
-  /*handleRemoveRole (manejarEliminarRol) es una función que se encarga de manejar
-  la eliminación de roles */
   const handleRemoveRole = async (roleToRemove) => {
     if (!isUserAdmin) return
     if (user.data.roles.length <= 1) return
@@ -415,7 +397,7 @@ export const UserForm = ({
     const role = user.data.roles.find((r) => r.rol === roleToRemove)
     if (!role) return
 
-    // ✅ Usar `showConfirm` en lugar de duplicar código
+   
     const isConfirmed = await showConfirm({
       title: '¿Estás seguro?',
       text: `Estás a punto de eliminar el rol ${roleToRemove}. ¿Deseas continuar?`,
@@ -423,12 +405,12 @@ export const UserForm = ({
       cancelText: 'Cancelar'
     })
 
-    if (!isConfirmed) return // ❌ Si el usuario cancela, no hacemos nada
+    if (!isConfirmed) return 
 
     try {
       await UsersApi.deleteUserRole(idUser, roleToRemove)
 
-      // ✅ Actualizar el estado después de eliminar el rol
+     
       const updatedRoles = user.data.roles.filter((r) => r.rol !== roleToRemove)
       setUser((prevUser) => ({
         ...prevUser,
@@ -438,10 +420,10 @@ export const UserForm = ({
         }
       }))
 
-      // ✅ Mostrar alerta de éxito
+     
       showSuccess(`El rol ${roleToRemove} ha sido eliminado exitosamente.`)
     } catch (error) {
-      // ❌ Manejo de errores si la API falla
+      
       showError(
         `Hubo un problema al eliminar el rol ${roleToRemove}. Por favor, intenta nuevamente.`
       )

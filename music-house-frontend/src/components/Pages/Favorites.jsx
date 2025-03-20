@@ -105,7 +105,11 @@ export const Favorites = () => {
               variant="h6"
               component="h2"
               textAlign="center"
-              sx={{ paddingBottom: 1, fontWeight: 'bold' }}
+              sx={{
+                 paddingBottom: 1, 
+                 fontWeight: 'bold' 
+                
+                }}
             >
               Favoritos
             </Typography>

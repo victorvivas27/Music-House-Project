@@ -29,7 +29,6 @@ const EditUser = ({ onSwitch }) => {
   const canEditUser = !(isUserAdmin && !isLoggedUser)
   const { showSuccess, showError } = useAlert()
 
-  // 🔹 Función normal sin `useCallback`
   const fetchUser = async () => {
     if (!id) return
 
@@ -43,8 +42,10 @@ const EditUser = ({ onSwitch }) => {
         name: userData.data.name || '',
         lastName: userData.data.lastName || '',
         email: userData.data.email || '',
-        addresses: userData.data.addresses || [],
-        phones: userData.data.phones || [],
+        addresses: userData.data.addresses?.length
+          ? userData.data.addresses
+          : [], // ✅ Garantiza que sea un array
+        phones: userData.data.phones?.length ? userData.data.phones : [], // ✅ Garantiza que sea un array
         roles:
           userData.data.roles?.map((role) => ({
             idRol: role.idRol,
@@ -73,6 +74,9 @@ const EditUser = ({ onSwitch }) => {
       const formDataToSend = new FormData()
       const { picture, ...userWithoutPicture } = formData
 
+      if (!formData.addresses.length) delete userWithoutPicture.addresses
+      if (!formData.phones.length) delete userWithoutPicture.phones
+      
       if (
         !picture ||
         picture === '' ||
@@ -95,21 +99,25 @@ const EditUser = ({ onSwitch }) => {
       const response = await UsersApi.updateUser(formDataToSend)
 
       // ✅ Actualizar dirección
-      const address = formData.addresses[0]
-      await updateAddress({
-        idAddress: address.idAddress,
-        street: address.street,
-        number: address.number,
-        city: address.city,
-        state: address.state,
-        country: address.country
-      })
+      if (formData.addresses.length > 0) {
+        const address = formData.addresses[0]
+        await updateAddress({
+          idAddress: address.idAddress,
+          street: address.street,
+          number: address.number,
+          city: address.city,
+          state: address.state,
+          country: address.country
+        })
+      }
 
-      const phone = formData.phones[0]
-      await updatePhone({
-        idPhone: phone.idPhone,
-        phoneNumber: phone.phoneNumber
-      })
+      if (formData.phones.length > 0) {
+        const phone = formData.phones[0]
+        await updatePhone({
+          idPhone: phone.idPhone,
+          phoneNumber: phone.phoneNumber
+        })
+      }
 
       const newRol = roleById(formData.idRol)
 
@@ -127,17 +135,17 @@ const EditUser = ({ onSwitch }) => {
           navigate(-1)
         }, 1100)
       }
-
-     
     } catch (error) {
       if (error.data) {
-     
-        showError(`❌ ${error.data.message||
-           '⚠️ No se pudo conectar con el servidor.'}`)
-      } 
+        showError(
+          `❌ ${
+            error.data.message || '⚠️ No se pudo conectar con el servidor.'
+          }`
+        )
+      }
     } finally {
       setTimeout(() => {
-        setIsSubmitting(false) 
+        setIsSubmitting(false)
       }, 1100)
     }
   }
