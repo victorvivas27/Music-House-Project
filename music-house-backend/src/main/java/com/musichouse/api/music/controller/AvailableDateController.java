@@ -122,4 +122,42 @@ public class AvailableDateController {
                 .error(null)
                 .build());
     }
+
+
+    @GetMapping("/find/all/{idInstrument}/instrument")
+    public ResponseEntity<ApiResponse<List<AvailableDateDtoExit>>> findAllAvailableDatesByInstrumentId(
+            @PathVariable UUID idInstrument) {
+        try {
+            List<AvailableDateDtoExit> availableDates = availableDateService.findByInstrumentIdInstrument(idInstrument);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(ApiResponse.<List<AvailableDateDtoExit>>builder()
+                            .status(HttpStatus.OK)
+                            .statusCode(HttpStatus.OK.value())
+                            .message("Lista de fechas disponibles asociadas al instrumento exitosa.")
+                            .data(availableDates)
+                            .error(null)
+                            .build());
+
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.<List<AvailableDateDtoExit>>builder()
+                            .status(HttpStatus.NOT_FOUND)
+                            .statusCode(HttpStatus.NOT_FOUND.value())
+                            .message("No se encontraron fechas para el instrumento con ID: " + idInstrument)
+                            .data(null)
+                            .error(e.getMessage())
+                            .build());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<List<AvailableDateDtoExit>>builder()
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                            .message("Ocurrió un error interno al obtener las fechas.")
+                            .data(null)
+                            .error(e.getMessage())
+                            .build());
+        }
+    }
 }

@@ -23,24 +23,24 @@ import {
 } from '../../../api/reservations'
 import { useNavigate } from 'react-router-dom'
 import { CustomButton } from '../../Form/formUsuario/CustomComponents'
-import Swal from 'sweetalert2'
 import { flexColumnContainer } from '../../styles/styleglobal'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import useAlert from '../../../hook/useAlert'
 
 const CalendarReserva = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
   const [selectedDates, setSelectedDates] = useState([])
   const [error, setError] = useState('')
   const [infoMessage, setInfoMessage] = useState('')
-
-  const [openSnackbar, setOpenSnackbar] = useState(false)
-
-  const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
+const [openSnackbar, setOpenSnackbar] = useState(false)
+const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
   const idInstrument = instrument?.data?.idInstrument
   const { idUser } = useAuthContext()
   const [reservedDates, setReservedDates] = useState([])
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const {showSuccess }=useAlert()
+  const [isInstrumentReserved, setIsInstrumentReserved] = useState(false);
 
   useEffect(() => {
     const fetchAvailableDates = async () => {
@@ -94,18 +94,15 @@ const CalendarReserva = ({ instrument }) => {
       await createReservation(idUser, idInstrument, startDate, endDate)
 
       // ✅ Mostrar SweetAlert2
-      Swal.fire({
-        title: '¡Reserva realizada!',
-        text: `Tu reserva ha sido confirmada del ${startDate} al ${endDate}.`,
-        icon: 'success',
-        confirmButtonText: 'OK',
-        timer: 2000,
-        timerProgressBar: true
-      })
+      showSuccess(
+         '¡Reserva realizada!',
+         `Tu reserva ha sido confirmada del ${startDate} al ${endDate}.`,
+        
+      )
 
       setSelectedDates([])
       setTimeout(() => {
-        navigate('/reservations')
+        navigate('/')
       }, 2500)
     } catch (error) {
       setError(error.message)
@@ -127,9 +124,7 @@ const CalendarReserva = ({ instrument }) => {
         reservations.data.length === 0
       ) {
         setReservedDates([])
-        setInfoMessage(
-          '📅 ¡Aún no tienes reservas! No dudes en reservar este hermoso instrumento y disfruta de la música. 🎶'
-        )
+       
         setOpenSnackbarInfo(true)
         return
       }
@@ -137,6 +132,9 @@ const CalendarReserva = ({ instrument }) => {
       const instrumentReservations = reservations.data.filter(
         (res) => res.idInstrument === idInstrument
       )
+      if (instrumentReservations.length > 0) {
+        setIsInstrumentReserved(true);
+      }
 
       const bookedDates = instrumentReservations.flatMap((res) => {
         const start = dayjs(res.startDate)
@@ -177,6 +175,14 @@ const CalendarReserva = ({ instrument }) => {
   useEffect(() => {
     if (idUser) fetchReservedDates()
   }, [fetchReservedDates, idUser])
+
+
+  useEffect(() => {
+    if (isInstrumentReserved) {
+      setInfoMessage("Este instrumento ya tiene una reserva activa.");
+      setOpenSnackbarInfo(true);
+    }
+  }, [isInstrumentReserved]);
 
   const CustomDayComponent = (props) => {
     const { day, ...other } = props
@@ -233,7 +239,11 @@ const CalendarReserva = ({ instrument }) => {
           }
         }}
       >
-        <DateCalendar slots={{ day: CustomDayComponent }} />
+        <DateCalendar slots={{
+           day: CustomDayComponent }}
+           disabled={isInstrumentReserved}
+           
+           />
 
         {/* Snackbar para errores reales (API falló) */}
         <Snackbar
@@ -263,7 +273,7 @@ const CalendarReserva = ({ instrument }) => {
         {/* Snackbar para mensaje amigable cuando no hay reservas */}
         <Snackbar
           open={openSnackbarInfo}
-          autoHideDuration={2000}
+          autoHideDuration={3500}
           onClose={() => setOpenSnackbarInfo(false)}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
@@ -400,13 +410,14 @@ const CalendarReserva = ({ instrument }) => {
             minHeight: '60px'
           }}
         >
-          <Tooltip title="Reservar">
+         
+
             <CustomButton
               variant="contained"
               onClick={handleConfirmReservation}
               disabled={loading}
               sx={{
-                padding: '10px 100px',
+               
                 visibility: selectedDates.length > 0 ? 'visible' : 'hidden'
               }}
               className={
@@ -425,7 +436,8 @@ const CalendarReserva = ({ instrument }) => {
                 'Reservar'
               )}
             </CustomButton>
-          </Tooltip>
+          
+
         </Box>
         {/*Fin button para reservar */}
       </Box>

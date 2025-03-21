@@ -306,7 +306,7 @@ export const Instrument = () => {
                             className="instrument-characteristic-image"
                           />
                         </Tooltip>
-                        {/* <ArrowLeft className="instrument-characteristic-arrow" />*/}
+                       
                         {instrumentSelected?.characteristics[
                           characteristic.id
                         ] === 'si' ? (
@@ -400,6 +400,7 @@ export const Instrument = () => {
               {/*Fin del calendario ADMIN*/}
 
               {/* 📌 Sección para el usuario */}
+              
               {/* 📌 Contenedor del Calendario */}
               {isUser && (
                 <Box
