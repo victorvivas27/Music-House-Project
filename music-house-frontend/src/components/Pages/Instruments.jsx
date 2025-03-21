@@ -130,7 +130,7 @@ export const Instruments = () => {
   return (
     <>
       {!loading && (
-        <MainWrapper>
+        <MainWrapper sx={{ padding: 2 }} >
           <Paper
             sx={{
               display: { xs: 'none', lg: 'initial' },
@@ -169,6 +169,7 @@ export const Instruments = () => {
                 />
 
                 <TableBody>
+                  
                   {visibleRows.map((row, index) => {
                     const isItemSelected = isSelected(
                       row.idInstrument,

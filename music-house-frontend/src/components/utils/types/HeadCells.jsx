@@ -1,4 +1,4 @@
-export const headCells = [
+export const headCellsReservas = [
   {
     id: 'verDetalles',
     numeric: false,
@@ -62,7 +62,7 @@ export const headCells = [
     id: 'delete',
     numeric: false,
     disablePadding: false,
-    label: '',
+    label: 'Eliminar',
     sx: { display: { xs: 'none', md: 'table-cell' } }
   }
 ]

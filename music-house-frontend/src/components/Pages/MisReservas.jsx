@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Table,
   TableBody,
@@ -7,20 +7,26 @@ import {
   TablePagination,
   TableRow,
   Paper,
-  Typography
+  Typography,
+  Checkbox,
+  Box,
+  Tooltip,
+  IconButton
 } from '@mui/material'
 
 import MainWrapper from '../common/MainWrapper'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 import {
   EnhancedTableHead,
- // getLabelDisplayedRows,
+  // getLabelDisplayedRows,
   isSelected,
   handleSort,
   handleSelected,
   getEmptyRows,
   useVisibleRows,
-  handleSelectAll
+  handleSelectAll,
+  EnhancedTableToolbar
 } from '../Pages/Admin/common/tableHelper'
 
 import { Loader } from '../common/loader/Loader'
@@ -28,13 +34,14 @@ import { useAuthContext } from '../utils/context/AuthGlobal'
 
 import { deleteReservation, getReservationById } from '../../api/reservations'
 import PropTypes from 'prop-types'
-import { headCells } from '../utils/types/HeadCells'
-import { ReservationRow } from './Admin/common/ReservationRow '
-import Swal from 'sweetalert2'
+import { headCellsReservas } from '../utils/types/HeadCells'
+
 import ArrowBack from '../utils/ArrowBack'
+import useAlert from '../../hook/useAlert'
+import { paginationStyles } from '../styles/styleglobal'
 
 const MisReservas = () => {
-  const [reservations, setReservations] = useState([])
+  const [reservations, setReservations] = useState({ data: [] })
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [order, setOrder] = useState('desc')
@@ -43,116 +50,87 @@ const MisReservas = () => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
   const { idUser } = useAuthContext()
+  const { showConfirm, showLoading, showSuccess, showError } = useAlert()
 
-  const getReservations = useCallback(() => {
+  const getAllReservations = async () => {
     setLoading(true)
-    getReservationById(idUser)
-      .then((data) => setReservations(data))
-      .catch(() => setReservations([]))
-      .finally(() => setLoading(false))
-  }, [idUser])
-
-  useEffect(() => {
-    if (!idUser) return
-    getReservations()
-  }, [getReservations, idUser])
-
-  useEffect(() => {
-    if (!reservations || reservations.length === 0) {
-      setRows([])
-      setLoading(false)
-      return
+    try {
+      const fetchedReservas = await getReservationById(idUser)
+      setReservations(fetchedReservas)
+      setRows(fetchedReservas.data || [])
+    } catch {
+      setReservations({ data: [] })
+    } finally {
+      setTimeout(() => setLoading(false), 500)
     }
+  }
+
+  useEffect(() => {
     setRows(reservations.data)
+
     setLoading(false)
   }, [reservations])
 
   useEffect(() => {
-    if (!idUser) return
-    getReservations()
-  }, [idUser, getReservations])
+    getAllReservations()
+  }, [])
 
-  const handleRequestSort = (event, property) => {
-    handleSort(event, property, orderBy, order, setOrderBy, setOrder)
+  const handleSelectAllClick = (event) => {
+    handleSelectAll(event, rows, 'idReservation', setSelected)
   }
 
   const handleClick = (event, id) => {
     handleSelected(event, id, selected, setSelected)
   }
 
-  const handleSelectAllClick = (event) => {
-    handleSelectAll(event, rows, 'idReservation', setSelected)
+  const handleRequestSort = (event, property) => {
+    handleSort(event, property, orderBy, order, setOrderBy, setOrder)
   }
 
-  const handleConfirmDelete = () => {
-    if (selected.length === 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Atención',
-        text: 'No has seleccionado ninguna reserva para eliminar.'
-      })
+  const handleConfirmDelete = async (idReservation = null) => {
+    const selectedIds = idReservation ? [idReservation] : selected
+    console.log('🔍 ID(s) a eliminar:', idReservation || selected)
+
+    if (selectedIds.length === 0) {
+      showError('Error', 'No hay reservas seleccionados para eliminar.')
       return
     }
 
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        handleDelete()
-      }
+    // Mostrar el modal de confirmación
+    const isConfirmed = await showConfirm({
+      title: `¿Eliminar ${selectedIds.length} reserva(s)?`,
+      text: 'Esta acción no se puede deshacer.'
     })
-  }
+    if (!isConfirmed) return
 
-  const handleDelete = () => {
-    const validReservations = selected
-      .map((id) => rows.find((row) => row.idReservation === id))
-      .filter((reservation) => reservation) // 🔹 Elimina `undefined`
-
-    Promise.all(
-      validReservations.map((reservation) =>
-        deleteReservation(
-          reservation.idInstrument,
-          idUser,
-          reservation.idReservation
-        )
+    showLoading('Eliminando...', 'Por favor espera.')
+    try {
+      await Promise.all(
+        selectedIds.map((id) => {
+          const reserva = rows.find((row) => row.idReservation === id)
+          return deleteReservation(
+            reserva.idInstrument,
+            reserva.idUser,
+            reserva.idReservation
+          )
+        })
       )
-    )
-      .then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Reservas eliminadas',
-          text: 'Las reservas seleccionadas fueron eliminadas con éxito.',
-          timer: 2000,
-          showConfirmButton: false
-        })
-      })
-      .catch(() => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'No fue posible eliminar algunas reservas.'
-        })
-      })
-      .finally(() => {
-        setSelected([])
-        getReservations()
-      })
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
+      showSuccess(
+        '¡Eliminado(s)!',
+        `${selectedIds.length} reserva(s) eliminada(s) correctamente.`
+      )
+      setSelected([])
+      getAllReservations()
+    } catch (error) {
+      if (error.data) {
+        // ✅ Ahora sí capturamos el mensaje que envía el backend
+        showError(
+          `❌ ${
+            error.data.message || '⚠️ No se pudo conectar con el servidor.'
+          }`
+        )
+      }
+    }
   }
 
   const emptyRows = getEmptyRows(page, rowsPerPage, rows)
@@ -161,88 +139,159 @@ const MisReservas = () => {
   if (loading) return <Loader title="Cargando reservas" />
 
   return (
-    <MainWrapper sx={{ padding: 2 }}>
-      <Paper
-        sx={{
-          width: '100%',
-          mb: 2,
-          padding: 2,
-          borderRadius: '10px',
-          boxShadow:
-          'rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px'
-        }}
-        >
-        <ArrowBack/>
-        <TableContainer>
-          <Table sx={{ boxShadow: 'none', minWidth: { xs: '100%', md: 750 } }}>
-            <EnhancedTableHead
-              headCells={headCells}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-              rowCount={rows?.length}
-              onSelectAllClick={handleSelectAllClick}
-            />
-            <TableBody>
-              {visibleRows &&
-                visibleRows.map((row, index) => {
-                  const isItemSelected = isSelected(row.idReservation, selected)
-                  const labelId = `enhanced-table-checkbox-${index}`
-                  return (
-                    <ReservationRow
-                      key={row.idReservation}
-                      row={row}
-                      isItemSelected={isItemSelected}
-                      labelId={labelId}
-                      handleClick={handleClick}
-                      handleConfirmDelete={handleConfirmDelete}
-                    />
-                  )
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows
-                  }}
-                >
-                  <TableCell colSpan={9} />
-                </TableRow>
-              )}
-              {page === 0 && rows.length === 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows
-                  }}
-                >
-                  <TableCell colSpan={9}>
-                    <Typography align="center">
-                      No se encontraron reservas
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+    <>
+      {!loading && (
+        <MainWrapper sx={{ padding: 2 }}>
+          <Paper
+            sx={{
+              display: { xs: 'none', lg: 'initial' },
+              width: '90%',
+              margin: 'auto',
+              boxShadow: 'var(--box-shadow)',
+              borderRadius: 4
+            }}
+          >
+            <ArrowBack />
 
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-         //labelDisplayedRows={getLabelDisplayedRows}
-         sx={{
-          '& .MuiTablePagination-displayedRows': { display: 'none' },
-          '& .MuiTablePagination-actions': { display: 'none' }
-        }}
-          labelRowsPerPage="Filas por página"
-        />
-      </Paper>
-    </MainWrapper>
+            <EnhancedTableToolbar
+              title="Reservas"
+              numSelected={selected.length}
+              handleConfirmDelete={() => handleConfirmDelete()}
+            />
+
+            <TableContainer>
+              <Table aria-labelledby="tableTitle" size="medium">
+                <EnhancedTableHead
+                  headCells={headCellsReservas}
+                  numSelected={selected.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onRequestSort={handleRequestSort}
+                  rowCount={rows?.length}
+                  onSelectAllClick={handleSelectAllClick}
+                />
+                <TableBody>
+                  {visibleRows.map((row, index) => {
+                    const isItemSelected = isSelected(
+                      row.idReservation,
+                      selected
+                    )
+                    const labelId = `enhanced-table-checkbox-${index}`
+                    const isRowEven = index % 2 === 0
+
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.idReservation}
+                        selected={isItemSelected}
+                        className={
+                          isRowEven ? 'table-row-even' : 'table-row-odd'
+                        }
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            onChange={(event) =>
+                              handleClick(event, row.idReservation)
+                            }
+                            inputProps={{ 'aria-labelledby': labelId }}
+                          />
+                        </TableCell>
+
+                        <TableCell align="left">
+                          <img
+                            src={row.imageUrl}
+                            alt="Instrumento"
+                            width="80"
+                          />
+                        </TableCell>
+                        <TableCell align="left">{row.instrumentName}</TableCell>
+                        <TableCell align="left">{row.startDate} </TableCell>
+                        <TableCell align="left">{row.endDate}</TableCell>
+                        <TableCell align="left">${row.totalPrice}</TableCell>
+                        <TableCell align="left">${row.email}</TableCell>
+                        <TableCell align="left">
+                          <Box
+                            style={{
+                              opacity: selected.length > 0 ? 0 : 1,
+                              pointerEvents:
+                                selected.length > 0 ? 'none' : 'auto',
+                              transition: 'opacity 0.5s ease-in-out'
+                            }}
+                          >
+                            <Tooltip title="Eliminar">
+                              <IconButton
+                                onClick={() =>
+                                  handleConfirmDelete(row.idReservation)
+                                }
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                  {emptyRows > 0 && (
+                    <TableRow
+                      style={{
+                        height: 53 * emptyRows
+                      }}
+                    >
+                      <TableCell colSpan={3} />
+                    </TableRow>
+                  )}
+                  {page === 0 && rows.length === 0 && (
+                    <TableRow
+                      style={{
+                        height: 53 * emptyRows
+                      }}
+                    >
+                      <TableCell colSpan={7}>
+                        <Typography align="center">
+                          No se encontraron reservas
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            <TablePagination
+              rowsPerPageOptions={[
+                5,
+                10,
+                25,
+                { label: 'Todos', value: rows.length }
+              ]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={Math.min(
+                page,
+                Math.max(0, Math.ceil(rows.length / rowsPerPage) - 1)
+              )} // Evita errores cuando cambia la cantidad de filas
+              onPageChange={(event, newPage) => setPage(newPage)}
+              onRowsPerPageChange={(event) => {
+                setRowsPerPage(parseInt(event.target.value, 10))
+                setPage(0) // Reinicia la paginación al cambiar el número de filas
+              }}
+              labelRowsPerPage="Filas por página"
+              sx={{
+                ...paginationStyles
+              }}
+            />
+          </Paper>
+        </MainWrapper>
+      )}
+    </>
   )
 }
 

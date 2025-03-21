@@ -3,7 +3,6 @@ import {
   Box,
   CircularProgress,
   Snackbar,
-  Tooltip,
   Typography
 } from '@mui/material'
 import {
@@ -13,7 +12,7 @@ import {
 } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import PropTypes from 'prop-types'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { getAllAvailableDatesByInstrument } from '../../../api/availability'
 import dayjs from 'dayjs'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
@@ -32,19 +31,20 @@ const CalendarReserva = ({ instrument }) => {
   const [selectedDates, setSelectedDates] = useState([])
   const [error, setError] = useState('')
   const [infoMessage, setInfoMessage] = useState('')
-const [openSnackbar, setOpenSnackbar] = useState(false)
-const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
+  const [openSnackbar, setOpenSnackbar] = useState(false)
+  const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
   const idInstrument = instrument?.data?.idInstrument
   const { idUser } = useAuthContext()
   const [reservedDates, setReservedDates] = useState([])
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-  const {showSuccess }=useAlert()
-  const [isInstrumentReserved, setIsInstrumentReserved] = useState(false);
+  const { showSuccess } = useAlert()
+  const [isInstrumentReserved, setIsInstrumentReserved] = useState(false)
+  const hasFetchedDates = useRef(false)
 
   useEffect(() => {
     const fetchAvailableDates = async () => {
-      if (!idInstrument) return
+      if (!idInstrument || hasFetchedDates.current) return
       try {
         const dates = await getAllAvailableDatesByInstrument(idInstrument)
         const filteredDates = dates
@@ -95,9 +95,8 @@ const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
 
       // ✅ Mostrar SweetAlert2
       showSuccess(
-         '¡Reserva realizada!',
-         `Tu reserva ha sido confirmada del ${startDate} al ${endDate}.`,
-        
+        '¡Reserva realizada!',
+        `Tu reserva ha sido confirmada del ${startDate} al ${endDate}.`
       )
 
       setSelectedDates([])
@@ -117,14 +116,13 @@ const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
     try {
       const reservations = await getReservationById(idUser)
 
-     
       if (
         !reservations.data ||
         !Array.isArray(reservations.data) ||
         reservations.data.length === 0
       ) {
         setReservedDates([])
-       
+
         setOpenSnackbarInfo(true)
         return
       }
@@ -133,7 +131,7 @@ const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
         (res) => res.idInstrument === idInstrument
       )
       if (instrumentReservations.length > 0) {
-        setIsInstrumentReserved(true);
+        setIsInstrumentReserved(true)
       }
 
       const bookedDates = instrumentReservations.flatMap((res) => {
@@ -154,19 +152,12 @@ const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
 
       setReservedDates(bookedDates)
     } catch (error) {
-      const { statusCode, message } = error
-
-      if (statusCode === 404) {
-      
+      if (error.data.statusCode === 404) {
         setReservedDates([])
         setInfoMessage(
           '📅 ¡Aún no tienes reservas! No dudes en reservar este hermoso instrumento y disfruta de la música. 🎶'
         )
         setOpenSnackbarInfo(true)
-      } else {
-        // 🛑 Si el error es otro (500, 403, etc.), mostrar error real
-        setError(`⚠️ Error ${statusCode}: ${message}`)
-        setOpenSnackbar(true)
       }
     }
   }, [idInstrument, idUser])
@@ -176,13 +167,12 @@ const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
     if (idUser) fetchReservedDates()
   }, [fetchReservedDates, idUser])
 
-
   useEffect(() => {
     if (isInstrumentReserved) {
-      setInfoMessage("Este instrumento ya tiene una reserva activa.");
-      setOpenSnackbarInfo(true);
+      setInfoMessage('Este instrumento ya tiene una reserva activa.')
+      setOpenSnackbarInfo(true)
     }
-  }, [isInstrumentReserved]);
+  }, [isInstrumentReserved])
 
   const CustomDayComponent = (props) => {
     const { day, ...other } = props
@@ -198,12 +188,12 @@ const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
         onClick={() => !isReserved && handleDateSelect(day)}
         sx={{
           bgcolor: isReserved
-            ? 'var(--color-primario) !important' 
+            ? 'var(--color-primario) !important'
             : isSelected
-              ? 'var(--color-azul) !important' 
+              ? 'var(--color-azul) !important'
               : isAvailable
-                ? 'var(--color-exito) !important' 
-                : 'var(--calendario-color-no-disponible) !important', 
+                ? 'var(--color-exito) !important'
+                : 'var(--calendario-color-no-disponible) !important',
           color: 'var( --texto-inverso) !important',
           borderRadius: '50%',
           pointerEvents: isReserved ? 'none' : 'auto'
@@ -239,11 +229,12 @@ const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
           }
         }}
       >
-        <DateCalendar slots={{
-           day: CustomDayComponent }}
-           disabled={isInstrumentReserved}
-           
-           />
+        <DateCalendar
+          slots={{
+            day: CustomDayComponent
+          }}
+          disabled={isInstrumentReserved}
+        />
 
         {/* Snackbar para errores reales (API falló) */}
         <Snackbar
@@ -333,7 +324,7 @@ const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
             sx={{
               display: 'grid',
               gridTemplateColumns: {
-                xs: '1fr 1fr', 
+                xs: '1fr 1fr',
                 sm: '1fr 1fr 1fr 1fr'
               },
               gap: 2,
@@ -410,34 +401,29 @@ const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
             minHeight: '60px'
           }}
         >
-         
-
-            <CustomButton
-              variant="contained"
-              onClick={handleConfirmReservation}
-              disabled={loading}
-              sx={{
-               
-                visibility: selectedDates.length > 0 ? 'visible' : 'hidden'
-              }}
-              className={
-                selectedDates.length > 1 ? 'fade-in-up' : 'fade-out-soft'
-              }
-            >
-              {loading ? (
-                <>
-                  Cargando Reserva...
-                  <CircularProgress
-                    size={20}
-                    sx={{ color: 'var(--color-azul)' }}
-                  />
-                </>
-              ) : (
-                'Reservar'
-              )}
-            </CustomButton>
-          
-
+          <CustomButton
+            variant="contained"
+            onClick={handleConfirmReservation}
+            disabled={loading}
+            sx={{
+              visibility: selectedDates.length > 0 ? 'visible' : 'hidden'
+            }}
+            className={
+              selectedDates.length > 1 ? 'fade-in-up' : 'fade-out-soft'
+            }
+          >
+            {loading ? (
+              <>
+                Cargando Reserva...
+                <CircularProgress
+                  size={20}
+                  sx={{ color: 'var(--color-azul)' }}
+                />
+              </>
+            ) : (
+              'Reservar'
+            )}
+          </CustomButton>
         </Box>
         {/*Fin button para reservar */}
       </Box>

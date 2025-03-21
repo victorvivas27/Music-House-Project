@@ -9,7 +9,9 @@ export const getReservations= async () => {
       const response = await axios.get(`${BASE_URL}/reservations/all`);
       return response.data;
     } catch (error) {
-      throw new Error('Error al obtener las reservas');
+      if (error.response) {
+        throw (error.response || "No se pudo conectar con el servidor");
+      }
     }
   }
 
@@ -18,18 +20,20 @@ export const getReservations= async () => {
       const response = await axios.get(`${BASE_URL}/reservations/search/user/${id}`);
       return response.data;
     } catch (error) {
-      const statusCode = error.response?.status || 500; // Si no hay status, asumimos 500
-      const errorMessage = error.response?.data?.message || "Error desconocido";
-      throw { statusCode, message: errorMessage };
+      if (error.response) {
+        throw (error.response || "No se pudo conectar con el servidor");
+      }
     }
 };
 
   export const deleteReservation =async (idInstrument, idUser, idReservation) => {
     try {
-      await axios.delete(`${BASE_URL}/reservations/delete/${idInstrument}/${idUser}/${idReservation}`);
-      return true;
+     const response= await axios.delete(`${BASE_URL}/reservations/delete/${idInstrument}/${idUser}/${idReservation}`);
+      return response.data 
     } catch (error) {
-      throw new Error('Error al eliminar la reserva');
+      if (error.response) {
+        throw (error.response || "No se pudo conectar con el servidor");
+      } 
     }
   }
 
@@ -44,9 +48,8 @@ export const createReservation = async (idUser, idInstrument, startDate, endDate
     });
     return response.data;
   } catch (error) {
-    if (error?.response?.status === 400) {
-      throw new Error(error.response.data.message || 'Error en la solicitud');
+    if (error.response) {
+      throw (error.response || "No se pudo conectar con el servidor");
     }
-    throw new Error('Error al crear la reserva');
   }
 };
