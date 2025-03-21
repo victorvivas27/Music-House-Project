@@ -3,7 +3,6 @@ import Typography from '@mui/material/Typography'
 import { Link } from 'react-router-dom'
 import {
   Avatar,
-  Box,
   Card,
   CardActions,
   CardHeader,
@@ -27,18 +26,18 @@ const ProductCard = ({ name, imageUrl, id }) => {
     <Card
       sx={{
         width: {
-          xs: 'calc(48% - 8px)',
-          sm: '35%',
-          md: '30%',
-          lg: '22%',
-          xl: '12%'
+          xs: '170px',
+          sm: '180px',
+          md: '190px',
+          lg: '200px',
+          xl: '210px'
         },
         height: {
-          xs: 330,
-          sm: 280,
-          md: 320,
-          lg: 350,
-          xl: 350
+          xs: '330px',
+          sm: '340px',
+          md: '350px',
+          lg: '360px',
+          xl: '350px'
         },
         margin: 1,
         boxShadow: 3,
@@ -46,10 +45,19 @@ const ProductCard = ({ name, imageUrl, id }) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'space-evenly'
+        justifyContent: 'flex-start',
+        paddingBottom: 2,
+        gap: 1
       }}
     >
       <CardHeader
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: 50,
+          width: '100%'
+        }}
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="product">
             {name.charAt(0)}
@@ -60,8 +68,6 @@ const ProductCard = ({ name, imageUrl, id }) => {
             <MoreVertIcon />
           </IconButton>
         }
-        title={name}
-        sx={{ paddingBottom: 0 }}
       />
 
       <CustomTooltip
@@ -76,9 +82,9 @@ const ProductCard = ({ name, imageUrl, id }) => {
           <CardMedia
             component="img"
             sx={{
-              height: 190,
-              width: 190,
-              objectFit: 'contain',
+              width: 150,
+              height: 150,
+              objectFit: 'cover',
               borderRadius: '50%',
               boxShadow: 'var(--box-shadow)'
             }}
@@ -87,20 +93,40 @@ const ProductCard = ({ name, imageUrl, id }) => {
           />
         </Link>
       </CustomTooltip>
+      {/* ✅ Título debajo de la imagen */}
+      <Typography
+        variant="subtitle1"
+        textAlign="center"
+        fontWeight="bold"
+        sx={{
+          color: 'text.primary',
+          fontSize: {
+            xs: '0.85rem',
+            sm: '0.9rem',
+            md: '1rem'
+          }
+        }}
+      >
+        {name}
+      </Typography>
 
       <CardActions
-        disableSpacing
-        sx={{ justifyContent: 'space-between', px: 2 }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: 40,
+          width: '100%',
+          marginTop: 'auto',
+         
+        }}
       >
         {isUser && (
-          <Box>
+          <>
             <FavoriteIcon idInstrument={id} />
-          </Box>
+            <ShareIcon />
+          </>
         )}
-
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
       </CardActions>
     </Card>
   )

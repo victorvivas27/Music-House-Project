@@ -3,7 +3,7 @@ import { Box, Tooltip } from '@mui/material'
 import { useAuthContext } from '../../utils/context/AuthGlobal'
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import {  getAllFavorites, toggleFavorite } from '../../../api/favorites'
+import { getAllFavorites, toggleFavorite } from '../../../api/favorites'
 
 import PropTypes from 'prop-types'
 import { useAppStates } from '../../utils/global.context'
@@ -16,7 +16,7 @@ const FavoriteIcon = ({ idInstrument }) => {
   const id = idInstrument || params.id
   const [isFavorite, setIsFavorite] = useState(false)
   const { dispatch } = useAppStates()
-  const {showError}=useAlert()
+  const { showError } = useAlert()
 
   useEffect(() => {
     const checkIfFavorite = async () => {
@@ -61,22 +61,22 @@ const FavoriteIcon = ({ idInstrument }) => {
         })
       }
     } catch (error) {
-    showError(error?.message)
+      showError(error?.message)
     }
   }
 
   return (
-    <Tooltip title={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'} arrow>
+    <Tooltip
+      title={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+      arrow
+    >
       <Box
         onClick={handleToggleFavorite}
         sx={{
           cursor: 'pointer',
-          display: 'inline-flex',
-          padding: 0,
           minWidth: 'auto',
           alignItems: 'center',
-          justifyContent: 'center',
-          margin: 4
+          justifyContent: 'center'
         }}
       >
         {isFavorite ? (

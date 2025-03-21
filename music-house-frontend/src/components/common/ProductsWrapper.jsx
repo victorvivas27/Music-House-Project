@@ -6,8 +6,11 @@ const ProductsWrapper = styled(Box)(() => ({
   display: 'flex',
   flexWrap: 'wrap',
   justifyContent: 'center',
-  alignItems:"center",
-  
+  gap: 2,
+  width: '100%',
+  maxWidth: '99%',
+  margin: '0 auto',
+ 
 }))
 
 export default ProductsWrapper

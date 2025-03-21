@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import CssBaseline from '@mui/material/CssBaseline'
-import { Typography, Box, Container } from '@mui/material'
+
+import { Typography, Box } from '@mui/material'
 import ProductsWrapper from '../common/ProductsWrapper'
 import ProductCard from '../common/ProductCard'
 import { Loader } from '../common/loader/Loader'
@@ -36,64 +36,72 @@ export const Favorites = () => {
   if (loading) return <Loader title="Cargando favoritos..." />
 
   return (
-    <main>
-      <MainWrapper
+    <MainWrapper
+      sx={{
+        padding: { xs: '2rem 1rem', sm: '2rem' },
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3,
+        alignItems: 'center',
+        justifyContent: 'flex-start', 
+        minHeight: '100vh', 
+        boxSizing: 'border-box'
+      }}
+    >
+      <ArrowBack />
+
+      <Box
         sx={{
-          paddingLeft: { xs: '0' },
-          paddingRight: { xs: '0' },
-          minHeight: '90vh'
+          textAlign: 'center'
         }}
       >
-        <ArrowBack />
-        <CssBaseline />
-        <Container
+        <Typography
+          variant="h4"
+          component="h1"
+          fontWeight="bold"
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            paddingBottom: 5,
-            paddingLeft: { xs: '0' },
-            paddingRight: { xs: '0' }
+            color: 'var(--color-primario)',
+            marginBottom: 1
           }}
         >
-          <Box>
-            <Typography
-              gutterBottom
-              variant="h6"
-              component="h2"
-              textAlign="center"
-              sx={{
-                paddingBottom: 1,
-                fontWeight: 'bold'
-              }}
-            >
-              Favoritos
-            </Typography>
-          </Box>
-          <ProductsWrapper>
-            {favorites.length > 0 ? (
-              favorites.map((favorite, index) => (
-                <ProductCard
-                  key={`favorite-card-${index}`}
-                  name={favorite.instrument.name}
-                  imageUrl={favorite.imageUrl}
-                  id={favorite.instrument.idInstrument}
-                  isFavorite={true}
-                />
-              ))
-            ) : (
-              <Typography
-                gutterBottom
-                variant="subtitle2"
-                component="h6"
-                textAlign="center"
-                sx={{ paddingBottom: 1, fontWeight: 'bold' }}
-              >
-                No se han encontrado favoritos
-              </Typography>
-            )}
-          </ProductsWrapper>
-        </Container>
-      </MainWrapper>
-    </main>
+          🎵 Tus Favoritos
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
+          Aquí puedes ver los instrumentos que marcaste como favoritos.
+        </Typography>
+      </Box>
+
+      <ProductsWrapper>
+        {favorites.length > 0 ? (
+          favorites.map((favorite, index) => (
+            <ProductCard
+              key={`favorite-card-${index}`}
+              name={favorite.instrument.name}
+              imageUrl={favorite.imageUrl}
+              id={favorite.instrument.idInstrument}
+              isFavorite={true}
+            />
+          ))
+        ) : (
+          <Typography
+            variant="subtitle1"
+            sx={{
+              textAlign: 'center',
+              marginTop: 4,
+              color: 'text.secondary',
+              fontStyle: 'italic'
+            }}
+          >
+            No se han encontrado favoritos. ¡Explora instrumentos y agrega
+            algunos! 🎸🎺
+          </Typography>
+        )}
+      </ProductsWrapper>
+    </MainWrapper>
   )
 }
