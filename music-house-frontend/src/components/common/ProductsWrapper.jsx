@@ -1,22 +1,13 @@
 import { styled } from '@mui/material/styles'
-import Container from '@mui/material/Container'
 
- const ProductsWrapper = styled(Container)(({ theme }) => ({
+import { Box } from '@mui/material';
+
+const ProductsWrapper = styled(Box)(() => ({
   display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-around',
   flexWrap: 'wrap',
-  gap: '1rem',
-  paddingTop: 1,
-  border:"2px solid blue",
-
-  [theme.breakpoints.up('sm')]: {
-    flexDirection: 'row'
-  },
-
-  [theme.breakpoints.up('md')]: {
-    paddingTop: 3
-  }
+  justifyContent: 'center',
+  alignItems:"center",
+  
 }))
 
 export default ProductsWrapper

@@ -9,32 +9,17 @@ export const getAllFavorites = async (idUser) => {
     return response.data.data
   } catch (error) {
     if (error?.response?.status === 404) {
-      return [] // Si no hay favoritos, devolvemos un array vacío
+      return [] 
     }
     throw new Error('Error al obtener favoritos')
   }
 }
 
-export const addFavorite = async (idUser, idInstrument) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/favorite/add`, {
-      idUser,
-      idInstrument
-    })
-    return response.data
-  } catch (error) {
-    if (error?.response?.status === 409) {
-      throw new Error('Ya está en favoritos')
-    }
-    throw new Error('Error al agregar a favoritos')
-  }
+export const toggleFavorite = async (idUser, idInstrument) => {
+  const response = await axios.post(`${BASE_URL}/favorite/add`, {
+    idUser,
+    idInstrument,
+  })
+  return response.data
 }
 
-export const removeFavorite = async (idFavorite, idUser, idInstrument) => {
-  try {
-    await axios.delete(`${BASE_URL}/favorite/delete/${idInstrument}/${idUser}/${idFavorite}`)
-    return true
-  } catch (error) {
-    throw new Error('Error al eliminar favorito')
-  }
-}

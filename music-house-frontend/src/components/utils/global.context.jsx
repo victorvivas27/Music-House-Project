@@ -84,6 +84,21 @@ const appReducer = (state, action) => {
         bookingInfo: action.payload
       }
 
+      case actions.UPDATE_FAVORITES:
+        return { ...state, favorites: action.payload }
+
+      case actions.TOGGLE_FAVORITE: {
+        const { isFavorite, favorite, instrumentId } = action.payload
+      
+        const updatedFavorites = isFavorite
+          ? [...state.favorites, favorite] // ✅ Se agrega
+          : state.favorites.filter(f => f.instrument.idInstrument !== instrumentId) 
+      
+        return { ...state, favorites: updatedFavorites }
+      }
+
+      
+
     default:
       return state
   }

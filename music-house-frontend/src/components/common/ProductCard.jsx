@@ -1,75 +1,117 @@
-import { styled, alpha } from '@mui/material/styles'
 import CardMedia from '@mui/material/CardMedia'
-import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
-import { ProductWrapper } from './ProductWrapper'
 import { Link } from 'react-router-dom'
-import { Button, Tooltip } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
+import {
+  Avatar,
+  Box,
+  Card,
+  CardActions,
+  CardHeader,
+  IconButton
+} from '@mui/material'
+
+import ShareIcon from '@mui/icons-material/Share'
+
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import '../styles/product.styles.css'
 import PropTypes from 'prop-types'
+import { red } from '@mui/material/colors'
+import { CustomTooltip } from './customTooltip/CustomTooltip'
+import FavoriteIcon from './favorito/FavoriteIcon'
+import { useAuthContext } from '../utils/context/AuthGlobal'
 
-const DeleteFavoriteIcon = styled(DeleteIcon)(({ theme }) => ({
-  fill: '#000000 !important',
-  '&:hover': {
-    fill: `${alpha(theme.palette.secondary.main, 0.7)} !important`
-  }
-}))
+const ProductCard = ({ name, imageUrl, id }) => {
+  const { isUser } = useAuthContext()
 
-const ProductCard = ({
-  name,
-  imageUrl,
-  id,
-  isFavorite = false,
-  onClickTrash
-}) => {
   return (
-    <ProductWrapper
+    <Card
       sx={{
+        width: {
+          xs: 'calc(48% - 8px)',
+          sm: '35%',
+          md: '30%',
+          lg: '22%',
+          xl: '12%'
+        },
+        height: {
+          xs: 330,
+          sm: 280,
+          md: 320,
+          lg: 350,
+          xl: 350
+        },
+        margin: 1,
+        boxShadow: 3,
+        borderRadius: 2,
         display: 'flex',
         flexDirection: 'column',
-        width: { xs: '100%', md: '15rem' },
-        borderRadius: '.625rem',
-        padding: '.5rem'
+        alignItems: 'center',
+        justifyContent: 'space-evenly'
       }}
     >
-      <Link to={`/instrument/${id}`} className="product-link">
-        <CardMedia
-          sx={{
-            height: 300,
-            cursor: 'pointer',
-            backgroundSize: 'contain !important'
-          }}
-          image={imageUrl}
-          alt={name}
-        />
-        <CardContent
-          sx={{
-            paddingBottom: isFavorite ? '0rem !important' : '1.5rem !important'
-          }}
-        >
-          <Typography gutterBottom variant="h5" component="h2">
-            {name}
+      <CardHeader
+        avatar={
+          <Avatar sx={{ bgcolor: red[500] }} aria-label="product">
+            {name.charAt(0)}
+          </Avatar>
+        }
+        action={
+          <IconButton aria-label="settings">
+            <MoreVertIcon />
+          </IconButton>
+        }
+        title={name}
+        sx={{ paddingBottom: 0 }}
+      />
+
+      <CustomTooltip
+        title={
+          <Typography variant="body2">
+            <strong>{name}</strong> - haz clic en la imagen para más info
           </Typography>
-        </CardContent>
-      </Link>
-      {isFavorite && (
-        <Tooltip title="Remover de favoritos">
-          <Button sx={{ height: '3rem' }} onClick={onClickTrash}>
-            <DeleteFavoriteIcon fontSize="large" />
-          </Button>
-        </Tooltip>
-      )}
-    </ProductWrapper>
+        }
+        arrow
+      >
+        <Link to={`/instrument/${id}`} className="product-link">
+          <CardMedia
+            component="img"
+            sx={{
+              height: 190,
+              width: 190,
+              objectFit: 'contain',
+              borderRadius: '50%',
+              boxShadow: 'var(--box-shadow)'
+            }}
+            image={imageUrl || '/default-image.jpg'}
+            alt={name}
+          />
+        </Link>
+      </CustomTooltip>
+
+      <CardActions
+        disableSpacing
+        sx={{ justifyContent: 'space-between', px: 2 }}
+      >
+        {isUser && (
+          <Box>
+            <FavoriteIcon idInstrument={id} />
+          </Box>
+        )}
+
+        <IconButton aria-label="share">
+          <ShareIcon />
+        </IconButton>
+      </CardActions>
+    </Card>
   )
 }
 
 ProductCard.propTypes = {
-  name: PropTypes.string.isRequired,  // Nombre del producto, obligatorio
-  imageUrl: PropTypes.string.isRequired,  // URL de la imagen del producto, obligatorio
-  id: PropTypes.string.isRequired,  // ID del producto, obligatorio
-  isFavorite: PropTypes.bool,  // Determina si el producto está en favoritos (opcional)
-  onClickTrash: PropTypes.func  // Función que se ejecuta al hacer clic en el ícono de eliminar, opcional
-};
+  name: PropTypes.string.isRequired,
+  imageUrl: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  isFavorite: PropTypes.bool,
+  onClickTrash: PropTypes.func
+}
 
 export default ProductCard

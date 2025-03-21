@@ -8,7 +8,12 @@ export const TematicCard = ({ title, imageUrl }) => {
     <Card
       sx={{
         flexGrow: 1,
-        width: { xs: '100%', md: '20rem', borderRadius: '10px' }
+        margin:1,
+        width: { 
+          xs: '100%',
+           md: '20rem',
+            borderRadius: '10px'
+           }
       }}
     >
       <CardMedia
@@ -25,7 +30,7 @@ export const TematicCard = ({ title, imageUrl }) => {
 }
 
 TematicCard.propTypes = {
-  title: PropTypes.string.isRequired, // El título de la temática es obligatorio y debe ser un string
-  imageUrl: PropTypes.string.isRequired // La URL de la imagen es obligatoria y debe ser un string
+  title: PropTypes.string.isRequired, 
+  imageUrl: PropTypes.string.isRequired 
 };
 export default TematicCard

@@ -47,19 +47,31 @@ public class FavoriteService implements FavoriteInterface {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario con el ID proporcionado"));
 
-        if (favoriteRepository.findByUserAndInstrument(user, instrument) != null) {
-            throw new FavoriteAlreadyExistsException("El instrumento ya está agregado como favorito para este usuario");
+        Favorite existingFavorite = favoriteRepository.findByUserAndInstrument(user, instrument);
+
+        String imageUrl = instrument.getImageUrls() != null && !instrument.getImageUrls().isEmpty()
+                ? instrument.getImageUrls().get(0).getImageUrl()
+                : "";
+
+        // ✅ Si ya existe → eliminarlo
+        if (existingFavorite != null) {
+            favoriteRepository.delete(existingFavorite);
+            return FavoriteDtoExit.builder()
+                    .idFavorite(existingFavorite.getIdFavorite())
+                    .instrument(instrument)
+                    .imageUrl(imageUrl)
+                    .idUser(user.getIdUser())
+                    .registDate(existingFavorite.getRegistDate())
+                    .isFavorite(false)
+                    .build();
         }
 
+        // ✅ Si no existe → crearlo
         Favorite favorite = new Favorite();
         favorite.setUser(user);
         favorite.setInstrument(instrument);
         favorite.setIsFavorite(true);
         Favorite favoriteSaved = favoriteRepository.save(favorite);
-
-        String imageUrl = instrument.getImageUrls() != null && !instrument.getImageUrls().isEmpty()
-                ? instrument.getImageUrls().get(0).getImageUrl()
-                : "";
 
         return FavoriteDtoExit.builder()
                 .idFavorite(favoriteSaved.getIdFavorite())
@@ -67,7 +79,7 @@ public class FavoriteService implements FavoriteInterface {
                 .imageUrl(imageUrl)
                 .idUser(favoriteSaved.getUser().getIdUser())
                 .registDate(favoriteSaved.getRegistDate())
-                .isFavorite(favoriteSaved.getIsFavorite())
+                .isFavorite(true)
                 .build();
     }
 

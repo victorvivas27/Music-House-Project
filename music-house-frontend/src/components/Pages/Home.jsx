@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CssBaseline, Typography, Container } from '@mui/material'
+import { Typography } from '@mui/material'
 import { useAppStates } from '../utils/global.context'
 import { getInstruments } from '../../api/instruments'
 import { actions } from '../utils/actions'
@@ -14,21 +14,18 @@ export const Home = () => {
   const { searchOptions } = state
   const [selectedInstruments, setSelectedInstruments] = useState([])
   const [loading, setLoading] = useState(true)
-  const [instruments, setInstruments] = useState({ data: [] }) // ✅ Inicializar correctamente
-
-  
+  const [instruments, setInstruments] = useState({ data: [] })
 
   useEffect(() => {
     const fetchInstruments = async () => {
       setLoading(true)
       try {
         const [fetchedInstruments] = await getInstruments()
-        setInstruments(fetchedInstruments || { data: [] }) // ✅ Asegurar estructura correcta
+        setInstruments(fetchedInstruments || { data: [] })
       } catch (error) {
-        console.error('Error al obtener los instrumentos:', error)
-        setInstruments({ data: [] }) // ✅ Evitar undefined
+        setInstruments({ data: [] }) 
       } finally {
-        setTimeout(() => setLoading(false), 500) // ✅ Pequeño delay para transición suave
+        setTimeout(() => setLoading(false), 500)
       }
     }
 
@@ -63,11 +60,9 @@ export const Home = () => {
   if (loading) return <Loader title="Un momento por favor..." />
 
   return (
-    <main>
+    <main >
       {!loading && (
         <>
-          <CssBaseline />
-
           <MainWrapper>
             {state.tematics?.map((tematic, index) => (
               <TematicCard
@@ -78,43 +73,32 @@ export const Home = () => {
             ))}
           </MainWrapper>
 
-          <Container
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              paddingBottom: 5,
-              paddingLeft: { xs: '0' },
-              paddingRight: { xs: '0' },
-              border: '2px solid blue'
-            }}
-          >
-            <ProductsWrapper>
-              {selectedInstruments.length > 0 ? (
-                selectedInstruments.map((instrument, index) => (
-                  <ProductCard
-                    key={`product-card-${index}`}
-                    name={instrument.name}
-                    imageUrl={
-                      instrument.imageUrls?.length > 0
-                        ? instrument.imageUrls[0].imageUrl
-                        : '/default-image.jpg' // ✅ Imagen por defecto
-                    }
-                    id={instrument.idInstrument}
-                  />
-                ))
-              ) : (
-                <Typography
-                  gutterBottom
-                  variant="h6"
-                  component="h6"
-                  textAlign="center"
-                  sx={{ paddingBottom: 1, fontWeight: 'bold' }}
-                >
-                  No se han encontrado instrumentos
-                </Typography>
-              )}
-            </ProductsWrapper>
-          </Container>
+          <ProductsWrapper>
+            {selectedInstruments.length > 0 ? (
+              selectedInstruments.map((instrument, index) => (
+                <ProductCard
+                  key={`product-card-${index}`}
+                  name={instrument.name}
+                  imageUrl={
+                    instrument.imageUrls?.length > 0
+                      ? instrument.imageUrls[0].imageUrl
+                      : '/default-image.jpg'
+                  }
+                  id={instrument.idInstrument}
+                />
+              ))
+            ) : (
+              <Typography
+                gutterBottom
+                variant="h6"
+                component="h6"
+                textAlign="center"
+                sx={{ paddingBottom: 1, fontWeight: 'bold' }}
+              >
+                No se han encontrado instrumentos
+              </Typography>
+            )}
+          </ProductsWrapper>
         </>
       )}
     </main>

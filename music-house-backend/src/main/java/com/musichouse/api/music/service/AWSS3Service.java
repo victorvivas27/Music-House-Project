@@ -46,9 +46,10 @@ public class AWSS3Service implements AWSS3Interface {
             // Crear el path del usuario en S3
             String userFolder = (userDtoEntrance.getName() + "-" + userDtoEntrance.getLastName())
                     .toLowerCase()
-                    .replaceAll("\\s+", "-");  // ✅ Reemplaza espacios por guiones
+                    .replaceAll("\\s+", "-")   // ✅ Reemplaza espacios múltiples por un solo guion
+                    .replaceAll("-$", "");     // ✅ Elimina un guion si está al final
 
-            String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            String newFilename = userFolder + "/" + System.currentTimeMillis() + file.getOriginalFilename();
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());
@@ -77,9 +78,10 @@ public class AWSS3Service implements AWSS3Interface {
                 // Crear el path en S3
                 String userFolder = (instrumentDtoEntrance.getName() )
                         .toLowerCase()
-                        .replaceAll("\\s+", "-");  // ✅ Reemplaza espacios por guiones
+                        .replaceAll("\\s+", "-")   // ✅ Reemplaza espacios múltiples por un solo guion
+                        .replaceAll("-$", "");     // ✅ Elimina un guion si está al final
 
-                String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                String newFilename = userFolder + "/" + System.currentTimeMillis() + file.getOriginalFilename();
 
                 ObjectMetadata metadata = new ObjectMetadata();
                 metadata.setContentLength(file.getSize());
@@ -106,9 +108,10 @@ public class AWSS3Service implements AWSS3Interface {
             // Crear el path del usuario en S3
             String userFolder = (userAdminDtoEntrance.getName() + "-" + userAdminDtoEntrance.getLastName())
                     .toLowerCase()
-                    .replaceAll("\\s+", "-");  // ✅ Reemplaza espacios por guiones
+                    .replaceAll("\\s+", "-")   // ✅ Reemplaza espacios múltiples por un solo guion
+                    .replaceAll("-$", "");     // ✅ Elimina un guion si está al final
 
-            String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            String newFilename = userFolder + "/" + System.currentTimeMillis() + file.getOriginalFilename();
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());
@@ -132,9 +135,10 @@ public class AWSS3Service implements AWSS3Interface {
             // Crear el path del usuario en S3
             String userFolder = (userDtoModify.getName() + "-" + userDtoModify.getLastName())
                     .toLowerCase()
-                    .replaceAll("\\s+", "-");  // ✅ Reemplaza espacios por guiones
+                    .replaceAll("\\s+", "-")   // ✅ Reemplaza espacios múltiples por un solo guion
+                    .replaceAll("-$", "");     // ✅ Elimina un guion si está al final
 
-            String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            String newFilename = userFolder + "/" + System.currentTimeMillis() + file.getOriginalFilename();
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());

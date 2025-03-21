@@ -120,7 +120,7 @@ const CalendarReserva = ({ instrument }) => {
     try {
       const reservations = await getReservationById(idUser)
 
-      // 🟢 Si no hay reservas, mostramos un mensaje amigable
+     
       if (
         !reservations.data ||
         !Array.isArray(reservations.data) ||
@@ -159,7 +159,7 @@ const CalendarReserva = ({ instrument }) => {
       const { statusCode, message } = error
 
       if (statusCode === 404) {
-        // 🟢 Si el error es 404, significa que simplemente no hay reservas, mostramos un mensaje amigable.
+      
         setReservedDates([])
         setInfoMessage(
           '📅 ¡Aún no tienes reservas! No dudes en reservar este hermoso instrumento y disfruta de la música. 🎶'
@@ -192,15 +192,15 @@ const CalendarReserva = ({ instrument }) => {
         onClick={() => !isReserved && handleDateSelect(day)}
         sx={{
           bgcolor: isReserved
-            ? 'var(--color-primario) !important' //  Si la fecha está reservada
+            ? 'var(--color-primario) !important' 
             : isSelected
-              ? 'var(--color-azul) !important' // 🔵 Azul si está seleccionada
+              ? 'var(--color-azul) !important' 
               : isAvailable
-                ? 'var(--color-exito) !important' // ✅ Verde si está disponible
-                : 'var(--calendario-color-no-disponible) !important', // Si no está disponible
+                ? 'var(--color-exito) !important' 
+                : 'var(--calendario-color-no-disponible) !important', 
           color: 'var( --texto-inverso) !important',
           borderRadius: '50%',
-          pointerEvents: isReserved ? 'none' : 'auto' // Deshabilitar clic en fechas reservadas
+          pointerEvents: isReserved ? 'none' : 'auto'
         }}
       />
     )
@@ -240,7 +240,7 @@ const CalendarReserva = ({ instrument }) => {
           open={openSnackbar}
           autoHideDuration={2000}
           onClose={() => setOpenSnackbar(false)}
-          anchorOrigin={{ vertical: 'botton', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
           <Alert
             onClose={() => setOpenSnackbar(false)}
@@ -265,7 +265,7 @@ const CalendarReserva = ({ instrument }) => {
           open={openSnackbarInfo}
           autoHideDuration={2000}
           onClose={() => setOpenSnackbarInfo(false)}
-          anchorOrigin={{ vertical: 'botton', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
           <Alert
             onClose={() => setOpenSnackbarInfo(false)}
@@ -323,8 +323,8 @@ const CalendarReserva = ({ instrument }) => {
             sx={{
               display: 'grid',
               gridTemplateColumns: {
-                xs: '1fr 1fr', // 📌 En móviles, 2 columnas
-                sm: '1fr 1fr 1fr 1fr' // 📌 En pantallas más grandes, 4 columnas
+                xs: '1fr 1fr', 
+                sm: '1fr 1fr 1fr 1fr'
               },
               gap: 2,
               width: '100%',

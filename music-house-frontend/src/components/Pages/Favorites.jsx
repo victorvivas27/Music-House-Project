@@ -7,75 +7,31 @@ import { Loader } from '../common/loader/Loader'
 import { MainWrapper } from '../common/MainWrapper'
 import { getAllFavorites } from '../../api/favorites'
 import { useAuthContext } from '../utils/context/AuthGlobal'
-import { removeFavorite } from '../../api/favorites'
-import Swal from 'sweetalert2'
-import ArrowBack from '../utils/ArrowBack'
 
+import ArrowBack from '../utils/ArrowBack'
+import { useAppStates } from '../utils/global.context'
+import { actions } from '../utils/actions'
 
 export const Favorites = () => {
   const [loading, setLoading] = useState(true)
-  const [favorites, setFavorites] = useState([])
+  const { state, dispatch } = useAppStates()
+  const { favorites } = state
   const { idUser } = useAuthContext()
 
- 
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
         const response = await getAllFavorites(idUser)
-        setLoading(false)
-        if (response?.length > 0) {
-          setFavorites(response)
-        } else {
-          setFavorites([])
-        }
+        dispatch({ type: actions.UPDATE_FAVORITES, payload: response })
       } catch (error) {
+        dispatch({ type: actions.UPDATE_FAVORITES, payload: [] })
+      } finally {
         setLoading(false)
-        setFavorites([])
       }
     }
 
     fetchFavorites()
-  }, [idUser])
-
- 
-  const handleRemoveFavorite = (favorite) => {
-   
-    Swal.fire({
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí,quitar de favoritos',
-      cancelButtonText: 'Cancelar',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.isConfirmed) {
-       
-        removeFavorite(
-          favorite.idFavorite,
-          favorite.idUser,
-          favorite.instrument.idInstrument
-        ).then(() => {
-          const updatedFavorites = favorites.filter(
-            (fav) => fav.idFavorite !== favorite.idFavorite
-          )
-          setFavorites(updatedFavorites)
-          Swal.fire({
-            icon: 'success',
-            title: 'Quitado de favoritos!',
-            timer: 1500, 
-            showConfirmButton: false
-          })
-        }).catch(() => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: 'Ocurrió un error al quitar de favoritos.',
-            timer: 1500, 
-            showConfirmButton: false
-          })
-        })
-      }
-    })
-  }
+  }, [idUser, dispatch])
 
   if (loading) return <Loader title="Cargando favoritos..." />
 
@@ -88,7 +44,7 @@ export const Favorites = () => {
           minHeight: '90vh'
         }}
       >
-         <ArrowBack/>
+        <ArrowBack />
         <CssBaseline />
         <Container
           sx={{
@@ -106,10 +62,9 @@ export const Favorites = () => {
               component="h2"
               textAlign="center"
               sx={{
-                 paddingBottom: 1, 
-                 fontWeight: 'bold' 
-                
-                }}
+                paddingBottom: 1,
+                fontWeight: 'bold'
+              }}
             >
               Favoritos
             </Typography>
@@ -123,17 +78,12 @@ export const Favorites = () => {
                   imageUrl={favorite.imageUrl}
                   id={favorite.instrument.idInstrument}
                   isFavorite={true}
-                  onClickTrash={() => handleRemoveFavorite(favorite)} 
-                  sx={{
-                    maxWidth: 250,  
-                    height: 'auto',
-                  }}
                 />
               ))
             ) : (
               <Typography
                 gutterBottom
-                variant="subtitle2"  
+                variant="subtitle2"
                 component="h6"
                 textAlign="center"
                 sx={{ paddingBottom: 1, fontWeight: 'bold' }}
