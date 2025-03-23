@@ -30,7 +30,7 @@ import {
 } from '../Pages/Admin/common/tableHelper'
 
 import { Loader } from '../common/loader/Loader'
-import { useAuthContext } from '../utils/context/AuthGlobal'
+
 
 import { deleteReservation, getReservationById } from '../../api/reservations'
 import PropTypes from 'prop-types'
@@ -39,6 +39,7 @@ import { headCellsReservas } from '../utils/types/HeadCells'
 import ArrowBack from '../utils/ArrowBack'
 import useAlert from '../../hook/useAlert'
 import { paginationStyles } from '../styles/styleglobal'
+import { useAuth } from '../../hook/useAuth'
 
 const MisReservas = () => {
   const [reservations, setReservations] = useState({ data: [] })
@@ -49,7 +50,7 @@ const MisReservas = () => {
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
-  const { idUser } = useAuthContext()
+  const { idUser } = useAuth()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
 
   const getAllReservations = async () => {

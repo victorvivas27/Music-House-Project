@@ -20,14 +20,14 @@ import { styled } from '@mui/material/styles'
 import { CustomButton } from './CustomComponents'
 import { RoleSelect } from './RoleSelect'
 import PropTypes from 'prop-types'
-import { UsersApi } from '../../../api/users'
+
 import Swal from 'sweetalert2'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import usePasswordValidation from '../../../hook/usePasswordValidation'
 import { inputStyles } from '../../styles/styleglobal'
 import { countryCodes } from '../../utils/codepaises/CountryCodes'
-import { useAuthContext } from '../../utils/context/AuthGlobal'
 import useAlert from '../../../hook/useAlert'
+import { useAuth } from '../../../hook/useAuth'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -70,8 +70,7 @@ export const UserForm = ({
   onSubmit,
   loading,
   isSubmitting,
-  user,
-  setUser
+  user
 }) => {
   const initialErrorState = {
     name: '',
@@ -101,8 +100,19 @@ export const UserForm = ({
   const { passwordErrors, success, validatePassword, validateRepeatPassword } =
     usePasswordValidation()
   const [preview, setPreview] = useState(null)
-  const { isUserAdmin } = useAuthContext()
+  const { isUserAdmin } = useAuth()
   const { showConfirm, showSuccess, showError } = useAlert()
+  const idUser = user?.data?.idUser || null
+  const isLoggedUser = idUser && idUser === Number(formData?.idUser)
+  const title = isLoggedUser
+    ? 'Mi perfil'
+    : formData.idUser
+      ? 'Editar cuenta usuario'
+      : 'Crear una cuenta'
+  const combinedLoading = loading || isSubmitting
+  const buttonText = formData.idUser || isUserAdmin ? 'Guardar' : 'Registrar'
+  const buttonTextLoading =
+    formData.idUser || isUserAdmin ? 'Guardardando...' : 'Registrando...'
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]
@@ -114,35 +124,16 @@ export const UserForm = ({
     }
   }
 
-  const idUser = user?.data?.idUser || null
-  const userRoles = user?.data?.roles?.map((role) => role.rol) || []
-
-
-  const isLoggedUser = idUser && idUser === Number(formData?.idUser)
-
   useEffect(() => {
     if (isUserAdmin) setAccept(true)
   }, [isUserAdmin])
 
-  const title = isLoggedUser
-    ? 'Mi perfil'
-    : formData.idUser
-      ? 'Editar cuenta usuario'
-      : 'Crear una cuenta'
-  const combinedLoading = loading || isSubmitting
-  const buttonText = formData.idUser || isUserAdmin ? 'Guardar' : 'Registrar'
-  const buttonTextLoading =
-    formData.idUser || isUserAdmin ? 'Guardardando...' : 'Registrando...'
-
-
   const handleChange = (event) => {
     const { name, value } = event.target
-    
-  
-  
+
     setFormData((prev) => ({
       ...prev,
-      [name]:value
+      [name]: value
     }))
 
     setErrors((prev) => ({
@@ -150,7 +141,6 @@ export const UserForm = ({
       general: ''
     }))
 
-   
     setErrors((prev) => ({
       ...prev,
       [name]:
@@ -161,7 +151,6 @@ export const UserForm = ({
             : ''
     }))
 
-   
     if (name === 'email') {
       setErrors((prev) => ({
         ...prev,
@@ -186,15 +175,28 @@ export const UserForm = ({
     }
 
     if (name === 'telegramChatId') {
-      const numericValue = value.replace(/\D/g, '') 
+      const numericValue = value.replace(/\D/g, '')
 
       setFormData((prev) => ({
         ...prev,
         telegramChatId: numericValue
       }))
     }
+    if (name === 'selectedRole') {
+      setFormData((prev) => {
+        const alreadyHasRole = prev.roles.includes(value)
+        const updatedRoles = alreadyHasRole
+          ? prev.roles
+          : [...prev.roles, value]
+        return {
+          ...prev,
+          roles: updatedRoles,
+          selectedRole: ''
+        }
+      })
+      return
+    }
   }
-
 
   const allErrors = { ...errors, ...passwordErrors }
 
@@ -205,13 +207,11 @@ export const UserForm = ({
     }
   }
 
- 
   const handleAddressChange = (index, event) => {
     const { name, value } = event.target
-   
 
     const updatedAddresses = formData.addresses.map((address, i) =>
-      i === index ? { ...address, [name]:value } : address
+      i === index ? { ...address, [name]: value } : address
     )
 
     setFormData((prevState) => ({
@@ -219,7 +219,6 @@ export const UserForm = ({
       addresses: updatedAddresses
     }))
 
-   
     setErrors((prev) => ({
       ...prev,
       [`${name}_${index}`]:
@@ -236,13 +235,12 @@ export const UserForm = ({
                   : ''
     }))
   }
- 
 
   const handlePhoneChange = (index, field, value) => {
     const updatedPhones = formData.phones.map((phone, i) => {
       if (i === index) {
         let newPhoneNumber = phone.phoneNumber
-        const validValue = value.replace(/[^0-9+]/g, '') 
+        const validValue = value.replace(/[^0-9+]/g, '')
 
         if (field === 'countryCode') {
           newPhoneNumber = `${validValue}${phone.phoneNumber.replace(phone.countryCode, '')}`
@@ -264,7 +262,6 @@ export const UserForm = ({
       phones: updatedPhones
     }))
 
-   
     const minLength = 7
     const maxLength = 15
 
@@ -279,19 +276,17 @@ export const UserForm = ({
     }))
   }
 
- 
   const handleSubmit = async (event) => {
     event.preventDefault()
 
     let formIsValid = true
     let newErrors = { ...initialErrorState }
-  
+
     if (!formData.picture || formData.name.trim() === '') {
       newErrors.picture = '❌El avatar es obligatorio'
       formIsValid = false
     }
 
-   
     if (!formData.name || formData.name.trim() === '') {
       newErrors.name = '❌El nombre es obligatorio'
       formIsValid = false
@@ -307,7 +302,6 @@ export const UserForm = ({
       formIsValid = false
     }
 
-  
     if (!isUserAdmin && (!formData.idUser || formData.idUser === '')) {
       if (!formData.password) {
         newErrors.password = '❌La contraseña es obligatoria'
@@ -334,7 +328,6 @@ export const UserForm = ({
       }
     }
 
-   
     formData.addresses.forEach((address, index) => {
       if (!address.street)
         newErrors[`street_${index}`] = '❌La calle es obligatoria'
@@ -348,13 +341,11 @@ export const UserForm = ({
         newErrors[`country_${index}`] = '❌El país es obligatorio'
     })
 
-    
     formData.phones.forEach((phone, index) => {
       if (!phone.phoneNumber)
         newErrors[`phone_${index}`] = '❌El teléfono es obligatorio'
     })
 
-    
     if (!isUserAdmin && !formData.idUser && !accept) {
       newErrors.general = '❌Debes aceptar los términos y condiciones'
       formIsValid = false
@@ -368,7 +359,6 @@ export const UserForm = ({
     try {
       await onSubmit(formData)
     } catch (error) {
-    
       if (error.response && error.response.data) {
         const backendErrors = error.response.data
         setErrors((prev) => ({
@@ -392,42 +382,28 @@ export const UserForm = ({
 
   const handleRemoveRole = async (roleToRemove) => {
     if (!isUserAdmin) return
-    if (user.data.roles.length <= 1) return
 
-    const role = user.data.roles.find((r) => r.rol === roleToRemove)
-    if (!role) return
+    if (formData.roles.length <= 1) {
+      showError('El usuario debe tener al menos un rol.')
+      return
+    }
 
-   
     const isConfirmed = await showConfirm({
       title: '¿Estás seguro?',
-      text: `Estás a punto de eliminar el rol ${roleToRemove}. ¿Deseas continuar?`,
-      confirmText: 'Sí, eliminar',
+      text: `Vas a quitar el rol ${roleToRemove}.`,
+      confirmText: 'Sí, quitar',
       cancelText: 'Cancelar'
     })
 
-    if (!isConfirmed) return 
+    if (!isConfirmed) return
 
-    try {
-      await UsersApi.deleteUserRole(idUser, roleToRemove)
+    // Actualizamos solo el formData, ya no el backend directamente
+    setFormData((prev) => ({
+      ...prev,
+      roles: prev.roles.filter((r) => r !== roleToRemove)
+    }))
 
-     
-      const updatedRoles = user.data.roles.filter((r) => r.rol !== roleToRemove)
-      setUser((prevUser) => ({
-        ...prevUser,
-        data: {
-          ...prevUser.data,
-          roles: updatedRoles
-        }
-      }))
-
-     
-      showSuccess(`El rol ${roleToRemove} ha sido eliminado exitosamente.`)
-    } catch (error) {
-      
-      showError(
-        `Hubo un problema al eliminar el rol ${roleToRemove}. Por favor, intenta nuevamente.`
-      )
-    }
+    showSuccess(`El rol ${roleToRemove} ha sido quitado.`)
   }
 
   useEffect(() => {
@@ -848,31 +824,25 @@ export const UserForm = ({
                     {/* ✅ Si soy admin, mostrar los botones de gestión de roles */}
                     {isUserAdmin && (
                       <>
-                        {userRoles.length > 0 ? (
-                          ['USER', 'ADMIN'].map(
-                            (role) =>
-                              userRoles.includes(role) && (
-                                <Button
-                                  key={role}
-                                  style={buttonStyle}
-                                  onClick={() => {
-                                    if (userRoles.length === 1) {
-                                      showError(
-                                        'No puedes eliminar el único rol del usuario.'
-                                      )
-                                    } else {
-                                      handleRemoveRole(role)
-                                    }
-                                  }}
-                                >
-                                  Eliminar rol {role}
-                                </Button>
-                              )
-                          )
-                        ) : (
-                          <Typography color="error">
-                            No hay roles asignados.
-                          </Typography>
+                        {formData.roles?.length > 0 && isUserAdmin && (
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              gap: 1,
+                              mt: 1
+                            }}
+                          >
+                            {formData.roles.map((role) => (
+                              <Button
+                                key={role}
+                                style={buttonStyle}
+                                onClick={() => handleRemoveRole(role)}
+                              >
+                                Quitar {role}
+                              </Button>
+                            ))}
+                          </Box>
                         )}
 
                         {/* 📌 Select para asignar roles */}
@@ -883,7 +853,7 @@ export const UserForm = ({
                           }}
                         >
                           <RoleSelect
-                            selectedRoleId={formData?.idRol}
+                            selectedRole={formData?.selectedRole}
                             onChange={handleChange}
                           />
                         </FormControl>

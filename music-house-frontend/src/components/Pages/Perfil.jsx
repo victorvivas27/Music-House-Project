@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { UsersApi } from '../../api/users'
-import { useAuthContext } from '../utils/context/AuthGlobal'
+
 import {
   Avatar,
   Card,
@@ -31,9 +31,10 @@ import { removePhone } from '../../api/phones'
 import ModalUpdateUser from '../common/modificardatosuser/ModalUpdateUser'
 import ModalUpdatePhone from '../common/nuevontelefono/ModalUpdatePhone'
 import ModalUpdateDireccion from '../common/nuevadireccion/ModalUpdateDireccion'
+import { useAuth } from '../../hook/useAuth'
 
 const Perfil = () => {
-  const { idUser } = useAuthContext()
+  const { idUser } = useAuth()
   const [userData, setUserData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')

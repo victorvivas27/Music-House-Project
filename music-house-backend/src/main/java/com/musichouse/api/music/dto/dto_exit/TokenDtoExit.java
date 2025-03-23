@@ -1,6 +1,6 @@
 package com.musichouse.api.music.dto.dto_exit;
 
-import com.musichouse.api.music.entity.Role;
+import com.musichouse.api.music.entity.Roles;
 import lombok.*;
 
 import java.util.List;
@@ -15,23 +15,21 @@ public class TokenDtoExit {
 
     private UUID idUser;
 
-    private String name;
+    //private String name;
 
-    private String lastName;
+   // private String lastName;
 
-    private List<Role> roles;
+    //private List<String> roles;
 
     private String token;
 
     @Builder.Default
     private String tokenType = "Bearer ";
 
-    public TokenDtoExit(UUID idUser ,String name, String lastName, List<Role> roles, String token) {
+    public TokenDtoExit(UUID idUser ,String token) {
         this.idUser = idUser;
 
-        this.name = name;
-        this.lastName = lastName;
-        this.roles = roles;
+
         this.token = token;
         this.tokenType = "Bearer ";
     }

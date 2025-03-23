@@ -17,10 +17,11 @@ import PropTypes from 'prop-types'
 import { red } from '@mui/material/colors'
 import { CustomTooltip } from './customTooltip/CustomTooltip'
 import FavoriteIcon from './favorito/FavoriteIcon'
-import { useAuthContext } from '../utils/context/AuthGlobal'
+
+import { useAuth } from '../../hook/useAuth'
 
 const ProductCard = ({ name, imageUrl, id }) => {
-  const { isUser } = useAuthContext()
+  const { isUser } = useAuth()
 
   return (
     <Card

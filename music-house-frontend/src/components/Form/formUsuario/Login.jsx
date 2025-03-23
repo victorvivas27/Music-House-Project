@@ -15,13 +15,14 @@ import { UsersApi } from '../../../api/users'
 
 import loginValidationSchema from './LoginValidation'
 import { useNavigate } from 'react-router-dom'
-import { useAuthContext } from '../../utils/context/AuthGlobal'
+
 import PropTypes from 'prop-types'
 
 import { useState } from 'react'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { inputStyles } from '../../styles/styleglobal'
 import useAlert from '../../../hook/useAlert'
+import { useAuth } from '../../../hook/useAuth'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -55,7 +56,7 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
 
 const Login = ({ onSwitch }) => {
   const navigate = useNavigate()
-  const { setAuthData } = useAuthContext()
+  const { setAuthData } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
   const [loading, setLoading] = useState(false)

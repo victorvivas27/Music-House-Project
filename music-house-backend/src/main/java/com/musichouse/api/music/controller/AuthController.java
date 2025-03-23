@@ -39,7 +39,7 @@ public class AuthController {
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
-    @PostMapping(value = "/create/admin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+   /* @PostMapping(value = "/create/admin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<TokenDtoExit>> createUserAdmin(
             @RequestParam("user") String userJson,
             @RequestPart(value = "file", required = false) MultipartFile file) {
@@ -102,7 +102,7 @@ public class AuthController {
                             .error(e.getMessage())
                             .build());
         }
-    }
+    }*/
 
 
     @PostMapping(value = "/create/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

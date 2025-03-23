@@ -6,17 +6,18 @@ import ProductCard from '../common/ProductCard'
 import { Loader } from '../common/loader/Loader'
 import { MainWrapper } from '../common/MainWrapper'
 import { getAllFavorites } from '../../api/favorites'
-import { useAuthContext } from '../utils/context/AuthGlobal'
+
 
 import ArrowBack from '../utils/ArrowBack'
 import { useAppStates } from '../utils/global.context'
 import { actions } from '../utils/actions'
+import { useAuth } from '../../hook/useAuth'
 
 export const Favorites = () => {
   const [loading, setLoading] = useState(true)
   const { state, dispatch } = useAppStates()
   const { favorites } = state
-  const { idUser } = useAuthContext()
+  const { idUser } = useAuth()
 
   useEffect(() => {
     const fetchFavorites = async () => {

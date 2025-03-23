@@ -7,10 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -106,27 +103,13 @@ public class User implements UserDetails {
     )
     private Set<Phone> phones;
 
-    /**
-     * Roles asignados al usuario.
-     *
-     * @ManyToMany: Relación muchos a muchos entre User y Role.
-     * Un usuario puede tener varios roles y viceversa.
-     * @JoinTable: Tabla de unión para la relación, define las columnas user_id y rol_id.
-     * <p>
-     * fetch = FetchType.EAGER: Carga ansiosa de roles al cargar un usuario.
-     * <p>
-     * cascade = CascadeType.ALL: Operaciones en cascada para roles asociados
-     * (guardar, actualizar, eliminar).
-     */
-    @ManyToMany(
-            fetch = FetchType.EAGER,
-            targetEntity = Role.class,
-            cascade = CascadeType.ALL
-    )
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "rol_id"))
-    private Set<Role> roles;
+
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private Set<Roles> roles = new HashSet<>();
 
     /**
      * Anotación que marca el campo como una fecha de creación automática.
@@ -158,8 +141,8 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles
-                .stream().map(role -> new SimpleGrantedAuthority(role.getRol()))
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
                 .collect(Collectors.toSet());
     }
 

@@ -120,8 +120,6 @@ export const Instruments = () => {
     }
   }
 
- 
-
   const emptyRows = getEmptyRows(page, rowsPerPage, rows)
   const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
 
@@ -130,7 +128,7 @@ export const Instruments = () => {
   return (
     <>
       {!loading && (
-        <MainWrapper sx={{ padding: 2 }} >
+        <MainWrapper sx={{ padding: 2 }}>
           <Paper
             sx={{
               display: { xs: 'none', lg: 'initial' },
@@ -147,6 +145,7 @@ export const Instruments = () => {
             </Typography>
             {/* Fin Contador de instrumentos */}
 
+            {/*Tercer parte de la tabla */}
             <EnhancedTableToolbar
               title="Instrumentos"
               titleAdd="Agregar instrumento"
@@ -154,9 +153,14 @@ export const Instruments = () => {
               numSelected={selected.length}
               handleConfirmDelete={() => handleConfirmDelete()}
             />
+            {/*Fin Tercer parte de la tabla */}
 
-            <TableContainer>
-              <Table aria-labelledby="tableTitle" size="medium">
+            <TableContainer >
+              <Table 
+              aria-labelledby="tableTitle"
+               size="medium"
+               
+               >
                 <EnhancedTableHead
                   headCells={headCellsInstrument}
                   numSelected={selected.length}
@@ -168,8 +172,7 @@ export const Instruments = () => {
                   disableSelectAll
                 />
 
-                <TableBody>
-                  
+                <TableBody  >
                   {visibleRows.map((row, index) => {
                     const isItemSelected = isSelected(
                       row.idInstrument,
@@ -190,8 +193,10 @@ export const Instruments = () => {
                           isRowEven ? 'table-row-even' : 'table-row-odd'
                         }
                         sx={{ cursor: 'pointer' }}
+                 
+
                       >
-                        <TableCell padding="checkbox">
+                        <TableCell padding="checkbox" >
                           <Checkbox
                             color="primary"
                             checked={isItemSelected}
@@ -207,10 +212,12 @@ export const Instruments = () => {
                           id={labelId}
                           scope="row"
                           align="center"
+                         
                         >
                           {row.idInstrument}
                         </TableCell>
-                        <TableCell align="left">{row.name}</TableCell>
+
+                        <TableCell  align="left">{row.name}</TableCell>
                         <TableCell align="left">
                           <Box
                             style={{

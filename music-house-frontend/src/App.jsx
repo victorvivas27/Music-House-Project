@@ -17,7 +17,7 @@ import { EditarCategoria } from './components/Pages/Admin/EditarCategoria'
 import { Favorites } from './components/Pages/Favorites'
 
 import { HeaderVisibilityProvider } from './components/utils/context/HeaderVisibilityGlobal'
-import { AuthContextProvider } from './components/utils/context/AuthGlobal'
+
 import AuthPage from './components/Pages/AuthPage'
 import { NotFoundPage } from './components/Pages/NotFound'
 import { ServerError } from './components/Pages/ServerError'
@@ -33,6 +33,8 @@ import { Theme } from './components/Pages/Admin/Theme'
 import { AgregarTheme } from './components/Pages/Admin/AgregarThem'
 import { EditarTheme } from './components/Pages/Admin/EditarTheme'
 import Perfil from './components/Pages/Perfil'
+import { AuthProvider } from './components/utils/context/AuthProvider'
+import { ROLE_ADMIN } from './components/utils/roles/constants'
 //import { jwtDecode } from 'jwt-decode'
 
 export const App = () => {
@@ -40,7 +42,7 @@ export const App = () => {
     <>
       <BrowserRouter>
         <HeaderVisibilityProvider>
-          <AuthContextProvider>
+          <AuthProvider>
             <ContextProvider>
               <Routes>
                 <Route path="/autentificacion" element={<AuthPage />} />
@@ -60,7 +62,7 @@ export const App = () => {
                   </Route>
                 </Route>
                 <Route element={<AdminLayout />}>
-                  <Route element={<ProtectedRoute role="ADMIN" />}>
+                  <Route element={<ProtectedRoute role={ROLE_ADMIN} />}>
                     <Route path="/instruments" element={<Instruments />} />
                     <Route path="/usuarios" element={<Usuarios />} />
                     <Route path="/categories" element={<Categories />} />
@@ -86,7 +88,7 @@ export const App = () => {
                   </Route>
                 </Route>
                 <Route element={<AdminLayoutWithoutHeaderFooter />}>
-                  <Route element={<ProtectedRoute role="ADMIN" />}>
+                  <Route element={<ProtectedRoute role={ROLE_ADMIN} />}>
                     <Route path="/agregarUsuario" element={<CrearUsuario />} />
                   </Route>
                 </Route>
@@ -94,7 +96,7 @@ export const App = () => {
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </ContextProvider>
-          </AuthContextProvider>
+          </AuthProvider>
         </HeaderVisibilityProvider>
       </BrowserRouter>
     </>

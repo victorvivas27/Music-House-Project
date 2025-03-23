@@ -15,7 +15,6 @@ import PropTypes from 'prop-types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { getAllAvailableDatesByInstrument } from '../../../api/availability'
 import dayjs from 'dayjs'
-import { useAuthContext } from '../../utils/context/AuthGlobal'
 import {
   createReservation,
   getReservationById
@@ -25,6 +24,7 @@ import { CustomButton } from '../../Form/formUsuario/CustomComponents'
 import { flexColumnContainer } from '../../styles/styleglobal'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import useAlert from '../../../hook/useAlert'
+import { useAuth } from '../../../hook/useAuth'
 
 const CalendarReserva = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
@@ -34,7 +34,7 @@ const CalendarReserva = ({ instrument }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
   const idInstrument = instrument?.data?.idInstrument
-  const { idUser } = useAuthContext()
+  const { idUser } = useAuth()
   const [reservedDates, setReservedDates] = useState([])
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()

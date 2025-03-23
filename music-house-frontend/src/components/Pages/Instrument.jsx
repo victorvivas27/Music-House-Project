@@ -7,7 +7,6 @@ import { Box, Divider, Tooltip, Button, Typography } from '@mui/material'
 import { ScreenModal } from '../common/ScreenModal'
 import { InstrumentGallery } from '../common/InstrumentGallery'
 import { useAppStates } from '../utils/global.context'
-import { useAuthContext } from '../utils/context/AuthGlobal'
 import { Si } from '../Images/Si'
 import { No } from '../Images/No'
 import { InstrumentTerms } from '../common/terms/InstrumentTerms'
@@ -19,6 +18,7 @@ import MyCalendar from '../common/availability/MyCalendar'
 import CalendarReserva from '../common/availability/CalendarReseva'
 import { flexRowContainer, flexColumnContainer } from '../styles/styleglobal'
 import ArrowBack from '../utils/ArrowBack'
+import { useAuth } from '../../hook/useAuth'
 export const Instrument = () => {
   const { id } = useParams()
   const { state } = useAppStates()
@@ -29,7 +29,7 @@ export const Instrument = () => {
   })
   const [instrument, setInstrument] = useState()
   const [showGallery, setShowGallery] = useState(false)
-  const { isUser, isUserAdmin } = useAuthContext()
+  const { isUser, isUserAdmin } = useAuth()
   const [showMessage, setShowMessage] = useState(false)
 
   useEffect(() => {

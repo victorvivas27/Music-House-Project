@@ -69,9 +69,9 @@ export const EnhancedTableHead = (props) => {
   }
 
   return (
-    <TableHead>
+    <TableHead  >
       <TableRow>
-        <TableCell padding="checkbox">
+        <TableCell padding="checkbox"  >
           {!disableSelectAll && (
             <Checkbox
               color="primary"
@@ -122,6 +122,7 @@ export const EnhancedTableToolbar = (props) => {
   return (
     <Toolbar
       sx={{
+        border:"1px solid red",
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {

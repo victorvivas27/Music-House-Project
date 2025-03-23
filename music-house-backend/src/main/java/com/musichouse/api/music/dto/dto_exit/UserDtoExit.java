@@ -1,7 +1,7 @@
 package com.musichouse.api.music.dto.dto_exit;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.musichouse.api.music.entity.Role;
+import com.musichouse.api.music.entity.Roles;
 import lombok.*;
 
 import java.util.Date;
@@ -30,7 +30,7 @@ public class UserDtoExit {
 
     private Long telegramChatId;
 
-    private List<Role> roles;
+    private List<String> roles;
 
     private List<AddressDtoExit> addresses;
 

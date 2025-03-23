@@ -34,7 +34,7 @@ public class JwtService {
      * @return Token JWT generado.
      */
     public String generateToken(UserDetails userDetails) {
-        User user =(User) userDetails;
+        User user = (User) userDetails;
         List<String> roles = userDetails.getAuthorities()
                 .stream()
                 .map(authority -> authority.getAuthority())
@@ -43,25 +43,26 @@ public class JwtService {
         JwtClaims jwtClaims = JwtClaims.builder()
                 .id(user.getIdUser().toString())
                 .roles(roles)
-                .name(((User) userDetails).getName())
-                .lastName(((User) userDetails).getLastName())
+                .name(user.getName())
+                .lastName(user.getLastName())
                 .build();
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", jwtClaims.getId());
         claims.put("roles", jwtClaims.getRoles());
+        claims.put("email", user.getEmail());
         claims.put("name", jwtClaims.getName());
         claims.put("lastName", jwtClaims.getLastName());
 
-        return generateToken(claims, userDetails);
+        return generateToken(claims, user.getIdUser().toString());
     }
 
-    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    private String generateToken(Map<String, Object> extraClaims, String subject) {
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + TOKEN_EXPIRATION_TIME * 60 * 1000);
         return Jwts.builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(subject)
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -105,9 +106,12 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
-        final String role = getClaim(token, claims -> claims.get("role", String.class));
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token)
-                && role.equals(RoleConstants.ADMIN) || role.equals(RoleConstants.USER));
+        @SuppressWarnings("unchecked")
+        final List<String> roles = getClaim(token, claims -> claims.get("roles", List.class));
+        return username.equals(userDetails.getUsername())
+                && !isTokenExpired(token)
+                && roles != null
+                && !roles.isEmpty();
     }
 
     private Claims getAllClaims(String token) {

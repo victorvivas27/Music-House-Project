@@ -23,11 +23,11 @@ import { Logo } from '../Images/Logo'
 import { LogoWrapper } from './LogoWrapper'
 import { MenuWrapper, MenuUserWrapper } from './MenuWrapper'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useAuthContext } from '../utils/context/AuthGlobal'
 import { useHeaderVisibility } from '../utils/context/HeaderVisibilityGlobal'
 
 import '../styles/header.styles.css'
 import background from '../../assets/background.svg'
+import { useAuth } from '../../hook/useAuth'
 
 const pagesMobile = [
   { to: '/', text: 'Inicio', any: true },
@@ -62,7 +62,7 @@ export const Header = () => {
     isUser,
     userName,
     userLastName
-  } = useAuthContext()
+  } = useAuth()
   const { toggleHeaderVisibility } = useHeaderVisibility()
   const { pathname } = useLocation()
   const [userMenuTimeout, setUserMenuTimeout] = useState(null)

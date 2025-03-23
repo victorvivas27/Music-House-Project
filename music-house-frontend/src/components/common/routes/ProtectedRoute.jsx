@@ -1,13 +1,15 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import { useAuthContext } from '../../utils/context/AuthGlobal'
+
 import PropTypes from 'prop-types';
+import { useAuth } from '../../../hook/useAuth';
+import { ROLE_ADMIN, ROLE_USER } from '../../utils/roles/constants';
 
 export const ProtectedRoute = ({ redirectPath = '/', role, children }) => {
-  const { isUserAdmin, isUser } = useAuthContext();
+  const { isUserAdmin, isUser } = useAuth();
 
   const hasAccess = 
-    (role === "ADMIN" && isUserAdmin) || 
-    (role === "USER" && isUser) || 
+    (role === ROLE_ADMIN && isUserAdmin) || 
+    (role === ROLE_USER && isUser) || 
     (!role); // Si no se requiere un rol específico, permitir acceso
 
   if (!hasAccess) {

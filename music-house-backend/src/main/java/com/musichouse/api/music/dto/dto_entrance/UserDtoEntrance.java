@@ -1,5 +1,6 @@
 package com.musichouse.api.music.dto.dto_entrance;
 
+import com.musichouse.api.music.entity.Roles;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -53,4 +54,8 @@ public class UserDtoEntrance {
     @Min(value = 10000, message = "⚠️ El código de Telegram debe tener al menos 5 dígitos")
     @Max(value = 999999999999999L, message = "⚠️ El código de Telegram no puede superar los 15 dígitos")
     private Long telegramChatId;
+
+    //@NotNull(message = "El campo roles no puede ser nulo")
+    //@Size(min = 1, message = "Debe haber al menos un rol asignado")
+    private List<Roles> roles;
 }

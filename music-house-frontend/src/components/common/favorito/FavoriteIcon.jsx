@@ -1,6 +1,6 @@
 import { Favorite, FavoriteBorder } from '@mui/icons-material'
 import { Box, Tooltip } from '@mui/material'
-import { useAuthContext } from '../../utils/context/AuthGlobal'
+
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { getAllFavorites, toggleFavorite } from '../../../api/favorites'
@@ -9,9 +9,10 @@ import PropTypes from 'prop-types'
 import { useAppStates } from '../../utils/global.context'
 import { actions } from '../../utils/actions'
 import useAlert from '../../../hook/useAlert'
+import { useAuth } from '../../../hook/useAuth'
 
 const FavoriteIcon = ({ idInstrument }) => {
-  const { idUser } = useAuthContext()
+  const { idUser } = useAuth()
   const params = useParams()
   const id = idInstrument || params.id
   const [isFavorite, setIsFavorite] = useState(false)

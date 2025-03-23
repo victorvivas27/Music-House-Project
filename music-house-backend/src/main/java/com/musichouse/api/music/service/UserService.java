@@ -6,7 +6,7 @@ import com.musichouse.api.music.dto.dto_entrance.UserDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.TokenDtoExit;
 import com.musichouse.api.music.dto.dto_exit.UserDtoExit;
 import com.musichouse.api.music.dto.dto_modify.UserDtoModify;
-import com.musichouse.api.music.entity.Role;
+import com.musichouse.api.music.entity.Roles;
 import com.musichouse.api.music.entity.User;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.infra.MailManager;
@@ -50,7 +50,7 @@ public class UserService implements UserInterface {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final RolRepository rolRepository;
+    //private final RolRepository rolRepository;
     private final AddressRepository addressRepository;
     private final PhoneRepository phoneRepository;
     private final ModelMapper modelMapper;
@@ -75,11 +75,14 @@ public class UserService implements UserInterface {
         User user = modelMapper.map(userDtoEntrance, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // 3️⃣ **Obtener o crear el rol de usuario**
-        Role role = rolRepository.findByRol(RoleConstants.USER)
-                .orElseGet(() -> rolRepository.save(new Role(RoleConstants.USER)));
+        // 3️⃣ Asignar los roles desde el DTO
+        Set<Roles> roles = userDtoEntrance.getRoles() != null && !userDtoEntrance.getRoles().isEmpty()
+                ? new HashSet<>(userDtoEntrance.getRoles())
+                : Set.of(Roles.USER); // Asigna USER por defecto
 
-        user.setRoles(Set.of(role));
+        user.setRoles(roles);
+
+
         user.setTelegramChatId(userDtoEntrance.getTelegramChatId());
 
         user.getAddresses().forEach(address -> address.setUser(user));
@@ -116,58 +119,14 @@ public class UserService implements UserInterface {
         // 9️⃣ **Construcción con Builder**
         return TokenDtoExit.builder()
                 .idUser(userSaved.getIdUser())
-                .name(userSaved.getName())
-                .lastName(userSaved.getLastName())
-                .roles(new ArrayList<>(userSaved.getRoles()))
+                //.name(userSaved.getName())
+                //.lastName(userSaved.getLastName())
+                //.roles(userSaved.getRoles().stream().map(Roles::name).toList())
                 .token(token)
                 .build();
     }
 
 
-    @Transactional
-    @Override
-    public TokenDtoExit createUserAdmin(MultipartFile file,UserAdminDtoEntrance userAdminDtoEntrance)
-            throws DataIntegrityViolationException, MessagingException {
-
-        // Verificar si el usuario ya existe por su email
-        if (userRepository.existsByEmail(userAdminDtoEntrance.getEmail())) {
-            throw new DataIntegrityViolationException("El correo electrónico: "+userAdminDtoEntrance.getEmail());
-        }
-
-        User user = modelMapper.map(userAdminDtoEntrance, User.class);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // Obtener o crear el rol de ADMIN
-        Role role = rolRepository.findByRol(RoleConstants.ADMIN)
-                .orElseGet(() -> rolRepository.save(new Role(RoleConstants.ADMIN)));
-
-        user.setRoles(Set.of(role));
-        String fileUrl = awss3Service.uploadFileToS3Admin(file,userAdminDtoEntrance);
-        user.setPicture(fileUrl);
-
-        User userSaved = userRepository.save(user);
-        // Generar token antes de guardar el usuario
-        String token = jwtService.generateToken(user);
-
-
-
-        try {
-            sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName());
-        } catch (MessagingException e) {
-            String errorMessage = String.format("No se pudo enviar el correo de bienvenida a %s", userSaved.getEmail());
-            throw new MessagingException(errorMessage, e);
-        }
-
-
-        // Construcción con Builder
-        return TokenDtoExit.builder()
-                .idUser(userSaved.getIdUser())
-                .name(userSaved.getName())
-                .lastName(userSaved.getLastName())
-                .roles(new ArrayList<>(userSaved.getRoles()))
-                .token(token)
-                .build();
-    }
 
     @Override
     public TokenDtoExit loginUserAndCheckEmail(LoginDtoEntrance loginDtoEntrance) throws ResourceNotFoundException, AuthenticationException {
@@ -182,14 +141,14 @@ public class UserService implements UserInterface {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtService.generateToken(userDetails);
         User user = userOptional.get();
-        TokenDtoExit tokenDtoSalida = new TokenDtoExit(
-                user.getIdUser(),
-                user.getName(),
-                user.getLastName(),
-                new ArrayList<>(user.getRoles()),
-                token
-        );
-        return tokenDtoSalida;
+
+        return TokenDtoExit.builder()
+                .idUser(user.getIdUser())
+                //.name(user.getName())
+                //.lastName(user.getLastName())
+                //.roles(user.getRoles().stream().map(Roles::name).toList())
+                .token(token)
+                .build();
     }
 
     public List<UserDtoExit> getAllUser() {
@@ -229,6 +188,12 @@ public class UserService implements UserInterface {
         userToUpdate.setLastName(userDtoModify.getLastName());
         userToUpdate.setEmail(userDtoModify.getEmail());
 
+        // 🟢 3️⃣ Opcional: actualizar roles si vienen en la request
+        if (userDtoModify.getRoles() != null && !userDtoModify.getRoles().isEmpty()) {
+            Set<Roles> newRoles = new HashSet<>(userDtoModify.getRoles());
+            userToUpdate.setRoles(newRoles);
+        }
+
         // 🟢 4️⃣ Manejo de la imagen en S3
         if (file != null && !file.isEmpty()) {
             // 📌 Obtener la URL de la imagen actual
@@ -261,7 +226,7 @@ public class UserService implements UserInterface {
 
            // 🟢 1️⃣ Obtener la URL de la imagen guardada en S3
             String imageUrl = usuario.getPicture();
-            LOGGER.info("ESTA ES LA IMAGEN"+imageUrl);
+
 
             // 🟢 2️⃣ Extraer la clave del archivo S3 desde la URL
             if (imageUrl != null && !imageUrl.isEmpty()) {

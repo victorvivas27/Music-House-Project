@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { UsersApi } from '../../../api/users'
 import { UserForm } from './UserForm'
 
-import { useAuthContext } from '../../utils/context/AuthGlobal'
+
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import useAlert from '../../../hook/useAlert'
+import { useAuth } from '../../../hook/useAuth'
 
 const NewUser = ({ onSwitch }) => {
   const initialFormData = {
@@ -17,11 +18,13 @@ const NewUser = ({ onSwitch }) => {
     repeatPassword: '',
     telegramChatId: '',
     addresses: [{ street: '', number: '', city: '', state: '', country: '' }],
-    phones: [{ phoneNumber: '', countryCode: '' }]
+    phones: [{ phoneNumber: '', countryCode: '' }],
+    roles: [],        
+    idRol: '' 
   }
 
   const [loading, setLoading] = useState(false)
-  const { setAuthData } = useAuthContext()
+  const { setAuthData } = useAuth()
   const navigate = useNavigate()
   const { showSuccess, showError } = useAlert()
 

@@ -4,11 +4,11 @@ import BoxLogoSuperior from '../common/crearUsuario/BoxLogoSuperior'
 import { Logo } from '../Images/Logo'
 import NewUser from '../Form/formUsuario/NewUser'
 import BoxFormUnder from '../common/crearUsuario/BoxFormUnder'
-import { useAuthContext } from '../utils/context/AuthGlobal'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../../hook/useAuth'
 
 export const CrearUsuario = () => {
-  const { isUserAdmin } = useAuthContext()
+  const { isUserAdmin } = useAuth()
 
   return (
     <MainCrearUsuario >

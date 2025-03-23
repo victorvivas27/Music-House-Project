@@ -2,20 +2,17 @@ import { useState, useEffect } from 'react'
 import { UsersApi } from '../../../api/users'
 import { UserForm } from './UserForm'
 import { Box, Typography } from '@mui/material'
-
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { MainCrearUsuario } from '../../common/crearUsuario/MainCrearUsuario'
 import { Loader } from '../../common/loader/Loader'
 import BoxLogoSuperior from '../../common/crearUsuario/BoxLogoSuperior'
 import BoxFormUnder from '../../common/crearUsuario/BoxFormUnder'
 import { Logo } from '../../Images/Logo'
-
-import { roleById } from '../../utils/roles/constants'
-import { useAuthContext } from '../../utils/context/AuthGlobal'
 import { updateAddress } from '../../../api/addresses'
 import { updatePhone } from '../../../api/phones'
 import PropTypes from 'prop-types'
 import useAlert from '../../../hook/useAlert'
+import { useAuth } from '../../../hook/useAuth'
 
 const EditUser = ({ onSwitch }) => {
   const { id } = useParams()
@@ -24,7 +21,7 @@ const EditUser = ({ onSwitch }) => {
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
-  const { user: loggedUser, isUserAdmin } = useAuthContext()
+  const { user: loggedUser, isUserAdmin } = useAuth()
   const isLoggedUser = loggedUser?.idUser && loggedUser.idUser === Number(id)
   const canEditUser = !(isUserAdmin && !isLoggedUser)
   const { showSuccess, showError } = useAlert()
@@ -44,16 +41,13 @@ const EditUser = ({ onSwitch }) => {
         email: userData.data.email || '',
         addresses: userData.data.addresses?.length
           ? userData.data.addresses
-          : [], // ✅ Garantiza que sea un array
-        phones: userData.data.phones?.length ? userData.data.phones : [], // ✅ Garantiza que sea un array
-        roles:
-          userData.data.roles?.map((role) => ({
-            idRol: role.idRol,
-            rol: role.rol
-          })) || []
+          : [],
+        phones: userData.data.phones?.length ? userData.data.phones : [],
+
+        roles: userData.data.roles || [],
+        selectedRole:''
       })
     } catch (error) {
-      console.error('Error al obtener usuario:', error)
       showError(error?.message || 'Error al obtener usuario')
       navigate('/')
     } finally {
@@ -74,9 +68,6 @@ const EditUser = ({ onSwitch }) => {
       const formDataToSend = new FormData()
       const { picture, ...userWithoutPicture } = formData
 
-      if (!formData.addresses.length) delete userWithoutPicture.addresses
-      if (!formData.phones.length) delete userWithoutPicture.phones
-      
       if (
         !picture ||
         picture === '' ||
@@ -117,16 +108,6 @@ const EditUser = ({ onSwitch }) => {
           idPhone: phone.idPhone,
           phoneNumber: phone.phoneNumber
         })
-      }
-
-      const newRol = roleById(formData.idRol)
-
-      if (
-        isUserAdmin &&
-        newRol &&
-        !user.data.roles.some((r) => r.rol === newRol)
-      ) {
-        await UsersApi.addUserRole(user.data.idUser, newRol)
       }
 
       if (response && response.message) {

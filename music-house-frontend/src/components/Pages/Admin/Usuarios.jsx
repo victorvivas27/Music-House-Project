@@ -200,7 +200,7 @@ export const Usuarios = () => {
                           {row.idUser}
                         </TableCell>
                         <TableCell align="left">
-                          {row.roles.map((r) => r.rol).join(', ')}
+                        {row.roles.join(', ')}
                         </TableCell>
                         <TableCell align="left">{row.name}</TableCell>
                         <TableCell align="left">{row.lastName}</TableCell>

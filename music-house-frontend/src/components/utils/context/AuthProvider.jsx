@@ -1,16 +1,14 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import {useEffect, useState } from 'react'
 //import { getIsAdmin, getIsUser } from '../roles/constants'
 import PropTypes from 'prop-types'
 import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom'
+import { AuthContext } from './AuthContext'
+import { ROLE_ADMIN, ROLE_USER } from '../roles/constants'
 
-const AuthUserContext = createContext()
 
-export const useAuthContext = () => {
-  return useContext(AuthUserContext)
-}
 
-export const AuthContextProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => {
   const [authGlobal, setAuthGlobal] = useState(false)
   const [isUserAdmin, setIsUserAdmin] = useState(false)
   const [isUser, setIsUser] = useState(false)
@@ -25,26 +23,29 @@ export const AuthContextProvider = ({ children }) => {
 
     if (token) {
       localStorage.setItem('token', token)
+    
       try {
         const decoded = jwtDecode(token) // Decodificamos el token
+
 
         const roles = decoded.roles || [] // Extraemos roles del token
         const userId = decoded.id || null
         const name = decoded.name || null
         const lastName = decoded.lastName || null
 
+     
        
         
 
         setAuthGlobal(true)
-        setIsUserAdmin(roles.includes('ADMIN'))
-        setIsUser(roles.includes('USER'))
+        setIsUserAdmin(roles.includes(ROLE_ADMIN))
+        setIsUser(roles.includes(ROLE_USER))
         setIdUser(userId)
         setUserName(name)
         setUserLastName(lastName)
         setUserRoles(roles) // Guardamos los roles obtenidos del token
       } catch (error) {
-        //console.error("Error al decodificar el token:", error);
+       
         localStorage.removeItem('token')
         setAuthGlobal(false)
         setIsUserAdmin(false)
@@ -84,14 +85,14 @@ export const AuthContextProvider = ({ children }) => {
         const lastName = decoded.lastName || null
 
         setAuthGlobal(true)
-        setIsUserAdmin(roles.includes('ADMIN'))
-        setIsUser(roles.includes('USER'))
+        setIsUserAdmin(roles.includes(ROLE_ADMIN))
+        setIsUser(roles.includes(ROLE_USER))
         setIdUser(userId)
         setUserName(name)
         setUserLastName(lastName)
         setUserRoles(roles)
       } catch (error) {
-        console.error('Error al decodificar el token:', error)
+       
         localStorage.removeItem('token')
         setAuthGlobal(false)
         setIsUserAdmin(false)
@@ -105,11 +106,11 @@ export const AuthContextProvider = ({ children }) => {
   }, [])
 
   return (
-    <AuthUserContext.Provider
+    <AuthContext.Provider
       value={{
         authGlobal,
         setAuthGlobal,
-        setAuthData, // Añadimos setAuthData aquí
+        setAuthData,
         isUserAdmin,
         setIsUserAdmin,
         isUser,
@@ -122,10 +123,11 @@ export const AuthContextProvider = ({ children }) => {
       }}
     >
       {children}
-    </AuthUserContext.Provider>
+    </AuthContext.Provider>
   )
 }
 
-AuthContextProvider.propTypes = {
+
+AuthProvider.propTypes = {
   children: PropTypes.node.isRequired
 }
