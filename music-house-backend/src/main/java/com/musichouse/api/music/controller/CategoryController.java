@@ -99,7 +99,7 @@ public class CategoryController {
                     .error(null)
                     .result(updatedCategory)
                     .build());
-        } catch (ResourceNotFoundException e) {
+        }catch (ResourceNotFoundException e) {
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.<UUID>builder()

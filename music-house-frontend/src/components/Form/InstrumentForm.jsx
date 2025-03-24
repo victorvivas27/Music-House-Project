@@ -80,9 +80,18 @@ const InstrumentForm = ({
     if (!formData.description)
       newErrors.description = 'Este campo es obligatorio.'
     if (!formData.measures) newErrors.measures = 'Este campo es obligatorio.'
-    if (!formData.weight) newErrors.weight = 'Este campo es obligatorio.'
-    if (!formData.rentalPrice)
+
+    if (!formData.weight) {
+      newErrors.weight = 'Este campo es obligatorio.'
+    } else if (isNaN(formData.weight)) {
+      newErrors.weight = 'Debe ser un número válido.'
+    }
+
+    if (!formData.rentalPrice) {
       newErrors.rentalPrice = 'Este campo es obligatorio.'
+    } else if (isNaN(formData.rentalPrice)) {
+      newErrors.rentalPrice = 'Debe ser un número válido.'
+    }
 
     if (
       !formData.idCategory ||

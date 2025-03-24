@@ -1,10 +1,14 @@
 package com.musichouse.api.music.exception;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.musichouse.api.music.util.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -53,6 +57,34 @@ public class GlobalExceptionHandler {
                         .error("Se encontraron errores en los datos enviados")
                         .result(errors)
                         .build());
+    }
+
+    @ExceptionHandler(JsonMappingException.class)
+    public ResponseEntity<ApiResponse<Void>> handleJsonMappingException(JsonMappingException e) {
+        return buildResponse(HttpStatus.BAD_REQUEST, "Error de mapeo de JSON: " + e.getOriginalMessage());
+    }
+
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        Throwable cause = ex.getCause();
+
+        if (cause instanceof InvalidFormatException invalidFormatException) {
+            String field = invalidFormatException.getPath().isEmpty()
+                    ? "desconocido"
+                    : invalidFormatException.getPath().get(0).getFieldName();
+
+            String errorMsg = invalidFormatException.getOriginalMessage() != null
+                    ? invalidFormatException.getOriginalMessage()
+                    : "Formato inválido";
+
+            return buildResponse(
+                    HttpStatus.BAD_REQUEST,
+                    "Dato inválido en el campo '" + field + "': " + errorMsg
+            );
+        }
+
+        return buildResponse(HttpStatus.BAD_REQUEST, "Error de lectura del cuerpo de la solicitud.");
     }
 
     // 🔹 Manejo de excepciones generales

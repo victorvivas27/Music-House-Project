@@ -32,7 +32,7 @@ public class Instrument {
     /**
      * Nombre del instrumento.
      */
-    @Column(length = 100, nullable = false)
+    @Column(length = 100,unique = true)
     private String name;
 
     /**
@@ -110,6 +110,16 @@ public class Instrument {
     )
     @JsonIgnore
     private List<AvailableDate> availableDates;
+
+    // 📌 Normalizar a mayúsculas y eliminar espacios extra antes de guardar o actualizar
+    @PrePersist
+    @PreUpdate
+    private void normalizeData() {
+        if (this.name != null) {
+            this.name = this.name.replaceAll("\\s+", " ").trim().toUpperCase();
+        }
+
+    }
 
     /**
      * Anotación que marca el campo como una fecha de creación automática.

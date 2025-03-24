@@ -12,6 +12,7 @@ import { Loader } from '../common/loader/Loader'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import useAlert from '../../hook/useAlert'
+import { getErrorMessage } from '../../api/getErrorMessage'
 
 const EditInstrumentForm = ({ id }) => {
   const [instrument, setInstrument] = useState(null)
@@ -24,6 +25,7 @@ const EditInstrumentForm = ({ id }) => {
   // ✅ Obtener instrumento por ID
   const getInstrument = useCallback(() => {
     setLoading(true)
+
     getInstrumentById(id)
       .then((response) => {
         setInstrument(response.result || null)
@@ -78,9 +80,7 @@ const EditInstrumentForm = ({ id }) => {
         showError(response?.message)
       }
     } catch (error) {
-      if (error) {
-        showError(`❌ ${error.message}`)
-      }
+      showError(`❌ ${getErrorMessage(error)}`)
     } finally {
       setTimeout(() => setIsSubmitting(false), 1100)
     }

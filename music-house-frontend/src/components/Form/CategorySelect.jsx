@@ -3,17 +3,13 @@ import { useEffect, useState } from 'react'
 import { getCategories } from '../../api/categories'
 import { Loader } from '../common/loader/Loader'
 import PropTypes from 'prop-types'
-import useAlert from '../../hook/useAlert'
+//import useAlert from '../../hook/useAlert'
 
-const CategorySelect = ({
-  label,
-  onChange,
-  selectedCategoryId = undefined
-}) => {
+const CategorySelect = ({label, onChange,selectedCategoryId = undefined}) => {
+  const [categories, setCategories] = useState([]) 
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('')
-  const [categories, setCategories] = useState([]) 
-  const {  showError } = useAlert()
+
 
   // ✅ Obtener categorias del backend
   useEffect(() => {
@@ -22,7 +18,7 @@ const CategorySelect = ({
         const response = await getCategories()
         setCategories(response.result || [])
       } catch (error) {
-       showError(error?.message)
+      
         setCategories([])
       } finally {
         setLoading(false)
@@ -30,7 +26,7 @@ const CategorySelect = ({
     }
 
     fetchCategory()
-  }, [showError])
+  }, [])
 
   // ✅ Establecer la categoría seleccionada desde prop
   useEffect(() => {

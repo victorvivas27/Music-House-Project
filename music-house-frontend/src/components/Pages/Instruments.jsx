@@ -23,7 +23,6 @@ import { Loader } from '../common/loader/Loader'
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
-  //getLabelDisplayedRows,
   isSelected,
   handleSort,
   handleSelectAll,
@@ -36,6 +35,7 @@ import ArrowBack from '../utils/ArrowBack'
 import useAlert from '../../hook/useAlert'
 import { headCellsInstrument } from '../utils/types/HeadCells'
 import { paginationStyles } from '../styles/styleglobal'
+import { getErrorMessage } from '../../api/getErrorMessage'
 
 export const Instruments = () => {
   const [instruments, setInstruments] = useState({ result: [] })
@@ -109,14 +109,7 @@ export const Instruments = () => {
       setSelected([])
       getAllInstruments()
     } catch (error) {
-      if (error.data) {
-        // ✅ Ahora sí capturamos el mensaje que envía el backend
-        showError(
-          `❌ ${
-            error.data.message || '⚠️ No se pudo conectar con el servidor.'
-          }`
-        )
-      }
+      showError(`❌ ${getErrorMessage(error)}`)
     }
   }
 

@@ -5,6 +5,7 @@ import { formDataToCharacteristics } from '../utils/editInstrument'
 import ArrowBack from '../utils/ArrowBack'
 import { useNavigate } from 'react-router-dom'
 import useAlert from '../../hook/useAlert'
+import { getErrorMessage } from '../../api/getErrorMessage'
 
 const NewInstrumentForm = () => {
   const navigate = useNavigate()
@@ -55,10 +56,7 @@ const NewInstrumentForm = () => {
       })
 
       // ✅ Agregar JSON correctamente como un Blob con application/json
-      formDataToSend.append(
-        'instrument',
-        new Blob([instrumentJson], { type: 'application/json' })
-      )
+      formDataToSend.append( 'instrument',new Blob([instrumentJson], { type: 'application/json' }))
 
       // ✅ Agregar imágenes correctamente
       if (formData.imageUrls && formData.imageUrls.length > 0) {
@@ -77,10 +75,7 @@ const NewInstrumentForm = () => {
           navigate('/instruments')
         }, 1000)
       } catch (error) {
-        if (error) {
-          // ✅ Ahora sí capturamos el mensaje que envía el backend
-          showError(`❌ ${error.message}`)
-        } 
+        showError(`❌ ${getErrorMessage(error)}`)
       } finally {
         setLoading(false)
       }

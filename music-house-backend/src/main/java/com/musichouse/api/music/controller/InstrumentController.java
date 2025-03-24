@@ -2,6 +2,7 @@ package com.musichouse.api.music.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.musichouse.api.music.dto.dto_entrance.InstrumentDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.InstrumentDtoExit;
 import com.musichouse.api.music.dto.dto_modify.InstrumentDtoModify;
@@ -10,12 +11,16 @@ import com.musichouse.api.music.service.InstrumentService;
 import com.musichouse.api.music.util.ApiResponse;
 import jakarta.validation.*;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,11 +38,11 @@ public class InstrumentController {
 
     // 🔹 CREAR INSTRUMENTO
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<InstrumentDtoExit>> createInstrument(
+    public ResponseEntity<ApiResponse<?>> createInstrument(
             @RequestPart("instrument") String instrumentJson,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) throws JsonProcessingException, ResourceNotFoundException {
+        try{
 
-        try {
             // 📌 Convertir JSON a Objeto
             InstrumentDtoEntrance instrumentDtoEntrance = objectMapper.readValue(instrumentJson, InstrumentDtoEntrance.class);
 
@@ -52,18 +57,18 @@ public class InstrumentController {
                             .error(null)
                             .result(instrumentDtoExit)
                             .build());
+    } catch (DataIntegrityViolationException e) {
 
-        } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiResponse.<String>builder()
+                        .status(HttpStatus.CONFLICT)
+                        .statusCode(HttpStatus.CONFLICT.value())
+                        .message("El nombre del instrumento ya existe en la base de datos.")
+                        .error(e.getRootCause() != null ? e.getRootCause().getMessage() : e.getMessage())
+                        .result(instrumentJson)
+                        .build());
+    }
 
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<InstrumentDtoExit>builder()
-                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                            .message("Error inesperado al crear el instrumento")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
-        }
     }
 
     // 🔹 OBTENER TODOS LOS INSTRUMENTOS
@@ -96,16 +101,40 @@ public class InstrumentController {
 
     // 🔹 ACTUALIZAR INSTRUMENTO
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse<InstrumentDtoExit>> updateInstrument(@Valid @RequestBody InstrumentDtoModify instrumentDtoModify) throws ResourceNotFoundException {
-        InstrumentDtoExit instrumentDtoExit = instrumentService.updateInstrument(instrumentDtoModify);
+    public ResponseEntity<ApiResponse<?>> updateInstrument(
+            @Valid @RequestBody InstrumentDtoModify instrumentDtoModify) throws ResourceNotFoundException {
+        try {
 
-        return ResponseEntity.ok(ApiResponse.<InstrumentDtoExit>builder()
-                .status(HttpStatus.OK)
-                .statusCode(HttpStatus.OK.value())
-                .message("Instrumento actualizado con éxito.")
-                .error(null)
-                .result(instrumentDtoExit)
-                .build());
+            InstrumentDtoExit instrumentDtoExit = instrumentService.updateInstrument(instrumentDtoModify);
+
+            return ResponseEntity.ok(ApiResponse.<InstrumentDtoExit>builder()
+                    .status(HttpStatus.OK)
+                    .statusCode(HttpStatus.OK.value())
+                    .message("Instrumento actualizado con éxito.")
+                    .error(null)
+                    .result(instrumentDtoExit)
+                    .build());
+        } catch (ResourceNotFoundException e) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.<UUID>builder()
+                            .status(HttpStatus.NOT_FOUND)
+                            .statusCode(HttpStatus.NOT_FOUND.value())
+                            .message("No se encontró el instrumento con el ID proporcionado.")
+                            .error(e.getMessage())
+                            .result(instrumentDtoModify.getIdInstrument())
+                            .build());
+        } catch (DataIntegrityViolationException e) {
+
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ApiResponse.<String>builder()
+                            .status(HttpStatus.CONFLICT)
+                            .statusCode(HttpStatus.CONFLICT.value())
+                            .message("El nombre del instrumento ya existe en la base de datos.")
+                            .error(e.getRootCause() != null ? e.getRootCause().getMessage() : e.getMessage())
+                            .result(instrumentDtoModify.getName())
+                            .build());
+        }
     }
 
     // 🔹 ELIMINAR INSTRUMENTO

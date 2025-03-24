@@ -8,6 +8,7 @@ import '../../styles/crearInstrumento.styles.css'
 export const EditarCategoria = () => {
  const { isHeaderVisible } = useHeaderVisibility()
 const { id } = useParams()
+
 return (
     <main>
       <CreateWrapper isHeaderVisible={isHeaderVisible}>
