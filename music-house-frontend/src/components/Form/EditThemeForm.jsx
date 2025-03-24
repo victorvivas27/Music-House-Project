@@ -8,73 +8,68 @@ import { useNavigate } from 'react-router-dom'
 import { useAppStates } from '../utils/global.context'
 import { actions } from '../utils/actions'
 import useAlert from '../../hook/useAlert'
+import { getErrorMessage } from '../../api/getErrorMessage'
 
-export const EditThemeForm = ({ id}) => {
- 
-  const [initialFormData, setInitialFormData] = useState()
+export const EditThemeForm = ({ id }) => {
+  const [initialFormData, setInitialFormData] = useState(null)
   const [loading, setLoading] = useState(true)
- 
-   const { state, dispatch } = useAppStates() 
-  const navigate =useNavigate()
+  const { state, dispatch } = useAppStates()
+  const navigate = useNavigate()
   const { showSuccess, showError } = useAlert()
 
-  
-
-  const getTheme = useCallback(async() => {
+  const getTheme = useCallback(async () => {
     setLoading(true)
+
     try {
-        const [theme] = await getThemeById(id)
-    
-        if (theme?.data) {
-          setTimeout(() => {
-            setInitialFormData({
-              idTheme: theme.data.idTheme,
-              themeName: theme.data.themeName,
-              description: theme.data.description
-            })
-            setLoading(false)
-          }, 100) 
-        } else {
-          setInitialFormData(null)
+      const theme = await getThemeById(id)
+
+      if (theme?.result) {
+        setTimeout(() => {
+          setInitialFormData({
+            idTheme: theme.result.idTheme,
+            themeName: theme.result.themeName,
+            description: theme.result.description
+          })
           setLoading(false)
-        }
-      } catch (error) {
-         setInitialFormData(null)
+        }, 100)
+      } else {
+        setInitialFormData(null)
         setLoading(false)
       }
-    }, [id])
-  
-    useEffect(() => {
-      getTheme()
-    }, [getTheme])
-  
-   
-    const onSubmit = async (formData) => {
-      if (!formData) return
-      dispatch({ type: actions.SET_LOADING, payload: true }) 
-  
-      try {
-        const response = await updateTheme(formData)
-  
-        if (response?.message) {
-          setTimeout(() => {
-            showSuccess(`✅ ${response.message}`)
-            navigate('/theme')
-          }, 1100)
-        }
-      } catch (error) {
-        showError(
-          `❌ ${error?.data?.message || '⚠️ Error al conectar con el servidor.'}`
-        )
-      } finally {
+    } catch (error) {
+      setInitialFormData(null)
+      setLoading(false)
+    }
+  }, [id])
+
+  useEffect(() => {
+    getTheme()
+  }, [getTheme])
+
+  const onSubmit = async (formData) => {
+    if (!formData) return
+    dispatch({ type: actions.SET_LOADING, payload: true })
+
+    try {
+      const response = await updateTheme(formData)
+
+      if (response?.message) {
         setTimeout(() => {
-          dispatch({ type: actions.SET_LOADING, payload: false })
-        }, 1000)
+          showSuccess(`✅ ${response.message}`)
+          navigate('/theme')
+        }, 1100)
       }
+    } catch (error) {
+      showError(`❌ ${getErrorMessage(error)}`)
+    } finally {
+      setTimeout(() => {
+        dispatch({ type: actions.SET_LOADING, payload: false })
+      }, 1000)
     }
+  }
   if (loading) {
-      return <Loader title="Un momento por favor" />
-    }
+    return <Loader title="Un momento por favor" />
+  }
 
   return (
     <Box
@@ -87,17 +82,16 @@ export const EditThemeForm = ({ id}) => {
       }}
     >
       {!loading && (
-        <ThemeForm 
-        initialFormData={initialFormData}
-         onSubmit={onSubmit} 
-         loading={state.loading} 
-         />
+        <ThemeForm
+          initialFormData={initialFormData}
+          onSubmit={onSubmit}
+          loading={state.loading}
+        />
       )}
-     
     </Box>
   )
 }
 
 EditThemeForm.propTypes = {
-  id: PropTypes.string.isRequired, 
-};
+  id: PropTypes.string.isRequired
+}

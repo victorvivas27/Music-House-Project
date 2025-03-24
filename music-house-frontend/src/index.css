@@ -40,9 +40,9 @@
 
 .custom-swal {
   border-radius: 50px 10PX !important;
-  /* Aplica el border-radius a la alerta */
-  padding: 20px !important;
-  /* Ajusta el padding si es necesario */
+  width: 700px !important;   /* ✅ Cambia el ancho */
+  max-width: 90vw;           /* ✅ Evita que explote en pantallas chicas */
+
 }
 
 /* @media (prefers-color-scheme: dark) {

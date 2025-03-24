@@ -94,7 +94,7 @@ const useAlert = () => {
   // ✅ Alerta de éxito
   const showSuccess = (
     title = '¡Éxito!',
-    text = 'Operación realizada correctamente.'
+    text //= 'Operación realizada correctamente.'
   ) => {
     Swal.fire({
       title,
@@ -119,7 +119,7 @@ const useAlert = () => {
   }
 
   // ✅ Alerta de error
-  const showError = (title = 'Error', text = 'Ocurrió un problema.') => {
+  const showError = (title = 'Error',text) => {
     Swal.fire({
       title,
       text,

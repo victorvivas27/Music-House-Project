@@ -104,7 +104,9 @@ public class ThemeController {
 
     // 🔹 ACTUALIZAR TEMÁTICA
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse<ThemeDtoExit>> updateTheme(@RequestBody @Valid ThemeDtoModify themeDtoModify) {
+    public ResponseEntity<ApiResponse<?>> updateTheme(@RequestBody @Valid ThemeDtoModify themeDtoModify) {
+
+
         try {
             ThemeDtoExit updatedTheme = themeService.updateTheme(themeDtoModify);
             return ResponseEntity.ok(ApiResponse.<ThemeDtoExit>builder()
@@ -117,12 +119,22 @@ public class ThemeController {
         } catch (ResourceNotFoundException e) {
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.<ThemeDtoExit>builder()
+                    .body(ApiResponse.<UUID>builder()
                             .status(HttpStatus.NOT_FOUND)
                             .statusCode(HttpStatus.NOT_FOUND.value())
                             .message("No se encontró la temática con el ID proporcionado.")
                             .error(e.getMessage())
-                            .result(null)
+                            .result(themeDtoModify.getIdTheme())
+                            .build());
+        }catch (DataIntegrityViolationException e) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.<String>builder()
+                            .status(HttpStatus.BAD_REQUEST)
+                            .statusCode(HttpStatus.BAD_REQUEST.value())
+                            .message("La temática ya existe en la base de datos.")
+                            .error(e.getMessage())
+                            .result(themeDtoModify.getThemeName())
                             .build());
         }
     }

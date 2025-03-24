@@ -33,10 +33,11 @@ import ArrowBack from '../../utils/ArrowBack'
 import { headCellsTheme } from '../../utils/types/HeadCells'
 import useAlert from '../../../hook/useAlert'
 import { paginationStyles } from '../../styles/styleglobal'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 
 export const Theme = () => {
   const [loading, setLoading] = useState(true)
-  const [theme, setTheme] = useState({ data: [] })
+  const [theme, setTheme] = useState({ result: [] })
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('number')
@@ -50,19 +51,18 @@ export const Theme = () => {
     setLoading(true)
 
     try {
-      const [fetchedTheme] = await getTheme()
-      setTheme(fetchedTheme || { data: [] })
-      setRows(fetchedTheme.data || [])
+      const fetchedTheme = await getTheme()
+      setTheme(fetchedTheme)
+      setRows(fetchedTheme.result || [])
     } catch {
-      setTheme({ data: [] })
-      setRows([])
+      setTheme({ result: [] })
     } finally {
       setTimeout(() => setLoading(false), 500)
     }
   }
 
   useEffect(() => {
-    setRows(theme.data)
+    setRows(theme.result)
     setLoading(false)
   }, [theme])
 
@@ -110,11 +110,7 @@ export const Theme = () => {
       setSelected([])
       getAllTheme()
     } catch (error) {
-      if (error?.data) {
-        showError(
-          `❌ ${error.data.message || '⚠️ No se pudo conectar con el servidor.'}`
-        )
-      }
+      showError(`❌ ${getErrorMessage(error)}`)
     }
   }
 
@@ -264,7 +260,7 @@ export const Theme = () => {
               page={Math.min(
                 page,
                 Math.max(0, Math.ceil(rows.length / rowsPerPage) - 1)
-              )} 
+              )}
               onPageChange={(event, newPage) => setPage(newPage)}
               onRowsPerPageChange={(event) => {
                 setRowsPerPage(parseInt(event.target.value, 10))

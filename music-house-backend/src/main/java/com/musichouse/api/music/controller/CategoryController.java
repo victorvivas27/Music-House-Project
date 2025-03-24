@@ -99,6 +99,16 @@ public class CategoryController {
                     .error(null)
                     .result(updatedCategory)
                     .build());
+        } catch (ResourceNotFoundException e) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.<UUID>builder()
+                            .status(HttpStatus.NOT_FOUND)
+                            .statusCode(HttpStatus.NOT_FOUND.value())
+                            .message("No se encontró la categoria con el ID proporcionado.")
+                            .error(e.getMessage())
+                            .result(categoryDtoModify.getIdCategory())
+                            .build());
         } catch (DataIntegrityViolationException e) {
 
             return ResponseEntity.status(HttpStatus.CONFLICT)
