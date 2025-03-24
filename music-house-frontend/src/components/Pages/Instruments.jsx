@@ -38,7 +38,7 @@ import { headCellsInstrument } from '../utils/types/HeadCells'
 import { paginationStyles } from '../styles/styleglobal'
 
 export const Instruments = () => {
-  const [instruments, setInstruments] = useState({ data: [] })
+  const [instruments, setInstruments] = useState({ result: [] })
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [order, setOrder] = useState('asc')
@@ -52,18 +52,18 @@ export const Instruments = () => {
   const getAllInstruments = async () => {
     setLoading(true)
     try {
-      const [fetchedInstruments] = await getInstruments()
+      const fetchedInstruments = await getInstruments()
       setInstruments(fetchedInstruments)
-      setRows(fetchedInstruments.data || [])
+      setRows(fetchedInstruments.result || [])
     } catch {
-      setInstruments({ data: [] })
+      setInstruments({ result: [] })
     } finally {
       setTimeout(() => setLoading(false), 500)
     }
   }
 
   useEffect(() => {
-    setRows(instruments.data)
+    setRows(instruments.result)
     setLoading(false)
   }, [instruments])
 
@@ -155,12 +155,8 @@ export const Instruments = () => {
             />
             {/*Fin Tercer parte de la tabla */}
 
-            <TableContainer >
-              <Table 
-              aria-labelledby="tableTitle"
-               size="medium"
-               
-               >
+            <TableContainer>
+              <Table aria-labelledby="tableTitle" size="medium">
                 <EnhancedTableHead
                   headCells={headCellsInstrument}
                   numSelected={selected.length}
@@ -172,7 +168,7 @@ export const Instruments = () => {
                   disableSelectAll
                 />
 
-                <TableBody  >
+                <TableBody>
                   {visibleRows.map((row, index) => {
                     const isItemSelected = isSelected(
                       row.idInstrument,
@@ -193,10 +189,8 @@ export const Instruments = () => {
                           isRowEven ? 'table-row-even' : 'table-row-odd'
                         }
                         sx={{ cursor: 'pointer' }}
-                 
-
                       >
-                        <TableCell padding="checkbox" >
+                        <TableCell padding="checkbox">
                           <Checkbox
                             color="primary"
                             checked={isItemSelected}
@@ -212,12 +206,11 @@ export const Instruments = () => {
                           id={labelId}
                           scope="row"
                           align="center"
-                         
                         >
                           {row.idInstrument}
                         </TableCell>
 
-                        <TableCell  align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.name}</TableCell>
                         <TableCell align="left">
                           <Box
                             style={{

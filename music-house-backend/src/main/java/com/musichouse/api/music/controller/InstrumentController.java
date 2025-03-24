@@ -49,19 +49,19 @@ public class InstrumentController {
                             .status(HttpStatus.CREATED)
                             .statusCode(HttpStatus.CREATED.value())
                             .message("Instrumento creado exitosamente.")
-                            .data(instrumentDtoExit)
                             .error(null)
+                            .result(instrumentDtoExit)
                             .build());
 
         } catch (Exception e) {
-            LOGGER.error("❌ Error al crear instrumento", e);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.<InstrumentDtoExit>builder()
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                             .message("Error inesperado al crear el instrumento")
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
         }
     }
@@ -75,8 +75,8 @@ public class InstrumentController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de instrumentos obtenida con éxito.")
-                .data(instrumentDtoExits)
                 .error(null)
+                .result(instrumentDtoExits)
                 .build());
     }
 
@@ -89,8 +89,8 @@ public class InstrumentController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Instrumento encontrado con éxito.")
-                .data(foundInstrument)
                 .error(null)
+                .result(foundInstrument)
                 .build());
     }
 
@@ -103,8 +103,8 @@ public class InstrumentController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Instrumento actualizado con éxito.")
-                .data(instrumentDtoExit)
                 .error(null)
+                .result(instrumentDtoExit)
                 .build());
     }
 
@@ -117,8 +117,8 @@ public class InstrumentController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Instrumento eliminado exitosamente.")
-                .data(null)
                 .error(null)
+                .result(null)
                 .build());
     }
 
@@ -133,8 +133,8 @@ public class InstrumentController {
                             .status(HttpStatus.NOT_FOUND)
                             .statusCode(HttpStatus.NOT_FOUND.value())
                             .message("No se encontraron instrumentos con el nombre proporcionado.")
-                            .data(null)
                             .error(null)
+                            .result(null)
                             .build());
         }
 
@@ -142,8 +142,8 @@ public class InstrumentController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Instrumentos encontrados con éxito.")
-                .data(instruments)
                 .error(null)
+                .result(instruments)
                 .build());
     }
 }

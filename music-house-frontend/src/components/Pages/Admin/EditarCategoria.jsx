@@ -1,26 +1,18 @@
-import { useState } from 'react'
+
 import { useParams } from 'react-router-dom'
 import CreateWrapper from '../../common/crearProd/createWrapper'
 import { Box, Typography } from '@mui/material'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 import { EditCategoryForm } from '../../Form/EditCategoryForm'
-
 import '../../styles/crearInstrumento.styles.css'
-
 export const EditarCategoria = () => {
-  const [key, setKey] = useState(0)
-  const { isHeaderVisible } = useHeaderVisibility()
-  const { id } = useParams()
-
-  const onClose = () => {
-    setKey(Math.random())
-  }
-
-  return (
+ const { isHeaderVisible } = useHeaderVisibility()
+const { id } = useParams()
+return (
     <main>
       <CreateWrapper isHeaderVisible={isHeaderVisible}>
         <Typography sx={{ fontSize: '35px' }}>Editar Categoría</Typography>
-        <EditCategoryForm key={key} id={id} onSaved={onClose} />
+        <EditCategoryForm  id={id}  />
       </CreateWrapper>
       <Box
         sx={{

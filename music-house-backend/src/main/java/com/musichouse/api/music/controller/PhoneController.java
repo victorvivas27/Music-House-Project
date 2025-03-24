@@ -36,8 +36,8 @@ public class PhoneController {
                         .status(HttpStatus.CREATED)
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Teléfono creado con éxito.")
-                        .data(createdPhone)
                         .error(null)
+                        .result(createdPhone)
                         .build());
     }
 
@@ -50,8 +50,8 @@ public class PhoneController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de teléfonos obtenida con éxito.")
-                .data(phoneDtoExits)
                 .error(null)
+                .result(phoneDtoExits)
                 .build());
     }
 
@@ -64,8 +64,8 @@ public class PhoneController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Teléfono encontrado con éxito.")
-                .data(foundPhone)
                 .error(null)
+                .result(foundPhone)
                 .build());
     }
 
@@ -78,8 +78,8 @@ public class PhoneController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Teléfono actualizado con éxito.")
-                .data(updatedPhone)
                 .error(null)
+                .result(updatedPhone)
                 .build());
     }
 
@@ -92,8 +92,8 @@ public class PhoneController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Teléfono eliminado exitosamente.")
-                .data(null)
                 .error(null)
+                .result(null)
                 .build());
     }
 }

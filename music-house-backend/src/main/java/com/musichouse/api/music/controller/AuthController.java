@@ -39,72 +39,6 @@ public class AuthController {
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
-   /* @PostMapping(value = "/create/admin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<TokenDtoExit>> createUserAdmin(
-            @RequestParam("user") String userJson,
-            @RequestPart(value = "file", required = false) MultipartFile file) {
-
-        UserAdminDtoEntrance userAdminDtoEntrance = null; // Inicialización para evitar errores en el catch
-
-        try {
-            // 📌 1️⃣ Convertir el JSON String a un objeto UserAdminDtoEntrance
-            userAdminDtoEntrance = objectMapper.readValue(userJson, UserAdminDtoEntrance.class);
-
-            // 📌 2️⃣ Validar los datos manualmente
-            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-            Validator validator = factory.getValidator();
-            Set<ConstraintViolation<UserAdminDtoEntrance>> violations = validator.validate(userAdminDtoEntrance);
-
-            if (!violations.isEmpty()) {
-                List<String> errorMessages = violations.stream()
-                        .map(v -> v.getPropertyPath() + ": " + v.getMessage())
-                        .toList();
-
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ApiResponse.<TokenDtoExit>builder()
-                                .status(HttpStatus.BAD_REQUEST)
-                                .statusCode(HttpStatus.BAD_REQUEST.value())
-                                .message("Errores de validación encontrados.")
-                                .data(null)
-                                .error(String.join(", ", errorMessages))
-                                .build());
-            }
-
-            // 📌 3️⃣ Llamar al servicio para crear el usuario administrador
-            TokenDtoExit tokenDtoExit = userService.createUserAdmin(file, userAdminDtoEntrance);
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponse.<TokenDtoExit>builder()
-                            .status(HttpStatus.CREATED)
-                            .statusCode(HttpStatus.CREATED.value())
-                            .message("Usuario admin creado con éxito.")
-                            .data(tokenDtoExit)
-                            .error(null)
-                            .build());
-
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(ApiResponse.<TokenDtoExit>builder()
-                            .status(HttpStatus.CONFLICT)
-                            .statusCode(HttpStatus.CONFLICT.value())
-                            .message("El correo electrónico ingresado ya está en uso.")
-                            .data(null)
-                            .error(e.getMessage())
-                            .build());
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<TokenDtoExit>builder()
-                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                            .message("Ocurrió un error interno en el servidor.")
-                            .data(null)
-                            .error(e.getMessage())
-                            .build());
-        }
-    }*/
-
-
     @PostMapping(value = "/create/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public HttpEntity<ApiResponse<TokenDtoExit>> createUser(
             @RequestParam("user") String userJson,
@@ -132,8 +66,8 @@ public class AuthController {
                                 .status(HttpStatus.BAD_REQUEST)
                                 .statusCode(HttpStatus.BAD_REQUEST.value())
                                 .message("Errores de validación encontrados.")
-                                .data(null)
                                 .error(String.join(", ", errorMessages))
+                                .result(null)
                                 .build());
             }
 
@@ -145,31 +79,31 @@ public class AuthController {
                             .status(HttpStatus.CREATED)
                             .statusCode(HttpStatus.CREATED.value())
                             .message("Usuario creado con éxito.")
-                            .data(tokenDtoExit) // 👈 Devuelve TokenDtoExit en data
                             .error(null)
+                            .result(tokenDtoExit)
                             .build());
 
         } catch (DataIntegrityViolationException e) {
-           // LOGGER.error("Error: Correo en uso", e);
+
 
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ApiResponse.<TokenDtoExit>builder()
                             .status(HttpStatus.CONFLICT)
                             .statusCode(HttpStatus.CONFLICT.value())
                             .message("El correo electrónico ingresado ya está en uso.")
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
 
         } catch (Exception e) {
-          //  LOGGER.error("Error inesperado al crear usuario", e);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.<TokenDtoExit>builder()
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                             .message("Ocurrió un error interno en el servidor.")
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
         }
     }
@@ -183,41 +117,41 @@ public class AuthController {
                     .status(HttpStatus.OK)
                     .statusCode(HttpStatus.OK.value())
                     .message("Inicio de sesión exitoso.")
-                    .data(tokenDtoExit)
                     .error(null)
+                    .result(tokenDtoExit)
                     .build());
 
         } catch (ResourceNotFoundException e) {
-            // 📌 Maneja el caso en que el correo no existe en la DB
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.<TokenDtoExit>builder()
                             .status(HttpStatus.NOT_FOUND)
                             .statusCode(HttpStatus.NOT_FOUND.value())
                             .message("Usuario no encontrado.")
-                            .data(null)
-                            .error(e.getMessage()) // Mensaje detallado con el correo faltante
+                            .error(e.getMessage())
+                            .result(null)
                             .build());
 
         } catch (AuthenticationException e) {
-            // 📌 Maneja credenciales incorrectas (usuario sí existe, pero contraseña incorrecta)
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.<TokenDtoExit>builder()
                             .status(HttpStatus.UNAUTHORIZED)
                             .statusCode(HttpStatus.UNAUTHORIZED.value())
                             .message("Autenticación fallida. Verifique sus credenciales.")
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
 
         } catch (Exception e) {
-            // 📌 Maneja errores inesperados
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.<TokenDtoExit>builder()
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                             .message("Ocurrió un error al procesar la solicitud.")
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
         }
     }

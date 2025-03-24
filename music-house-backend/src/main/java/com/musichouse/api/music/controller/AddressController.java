@@ -33,8 +33,8 @@ public class AddressController {
                         .status(HttpStatus.CREATED)
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Dirección creada con éxito.")
-                        .data(createdAddress)
                         .error(null)
+                        .result(createdAddress)
                         .build());
     }
 
@@ -47,8 +47,8 @@ public class AddressController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de direcciones obtenida con éxito.")
-                .data(addressList)
                 .error(null)
+                .result(addressList)
                 .build());
     }
 
@@ -61,8 +61,8 @@ public class AddressController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Dirección encontrada con éxito.")
-                .data(foundAddress)
                 .error(null)
+                .result(foundAddress)
                 .build());
     }
 
@@ -75,8 +75,8 @@ public class AddressController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Dirección actualizada con éxito.")
-                .data(updatedAddress)
                 .error(null)
+                .result(updatedAddress)
                 .build());
     }
 
@@ -89,8 +89,8 @@ public class AddressController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Dirección eliminada exitosamente.")
-                .data(null)
                 .error(null)
+                .result(null)
                 .build());
     }
 }

@@ -1,68 +1,81 @@
 import axios from 'axios';
-import {
-  useGetFetch,
-  getFetch,
-} from '../helpers/useFetch'
+import { handleApiError } from './handleApiError';
 
-/* const URL_INSTRUMENTS = 'https://music-house.up.railway.app/api/instrument'
-const URL_THEMES = 'https://music-house.up.railway.app/api/theme' */
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const getInstruments = () => {
-  return getFetch(`${BASE_URL}/instrument/all`)
-}
+// Obtener todos los instrumentos
+export const getInstruments = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/instrument/all`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
 
-export const getInstrumentById = (id) => {
-  return getFetch(`${BASE_URL}/instrument/search/${id}`)
-}
+// Obtener un instrumento por ID
+export const getInstrumentById = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/instrument/search/${id}`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
 
-export const getThemes = () => {
-  return useGetFetch(`${BASE_URL}/theme/all`)
-}
+// Obtener todos los temas
+export const getThemes = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/theme/all`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
 
+// Crear un nuevo instrumento
 export const createInstrument = async (formData) => {
   try {
     const response = await axios.post(`${BASE_URL}/instrument/create`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
-
     return response.data;
   } catch (error) {
-    if (error.response) {
-      throw (error.response || "No se pudo conectar con el servidor");
-    } 
+    handleApiError(error);
   }
 };
 
+// Actualizar un instrumento existente
 export const updateInstrument = async (payload) => {
   try {
-    const response = await axios.put(`${BASE_URL}/instrument/update`, payload)
-    return response.data
-
+    const response = await axios.put(`${BASE_URL}/instrument/update`, payload);
+    return response.data;
   } catch (error) {
-    if (error.response) {
-      throw (error.response || "No se pudo conectar con el servidor");
-    } 
-
+    handleApiError(error);
   }
+};
 
-}
-
+// Eliminar un instrumento por ID
 export const deleteInstrument = async (idInstrument) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/instrument/delete/${idInstrument}`)
-    return response.data 
+    const response = await axios.delete(`${BASE_URL}/instrument/delete/${idInstrument}`);
+    return response.data;
   } catch (error) {
-    if (error.response) {
-      throw (error.response || "No se pudo conectar con el servidor");
-    } 
+    handleApiError(error);
   }
-}
+};
 
-export const searchInstrumentsByName = (name) => {
-  if (!name) return []; // Si `name` no existe, no hacer la petición
+// Buscar instrumentos por nombre
+export const searchInstrumentsByName = async (name) => {
+  if (!name) return [];
 
-  return useGetFetch(`${BASE_URL}/instrument/find/name/${name}`);
-}
+  try {
+    const response = await axios.get(`${BASE_URL}/instrument/find/name/${name}`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};

@@ -1,49 +1,62 @@
 import axios from 'axios';
-import { getFetch } from '../helpers/useFetch'
+import { handleApiError } from './handleApiError';
 
 //const URL_CATEGORIES = 'https://music-house.up.railway.app/api/category'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const getTheme = () => {
-  return getFetch(`${BASE_URL}/theme/all`)
-}
+// Obtener todos los temas
+export const getTheme = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/theme/all`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
 
-export const getThemeById = (idTheme) => {
-  return getFetch(`${BASE_URL}/theme/search/${idTheme}`)
-}
+// Obtener tema por ID
+export const getThemeById = async (idTheme) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/theme/search/${idTheme}`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
 
+// Crear nuevo tema
 export const createTheme = async ({ themeName, description }) => {
   try {
-    const respuesta = await axios.post(`${BASE_URL}/theme/create`, { themeName, description });
-    return respuesta.data;
+    const response = await axios.post(`${BASE_URL}/theme/create`, {
+      themeName,
+      description
+    });
+    return response.data;
   } catch (error) {
-    if (error.response) {
-      throw (error.response || "No se pudo conectar con el servidor");
-    }
+    handleApiError(error);
   }
-}
+};
 
+// Actualizar un tema existente
 export const updateTheme = async ({ idTheme, themeName, description }) => {
   try {
-    const respuesta = await axios.put(`${BASE_URL}/theme/update`, { idTheme, themeName, description })
-    return respuesta.data
+    const response = await axios.put(`${BASE_URL}/theme/update`, {
+      idTheme,
+      themeName,
+      description
+    });
+    return response.data;
   } catch (error) {
-    if (error.response) {
-      throw (error.response || "No se pudo conectar con el servidor");
-    }
+    handleApiError(error);
   }
+};
 
-
-}
-
+// Eliminar un tema
 export const deleteTheme = async (idTheme) => {
   try {
-    const respuesta = await axios.delete(`${BASE_URL}/theme/delete/${idTheme}`)
-    return respuesta.data
+    const response = await axios.delete(`${BASE_URL}/theme/delete/${idTheme}`);
+    return response.data;
   } catch (error) {
-    if (error.response) {
-      throw (error.response || "No se pudo conectar con el servidor");
-    }
+    handleApiError(error);
   }
-
-}
+};

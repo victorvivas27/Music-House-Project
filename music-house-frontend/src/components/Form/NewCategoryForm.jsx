@@ -5,10 +5,13 @@ import { createCategory } from '../../api/categories'
 import { useAppStates } from '../utils/global.context'
 import { actions } from '../utils/actions'
 import useAlert from '../../hook/useAlert'
+import { useNavigate } from 'react-router-dom'
+import { getErrorMessage } from '../../api/getErrorMessage'
 
 export const NewCategoryForm = () => {
   const { state, dispatch } = useAppStates()
   const { showSuccess, showError } = useAlert()
+  const navigate = useNavigate()
 
   const initialFormData = {
     idCategory: '',
@@ -31,6 +34,7 @@ export const NewCategoryForm = () => {
         if (response?.message) {
           setTimeout(() => {
             showSuccess(`✅ ${response.message}`)
+            navigate('/categories')
           }, 1100)
 
           dispatch({
@@ -39,16 +43,14 @@ export const NewCategoryForm = () => {
           })
         }
       } catch (error) {
-        showError(
-          `❌ ${error?.data?.message || '⚠️ No se pudo conectar con el servidor.'}`
-        )
+       showError(`❌ ${getErrorMessage(error)}`)
       } finally {
         setTimeout(() => {
           dispatch({ type: actions.SET_LOADING, payload: false })
         }, 1000)
       }
     },
-    [dispatch, showSuccess, showError]
+    [dispatch, showSuccess, navigate, showError]
   )
 
   return (

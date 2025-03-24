@@ -1,27 +1,27 @@
 import axios from 'axios';
-import { putFetch } from '../helpers/useFetch'
+
+import { handleApiError } from './handleApiError';
 
 //const URL_ADDRESSES = 'https://music-house.up.railway.app/api/address'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 
-export const updateAddress = ({
-  idAddress,
-  street,
-  number,
-  city,
-  state,
-  country
-}) => {
-  return putFetch(`${BASE_URL}/address/update`, {
-    idAddress,
-    street,
-    number,
-    city,
-    state,
-    country
-  })
-}
+export const updateAddress = async ({ idAddress, street, number, city, state, country }) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/address/update`, {
+      idAddress,
+      street,
+      number,
+      city,
+      state,
+      country
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error)
+  }
+};
+
 export const addAddress = async ({ idUser, street, number, city, state, country }) => {
   try {
     const response = await axios.post(`${BASE_URL}/address/add_address`, {
@@ -34,15 +34,15 @@ export const addAddress = async ({ idUser, street, number, city, state, country 
     });
     return response.data;
   } catch (error) {
-    throw new Error('Error al agregar la dirección');
+    handleApiError(error)
   }
 };
 
 export const removeAddress = async (idAddress) => {
   try {
-    await axios.delete(`${BASE_URL}/address/delete/${idAddress}`);
-    return true;
+    const response = await axios.delete(`${BASE_URL}/address/delete/${idAddress}`);
+    return response.data;
   } catch (error) {
-    throw new Error('Error al eliminar la dirección');
+   handleApiError(error)
   }
 };

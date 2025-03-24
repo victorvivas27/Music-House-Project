@@ -34,37 +34,36 @@ import {
 import ArrowBack from '../../utils/ArrowBack'
 import { headCellsCategory } from '../../utils/types/HeadCells'
 import useAlert from '../../../hook/useAlert'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 
 export const Categories = () => {
   const [loading, setLoading] = useState(true)
-  const [categories, setCategories] = useState({ data: [] })
+  const [categories, setCategories] = useState({ result: [] })
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('number')
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
-const navigate = useNavigate()
+  const navigate = useNavigate()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
 
   const getAllCategories = async () => {
-
     setLoading(true)
 
     try {
-      const [fetchedCategory] = await getCategories()
-      setCategories(fetchedCategory || {data:[]})
-      setRows(fetchedCategory.data || [])
+      const fetchedCategory = await getCategories()
+      setCategories(fetchedCategory)
+      setRows(fetchedCategory.result || [])
     } catch {
-      setCategories({ data: [] })
-      setRows([]) 
+      setCategories({ result: [] })
     } finally {
       setTimeout(() => setLoading(false), 500)
     }
   }
 
   useEffect(() => {
-    setRows(categories.data)
+    setRows(categories.result)
     setLoading(false)
   }, [categories])
 
@@ -112,11 +111,7 @@ const navigate = useNavigate()
       setSelected([])
       getAllCategories()
     } catch (error) {
-      if (error?.data) {
-        showError(
-          `❌ ${error.data.message || '⚠️ No se pudo conectar con el servidor.'}`
-        )
-      }
+      showError(`❌ ${getErrorMessage(error)}`)
     }
   }
 
@@ -152,11 +147,10 @@ const navigate = useNavigate()
             />
             <TableContainer>
               <Table
-              sx={{ minWidth: 750 }}
-               aria-labelledby="tableTitle" 
-               size="medium"
-               
-               >
+                sx={{ minWidth: 750 }}
+                aria-labelledby="tableTitle"
+                size="medium"
+              >
                 <EnhancedTableHead
                   headCells={headCellsCategory}
                   numSelected={selected.length}
@@ -267,11 +261,11 @@ const navigate = useNavigate()
               page={Math.min(
                 page,
                 Math.max(0, Math.ceil(rows.length / rowsPerPage) - 1)
-              )} 
+              )}
               onPageChange={(event, newPage) => setPage(newPage)}
               onRowsPerPageChange={(event) => {
                 setRowsPerPage(parseInt(event.target.value, 10))
-                setPage(0) 
+                setPage(0)
               }}
               labelRowsPerPage="Filas por página"
               sx={{

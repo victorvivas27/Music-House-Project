@@ -36,8 +36,8 @@ public class PrivacyPolicyController {
                         .status(HttpStatus.CREATED)
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Política de privacidad creada con éxito.")
-                        .data(createdPrivacyPolicy)
                         .error(null)
+                        .result(createdPrivacyPolicy)
                         .build());
     }
 
@@ -50,8 +50,8 @@ public class PrivacyPolicyController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de políticas de privacidad obtenida con éxito.")
-                .data(privacyPolicies)
                 .error(null)
+                .result(privacyPolicies)
                 .build());
     }
 
@@ -64,8 +64,8 @@ public class PrivacyPolicyController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Política de privacidad actualizada con éxito.")
-                .data(updatedPrivacyPolicy)
                 .error(null)
+                .result(updatedPrivacyPolicy)
                 .build());
     }
 
@@ -78,8 +78,8 @@ public class PrivacyPolicyController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Política de privacidad eliminada exitosamente.")
-                .data(null)
                 .error(null)
+                .result(null)
                 .build());
     }
 }

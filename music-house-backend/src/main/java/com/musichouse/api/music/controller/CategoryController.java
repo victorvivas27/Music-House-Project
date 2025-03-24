@@ -40,18 +40,18 @@ public class CategoryController {
                             .status(HttpStatus.CREATED)
                             .statusCode(HttpStatus.CREATED.value())
                             .message("Categoría creada exitosamente.")
-                            .data(categoryDtoExit)
                             .error(null)
+                            .result(categoryDtoExit)
                             .build());
         } catch (DataIntegrityViolationException e) {
-            LOGGER.error("Error: Categoría ya existe", e);
+
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ApiResponse.<CategoryDtoExit>builder()
                             .status(HttpStatus.CONFLICT)
                             .statusCode(HttpStatus.CONFLICT.value())
                             .message("La categoría ya existe en la base de datos.")
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
         }
     }
@@ -65,8 +65,8 @@ public class CategoryController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de categorías obtenida con éxito.")
-                .data(categories)
                 .error(null)
+                .result(categories)
                 .build());
     }
 
@@ -79,25 +79,37 @@ public class CategoryController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Categoría encontrada con éxito.")
-                .data(foundCategory)
                 .error(null)
+                .result(foundCategory)
                 .build());
     }
 
     // 🔹 ACTUALIZAR CATEGORÍA
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse<CategoryDtoExit>> updateCategory(
+    public ResponseEntity<ApiResponse<?>> updateCategory(
             @RequestBody @Valid CategoryDtoModify categoryDtoModify) throws ResourceNotFoundException {
 
-        CategoryDtoExit updatedCategory = categoryService.updateCategory(categoryDtoModify);
+        try {
+            CategoryDtoExit updatedCategory = categoryService.updateCategory(categoryDtoModify);
 
-        return ResponseEntity.ok(ApiResponse.<CategoryDtoExit>builder()
-                .status(HttpStatus.OK)
-                .statusCode(HttpStatus.OK.value())
-                .message("Categoría actualizada con éxito.")
-                .data(updatedCategory)
-                .error(null)
-                .build());
+            return ResponseEntity.ok(ApiResponse.<CategoryDtoExit>builder()
+                    .status(HttpStatus.OK)
+                    .statusCode(HttpStatus.OK.value())
+                    .message("Categoría actualizada con éxito.")
+                    .error(null)
+                    .result(updatedCategory)
+                    .build());
+        } catch (DataIntegrityViolationException e) {
+
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ApiResponse.<String>builder()
+                            .status(HttpStatus.CONFLICT)
+                            .statusCode(HttpStatus.CONFLICT.value())
+                            .message("La categoría ya existe en la base de datos.")
+                            .error(e.getRootCause() != null ? e.getRootCause().getMessage() : e.getMessage())
+                            .result(categoryDtoModify.getCategoryName())
+                            .build());
+        }
     }
 
     // 🔹 ELIMINAR CATEGORÍA
@@ -110,8 +122,8 @@ public class CategoryController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Categoría eliminada exitosamente.")
-                .data(null)
                 .error(null)
+                .result(null)
                 .build());
     }
 
@@ -124,8 +136,8 @@ public class CategoryController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Búsqueda de categorías exitosa.")
-                .data(categories)
                 .error(null)
+                .result(categories)
                 .build());
     }
 }

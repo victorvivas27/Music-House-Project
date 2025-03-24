@@ -8,22 +8,26 @@ import TematicCard from '../common/TematicCard'
 import ProductsWrapper from '../common/ProductsWrapper'
 import ProductCard from '../common/ProductCard'
 import { Loader } from '../common/loader/Loader'
+import { toast } from 'react-toastify'
 
 export const Home = () => {
   const { state, dispatch } = useAppStates()
   const { searchOptions } = state
   const [selectedInstruments, setSelectedInstruments] = useState([])
   const [loading, setLoading] = useState(true)
-  const [instruments, setInstruments] = useState({ data: [] })
+  const [instruments, setInstruments] = useState([])
+
+console.log(instruments);
+ 
 
   useEffect(() => {
     const fetchInstruments = async () => {
       setLoading(true)
       try {
-        const [fetchedInstruments] = await getInstruments()
-        setInstruments(fetchedInstruments || { data: [] })
+        const { result} = await getInstruments()
+        setInstruments(result)
       } catch (error) {
-        setInstruments({ data: [] }) 
+        toast.error(error);
       } finally {
         setTimeout(() => setLoading(false), 500)
       }
@@ -33,29 +37,29 @@ export const Home = () => {
   }, [])
 
   useEffect(() => {
-    if (instruments.data.length > 0) {
+    if (instruments.length > 0) {
       dispatch({ type: actions.UPDATE_INSTRUMENTS, payload: instruments })
-      setSelectedInstruments(instruments.data)
+      setSelectedInstruments(instruments)
     }
   }, [dispatch, instruments])
 
   useEffect(() => {
-    if (instruments.data.length > 0) {
+    if (instruments.length > 0) {
       const found = searchOptions.found
-        ? instruments.data.filter((instrument) =>
+        ? instruments.filter((instrument) =>
             searchOptions.found.some(
               (instrumentFound) =>
                 instrument.idInstrument === instrumentFound.idInstrument
             )
           )
-        : instruments.data
+        : instruments
       setSelectedInstruments(found)
 
       if (searchOptions.found && window) {
         window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
       }
     }
-  }, [instruments.data, searchOptions])
+  }, [instruments, searchOptions])
 
   if (loading) return <Loader title="Un momento por favor..." />
 

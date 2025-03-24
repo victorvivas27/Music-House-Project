@@ -38,38 +38,38 @@ public class ReservationController {
                             .status(HttpStatus.CREATED)
                             .statusCode(HttpStatus.CREATED.value())
                             .message("Reserva creada con éxito.")
-                            .data(reservationDtoExit)
                             .error(null)
+                            .result(reservationDtoExit)
                             .build());
         } catch (ResourceNotFoundException e) {
-            LOGGER.error("Recurso no encontrado en createReservation", e);
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.<ReservationDtoExit>builder()
                             .status(HttpStatus.NOT_FOUND)
                             .statusCode(HttpStatus.NOT_FOUND.value())
                             .message(e.getMessage())
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
         } catch (ReservationAlreadyExistsException e) {
-            LOGGER.error("Reserva ya existe", e);
+
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(ApiResponse.<ReservationDtoExit>builder()
                             .status(HttpStatus.CONFLICT)
                             .statusCode(HttpStatus.CONFLICT.value())
                             .message(e.getMessage())
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
         } catch (Exception e) {
-            LOGGER.error("Error inesperado en createReservation", e);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.<ReservationDtoExit>builder()
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                             .message("Ocurrió un error al procesar la solicitud.")
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
         }
     }
@@ -83,8 +83,8 @@ public class ReservationController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de reservas obtenida con éxito.")
-                .data(reservationDtoExits)
                 .error(null)
+                .result(reservationDtoExits)
                 .build());
     }
 
@@ -98,18 +98,18 @@ public class ReservationController {
                     .status(HttpStatus.OK)
                     .statusCode(HttpStatus.OK.value())
                     .message("Reservas encontradas con éxito para el usuario con ID: " + userId)
-                    .data(reservationDtoExits)
                     .error(null)
+                    .result(reservationDtoExits)
                     .build());
         } catch (ResourceNotFoundException e) {
-            LOGGER.error("Reservas no encontradas para el usuario con ID: " + userId, e);
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.<List<ReservationDtoExit>>builder()
                             .status(HttpStatus.NOT_FOUND)
                             .statusCode(HttpStatus.NOT_FOUND.value())
                             .message("No se encontraron reservas para el usuario con ID: " + userId)
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
         }
     }
@@ -127,28 +127,28 @@ public class ReservationController {
                     .status(HttpStatus.OK)
                     .statusCode(HttpStatus.OK.value())
                     .message("Reserva eliminada con éxito.")
-                    .data(null)
                     .error(null)
+                    .result(null)
                     .build());
         } catch (ResourceNotFoundException e) {
-            LOGGER.error("Reserva no encontrada en deleteReservation", e);
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.<Void>builder()
                             .status(HttpStatus.NOT_FOUND)
                             .statusCode(HttpStatus.NOT_FOUND.value())
                             .message(e.getMessage())
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
         } catch (Exception e) {
-            LOGGER.error("Error inesperado en deleteReservation", e);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.<Void>builder()
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                             .message("Ocurrió un error al procesar la solicitud.")
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
         }
     }

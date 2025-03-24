@@ -8,29 +8,30 @@ import { useNavigate } from 'react-router-dom'
 import useAlert from '../../hook/useAlert'
 import { useAppStates } from '../utils/global.context'
 import { actions } from '../utils/actions'
+import { getErrorMessage } from '../../api/getErrorMessage'
 
 export const EditCategoryForm = ({ id }) => {
   const [initialFormData, setInitialFormData] = useState(null)
-  const [loading, setLoading] = useState(true) 
-  const { state, dispatch } = useAppStates() 
+  const [loading, setLoading] = useState(true)
+  const { state, dispatch } = useAppStates()
   const navigate = useNavigate()
   const { showSuccess, showError } = useAlert()
 
   const getCategory = useCallback(async () => {
     setLoading(true)
-  
+
     try {
-      const [category] = await getCategoryById(id)
-  
-      if (category?.data) {
+      const category = await getCategoryById(id)
+
+      if (category?.result) {
         setTimeout(() => {
           setInitialFormData({
-            idCategory: category.data.idCategory,
-            categoryName: category.data.categoryName,
-            description: category.data.description
+            idCategory: category.result.idCategory,
+            categoryName: category.result.categoryName,
+            description: category.result.description
           })
           setLoading(false)
-        }, 100) 
+        }, 100)
       } else {
         setInitialFormData(null)
         setLoading(false)
@@ -45,10 +46,9 @@ export const EditCategoryForm = ({ id }) => {
     getCategory()
   }, [getCategory])
 
- 
   const onSubmit = async (formData) => {
     if (!formData) return
-    dispatch({ type: actions.SET_LOADING, payload: true }) 
+    dispatch({ type: actions.SET_LOADING, payload: true })
 
     try {
       const response = await updateCategory(formData)
@@ -60,20 +60,19 @@ export const EditCategoryForm = ({ id }) => {
         }, 1100)
       }
     } catch (error) {
-      showError(
-        `❌ ${error?.data?.message || '⚠️ Error al conectar con el servidor.'}`
-      )
+      showError(`❌ ${getErrorMessage(error)}`)
     } finally {
       setTimeout(() => {
         dispatch({ type: actions.SET_LOADING, payload: false })
       }, 1000)
     }
   }
-if (loading) {
+
+  if (loading) {
     return <Loader title="Un momento por favor" />
   }
 
-return (
+  return (
     <Box
       sx={{
         width: '100%',
@@ -83,13 +82,13 @@ return (
         alignItems: 'center'
       }}
     >
-      {initialFormData && ( 
+       
         <CategoryForm
           initialFormData={initialFormData}
           onSubmit={onSubmit}
-          loading={state.loading} 
+          loading={state.loading}
         />
-      )}
+    
     </Box>
   )
 }

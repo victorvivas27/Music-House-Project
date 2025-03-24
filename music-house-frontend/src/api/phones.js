@@ -1,16 +1,23 @@
 import axios from 'axios';
-import { putFetch } from '../helpers/useFetch'
+import { handleApiError } from './handleApiError';
 
 //const URL_PHONES = 'https://music-house.up.railway.app/api/phone'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const updatePhone = ({ idPhone, phoneNumber }) => {
-  return putFetch(`${BASE_URL}/phone/update`, {
-    idPhone,
-    phoneNumber
-  })
-}
+// Actualizar un teléfono existente
+export const updatePhone = async ({ idPhone, phoneNumber }) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/phone/update`, {
+      idPhone,
+      phoneNumber
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
 
+// Agregar un nuevo teléfono
 export const addPhone = async ({ idUser, phoneNumber }) => {
   try {
     const response = await axios.post(`${BASE_URL}/phone/add_phone`, {
@@ -19,15 +26,16 @@ export const addPhone = async ({ idUser, phoneNumber }) => {
     });
     return response.data;
   } catch (error) {
-    throw new Error('Error al agregar el telefono');
+    handleApiError(error);
   }
 };
 
+// Eliminar un teléfono por ID
 export const removePhone = async (idPhone) => {
   try {
-    await axios.delete(`${BASE_URL}/phone/delete/${idPhone}`);
-    return true;
+    const response = await axios.delete(`${BASE_URL}/phone/delete/${idPhone}`);
+    return response.data;
   } catch (error) {
-    throw new Error('Error al eliminar un telefono');
+    handleApiError(error);
   }
 };

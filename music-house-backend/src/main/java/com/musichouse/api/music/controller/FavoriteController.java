@@ -37,8 +37,8 @@ public class FavoriteController {
                         .status(HttpStatus.CREATED)
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Instrumento agregado a favoritos con éxito.")
-                        .data(favoriteDtoExit)
                         .error(null)
+                        .result(favoriteDtoExit)
                         .build());
     }
 
@@ -51,8 +51,8 @@ public class FavoriteController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de favoritos obtenida con éxito.")
-                .data(favoriteDtoExits)
                 .error(null)
+                .result(favoriteDtoExits)
                 .build());
     }
 
@@ -65,8 +65,8 @@ public class FavoriteController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Favoritos encontrados con éxito para el usuario con ID: " + userId)
-                .data(favoriteDtoExits)
                 .error(null)
+                .result(favoriteDtoExits)
                 .build());
     }
 
@@ -80,8 +80,8 @@ public class FavoriteController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Instrumento eliminado de favoritos con éxito.")
-                .data(response.getData())
                 .error(null)
+                .result(response.getResult())
                 .build());
     }
 }

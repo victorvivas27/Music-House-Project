@@ -36,8 +36,8 @@ public class ImageUrlsController {
                         .status(HttpStatus.CREATED)
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Imágenes agregadas exitosamente.")
-                        .data(imagesUrlsDtoExit)
                         .error(null)
+                        .result(imagesUrlsDtoExit)
                         .build());
     }
 
@@ -50,8 +50,8 @@ public class ImageUrlsController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de imágenes obtenida con éxito.")
-                .data(imagesUrlsDtoExits)
                 .error(null)
+                .result(imagesUrlsDtoExits)
                 .build());
     }
 
@@ -64,8 +64,8 @@ public class ImageUrlsController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Imagen encontrada con éxito.")
-                .data(imagesUrlsDtoExit)
                 .error(null)
+                .result(imagesUrlsDtoExit)
                 .build());
     }
 
@@ -79,8 +79,8 @@ public class ImageUrlsController {
                         .status(HttpStatus.OK)
                         .statusCode(HttpStatus.OK.value())
                         .message("Imagen actualizada con éxito.")
-                        .data(imagesUrlsDtoExit)
                         .error(null)
+                        .result(imagesUrlsDtoExit)
                         .build());
     }
 
@@ -93,8 +93,8 @@ public class ImageUrlsController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Imagen eliminada exitosamente.")
-                .data(null)
                 .error(null)
+                .result(null)
                 .build());
     }
 }

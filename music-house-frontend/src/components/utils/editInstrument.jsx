@@ -1,14 +1,14 @@
 export const characteristicsToFormData = (instrument) => {
   const characteristics = {
-    idCharacteristics: instrument.data?.characteristics?.idCharacteristics,
+    idCharacteristics: instrument.result?.characteristics?.idCharacteristics,
     instrumentCase:
-      instrument.data?.characteristics?.instrumentCase === 'si' ? true : false,
-    support: instrument.data?.characteristics?.support === 'si' ? true : false,
-    tuner: instrument.data?.characteristics?.tuner === 'si' ? true : false,
+      instrument.result?.characteristics?.instrumentCase === 'si' ? true : false,
+    support: instrument.result?.characteristics?.support === 'si' ? true : false,
+    tuner: instrument.result?.characteristics?.tuner === 'si' ? true : false,
     microphone:
-      instrument.data?.characteristics?.microphone === 'si' ? true : false,
+      instrument.result?.characteristics?.microphone === 'si' ? true : false,
     phoneHolder:
-      instrument.data?.characteristics?.phoneHolder === 'si' ? true : false
+      instrument.result?.characteristics?.phoneHolder === 'si' ? true : false
   }
 
   return characteristics

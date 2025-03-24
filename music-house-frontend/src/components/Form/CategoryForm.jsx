@@ -12,7 +12,7 @@ import '../styles/crearInstrumento.styles.css'
 import PropTypes from 'prop-types'
 import ArrowBack from '../utils/ArrowBack'
 import { CustomButton } from './formUsuario/CustomComponents'
-import { flexRowContainer,inputStyles  } from '../styles/styleglobal'
+import { flexRowContainer, inputStyles } from '../styles/styleglobal'
 
 export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
   const [formData, setFormData] = useState({ ...initialFormData })
@@ -33,18 +33,8 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
       categoryName: formData.categoryName,
       description: formData.description
     }
-
     setFormData(data)
     setSubmitData(true)
-
-    setTimeout(() => {
-      setFormData({
-        idCategory: '',
-        categoryName: '',
-        description: ''
-      })
-      setSubmitData(false)
-    }, 500)
   }
 
   useEffect(() => {
@@ -84,7 +74,7 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
                 multiline
                 minRows={1}
                 maxRows={8}
-                sx={{...inputStyles,width:"900px" }}
+                sx={{ ...inputStyles, width: '900px' }}
               />
             </FormControl>
 
@@ -100,7 +90,7 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
                 multiline
                 minRows={3}
                 maxRows={10}
-                sx={{ ...inputStyles,width:"900px" }}
+                sx={{ ...inputStyles, width: '900px' }}
               />
             </FormControl>
           </Grid>

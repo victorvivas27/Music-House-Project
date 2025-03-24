@@ -140,14 +140,14 @@ public class FavoriteService implements FavoriteInterface {
         IsFavoriteExit isFavoriteExit = new IsFavoriteExit();
         isFavoriteExit.setIsFavorite(false);
 
-        LOGGER.info("Favorito eliminado con éxito: ID Usuario {}, ID Instrumento {}", idUser, idInstrument);
+
 
         return ApiResponse.<IsFavoriteExit>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Favorito eliminado exitosamente.")
-                .data(isFavoriteExit)
                 .error(null)
+                .result(isFavoriteExit)
                 .build();
     }
 }

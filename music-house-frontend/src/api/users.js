@@ -1,102 +1,77 @@
-import {
-  getFetch,
-  postFetch,
-  deleteFetch
-} from '../helpers/useFetch';
 import axios from 'axios';
+import { handleApiError } from './handleApiError';
 
 //const BASE_URL = "http://localhost:8080/api"
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Definir las rutas usando la base dinámica
-const URL_GET_USERS = `${BASE_URL}/user/all`;
-const URL_GET_USER = `${BASE_URL}/user/search/`;
-const URL_CREATE_USER = `${BASE_URL}/auth/create/user`;
-const URL_UPDATE_USER = `${BASE_URL}/user/update`;
-const URL_DELETE_USER = `${BASE_URL}/user/delete`;
-const URL_BASE_LOGIN = `${BASE_URL}/auth/login`;
-const URL_CREATE_ADMIN = `${BASE_URL}/auth/create/admin`;
-const URL_ADD_ROLE_USER = `${BASE_URL}/roles/user/rol/add`;
-const URL_DELETE_ROLE_USER = `${BASE_URL}/roles/user/rol/delete`;
 
 export const UsersApi = {
-  getAllUsers: () => getFetch(URL_GET_USERS),
-
-
-
-  deleteUser: (idUser) => deleteFetch(`${URL_DELETE_USER}/${idUser}`),
-
-  addUserRole: (idUser, rol) =>
-    postFetch(URL_ADD_ROLE_USER, { idUser, rol }),
-
-  deleteUserRole: (idUser, rol) =>
-    deleteFetch(URL_DELETE_ROLE_USER, { idUser, rol }),
-
-
-  registerAdmin: async (adminUser) => {
+  // Obtener todos los usuarios
+  getAllUsers: async () => {
     try {
-      const respuesta = await axios.post(URL_CREATE_ADMIN, adminUser);
-      return respuesta.data;
+      const response = await axios.get(`${BASE_URL}/user/all`);
+      return response.data;
     } catch (error) {
-      if (error.response) {
-        throw (error.response || "No se pudo conectar con el servidor");
-      } 
+      handleApiError(error);
     }
   },
 
-  getUserById: async (id) => {
+  // Eliminar un usuario por ID
+  deleteUser: async (idUser) => {
     try {
-      const { data } = await axios.get(`${URL_GET_USER}${id}`);
-      return data;
+      const response = await axios.delete(`${BASE_URL}/user/delete/${idUser}`);
+      return response.data;
     } catch (error) {
-      if (error.response) {
-        throw (error.response || "No se pudo conectar con el servidor");
-      } 
+      handleApiError(error);
     }
   },
 
+  // Obtener usuario por ID
+  getUserById: async (idUser) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/user/search/${idUser}`);
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
 
+  // Registrar nuevo usuario
   registerUser: async (formData) => {
     try {
-      const response = await axios.post(URL_CREATE_USER, formData, {
+      const response = await axios.post(`${BASE_URL}/auth/create/user`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
-
       return response.data;
     } catch (error) {
-      if (error.response) {
-        throw (error.response || "No se pudo conectar con el servidor");
-      } 
+      handleApiError(error);
     }
   },
 
-
+  // Login de usuario
   loginUser: async (user) => {
     try {
-      const respuesta = await axios.post(URL_BASE_LOGIN, user);
-      return respuesta.data;
+      const response = await axios.post(`${BASE_URL}/auth/login`, user);
+      return response.data;
     } catch (error) {
-      if (error.response) {
-        throw (error.response || "No se pudo conectar con el servidor");
-      }
+      handleApiError(error);
     }
   },
 
+  // Actualizar datos de usuario
   updateUser: async (formData) => {
     try {
-      const response = await axios.put(URL_UPDATE_USER, formData, {
+      const response = await axios.put(`${BASE_URL}/user/update`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
       return response.data;
     } catch (error) {
-      if (error.response) {
-        throw (error.response || "No se pudo conectar con el servidor");
-      } 
+      handleApiError(error);
     }
   },
 };

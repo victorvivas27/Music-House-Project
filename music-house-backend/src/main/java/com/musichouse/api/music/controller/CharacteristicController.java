@@ -34,8 +34,8 @@ public class CharacteristicController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de características obtenida con éxito.")
-                .data(characteristics)
                 .error(null)
+                .result(characteristics)
                 .build());
     }
 
@@ -48,8 +48,8 @@ public class CharacteristicController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Característica encontrada con éxito.")
-                .data(foundCharacteristic)
                 .error(null)
+                .result(foundCharacteristic)
                 .build());
     }
 
@@ -64,8 +64,8 @@ public class CharacteristicController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Característica actualizada con éxito.")
-                .data(updatedCharacteristic)
                 .error(null)
+                .result(updatedCharacteristic)
                 .build());
     }
 }

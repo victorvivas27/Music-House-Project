@@ -33,26 +33,26 @@ export const Instrument = () => {
   const [showMessage, setShowMessage] = useState(false)
 
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
     getInstrumentById(id)
-      .then(([instrument]) => {
-        setInstrument(instrument)
+      .then((instrument) => {
+        setInstrument(instrument); // ya no destructurás porque no es un array
       })
       .catch(() => {
-        setInstrument(undefined)
-        navigate('/noDisponible')
-      })
-  }, [id, navigate])
-
+        setInstrument(undefined);
+        navigate('/noDisponible');
+      });
+  }, [id, navigate]);
+  
   useEffect(() => {
-    if (!instrument?.data) return
-
-    setInstrumentSelected(instrument.data)
-    setIsLoading(false)
+    if (!instrument?.result) return;
+  
+    setInstrumentSelected(instrument.result); // 👈 cambio de data a result
+    setIsLoading(false);
     if (window) {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [instrument])
+  }, [instrument]);
 
   const onClose = () => {
     setShowGallery(false)
@@ -61,9 +61,7 @@ export const Instrument = () => {
   return (
     <main>
       <MainWrapper>
-        {/*<Typography variant="h2" sx={{ color: 'red', textAlign: 'center' }}>
-          {isUserAdmin ? 'ADMIN' : isUser ? 'USER' : 'No autenticado'}
-        </Typography>*/}
+      
 
         {loading && <Loader title="Cargando detalle del instrumento" />}
         {!loading && (

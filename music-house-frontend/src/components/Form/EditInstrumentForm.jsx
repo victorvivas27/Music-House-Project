@@ -14,21 +14,22 @@ import { useNavigate } from 'react-router-dom'
 import useAlert from '../../hook/useAlert'
 
 const EditInstrumentForm = ({ id }) => {
-  const [instrument, setInstrument] = useState(0)
-  const [initialFormData, setInitialFormData] = useState()
-  const [loading, setLoading] = useState(true)
+  const [instrument, setInstrument] = useState(null)
+  const [initialFormData, setInitialFormData] = useState(null)
+ const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
   const { showSuccess, showError } = useAlert()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // ✅ Obtener instrumento por ID
   const getInstrument = useCallback(() => {
     setLoading(true)
     getInstrumentById(id)
-      .then(([instrument]) => {
-        setInstrument(instrument)
+      .then((response) => {
+        setInstrument(response.result || null)
       })
       .catch(() => {
-        setInstrument({})
+        setInstrument(null)
       })
   }, [id])
 
@@ -37,57 +38,55 @@ const EditInstrumentForm = ({ id }) => {
   }, [getInstrument])
 
   useEffect(() => {
-    if (!(instrument && instrument.data?.idInstrument)) return
+    if (!instrument?.idInstrument) return
 
     const data = {
-      idInstrument: instrument.data.idInstrument || '',
-      name: instrument.data.name || '',
-      description: instrument.data.description || '',
-      measures: instrument.data.measures || '',
-      weight: instrument.data.weight || '',
-      rentalPrice: instrument.data.rentalPrice || '',
-      idCategory: instrument.data.category?.idCategory || '',
-      idTheme: instrument.data.theme?.idTheme || '',
-      characteristics: characteristicsToFormData(instrument)
+      idInstrument: instrument.idInstrument || '',
+      name: instrument.name || '',
+      description: instrument.description || '',
+      measures: instrument.measures || '',
+      weight: instrument.weight || '',
+      rentalPrice: instrument.rentalPrice || '',
+      idCategory: instrument.category?.idCategory || '',
+      idTheme: instrument.theme?.idTheme || '',
+      characteristics: characteristicsToFormData({ result: instrument }) // 👈 le pasamos el mismo formato que antes esperaba
     }
     setInitialFormData(data)
-    setLoading(false)
+   setLoading(false)
   }, [instrument])
-  
-  // Enviar actualización del instrumento sin imágenes
+
+  // ✅ Enviar actualización
   const onSubmit = async (formData) => {
     if (!formData) return
+
     const data = {
       ...formData,
       characteristic: formDataToCharacteristics(formData)
     }
-    setIsSubmitting(true) 
+
+    setIsSubmitting(true)
+
     try {
       const response = await updateInstrument(data)
-      if (response && response.data) {
+
+      if (response?.result) {
         setTimeout(() => {
-          showSuccess(`✅${response.message}`)
+          showSuccess(`✅ ${response.message}`)
           navigate('/instruments')
         }, 1100)
       } else {
-        showError(`${response.message}`)
+        showError(response?.message)
       }
     } catch (error) {
-      if (error.data) {
-       
-        showError(`❌ ${error.data.message||
-           '⚠️ No se pudo conectar con el servidor.'}`)
-      } 
+      if (error) {
+        showError(`❌ ${error.message}`)
+      }
     } finally {
-      setTimeout(() => {
-        setIsSubmitting(false) 
-      }, 1100)
+      setTimeout(() => setIsSubmitting(false), 1100)
     }
   }
 
-  if (loading) {
-    return <Loader title="Un momento por favor" />
-  }
+  if (loading) return <Loader title="Un momento por favor..." />
 
   return (
     <Box
@@ -99,14 +98,12 @@ const EditInstrumentForm = ({ id }) => {
         alignItems: 'center'
       }}
     >
-      {!loading && (
-        <InstrumentForm
-          initialFormData={initialFormData}
-          onSubmit={onSubmit}
-          loading={isSubmitting}
-          isEditing={true}
-        />
-      )}
+      <InstrumentForm
+        initialFormData={initialFormData}
+        onSubmit={onSubmit}
+        loading={isSubmitting}
+        isEditing={true}
+      />
     </Box>
   )
 }

@@ -71,16 +71,15 @@ const NewInstrumentForm = () => {
 
       try {
         const response = await createInstrument(formDataToSend)
-        showSuccess(`✅ ${response.message}`) // Mostrar mensaje de éxito del backend
+        showSuccess(`✅ ${response.message}`) 
 
         setTimeout(() => {
-          navigate('/instruments') // ✅ Redirigir después de 1s
+          navigate('/instruments')
         }, 1000)
       } catch (error) {
-        if (error.data) {
+        if (error) {
           // ✅ Ahora sí capturamos el mensaje que envía el backend
-          showError(`❌ ${error.data.message||
-             '⚠️ No se pudo conectar con el servidor.'}`)
+          showError(`❌ ${error.message}`)
         } 
       } finally {
         setLoading(false)

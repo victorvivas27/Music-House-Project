@@ -22,8 +22,8 @@ public class GlobalExceptionHandler {
                         .status(status)
                         .statusCode(status.value())
                         .message(null)
-                        .data(null)
                         .error(errorMessage)
+                        .result(null)
                         .build());
     }
 
@@ -50,8 +50,8 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.BAD_REQUEST)
                         .statusCode(HttpStatus.BAD_REQUEST.value())
                         .message("Error de validación")
-                        .data(errors)
                         .error("Se encontraron errores en los datos enviados")
+                        .result(errors)
                         .build());
     }
 

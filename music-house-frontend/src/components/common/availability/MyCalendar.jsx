@@ -18,7 +18,7 @@ const MyCalendar = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
   const [error, setError] = useState('')
   const [openSnackbar, setOpenSnackbar] = useState(false) // Estado para Snackbar
-  const id = instrument?.data.idInstrument
+  const id = instrument?.result.idInstrument
 
   useEffect(() => {
     const fetchAvailableDates = async () => {
@@ -224,7 +224,7 @@ const MyCalendar = ({ instrument }) => {
 // Definimos los PropTypes
 MyCalendar.propTypes = {
   instrument: PropTypes.shape({
-    data: PropTypes.shape({
+    result: PropTypes.shape({
       idInstrument: PropTypes.string.isRequired
     })
   })

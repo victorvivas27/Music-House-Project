@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { getCategories } from '../../api/categories'
 import { Loader } from '../common/loader/Loader'
 import PropTypes from 'prop-types'
+import useAlert from '../../hook/useAlert'
 
 const CategorySelect = ({
   label,
@@ -11,47 +12,57 @@ const CategorySelect = ({
 }) => {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('')
-  const [categories, setCategories] = useState()
+  const [categories, setCategories] = useState([]) 
+  const {  showError } = useAlert()
 
+  // ✅ Obtener categorias del backend
   useEffect(() => {
-    getAllGategories()
-  }, [])
-
-  const getAllGategories = () => {
-    setLoading(true)
-    getCategories()
-      .then(([categories]) => {
-        setCategories(categories)
-      })
-      .catch(() => {
+    const fetchCategory = async () => {
+      try {
+        const response = await getCategories()
+        setCategories(response.result || [])
+      } catch (error) {
+       showError(error?.message)
         setCategories([])
-      })
-      .finally(() => setLoading(false))
-  }
+      } finally {
+        setLoading(false)
+      }
+    }
 
+    fetchCategory()
+  }, [showError])
+
+  // ✅ Establecer la categoría seleccionada desde prop
   useEffect(() => {
-    if (!selectedCategoryId || !categories) return
+    if (!selectedCategoryId || categories.length === 0) return
 
-    const selectedCategory = categories.data.find(
+    const foundCategory = categories.find(
       (category) => category.idCategory === selectedCategoryId
     )
-    setSelectedCategory(selectedCategory)
+    if (foundCategory) {
+      setSelectedCategory(foundCategory)
+    }
   }, [selectedCategoryId, categories])
 
+  // ✅ Comunicar cambio al padre
   useEffect(() => {
-    if (loading) return
-    if (typeof onChange === 'function')
+    if (loading || !selectedCategory) return
+    if (typeof onChange === 'function') {
       onChange({
-        target: { name: 'idCategory', value: selectedCategory.idCategory }
+        target: {
+          name: 'idCategory',
+          value: selectedCategory.idCategory
+        }
       })
-  }, [loading, onChange, selectedCategory])
-
-  if (loading) {
-    return <Loader fullSize={false} />
-  }
+    }
+  }, [selectedCategory, loading, onChange])
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value)
+  }
+
+  if (loading) {
+    return <Loader fullSize={false} />
   }
 
   return (
@@ -59,25 +70,24 @@ const CategorySelect = ({
       displayEmpty
       value={selectedCategory}
       onChange={handleCategoryChange}
-      placeholder="Categoria"
       label={label}
       color="secondary"
     >
-      {/* 📌 Placeholder */}
       <MenuItem value="" disabled>
-        <Typography variant="h6">🎸🎷Selecciona una Categoria🥁🪘</Typography>
+        <Typography variant="h6">🎸🎷Selecciona una Categoría 🥁🪘</Typography>
       </MenuItem>
-      {!loading &&
-        categories?.data?.map((category, index) => (
-          <MenuItem key={`category-select-${index}`} value={category}>
-            {category.categoryName}
-          </MenuItem>
-        ))}
+
+      {categories.map((category, index) => (
+        <MenuItem key={`category-select-${index}`} value={category}>
+          {category.categoryName}
+        </MenuItem>
+      ))}
     </Select>
   )
 }
 
 export default CategorySelect
+
 CategorySelect.propTypes = {
   label: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,

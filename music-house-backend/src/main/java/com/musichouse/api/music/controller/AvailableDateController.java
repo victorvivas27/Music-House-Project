@@ -41,8 +41,8 @@ public class AvailableDateController {
                         .status(HttpStatus.CREATED)
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Fechas disponibles agregadas exitosamente.")
-                        .data(addedDates)
                         .error(null)
+                        .result(addedDates)
                         .build());
     }
 
@@ -55,8 +55,8 @@ public class AvailableDateController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de fechas disponibles obtenida con éxito.")
-                .data(availableDates)
                 .error(null)
+                .result(availableDates)
                 .build());
     }
 
@@ -69,8 +69,8 @@ public class AvailableDateController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Fecha disponible encontrada con éxito.")
-                .data(availableDateDtoExit)
                 .error(null)
+                .result(availableDateDtoExit)
                 .build());
     }
 
@@ -85,8 +85,8 @@ public class AvailableDateController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Fecha disponible actualizada con éxito.")
-                .data(updatedDate)
                 .error(null)
+                .result(updatedDate)
                 .build());
     }
 
@@ -101,8 +101,8 @@ public class AvailableDateController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Fecha disponible eliminada exitosamente.")
-                .data(null)
                 .error(null)
+                .result(null)
                 .build());
     }
 
@@ -118,8 +118,8 @@ public class AvailableDateController {
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de fechas disponibles obtenida con éxito.")
-                .data(availableDates)
                 .error(null)
+                .result(availableDates)
                 .build());
     }
 
@@ -135,8 +135,8 @@ public class AvailableDateController {
                             .status(HttpStatus.OK)
                             .statusCode(HttpStatus.OK.value())
                             .message("Lista de fechas disponibles asociadas al instrumento exitosa.")
-                            .data(availableDates)
                             .error(null)
+                            .result(availableDates)
                             .build());
 
         } catch (ResourceNotFoundException e) {
@@ -145,8 +145,8 @@ public class AvailableDateController {
                             .status(HttpStatus.NOT_FOUND)
                             .statusCode(HttpStatus.NOT_FOUND.value())
                             .message("No se encontraron fechas para el instrumento con ID: " + idInstrument)
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
 
         } catch (Exception e) {
@@ -155,8 +155,8 @@ public class AvailableDateController {
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                             .message("Ocurrió un error interno al obtener las fechas.")
-                            .data(null)
                             .error(e.getMessage())
+                            .result(null)
                             .build());
         }
     }
