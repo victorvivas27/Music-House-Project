@@ -16,10 +16,7 @@ export const Home = () => {
   const [selectedInstruments, setSelectedInstruments] = useState([])
   const [loading, setLoading] = useState(true)
   const [instruments, setInstruments] = useState([])
-
-console.log(instruments);
- 
-
+  
   useEffect(() => {
     const fetchInstruments = async () => {
       setLoading(true)
