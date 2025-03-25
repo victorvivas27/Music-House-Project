@@ -33,12 +33,12 @@ const useAlert = () => {
   }
 
   // ✅ Alerta de confirmación antes de realizar una acción
-  const showConfirm = async ({
+  const showConfirm = async (
     title,
     text,
     confirmText = 'Sí, continuar',
     cancelText = 'Cancelar'
-  }) => {
+  ) => {
     const result = await Swal.fire({
       title,
       text,

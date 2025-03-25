@@ -32,6 +32,8 @@ import ModalUpdateUser from '../common/modificardatosuser/ModalUpdateUser'
 import ModalUpdatePhone from '../common/nuevontelefono/ModalUpdatePhone'
 import ModalUpdateDireccion from '../common/nuevadireccion/ModalUpdateDireccion'
 import { useAuth } from '../../hook/useAuth'
+import { getErrorMessage } from '../../api/getErrorMessage'
+import useAlert from '../../hook/useAlert'
 
 const Perfil = () => {
   const { idUser } = useAuth()
@@ -47,9 +49,9 @@ const Perfil = () => {
     useState(false)
   const [selectedPhone, setSelectedPhone] = useState(null)
   const [selectedDireccion, setSelectedDireccion] = useState(null)
-  // 📌 Media Query para detectar si estamos en pantallas pequeñas
+  const { showSuccess, showConfirm } = useAlert()
+
   const isMobile = useMediaQuery('(max-width:600px)')
- 
 
   const handleOpenModal = () => setOpenModal(true)
   const handleCloseModal = () => setOpenModal(false)
@@ -87,16 +89,14 @@ const Perfil = () => {
     try {
       const response = await UsersApi.getUserById(idUser)
 
-      if (response?.data) {
-        setUserData(response.data)
-        
-        
+      if (response?.result) {
+        setUserData(response.result)
       } else {
-        setError('Estructura de datos inesperada')
+        setError(`❌ ${getErrorMessage(error)}`)
         setOpenSnackbar(true)
       }
     } catch (err) {
-      setError('Error al obtener los datos del usuario.')
+      setError(`❌ ${getErrorMessage(error)}`)
       setOpenSnackbar(true)
     } finally {
       setLoading(false)
@@ -233,8 +233,7 @@ const Perfil = () => {
                                   sx={{
                                     p: 1,
                                     borderRadius: '8px',
-                                    boxShadow: 3,
-                                   
+                                    boxShadow: 3
                                   }}
                                 >
                                   <CardContent>
@@ -278,33 +277,20 @@ const Perfil = () => {
                                         <IconButton
                                           onClick={async () => {
                                             if (userData.phones.length > 1) {
-                                              const result = await Swal.fire({
-                                                title: '¿Estás seguro?',
-                                                text: 'Esta acción eliminará el teléfono.',
-                                                icon: 'warning',
-                                                showCancelButton: true,
-                                                confirmButtonColor: '#d33',
-                                                cancelButtonColor: '#3085d6',
-                                                confirmButtonText:
-                                                  'Sí, eliminar',
-                                                cancelButtonText: 'Cancelar'
-                                              })
+                                              const isConfirmed =
+                                                await showConfirm(
+                                                  '¿Estás seguro?',
+                                                  'Esta acción eliminará el teléfono.'
+                                                )
 
-                                              if (result.isConfirmed) {
+                                              if (isConfirmed) {
                                                 await removePhone(phone.idPhone)
-                                                fetchUser()
-                                                Swal.fire(
+                                                await fetchUser()
+                                                showSuccess(
                                                   'Eliminado',
-                                                  'El teléfono ha sido eliminado correctamente.',
-                                                  'success'
+                                                  'El teléfono ha sido eliminado correctamente.'
                                                 )
                                               }
-                                            } else {
-                                              Swal.fire(
-                                                'Acción no permitida',
-                                                'Debe haber al menos un teléfono registrado.',
-                                                'error'
-                                              )
                                             }
                                           }}
                                           color="error"
@@ -315,11 +301,11 @@ const Perfil = () => {
                                             opacity:
                                               userData.phones.length === 1
                                                 ? 0.5
-                                                : 1, // 🔹 Reduce opacidad cuando está deshabilitado
+                                                : 1,
                                             cursor:
                                               userData.phones.length === 1
                                                 ? 'not-allowed'
-                                                : 'pointer' // 🔹 Cambia el cursor
+                                                : 'pointer'
                                           }}
                                         >
                                           <DeleteIcon
@@ -327,7 +313,7 @@ const Perfil = () => {
                                               color:
                                                 userData.phones.length === 1
                                                   ? 'gray'
-                                                  : 'var(--color-error)' // 🔹 Cambia color del ícono
+                                                  : 'var(--color-error)'
                                             }}
                                           />
                                         </IconButton>
@@ -380,8 +366,7 @@ const Perfil = () => {
                               sx={{
                                 p: 1,
                                 borderRadius: '8px',
-                                boxShadow: 3,
-                               
+                                boxShadow: 3
                               }}
                             >
                               <CardContent>
@@ -408,24 +393,17 @@ const Perfil = () => {
                                     onClick={async () => {
                                       if (userData.addresses.length > 1) {
                                         // Evita eliminar la última dirección
-                                        const result = await Swal.fire({
-                                          title: '¿Estás seguro?',
-                                          text: 'Esta acción eliminará la dirección de forma permanente.',
-                                          icon: 'warning',
-                                          showCancelButton: true,
-                                          confirmButtonColor: '#d33',
-                                          cancelButtonColor: '#3085d6',
-                                          confirmButtonText: 'Sí, eliminar',
-                                          cancelButtonText: 'Cancelar'
-                                        })
+                                        const isConfirm = await showConfirm(
+                                          '¿Estás seguro?',
+                                          'Esta acción eliminará la dirección de forma permanente.'
+                                        )
 
-                                        if (result.isConfirmed) {
+                                        if (isConfirm) {
                                           await removeAddress(address.idAddress)
-                                          fetchUser() // 🔄 Actualiza la lista después de eliminar
-                                          Swal.fire(
+                                          await fetchUser()
+                                          showSuccess(
                                             'Eliminado',
-                                            'La dirección ha sido eliminada correctamente.',
-                                            'success'
+                                            'La dirección ha sido eliminada correctamente.'
                                           )
                                         }
                                       } else {

@@ -20,7 +20,7 @@ export const updatePhone = async ({ idPhone, phoneNumber }) => {
 // Agregar un nuevo teléfono
 export const addPhone = async ({ idUser, phoneNumber }) => {
   try {
-    const response = await axios.post(`${BASE_URL}/phone/add_phone`, {
+    const response = await axios.post(`${BASE_URL}/phone/add`, {
       idUser,
       phoneNumber
     });

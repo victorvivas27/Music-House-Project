@@ -10,8 +10,9 @@ import {
 import PropTypes from 'prop-types'
 import { addAddress } from '../../../api/addresses'
 import { useEffect, useState } from 'react'
-import Swal from 'sweetalert2'
 import { CustomButton } from '../../Form/formUsuario/CustomComponents'
+import useAlert from '../../../hook/useAlert'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 
 const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
   const [formData, setFormData] = useState({
@@ -24,7 +25,7 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-
+  const { showSuccess } = useAlert()
   const isMobile = useMediaQuery('(max-width:600px)')
 
   const style = {
@@ -80,18 +81,13 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
       setTimeout(() => {
         setLoading(false)
         handleClose()
-        Swal.fire({
-          title: 'Dirección agregada',
-          text: 'La dirección ha sido agregada con éxito.',
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false,
-          allowOutsideClick: false,
-          timerProgressBar: true
-        })
+        showSuccess(
+          'Dirección agregada',
+           'La dirección ha sido agregada con éxito.'
+        )
       }, 1500)
     } catch (error) {
-      setError('Hubo un error al agregar la dirección.')
+      setError(`❌ ${getErrorMessage(error)}`)
       setLoading(false)
     }
   }

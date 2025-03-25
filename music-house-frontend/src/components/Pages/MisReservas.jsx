@@ -90,7 +90,7 @@ const MisReservas = () => {
 
   const handleConfirmDelete = async (idReservation = null) => {
     const selectedIds = idReservation ? [idReservation] : selected
-    console.log('🔍 ID(s) a eliminar:', idReservation || selected)
+   
 
     if (selectedIds.length === 0) {
       showError('Error', 'No hay reservas seleccionados para eliminar.')

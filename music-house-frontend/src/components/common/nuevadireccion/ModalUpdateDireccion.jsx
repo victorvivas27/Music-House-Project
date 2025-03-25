@@ -9,10 +9,10 @@ import {
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
-import Swal from 'sweetalert2'
-
 import { updateAddress } from '../../../api/addresses'
 import { CustomButton } from '../../Form/formUsuario/CustomComponents'
+import useAlert from '../../../hook/useAlert'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 
 const ModalUpdateDireccion = ({
   open,
@@ -30,7 +30,7 @@ const ModalUpdateDireccion = ({
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-
+  const { showSuccess} = useAlert()
   const isMobile = useMediaQuery('(max-width:600px)')
 
   const style = {
@@ -79,18 +79,13 @@ const ModalUpdateDireccion = ({
       setTimeout(() => {
         setLoading(false)
         handleCloseModalDireccionUpdate()
-        Swal.fire({
-          title: 'Dirección modificada',
-          text: 'La dirección ha sido modificada con éxito.',
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false,
-          allowOutsideClick: false,
-          timerProgressBar: true
-        })
+        showSuccess(
+           'Dirección modificada',
+         'La dirección ha sido modificada con éxito.'
+        )
       }, 1500)
     } catch (error) {
-      setError('Hubo un error al modificar la dirección.')
+      setError(`❌ ${getErrorMessage(error)}`)
       setLoading(false)
     }
   }

@@ -14,10 +14,12 @@ import {
 import PropTypes from 'prop-types'
 
 import { useEffect, useState } from 'react'
-import Swal from 'sweetalert2'
+
 import { addPhone } from '../../../api/phones'
 import { countryCodes } from '../../utils/codepaises/CountryCodes'
 import { CustomButton } from '../../Form/formUsuario/CustomComponents'
+import { getErrorMessage } from '../../../api/getErrorMessage'
+import useAlert from '../../../hook/useAlert'
 
 const ModalNewPhone = ({
   open,
@@ -26,13 +28,13 @@ const ModalNewPhone = ({
   refreshPhoneData
 }) => {
   const [formData, setFormData] = useState({
-    countryCode: '', // 📌 Código vacío al inicio
+    countryCode: '', 
     phoneNumber: ''
   })
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-
+  const { showSuccess } = useAlert()
   const isMobile = useMediaQuery('(max-width:600px)')
 
   const style = {
@@ -114,27 +116,24 @@ const ModalNewPhone = ({
 
     try {
       const fullPhoneNumber = `${formData.countryCode}${formData.phoneNumber}`
+
       await addPhone({ idUser, phoneNumber: fullPhoneNumber })
 
       setTimeout(() => {
         setLoading(false)
         handleCloseModalPhone()
 
-        Swal.fire({
-          title: 'Teléfono agregado',
-          text: 'El teléfono ha sido agregado con éxito.',
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false,
-          allowOutsideClick: false,
-          timerProgressBar: true
-        })
+        showSuccess(
+           'Teléfono agregado',
+          'El teléfono ha sido agregado con éxito.',
+           )
 
-        setFormData({ countryCode: '', phoneNumber: '' }) // 🔹 Limpia el formulario
+        setFormData({ countryCode: '', phoneNumber: '' }) 
       }, 1500)
       await refreshPhoneData()
     } catch (error) {
-      setError('Hubo un error al agregar el teléfono.')
+      setError(`❌ ${getErrorMessage(error)}`)
+      // showError(`❌ ${getErrorMessage(error)}`)
       setLoading(false)
     }
   }

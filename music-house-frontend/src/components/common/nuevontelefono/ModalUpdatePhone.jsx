@@ -9,10 +9,10 @@ import {
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
-import Swal from 'sweetalert2'
-
 import { updatePhone } from '../../../api/phones'
 import { CustomButton } from '../../Form/formUsuario/CustomComponents'
+import useAlert from '../../../hook/useAlert'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 
 const ModalUpdatePhone = ({
   open,
@@ -26,7 +26,7 @@ const ModalUpdatePhone = ({
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-
+  const { showSuccess} = useAlert()
   const isMobile = useMediaQuery('(max-width:600px)')
 
   const style = {
@@ -68,18 +68,13 @@ const ModalUpdatePhone = ({
       setTimeout(() => {
         setLoading(false)
         handleCloseModalPhoneUpdate()
-        Swal.fire({
-          title: 'Teléfono modificado',
-          text: 'El teléfono ha sido modificado con éxito.',
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false,
-          allowOutsideClick: false,
-          timerProgressBar: true
-        })
+        showSuccess(
+          'Teléfono modificado',
+          'El teléfono ha sido modificado con éxito.',
+        )
       }, 1500)
     } catch (error) {
-      setError('Hubo un error al modificar el teléfono.')
+      setError(`❌ ${getErrorMessage(error)}`)
       setLoading(false)
     }
   }
