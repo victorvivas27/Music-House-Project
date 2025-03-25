@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Table,
   TableBody,
@@ -19,7 +19,6 @@ import DeleteIcon from '@mui/icons-material/Delete'
 
 import {
   EnhancedTableHead,
-  // getLabelDisplayedRows,
   isSelected,
   handleSort,
   handleSelected,
@@ -31,7 +30,6 @@ import {
 
 import { Loader } from '../common/loader/Loader'
 
-
 import { deleteReservation, getReservationById } from '../../api/reservations'
 import PropTypes from 'prop-types'
 import { headCellsReservas } from '../utils/types/HeadCells'
@@ -40,9 +38,10 @@ import ArrowBack from '../utils/ArrowBack'
 import useAlert from '../../hook/useAlert'
 import { paginationStyles } from '../styles/styleglobal'
 import { useAuth } from '../../hook/useAuth'
+import { getErrorMessage } from '../../api/getErrorMessage'
 
 const MisReservas = () => {
-  const [reservations, setReservations] = useState({ data: [] })
+  const [reservations, setReservations] = useState({ result: [] })
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [order, setOrder] = useState('desc')
@@ -53,28 +52,29 @@ const MisReservas = () => {
   const { idUser } = useAuth()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
 
-  const getAllReservations = async () => {
+  const getAllReservations = useCallback(async () => {
     setLoading(true)
     try {
       const fetchedReservas = await getReservationById(idUser)
+
       setReservations(fetchedReservas)
-      setRows(fetchedReservas.data || [])
+      setRows(fetchedReservas.result || [])
     } catch {
-      setReservations({ data: [] })
+      setReservations({ result: [] })
     } finally {
       setTimeout(() => setLoading(false), 500)
     }
-  }
+  }, [idUser])
 
   useEffect(() => {
-    setRows(reservations.data)
+    setRows(reservations.result)
 
     setLoading(false)
   }, [reservations])
 
   useEffect(() => {
     getAllReservations()
-  }, [])
+  }, [getAllReservations])
 
   const handleSelectAllClick = (event) => {
     handleSelectAll(event, rows, 'idReservation', setSelected)
@@ -90,7 +90,6 @@ const MisReservas = () => {
 
   const handleConfirmDelete = async (idReservation = null) => {
     const selectedIds = idReservation ? [idReservation] : selected
-   
 
     if (selectedIds.length === 0) {
       showError('Error', 'No hay reservas seleccionados para eliminar.')
@@ -123,14 +122,7 @@ const MisReservas = () => {
       setSelected([])
       getAllReservations()
     } catch (error) {
-      if (error.data) {
-        // ✅ Ahora sí capturamos el mensaje que envía el backend
-        showError(
-          `❌ ${
-            error.data.message || '⚠️ No se pudo conectar con el servidor.'
-          }`
-        )
-      }
+      showError(`❌ ${getErrorMessage(error)}`)
     }
   }
 

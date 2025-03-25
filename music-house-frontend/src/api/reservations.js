@@ -9,7 +9,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export const getReservations = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/reservations/all`);
-    return response.data.result;
+    return response.data;
   } catch (error) {
     handleApiError(error);
   }
@@ -19,7 +19,7 @@ export const getReservations = async () => {
 export const getReservationById = async (id) => {
   try {
     const response = await axios.get(`${BASE_URL}/reservations/search/user/${id}`);
-    return response.data.result;
+    return response.data;
   } catch (error) {
     handleApiError(error);
   }

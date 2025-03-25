@@ -64,6 +64,7 @@ export const Instruments = () => {
 
   useEffect(() => {
     setRows(instruments.result)
+    
     setLoading(false)
   }, [instruments])
 
