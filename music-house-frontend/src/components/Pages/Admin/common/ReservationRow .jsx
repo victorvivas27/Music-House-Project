@@ -32,8 +32,7 @@ export const ReservationRow = ({
         selected={isItemSelected}
         onClick={(event) => handleClick(event, row.idReservation)}
         sx={{
-          boxShadow:
-            ' rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px',
+          boxShadow:"var(--box-shadow)",
 
           '&.Mui-selected': { backgroundColor: 'inherit' },
           '&.Mui-selected:hover': { backgroundColor: 'inherit' }

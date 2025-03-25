@@ -33,15 +33,12 @@ const CalendarReserva = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
   const [selectedDates, setSelectedDates] = useState([])
   const [reservedDates, setReservedDates] = useState([])
-
   const [error, setError] = useState('')
   const [infoMessage, setInfoMessage] = useState('')
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [openSnackbarInfo, setOpenSnackbarInfo] = useState(false)
-
   const [loading, setLoading] = useState(false)
   const [isInstrumentReserved, setIsInstrumentReserved] = useState(false)
-
   const idInstrument = instrument?.result?.idInstrument
   const { idUser } = useAuth()
   const navigate = useNavigate()
@@ -72,7 +69,7 @@ const CalendarReserva = ({ instrument }) => {
 
     if (!availableDates.includes(formattedDate)) {
       const isPast = dayjs(formattedDate).isBefore(dayjs(), 'day')
-    
+
       setError(
         isPast
           ? '❌ No se puede seleccionar una fecha pasada.'
@@ -110,7 +107,6 @@ const CalendarReserva = ({ instrument }) => {
         '¡Reserva realizada!',
         `Tu reserva ha sido confirmada del ${startDate} al ${endDate}.`
       )
-
       setSelectedDates([])
       setTimeout(() => {
         navigate('/')
@@ -144,7 +140,6 @@ const CalendarReserva = ({ instrument }) => {
         setIsInstrumentReserved(true)
       }
 
-      // 🔁 Generar todas las fechas reservadas
       const bookedDates = instrumentReservations.flatMap((res) => {
         const start = dayjs(res.startDate)
         const end = dayjs(res.endDate)
@@ -225,68 +220,61 @@ const CalendarReserva = ({ instrument }) => {
         sx={{
           ...flexColumnContainer,
           minHeight: '90%',
-          minWidth: '300px',
-       
-
+          minWidth: '300px'
         }}
       >
         <DateCalendar
           slots={{
-             day: CustomDayComponent
-             }}
-        sx={{
-          boxShadow:"var(--box-shadow)",
-          borderRadius:5
-        }}
-             
+            day: CustomDayComponent
+          }}
+          sx={{
+            boxShadow: 'var(--box-shadow)',
+            borderRadius: 5
+          }}
         />
 
-        
-          <Box
-            sx={{
-              visibility:
+        <Box
+          sx={{
+            visibility:
               selectedDates.length > 0 && !isInstrumentReserved
                 ? 'visible'
                 : 'hidden',
-              mt: 3,
-              p: 2,
-              backgroundColor: 'var(--color-exito)',
-              borderRadius: 2,
-              boxShadow:"var(--box-shadow)",
-              color: 'var(--texto-inverso)',
-              textAlign: 'center',
-              border: '1px solid red',
-              width:"30%",
-              height:"100%"
+            mt: 3,
+            p: 2,
+            backgroundColor: 'var(--color-exito)',
+            borderRadius: 2,
+            boxShadow: 'var(--box-shadow)',
+            color: 'var(--texto-inverso)',
+            textAlign: 'center',
+            border: '1px solid red',
+            width: '30%',
+            height: '100%'
+          }}
+          className={selectedDates.length > 0 ? 'fade-in-up' : 'fade-out-soft'}
+        >
+          <Typography
+            variant="body1"
+            sx={{
+              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1
             }}
-            className={
-              selectedDates.length > 0 ? 'fade-in-up' : 'fade-out-soft'
-            }
           >
-            <Typography
-              variant="body1"
-              sx={{
-                fontWeight: 'bold',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 1
-              }}
-            >
-              📅 Fechas seleccionadas:
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                mt: 1,
-                fontSize: { xs: '0.85rem', sm: '0.9rem' },
-                wordWrap: 'break-word'
-              }}
-            >
-              {selectedDates.join(' • ')}
-            </Typography>
-          </Box>
-        
+            📅 Fechas seleccionadas:
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 1,
+              fontSize: { xs: '0.85rem', sm: '0.9rem' },
+              wordWrap: 'break-word'
+            }}
+          >
+            {selectedDates.join(' • ')}
+          </Typography>
+        </Box>
 
         <Box
           sx={{
@@ -307,7 +295,7 @@ const CalendarReserva = ({ instrument }) => {
                 selectedDates.length > 0 && !isInstrumentReserved
                   ? 'visible'
                   : 'hidden',
-                  boxShadow:"var(--box-shadow)",
+              boxShadow: 'var(--box-shadow)'
             }}
             className={
               selectedDates.length > 1 ? 'fade-in-up' : 'fade-out-soft'

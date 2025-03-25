@@ -208,7 +208,7 @@ const MyCalendar = ({ instrument }) => {
           severity="warning"
           sx={{
             backgroundColor: 'var(--color-advertencia)', 
-            color: 'rgb(170, 46, 46)',
+            color: 'var(--color-error)',
             fontWeight: 'bold',
             fontSize: '1rem',
             borderRadius: '8px'

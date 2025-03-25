@@ -11,7 +11,6 @@ import { Si } from '../Images/Si'
 import { No } from '../Images/No'
 import { InstrumentTerms } from '../common/terms/InstrumentTerms'
 import { Loader } from '../common/loader/Loader'
-import { MessageDialog } from '../common/MessageDialog'
 import '../styles/instrument.styles.css'
 import FavoriteIcon from '../common/favorito/FavoriteIcon'
 import MyCalendar from '../common/availability/MyCalendar'
@@ -30,7 +29,7 @@ export const Instrument = () => {
   const [instrument, setInstrument] = useState()
   const [showGallery, setShowGallery] = useState(false)
   const { isUser, isUserAdmin } = useAuth()
-  const [showMessage, setShowMessage] = useState(false)
+
 
   useEffect(() => {
     setIsLoading(true);
@@ -61,9 +60,7 @@ export const Instrument = () => {
   return (
     <main>
       <MainWrapper>
-      
-
-        {loading && <Loader title="Cargando detalle del instrumento" />}
+       {loading && <Loader title="Cargando detalle del instrumento" />}
         {!loading && (
           <>
             <InstrumentDetailWrapper>
@@ -461,13 +458,7 @@ export const Instrument = () => {
             </InstrumentDetailWrapper>
           </>
         )}
-        <MessageDialog
-          title="Reservar instrumento"
-          isOpen={showMessage}
-          buttonText="Ok"
-          onClose={() => setShowMessage(false)}
-          onButtonPressed={() => setShowMessage(false)}
-        />
+       
       </MainWrapper>
       <ScreenModal isOpen={showGallery} onClose={onClose}>
         <InstrumentGallery itemData={instrumentSelected?.imageUrls} />
