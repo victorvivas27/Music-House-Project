@@ -28,35 +28,41 @@ const NewUser = ({ onSwitch }) => {
   const { setAuthData } = useAuth()
   const navigate = useNavigate()
   const { showSuccess, showError } = useAlert()
+   const { isUserAdmin } = useAuth()
 
-  const handleSubmit = async (formData) => {
+   const handleSubmit = async (formData) => {
     setLoading(true)
-
+  
     try {
       const formDataToSend = new FormData()
       const { picture, ...userWithoutPicture } = formData
       delete userWithoutPicture.repeatPassword
       formDataToSend.append('user', JSON.stringify(userWithoutPicture))
-
+  
       if (picture instanceof File) {
         formDataToSend.append('file', picture)
       }
-
+  
       const response = await UsersApi.registerUser(formDataToSend)
-
-      if ( response?.result?.token) {
-        
-        
-        setAuthData({ token: response.result.token })
+  
+      if (response?.result?.token) {
         showSuccess(`✅${response.message}`)
+  
         setTimeout(() => {
-          navigate('/')
+          if (isUserAdmin) {
+            // ⚠️ NO guardar el token si es admin
+            navigate(-1) // 🔙 vuelve a la página anterior
+          } else {
+            // ✅ Guardamos el token para el usuario normal
+            setAuthData({ token: response.result.token })
+            navigate('/')
+          }
         }, 1700)
       } else {
         showError(`${response.message}`)
       }
     } catch (error) {
-     showError(`❌ ${getErrorMessage(error)}`)
+      showError(`❌ ${getErrorMessage(error)}`)
     } finally {
       setLoading(false)
     }

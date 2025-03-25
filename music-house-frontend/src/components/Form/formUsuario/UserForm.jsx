@@ -104,6 +104,9 @@ export const UserForm = ({
   const { showConfirm, showSuccess, showError } = useAlert()
   const idUser = user?.data?.idUser || null
   const isLoggedUser = idUser && idUser === Number(formData?.idUser)
+  const isNewUser = !formData.idUser
+  const showPasswordFields =
+    (!isUserAdmin && isNewUser) || (isUserAdmin && isNewUser)
   const title = isLoggedUser
     ? 'Mi perfil'
     : formData.idUser
@@ -302,7 +305,7 @@ export const UserForm = ({
       formIsValid = false
     }
 
-    if (!isUserAdmin && (!formData.idUser || formData.idUser === '')) {
+    if (showPasswordFields) {
       if (!formData.password) {
         newErrors.password = '❌La contraseña es obligatoria'
         formIsValid = false
@@ -317,15 +320,13 @@ export const UserForm = ({
         newErrors.repeatPassword = '❌Las contraseñas no coinciden'
         formIsValid = false
       }
-
-      if (!formData.telegramChatId) {
-        newErrors.telegramChatId = '❌ El código de Telegram es obligatorio'
-        formIsValid = false
-      } else if (formData.telegramChatId.length <= 4) {
-        newErrors.telegramChatId =
-          '❌ El código de Telegram debe tener 5 dígitos'
-        formIsValid = false
-      }
+    }
+    if (!formData.telegramChatId) {
+      newErrors.telegramChatId = '❌ El código de Telegram es obligatorio'
+      formIsValid = false
+    } else if (formData.telegramChatId.length <= 4) {
+      newErrors.telegramChatId = '❌ El código de Telegram debe tener 5 dígitos'
+      formIsValid = false
     }
 
     formData.addresses.forEach((address, index) => {
@@ -862,8 +863,7 @@ export const UserForm = ({
                   </Box>
                 )}
 
-                {!isUserAdmin &&
-                  (!formData.idUser || formData.idUser === '') && (
+                {showPasswordFields && (
                     <>
                       {/* Campo de contraseña */}
                       <FormControl
@@ -954,7 +954,10 @@ export const UserForm = ({
                         />
                       </FormControl>
 
-                      <FormControl
+                    
+                    </>
+                  )}
+                    <FormControl
                         margin="normal"
                         sx={{
                           ...inputStyles
@@ -987,8 +990,6 @@ export const UserForm = ({
                           Haz clic aquí para obtenerlo en Telegram
                         </Link>
                       </Typography>
-                    </>
-                  )}
               </Grid>
             </Grid>
             {!formData.idUser && !isUserAdmin && (

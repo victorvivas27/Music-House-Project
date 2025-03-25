@@ -11,9 +11,10 @@ import {
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
-import Swal from 'sweetalert2'
 import { UsersApi } from '../../../api/users'
 import { CustomButton } from '../../Form/formUsuario/CustomComponents'
+import useAlert from '../../../hook/useAlert'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 
 const ModalUpdateUser = ({
   open,
@@ -33,6 +34,7 @@ const ModalUpdateUser = ({
   const [error, setError] = useState(null)
   const [preview, setPreview] = useState(null)
   const isMobile = useMediaQuery('(max-width:600px)')
+  const { showSuccess } = useAlert()
 
   const style = {
     position: 'absolute',
@@ -96,18 +98,13 @@ const ModalUpdateUser = ({
       setTimeout(() => {
         setLoading(false)
         handleCloseModalUser()
-        Swal.fire({
-          title: 'Usuario modificado',
-          text: 'El usuario ha sido modificado con éxito.',
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false,
-          allowOutsideClick: false,
-          timerProgressBar: true
-        })
+        showSuccess(
+          'Usuario modificado',
+          'El usuario ha sido modificado con éxito.'
+        )
       }, 1500)
     } catch (error) {
-      setError('Hubo un error al modificar el usuario.')
+      setError(`❌ ${getErrorMessage(error)}`)
       setLoading(false)
     }
   }
@@ -157,7 +154,7 @@ const ModalUpdateUser = ({
                     cursor: 'pointer',
                     color: 'var(--color-primario)',
                     margin: 2,
-                   
+
                     '&:hover': { opacity: 0.8 }
                   }}
                 >
@@ -233,7 +230,7 @@ const ModalUpdateUser = ({
               type="submit"
               disabled={loading}
               sx={{
-                minWidth: '150px', 
+                minWidth: '150px',
                 minHeight: '40px',
                 display: 'flex',
                 alignItems: 'center',

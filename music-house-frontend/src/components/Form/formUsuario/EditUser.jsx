@@ -43,6 +43,7 @@ const EditUser = ({ onSwitch }) => {
         email: result.email || '',
         addresses: result.addresses?.length ? result.addresses : [],
         phones: result.phones?.length ? result.phones : [],
+        telegramChatId:result.telegramChatId || '',
         roles: result.roles || [],
         selectedRole: ''
       })
