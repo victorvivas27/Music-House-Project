@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 
 const NewUser = ({ onSwitch }) => {
   const initialFormData = {
@@ -43,8 +44,10 @@ const NewUser = ({ onSwitch }) => {
 
       const response = await UsersApi.registerUser(formDataToSend)
 
-      if (response && response.data && response.data.token) {
-        setAuthData(response.data)
+      if ( response?.result?.token) {
+        
+        
+        setAuthData({ token: response.result.token })
         showSuccess(`✅${response.message}`)
         setTimeout(() => {
           navigate('/')
@@ -53,11 +56,7 @@ const NewUser = ({ onSwitch }) => {
         showError(`${response.message}`)
       }
     } catch (error) {
-      if (error.data) {
-        // ✅ Ahora sí capturamos el mensaje que envía el backend
-        showError(`❌ ${error.data.message||
-           '⚠️ No se pudo conectar con el servidor.'}`)
-      }
+     showError(`❌ ${getErrorMessage(error)}`)
     } finally {
       setLoading(false)
     }

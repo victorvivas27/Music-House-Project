@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from './AuthContext'
 import { ROLE_ADMIN, ROLE_USER } from '../roles/constants'
+import { isTokenExpired } from '../jwt/isTokenExpired'
 
 
 
@@ -21,7 +22,7 @@ export const AuthProvider = ({ children }) => {
   const setAuthData = (userData) => {
     const { token } = userData // Solo extraemos el token
 
-    if (token) {
+    if (token && !isTokenExpired(token)) {
       localStorage.setItem('token', token)
     
       try {
@@ -43,7 +44,7 @@ export const AuthProvider = ({ children }) => {
         setIdUser(userId)
         setUserName(name)
         setUserLastName(lastName)
-        setUserRoles(roles) // Guardamos los roles obtenidos del token
+        setUserRoles(roles) 
       } catch (error) {
        
         localStorage.removeItem('token')
@@ -60,7 +61,7 @@ export const AuthProvider = ({ children }) => {
 
     // ✅ Función de Logout
     const logOut = () => {
-      localStorage.removeItem('token') // 🔹 Eliminar token del almacenamiento
+      localStorage.removeItem('token')
       setAuthGlobal(false)
       setIsUserAdmin(false)
       setIsUser(false)
@@ -69,13 +70,13 @@ export const AuthProvider = ({ children }) => {
       setUserLastName(null)
       setUserRoles([])
   
-      navigate('/', { replace: true }) // 🔹 Redirigir al usuario a la página de inicio
+      navigate('/', { replace: true }) 
     }
 
   useEffect(() => {
     const token = localStorage.getItem('token')
 
-    if (token) {
+    if (token && !isTokenExpired(token)) {
       try {
         const decoded = jwtDecode(token)
 

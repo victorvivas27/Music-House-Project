@@ -40,10 +40,75 @@
 
 .custom-swal {
   border-radius: 50px 10PX !important;
-  width: 700px !important;   /* ✅ Cambia el ancho */
+  width: 500px !important;   /* ✅ Cambia el ancho */
   max-width: 90vw;           /* ✅ Evita que explote en pantallas chicas */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--color-primario);
 
 }
+
+/* Personaliza el título */
+.custom-swal .swal2-title {
+  font-size: 1.2rem;
+  font-family: "Winky Sans", sans-serif;
+  font-optical-sizing: auto;
+}
+
+/* Personaliza el texto */
+.custom-swal .swal2-html-container {
+  font-size: 1rem;
+  font-family: "Meow Script", cursive;
+}  
+
+.custom-swal-btn {
+  background-color: #ff4d4f !important;
+  color: #fff !important;
+  font-size: 1rem;
+  padding: 7px 35px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 77, 79, 0.5);
+  font-family: "Meow Script", cursive;
+  transition: all 0.3s ease;
+}
+
+.custom-swal-btn-can{
+  background-color: var(--color-azul) !important;
+  color: var(--background-color) !important;
+  font-size: 1rem;
+  padding: 7px 35px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(104, 125, 217, 0.5);
+  font-family: "Meow Script", cursive;
+  transition: all 0.3s ease;
+}
+
+.custom-swal-btn:hover {
+  background-color: var(--color-error) !important;
+  transform: scale(1.05);
+}
+
+.custom-swal .swal2-icon.swal2-error {
+  border: 4px solid !important ;
+  height: 50px !important;
+  width: 50px !important;
+  font-size: 10px !important;
+}
+.custom-swal .swal2-icon.swal2-success {
+ height: 50px !important;
+  width: 50px !important;
+  font-size: 10px !important;
+  border: 4px solid !important ;
+}
+.custom-swal .swal2-icon.swal2-warning {
+  height: 50px !important;
+  width: 50px !important;
+  font-size: 10px !important;
+ border: 4px solid !important;
+}
+
+
+
+
 
 /* @media (prefers-color-scheme: dark) {
   :root {

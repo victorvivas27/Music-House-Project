@@ -13,6 +13,7 @@ import { updatePhone } from '../../../api/phones'
 import PropTypes from 'prop-types'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 
 const EditUser = ({ onSwitch }) => {
   const { id } = useParams()
@@ -32,23 +33,21 @@ const EditUser = ({ onSwitch }) => {
     setLoading(true)
     try {
       const userData = await UsersApi.getUserById(id)
+      const result = userData.result 
       setUser(userData)
       setFormData({
         idUser: id,
-        picture: userData.data.picture || '',
-        name: userData.data.name || '',
-        lastName: userData.data.lastName || '',
-        email: userData.data.email || '',
-        addresses: userData.data.addresses?.length
-          ? userData.data.addresses
-          : [],
-        phones: userData.data.phones?.length ? userData.data.phones : [],
-
-        roles: userData.data.roles || [],
-        selectedRole:''
+        picture: result.picture || '',
+        name: result.name || '',
+        lastName: result.lastName || '',
+        email: result.email || '',
+        addresses: result.addresses?.length ? result.addresses : [],
+        phones: result.phones?.length ? result.phones : [],
+        roles: result.roles || [],
+        selectedRole: ''
       })
     } catch (error) {
-      showError(error?.message || 'Error al obtener usuario')
+      showError(`❌ ${getErrorMessage(error)}`)
       navigate('/')
     } finally {
       setLoading(false)
@@ -117,13 +116,7 @@ const EditUser = ({ onSwitch }) => {
         }, 1100)
       }
     } catch (error) {
-      if (error.data) {
-        showError(
-          `❌ ${
-            error.data.message || '⚠️ No se pudo conectar con el servidor.'
-          }`
-        )
-      }
+     showError(`❌ ${getErrorMessage(error)}`)
     } finally {
       setTimeout(() => {
         setIsSubmitting(false)

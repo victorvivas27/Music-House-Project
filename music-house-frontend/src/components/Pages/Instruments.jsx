@@ -190,10 +190,11 @@ export const Instruments = () => {
                             onChange={(event) =>
                               handleClick(event, row.idInstrument)
                             }
-                            inputProps={{ 'aria-labelledby': labelId }}
+                            inputProps={{
+                               'aria-labelledby': labelId 
+                              }}
                           />
                         </TableCell>
-
                         <TableCell
                           component="th"
                           id={labelId}
@@ -215,15 +216,21 @@ export const Instruments = () => {
                           >
                             <Tooltip title="Editar">
                               <IconButton
-                                onClick={() => handleEdit(row.idInstrument)}
+                                onClick={(event) =>{
+                                   handleEdit(row.idInstrument)
+                                   event.stopPropagation()
+                                }}
                               >
                                 <EditIcon />
                               </IconButton>
                             </Tooltip>
+
                             <Tooltip title="Eliminar">
                               <IconButton
-                                onClick={() =>
+                                onClick={(event) =>{
                                   handleConfirmDelete(row.idInstrument)
+                                  event.stopPropagation()
+                                }
                                 }
                               >
                                 <DeleteIcon />

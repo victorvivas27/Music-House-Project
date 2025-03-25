@@ -33,8 +33,10 @@ import ArrowBack from '../../utils/ArrowBack'
 import { headCellsUser } from '../../utils/types/HeadCells'
 import useAlert from '../../../hook/useAlert'
 import { paginationStyles } from '../../styles/styleglobal'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 export const Usuarios = () => {
-  const [usuarios, setUsuarios] = useState([])
+  const [usuarios, setUsuarios] = useState({result:[]})
+   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('idUser')
@@ -44,40 +46,46 @@ export const Usuarios = () => {
   const navigate = useNavigate()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
 
-  const getUsuarios = () => {
+  const getUsuarios = async () => {
     setLoading(true)
-    UsersApi.getAllUsers()
-      .then(([usuarios]) => {
-        setUsuarios(usuarios?.data || [])
-      })
-      .catch(() => {
-        setUsuarios([])
-      })
-      .finally(() => {
-        setTimeout(() => setLoading(false), 500)
-      })
+    try{
+   const fetchedUsers= await UsersApi.getAllUsers()
+   setUsuarios(fetchedUsers)
+   setRows(fetchedUsers.result||[])
+    }catch{
+      setUsuarios({result:[] })
+
+    }finally{
+      setTimeout(()=>setLoading(false))
+    }
+    
   }
+
+  useEffect(() => {
+    setRows(usuarios.result)
+   setLoading(false)
+  }, [usuarios])
 
   useEffect(() => {
     getUsuarios()
   }, [])
 
-
-  const handleRequestSort = (event, property) => {
-    handleSort(event, property, orderBy, order, setOrderBy, setOrder)
-  }
+  const handleAdd = () => navigate('/agregarUsuario')
 
   const handleSelectAllClick = (event) => {
     handleSelectAll(event, usuarios, 'idUser', setSelected)
   }
-
   const handleClick = (event, id) => {
     handleSelected(event, id, selected, setSelected)
   }
-
-  const handleEdit = (idUser) => {
-    navigate(`/editarUsuario/${idUser}`)
+  const handleRequestSort = (event, property) => {
+    handleSort(event, property, orderBy, order, setOrderBy, setOrder)
   }
+
+
+
+  const handleEdit = (idUser) => navigate(`/editarUsuario/${idUser}`)
+  
 
   const handleDelete = async (idUser = null) => {
     const selectedIds = idUser ? [idUser] : selected
@@ -100,23 +108,12 @@ export const Usuarios = () => {
       setSelected([])
       getUsuarios()
     } catch (error) {
-      if (error.data) {
-        showError(
-          `❌ ${
-            error.data.message || '⚠️ No se pudo conectar con el servidor.'
-          }`
-        )
-      }
+      showError(`❌ ${getErrorMessage(error)}`)
     }
   }
 
   const emptyRows = getEmptyRows(page, rowsPerPage, usuarios)
-  const visibleRows = useVisibleRows(
-    usuarios,
-    order,
-    orderBy,
-    page,
-    rowsPerPage
+  const visibleRows = useVisibleRows( rows, order, orderBy, page, rowsPerPage
   )
 
   if (loading) return <Loader title="Cargando usuarios..." />
@@ -137,13 +134,14 @@ export const Usuarios = () => {
             <ArrowBack />
             {/* Contador */}
             <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
-              Total de Usuarios: {usuarios.length}
+              Total de Usuarios: {rows.length}
             </Typography>
             {/*Fin Contador */}
 
             <EnhancedTableToolbar
               title="Usuarios"
               titleAdd="Agregar usuario"
+              handleAdd={handleAdd}
               numSelected={selected.length}
               handleConfirmDelete={() => handleDelete()}
             />
@@ -157,7 +155,7 @@ export const Usuarios = () => {
                   orderBy={orderBy}
                   onSelectAllClick={handleSelectAllClick}
                   onRequestSort={handleRequestSort}
-                  rowCount={usuarios.length}
+                  rowCount={rows.length}
                   disableSelectAll
                 />
 
@@ -175,16 +173,19 @@ export const Usuarios = () => {
                         tabIndex={-1}
                         key={row.idUser}
                         selected={isItemSelected}
-                        sx={{
-                          cursor: 'pointer',
-                          backgroundColor: isRowEven ? '#fbf194' : 'inherit'
-                        }}
-                        onClick={(event) => handleClick(event, row.idUser)}
+                        className={
+                          isRowEven ? 'table-row-even' : 'table-row-odd'
+                        }
+                        sx={{ cursor: 'pointer' }}
+                        
                       >
                         <TableCell padding="checkbox">
                           <Checkbox
                             color="primary"
                             checked={isItemSelected}
+                            onChange={(event) =>
+                              handleClick(event, row.idUser)
+                            }
                             inputProps={{
                               'aria-labelledby': labelId
                             }}
@@ -199,6 +200,8 @@ export const Usuarios = () => {
                         >
                           {row.idUser}
                         </TableCell>
+
+
                         <TableCell align="left">
                         {row.roles.join(', ')}
                         </TableCell>
@@ -259,14 +262,14 @@ export const Usuarios = () => {
                 5,
                 10,
                 25,
-                { label: 'Todos', value: usuarios.length }
+                { label: 'Todos', value: rows.length }
               ]}
               component="div"
-              count={usuarios.length}
+              count={rows.length}
               rowsPerPage={rowsPerPage}
               page={Math.min(
                 page,
-                Math.max(0, Math.ceil(usuarios.length / rowsPerPage) - 1)
+                Math.max(0, Math.ceil(rows.length / rowsPerPage) - 1)
               )} 
               onPageChange={(event, newPage) => setPage(newPage)}
               onRowsPerPageChange={(event) => {

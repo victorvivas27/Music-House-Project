@@ -23,6 +23,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { inputStyles } from '../../styles/styleglobal'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -74,8 +75,8 @@ const Login = ({ onSwitch }) => {
       try {
         const response = await UsersApi.loginUser(values)
 
-        if (response && response.data && response.data.token) {
-          setAuthData(response.data)
+        if (response?.result?.token) {
+          setAuthData({ token: response.result.token })
           showSuccess(`✅${response.message}`)
 
           setTimeout(() => {
@@ -85,11 +86,7 @@ const Login = ({ onSwitch }) => {
           showError(`❌${response.message}`)
         }
       } catch (error) {
-        if (error.data) {
-          // ✅ Ahora sí capturamos el mensaje que envía el backend
-          showError(`❌ ${error.data.message||
-             '⚠️ No se pudo conectar con el servidor.'}`)
-        } 
+        showError(`❌ ${getErrorMessage(error)}`)
       } finally {
         setSubmitting(false)
         setLoading(false)

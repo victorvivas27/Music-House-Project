@@ -51,7 +51,7 @@ const EditInstrumentForm = ({ id }) => {
       rentalPrice: instrument.rentalPrice || '',
       idCategory: instrument.category?.idCategory || '',
       idTheme: instrument.theme?.idTheme || '',
-      characteristics: characteristicsToFormData({ result: instrument }) // 👈 le pasamos el mismo formato que antes esperaba
+      characteristics: characteristicsToFormData({ result: instrument }) 
     }
     setInitialFormData(data)
    setLoading(false)

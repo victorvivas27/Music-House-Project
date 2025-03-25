@@ -60,7 +60,9 @@ const useAlert = () => {
         popup: 'animate__animated animate__fadeOutUp'
       },
       customClass: {
-        popup: 'custom-swal'
+        popup: 'custom-swal',
+        confirmButton: 'custom-swal-btn',
+        cancelButton:'custom-swal-btn-can',
       }
     })
 
@@ -125,6 +127,7 @@ const useAlert = () => {
       text,
       icon: 'error',
       confirmButtonColor: '#d33',
+      confirmButtonText: 'Entendido ✔️', // Cambiás el texto
       background: 'var(--color-secundario)',
       color: 'var(--color-primario)',
       showClass: {
@@ -134,7 +137,8 @@ const useAlert = () => {
         popup: 'animate__animated animate__fadeOutUp'
       },
       customClass: {
-        popup: 'custom-swal'
+        popup: 'custom-swal',
+        confirmButton: 'custom-swal-btn' // Aplicás tu clase
       }
     })
   }
