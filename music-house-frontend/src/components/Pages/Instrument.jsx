@@ -36,7 +36,7 @@ export const Instrument = () => {
     setIsLoading(true);
     getInstrumentById(id)
       .then((instrument) => {
-        setInstrument(instrument); // ya no destructurás porque no es un array
+        setInstrument(instrument); 
       })
       .catch(() => {
         setInstrument(undefined);
@@ -47,7 +47,7 @@ export const Instrument = () => {
   useEffect(() => {
     if (!instrument?.result) return;
   
-    setInstrumentSelected(instrument.result); // 👈 cambio de data a result
+    setInstrumentSelected(instrument.result); 
     setIsLoading(false);
     if (window) {
       window.scrollTo({ top: 0, behavior: 'smooth' });

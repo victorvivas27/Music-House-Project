@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -125,13 +126,13 @@ public class AvailableDateController {
 
 
     @GetMapping("/find/all/{idInstrument}/instrument")
-    public ResponseEntity<ApiResponse<List<AvailableDateDtoExit>>> findAllAvailableDatesByInstrumentId(
+    public ResponseEntity<ApiResponse<List<?>>> findAllAvailableDatesByInstrumentId(
             @PathVariable UUID idInstrument) {
         try {
             List<AvailableDateDtoExit> availableDates = availableDateService.findByInstrumentIdInstrument(idInstrument);
 
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(ApiResponse.<List<AvailableDateDtoExit>>builder()
+                    .body(ApiResponse.<List<?>>builder()
                             .status(HttpStatus.OK)
                             .statusCode(HttpStatus.OK.value())
                             .message("Lista de fechas disponibles asociadas al instrumento exitosa.")
@@ -141,17 +142,16 @@ public class AvailableDateController {
 
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.<List<AvailableDateDtoExit>>builder()
+                    .body(ApiResponse.<List<?>>builder()
                             .status(HttpStatus.NOT_FOUND)
                             .statusCode(HttpStatus.NOT_FOUND.value())
-                            .message("No se encontraron fechas para el instrumento con ID: " + idInstrument)
+                            .message("No se encontraron fechas para el instrumento")
                             .error(e.getMessage())
-                            .result(null)
+                            .result(Collections.emptyList())
                             .build());
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<List<AvailableDateDtoExit>>builder()
+                    .body(ApiResponse.<List<?>>builder()
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                             .message("Ocurrió un error interno al obtener las fechas.")

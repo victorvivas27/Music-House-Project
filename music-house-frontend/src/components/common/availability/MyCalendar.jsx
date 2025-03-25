@@ -13,26 +13,28 @@ import {
 import dayjs from 'dayjs'
 import PropTypes from 'prop-types'
 import { Alert, Box, Snackbar, Typography } from '@mui/material'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 
 const MyCalendar = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
   const [error, setError] = useState('')
-  const [openSnackbar, setOpenSnackbar] = useState(false) // Estado para Snackbar
+  const [openSnackbar, setOpenSnackbar] = useState(false) 
   const id = instrument?.result.idInstrument
 
   useEffect(() => {
     const fetchAvailableDates = async () => {
       if (!id) return
       try {
-        const dates = await getAllAvailableDatesByInstrument(id)
-
+        const response = await getAllAvailableDatesByInstrument(id)
+        const dates = response.result || []
+        
         const filteredDates = dates
           .filter((item) => item.available)
           .map((item) => dayjs(item.dateAvailable).format('YYYY-MM-DD'))
-
+        
         setAvailableDates(filteredDates)
       } catch (error) {
-        setError('Error al obtener las fechas. Intenta nuevamente.')
+        setError(`❌ ${getErrorMessage(error)}`)
         setOpenSnackbar(true) 
       }
     }
@@ -68,11 +70,9 @@ const MyCalendar = ({ instrument }) => {
             : [...prevDates, formattedDay] 
       )
     } catch (error) {
-      const errorMessage =
-        error?.message || 
-        'Error inesperado. Intenta nuevamente.' 
+       
 
-      setError(errorMessage)
+      setError(`❌ ${getErrorMessage(error)}`)
       setOpenSnackbar(true)
     }
   }
@@ -208,7 +208,7 @@ const MyCalendar = ({ instrument }) => {
           severity="warning"
           sx={{
             backgroundColor: 'var(--color-advertencia)', 
-            color: 'rgb(0, 0, 0)',
+            color: 'rgb(170, 46, 46)',
             fontWeight: 'bold',
             fontSize: '1rem',
             borderRadius: '8px'
