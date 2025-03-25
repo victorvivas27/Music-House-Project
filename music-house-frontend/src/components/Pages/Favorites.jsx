@@ -7,7 +7,6 @@ import { Loader } from '../common/loader/Loader'
 import { MainWrapper } from '../common/MainWrapper'
 import { getAllFavorites } from '../../api/favorites'
 
-
 import ArrowBack from '../utils/ArrowBack'
 import { useAppStates } from '../utils/global.context'
 import { actions } from '../utils/actions'
@@ -21,14 +20,12 @@ export const Favorites = () => {
 
   useEffect(() => {
     const fetchFavorites = async () => {
-      try {
-        const response = await getAllFavorites(idUser)
-        dispatch({ type: actions.UPDATE_FAVORITES, payload: response })
-      } catch (error) {
-        dispatch({ type: actions.UPDATE_FAVORITES, payload: [] })
-      } finally {
-        setLoading(false)
-      }
+      const response = await getAllFavorites(idUser)
+      dispatch({
+        type: actions.UPDATE_FAVORITES,
+        payload: Array.isArray(response.result) ? response.result : []
+      })
+      setLoading(false)
     }
 
     fetchFavorites()
@@ -44,8 +41,8 @@ export const Favorites = () => {
         flexDirection: 'column',
         gap: 3,
         alignItems: 'center',
-        justifyContent: 'flex-start', 
-        minHeight: '100vh', 
+        justifyContent: 'flex-start',
+        minHeight: '100vh',
         boxSizing: 'border-box'
       }}
     >

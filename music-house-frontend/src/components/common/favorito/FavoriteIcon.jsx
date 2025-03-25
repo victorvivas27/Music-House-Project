@@ -10,6 +10,7 @@ import { useAppStates } from '../../utils/global.context'
 import { actions } from '../../utils/actions'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
+import { getErrorMessage } from '../../../api/getErrorMessage'
 
 const FavoriteIcon = ({ idInstrument }) => {
   const { idUser } = useAuth()
@@ -21,20 +22,27 @@ const FavoriteIcon = ({ idInstrument }) => {
 
   useEffect(() => {
     const checkIfFavorite = async () => {
-      const response = await getAllFavorites(idUser)
-      const isInstrumentFavorite = response.some(
-        (favorite) => favorite.instrument.idInstrument === id
-      )
-      setIsFavorite(isInstrumentFavorite)
+      try {
+        const response = await getAllFavorites(idUser)
+        const favorites = Array.isArray(response.result) ? response.result : []
+        const isInstrumentFavorite = favorites.some(
+          (fav) => fav.instrument.idInstrument === id
+        )
+        setIsFavorite(isInstrumentFavorite)
+      } catch (error) {
+        showError(`❌ ${getErrorMessage(error)}`)
+      }
     }
 
-    checkIfFavorite()
-  }, [idUser, id])
+    if (idUser) {
+      checkIfFavorite()
+    }
+  }, [idUser, id, showError])
 
   const handleToggleFavorite = async () => {
     try {
       const result = await toggleFavorite(idUser, id)
-      const newStatus = result.data.isFavorite
+      const newStatus = result.result.isFavorite
       setIsFavorite(newStatus)
 
       if (newStatus) {
@@ -52,7 +60,6 @@ const FavoriteIcon = ({ idInstrument }) => {
           }
         })
       } else {
-        // ❌ Se eliminó
         dispatch({
           type: actions.TOGGLE_FAVORITE,
           payload: {
@@ -62,7 +69,7 @@ const FavoriteIcon = ({ idInstrument }) => {
         })
       }
     } catch (error) {
-      showError(error?.message)
+      showError(`❌ ${getErrorMessage(error)}`)
     }
   }
 
