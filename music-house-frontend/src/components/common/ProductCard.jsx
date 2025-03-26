@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography'
 import { Link } from 'react-router-dom'
 import {
   Avatar,
+  Box,
   Card,
   CardActions,
   CardHeader,
@@ -10,18 +11,18 @@ import {
 } from '@mui/material'
 
 import ShareIcon from '@mui/icons-material/Share'
-
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import '../styles/product.styles.css'
 import PropTypes from 'prop-types'
 import { red } from '@mui/material/colors'
 import { CustomTooltip } from './customTooltip/CustomTooltip'
 import FavoriteIcon from './favorito/FavoriteIcon'
-
 import { useAuth } from '../../hook/useAuth'
+import { useState } from 'react'
 
 const ProductCard = ({ name, imageUrl, id }) => {
   const { isUser } = useAuth()
+  const [imgError, setImgError] = useState(false)
 
   return (
     <Card
@@ -38,7 +39,7 @@ const ProductCard = ({ name, imageUrl, id }) => {
           sm: '340px',
           md: '350px',
           lg: '360px',
-          xl: '350px'
+          xl: '320px'
         },
         margin: 1,
         boxShadow: 3,
@@ -73,25 +74,51 @@ const ProductCard = ({ name, imageUrl, id }) => {
 
       <CustomTooltip
         title={
-          <Typography variant="body2">
-            <strong>{name}</strong> - haz clic en la imagen para más info
+          <Typography 
+          sx={{
+            fontFamily:"Roboto",
+            fontSize:10
+          }}
+          >
+            <strong>✅ Más info</strong>
           </Typography>
         }
         arrow
       >
         <Link to={`/instrument/${id}`} className="product-link">
-          <CardMedia
-            component="img"
-            sx={{
-              width: 150,
-              height: 150,
-              objectFit: 'cover',
-              borderRadius: '50%',
-              boxShadow: 'var(--box-shadow)'
-            }}
-            image={imageUrl || '/default-image.jpg'}
-            alt={name}
-          />
+        {!imgError ? (
+  <CardMedia
+    component="img"
+    sx={{
+      width: 150,
+      height: 150,
+      objectFit: 'cover',
+      borderRadius: '50%',
+      boxShadow: 'var(--box-shadow)'
+    }}
+    image={imageUrl || '/default-image.jpg'}
+    alt={name}
+    onError={() => setImgError(true)}
+  />
+) : (
+  <Box
+    sx={{
+      width: 150,
+      height: 150,
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#eee',
+      fontSize: '0.75rem',
+      textAlign: 'center',
+      padding: 1,
+      boxShadow: 'var(--box-shadow)'
+    }}
+  >
+    Imagen no disponible: {name}
+  </Box>
+)}
         </Link>
       </CustomTooltip>
       {/* ✅ Título debajo de la imagen */}
@@ -116,7 +143,7 @@ const ProductCard = ({ name, imageUrl, id }) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          height: 40,
+          height: 30,
           width: '100%',
           marginTop: 'auto',
          

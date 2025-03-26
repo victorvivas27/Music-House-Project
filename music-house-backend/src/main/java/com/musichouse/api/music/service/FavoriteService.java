@@ -4,10 +4,8 @@ import com.musichouse.api.music.dto.dto_entrance.FavoriteDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.FavoriteDtoExit;
 import com.musichouse.api.music.dto.dto_exit.IsFavoriteExit;
 import com.musichouse.api.music.entity.Favorite;
-import com.musichouse.api.music.entity.ImageUrls;
 import com.musichouse.api.music.entity.Instrument;
 import com.musichouse.api.music.entity.User;
-import com.musichouse.api.music.exception.FavoriteAlreadyExistsException;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.interfaces.FavoriteInterface;
 import com.musichouse.api.music.repository.FavoriteRepository;
@@ -100,12 +98,10 @@ public class FavoriteService implements FavoriteInterface {
     }
 
     @Override
-    public List<FavoriteDtoExit> getFavoritesByUserId(UUID userId) throws ResourceNotFoundException {
+    public List<FavoriteDtoExit> getFavoritesByUserId(UUID userId) {
         List<Favorite> favorites = favoriteRepository.findByUserId(userId);
-        if (favorites.isEmpty()) {
-            throw new ResourceNotFoundException("No se encontraron favoritos para el usuario con ID: " + userId);
-        }
 
+        // No lanzar excepción si está vacío
         return favorites.stream()
                 .map(favorite -> {
                     FavoriteDtoExit favoriteDtoExit = mapper.map(favorite, FavoriteDtoExit.class);
@@ -139,7 +135,6 @@ public class FavoriteService implements FavoriteInterface {
         favoriteRepository.delete(favorite);
         IsFavoriteExit isFavoriteExit = new IsFavoriteExit();
         isFavoriteExit.setIsFavorite(false);
-
 
 
         return ApiResponse.<IsFavoriteExit>builder()

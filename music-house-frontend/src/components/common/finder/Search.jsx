@@ -10,17 +10,18 @@ export const Search = styled('div')(({ theme }) => ({
   marginRight: 0,
   marginLeft: 0,
   width: '100%',
-  height: '2.5rem',
+  height: '3.5rem',
+  
 
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(3),
-    width: '60%'
+    width: '80%' // 🔹 Más amplio en sm
   },
 
   [theme.breakpoints.up('md')]: {
     margin: 0,
-    width: '33%',
-    maxWidth: '18.375rem'
+    width: '500px', // 🔹 Tamaño fijo para desktop (podés ajustar esto)
+    maxWidth: '90%'
   },
 
   '& .MuiInputBase-root': {

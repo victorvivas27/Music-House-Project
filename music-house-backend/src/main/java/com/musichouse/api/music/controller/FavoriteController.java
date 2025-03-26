@@ -58,13 +58,17 @@ public class FavoriteController {
 
     // 🔹 BUSCAR FAVORITOS POR ID DE USUARIO
     @GetMapping("/search/{userId}")
-    public ResponseEntity<ApiResponse<List<FavoriteDtoExit>>> getFavoritesByUserId(@PathVariable UUID userId) throws ResourceNotFoundException {
+    public ResponseEntity<ApiResponse<List<FavoriteDtoExit>>> getFavoritesByUserId(@PathVariable UUID userId) {
         List<FavoriteDtoExit> favoriteDtoExits = favoriteService.getFavoritesByUserId(userId);
+
+        String message = favoriteDtoExits.isEmpty()
+                ? "No se encontraron favoritos para el usuario con ID: " + userId
+                : "Favoritos encontrados con éxito para el usuario con ID: " + userId;
 
         return ResponseEntity.ok(ApiResponse.<List<FavoriteDtoExit>>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
-                .message("Favoritos encontrados con éxito para el usuario con ID: " + userId)
+                .message(message)
                 .error(null)
                 .result(favoriteDtoExits)
                 .build());

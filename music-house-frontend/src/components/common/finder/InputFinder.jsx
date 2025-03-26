@@ -37,7 +37,10 @@ export const InputFinder = ({
   }
 
   return (
-    <Search ref={inputRef}>
+    <Search
+     ref={inputRef}
+    
+     >
       <SearchIconWrapper>
         <SearchIcon />
       </SearchIconWrapper>
