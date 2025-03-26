@@ -11,7 +11,6 @@ import { InputFinder } from './InputFinder'
 import { Link, useLocation } from 'react-router-dom'
 import Draggable from 'react-draggable'
 
-
 export const Finder = () => {
   const [searchPattern, setSearchPattern] = useState('')
   const [showSugests, setShowSugests] = useState(false)
@@ -86,14 +85,14 @@ export const Finder = () => {
   }
   const location = useLocation()
 
-useEffect(() => {
-  // Si el usuario se va del home, ocultar el desplegable
-  if (location.pathname !== '/') {
-    setSearchPattern('')
-    setInstruments([])
-    setShowSugests(false)
-  }
-}, [location.pathname])
+  useEffect(() => {
+    // Si el usuario se va del home, ocultar el desplegable
+    if (location.pathname !== '/') {
+      setSearchPattern('')
+      setInstruments([])
+      setShowSugests(false)
+    }
+  }, [location.pathname])
 
   return (
     <Box
@@ -103,8 +102,7 @@ useEffect(() => {
         gap: 2,
         justifyContent: { md: 'center' },
         alignItems: { md: 'center' },
-        width: '100%',
-        
+        width: '100%'
       }}
     >
       <InputFinder
@@ -133,9 +131,10 @@ useEffect(() => {
               left: position.left,
               top: position.top,
               width: position.width,
-              backgroundColor: 'white',
+              backgroundColor: 'var( --color-secundario-80)',
+
               borderRadius: '5px',
-              boxShadow: '5px 5px 10px rgba(0,0,0,0.5)',
+              boxShadow: 'var(--box-shadow)',
               zIndex: 1300,
               cursor: 'pointer'
             }}
@@ -149,20 +148,22 @@ useEffect(() => {
                 alignItems: 'center',
                 px: 2,
                 py: 1,
-                backgroundColor: '#f7f7f7',
+                backgroundColor: 'var(--color-primario)',
                 borderBottom: '1px solid #ccc',
                 borderTopLeftRadius: '5px',
                 borderTopRightRadius: '5px'
               }}
             >
-              <strong style={{ fontSize: '0.95rem' }}>Resultados de búsqueda</strong>
+              <strong style={{ fontSize: '0.95rem' }}>
+                Resultados de búsqueda
+              </strong>
               <IconButton
                 sx={{
                   width: 30,
                   height: 30
                 }}
                 size="small"
-                onClick={() => setShowSugests(false)}
+                onClick={clearFinder}
               >
                 <Close
                   sx={{
@@ -179,9 +180,10 @@ useEffect(() => {
                   key={instrument.idInstrument || index}
                   sx={{
                     cursor: 'pointer',
+
                     transition: 'background-color 0.2s ease',
                     '&:hover': {
-                      backgroundColor: '#f0f0f0'
+                      backgroundColor: 'var(--color-secundario)'
                     },
                     px: 2,
                     py: 1
@@ -193,7 +195,7 @@ useEffect(() => {
                       textDecoration: 'none',
                       width: '100%',
                       display: 'block',
-                      color: '#333',
+                      color: 'var(--color-primario)',
                       fontWeight: 500
                     }}
                   >

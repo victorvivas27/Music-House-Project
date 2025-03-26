@@ -2,8 +2,7 @@ import { Search } from './Search'
 import { SearchIconWrapper } from './SearchIconWrapper'
 import { StyledInputBase } from './StyledInputBase'
 import SearchIcon from '@mui/icons-material/Search'
-import Close from '@mui/icons-material/Close'
-import { Box, IconButton } from '@mui/material'
+import { Box } from '@mui/material'
 import PropTypes from 'prop-types'
 
 export const InputFinder = ({
@@ -12,7 +11,6 @@ export const InputFinder = ({
   onKeyUp,
   onKeyDown,
   inputRef,
-  onClose
 }) => {
   const handleKeyUp = (event) => {
     const keyCode = event.keyCode
@@ -32,9 +30,7 @@ export const InputFinder = ({
     if (typeof setValue === 'function') setValue(value.trim())
   }
 
-  const handleClose = () => {
-    if (typeof onClose === 'function') onClose()
-  }
+ 
 
   return (
     <Search
@@ -62,9 +58,7 @@ export const InputFinder = ({
           '& svg': { height: '1.5rem' }
         }}
       >
-        <IconButton sx={{ zIndex: 1300 }} onClick={handleClose}>
-          <Close />
-        </IconButton>
+       
       </Box>
     </Search>
   )

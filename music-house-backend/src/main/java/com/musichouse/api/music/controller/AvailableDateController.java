@@ -145,7 +145,7 @@ public class AvailableDateController {
                     .body(ApiResponse.<List<?>>builder()
                             .status(HttpStatus.NOT_FOUND)
                             .statusCode(HttpStatus.NOT_FOUND.value())
-                            .message("No se encontraron fechas para el instrumento")
+                            .message("Instrumento sin fechas disponibles")
                             .error(e.getMessage())
                             .result(Collections.emptyList())
                             .build());
