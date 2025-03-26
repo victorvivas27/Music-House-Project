@@ -12,7 +12,8 @@ import Chip from '@mui/material/Chip'
 import Avatar from '@mui/material/Avatar'
 import { Divider } from '@mui/material'
 import { Finder } from '../common/finder/InstrumentsFinder'
-
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
+import LoginRoundedIcon from '@mui/icons-material/LoginRounded'
 import { HeaderWrapper } from './HeaderWrapper'
 import {
   UpperStyledToolbar,
@@ -24,28 +25,11 @@ import { LogoWrapper } from './LogoWrapper'
 import { MenuWrapper, MenuUserWrapper } from './MenuWrapper'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useHeaderVisibility } from '../utils/context/HeaderVisibilityGlobal'
-
+import AssignmentIndRoundedIcon from '@mui/icons-material/AssignmentIndRounded'
 import '../styles/header.styles.css'
 import background from '../../assets/background.svg'
 import { useAuth } from '../../hook/useAuth'
-
-const pagesMobile = [
-  { to: '/', text: 'Inicio', any: true },
-  { to: '/about', text: 'Acerca de', anonymous: true, user: true },
-  { to: '/favorites', text: 'Favoritos', user: true },
-  { to: '/reservations', text: 'Mis reservas', user: true }
-]
-
-const pagesDesktop = [
-  { to: '/', text: 'Inicio', any: true },
-  { to: '/instruments', text: 'Instrumentos', admin: true },
-  { to: '/usuarios', text: 'Usuarios', admin: true },
-  { to: '/categories', text: 'Categorías', admin: true },
-  { to: '/theme', text: 'Tematica', admin: true },
-  { to: '/about', text: 'Acerca de', anonymous: true, user: true },
-  { to: '/favorites', text: 'Favoritos', user: true },
-  { to: '/reservations', text: 'Mis reservas', user: true }
-]
+import { pagesDesktop, pagesMobile } from './NavBar'
 
 export const Header = () => {
   const [prevScroll, setPrevScroll] = useState(0)
@@ -147,8 +131,8 @@ export const Header = () => {
               {authGlobal ? (
                 <Avatar
                   sx={{
-                    height: '2rem !important',
-                    width: '2rem !important'
+                    height: '3rem !important',
+                    width: '3rem !important'
                   }}
                 >
                   {userName && userLastName
@@ -159,21 +143,33 @@ export const Header = () => {
                 <MenuIcon sx={{ fill: 'white' }} fontSize="large" />
               )}
             </IconButton>
+
+            {/* 🔽 Menú MOBILE - Hamburguesa */}
             <Menu
               id="menu-appbar"
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'right'
               }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right'
+              }}
               anchorEl={anchorElNav}
               keepMounted
               open={isMenuOpen}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-                width: '10rem',
-                height: '26rem'
-              }}
               hideBackdrop
+              sx={{
+                '& .MuiPaper-root': {
+                  width: '200px',
+                  backgroundColor: 'var(--color-secundario-80)',
+                  borderRadius: '1rem',
+                  padding: '0.5rem',
+                  boxShadow: 'var(--box-shadow)',
+                  color: 'var(--color-primario)',
+                  border: '1px solid var(--color-primario)'
+                }
+              }}
             >
               {pagesMobile.map((page, index) => {
                 return (
@@ -185,11 +181,23 @@ export const Header = () => {
                       key={`menu-nav-${index}`}
                       onClick={handleCloseNavMenu}
                     >
-                      <Typography textAlign="center">
-                        <Link to={page.to} className="option-link">
+                      <Link
+                        to={page.to}
+                        className="option-link"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          textDecoration: 'none',
+                          color: 'var(--color-primario)',
+                          width: '100%'
+                        }}
+                      >
+                        {page.icon}
+                        <Typography textAlign="left" sx={{ fontWeight: 500 }}>
                           {page.text}
-                        </Link>
-                      </Typography>
+                        </Typography>
+                      </Link>
                     </MenuItem>
                   )
                 )
@@ -208,13 +216,17 @@ export const Header = () => {
                     key={'menu-nav-user-profile'}
                     onClick={() => {
                       navigate(`/perfil/${idUser}`) // Luego navega a la página
-
                       handleCloseUserMenu() // Cierra el menú primero
                     }}
                   >
+                    <AssignmentIndRoundedIcon
+                      sx={{ marginRight: 1, fontSize: 20 }}
+                    />
                     <Typography textAlign="center">Mi Perfil</Typography>
                   </MenuItem>
+
                   <MenuItem key={`menu-nav-close-session`} onClick={logOut}>
+                    <LogoutRoundedIcon sx={{ marginRight: 1, fontSize: 20 }} />
                     <Typography textAlign="center">Cerrar sesión</Typography>
                   </MenuItem>
                 </Box>
@@ -231,36 +243,70 @@ export const Header = () => {
                     key={`menu-nav-close-session`}
                     onClick={() => navigationTo('/autentificacion')}
                   >
+                    <LoginRoundedIcon sx={{ marginRight: 1, fontSize: 20 }} />
                     <Typography textAlign="center">Iniciar sesión</Typography>
                   </MenuItem>
                 </Box>
               )}
             </Menu>
+
+            {/* 🔽Fin Menú MOBILE - Hamburguesa */}
           </MenuWrapper>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: {
+                xs: 'none',
+                md: 'flex'
+              },
+              alignItems: 'center'
+            }}
+          >
             {pagesDesktop.map((page, index) => {
-              return [
-                ((page.admin && isUserAdmin) ||
-                  (page.user && isUser) ||
-                  (page.anonymous && !(isUser || isUserAdmin)) ||
-                  page.any) && (
+              const shouldShow =
+                (page.admin && isUserAdmin) ||
+                (page.user && isUser) ||
+                (page.anonymous && !(isUser || isUserAdmin)) ||
+                page.any
+              const isActive = location.pathname === page.to
+              return (
+                shouldShow && (
                   <Button
                     key={`menu-option-${index}`}
                     sx={{
-                      my: 2,
-                      color: 'white',
-                      display: 'block',
-                      fontSize: '1.3rem',
-                      fontWeight: 'bold',
-                      padding: '0 .6rem'
+                      textTransform: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      border: isActive
+                        ? '2px solid var(--color-exito)'
+                        : '2px solid transparent',
+                      backgroundColor: isActive
+                        ? 'rgba(255, 255, 255, 0.1)'
+                        : 'transparent',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                      },
+                      height: 50,
+                      margin: 1
                     }}
                   >
-                    <Link to={page.to} className="nav-link">
+                    <Link
+                      to={page.to}
+                      className="nav-link"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        textDecoration: 'none',
+                        color: 'var(--color-primario)'
+                      }}
+                    >
+                      {page.icon}
                       {page.text}
                     </Link>
                   </Button>
                 )
-              ]
+              )
             })}
           </Box>
           <Link to="/">
@@ -287,20 +333,29 @@ export const Header = () => {
             {authGlobal ? (
               <MenuUserWrapper>
                 <IconButton
-                  size="large"
-                  aria-label="menu"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
                   onClick={handleOpenUserMenu}
-                  color="inherit"
+                  sx={{
+                    p: 0,
+                    height: '100%',
+                    width: 'auto',
+                    borderRadius: '1.5rem',
+                    transition: 'box-shadow 0.2s ease',
+                    '&:hover': {
+                      boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)'
+                    }
+                  }}
                 >
-                  <Tooltip title="Opciones">
+                  <Tooltip title="Opciones" arrow>
                     <Chip
                       avatar={
                         <Avatar
                           sx={{
-                            height: '2rem !important',
-                            width: '2rem !important'
+                            bgcolor: 'var(--color-secundario)!important',
+                            color: 'var(--color-primario)!important',
+                            height: '3rem !important',
+                            width: '3rem !important',
+                            fontSize: '1rem !important',
+                            fontFamily: 'Roboto'
                           }}
                         >
                           {userName && userLastName
@@ -308,36 +363,68 @@ export const Header = () => {
                             : '...'}
                         </Avatar>
                       }
-                      label={`Hola ${userName} ${userLastName}!`}
+                      label={
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontWeight: 600,
+                            textTransform: 'capitalize',
+                            whiteSpace: 'nowrap'
+                          }}
+                        >
+                          {`${userName} ${userLastName}`}
+                        </Typography>
+                      }
                       color="primary"
                       onClick={handleOpenUserMenu}
                       sx={{
-                        borderRadius: '1rem',
-                        height: '2.5rem'
+                        borderRadius: '1.5rem',
+                        height: '3rem',
+                        px: 2,
+                        bgcolor: 'var(--color-primario)',
+                        border: '1px solid var(--color-primario)',
+                        '&:hover': {
+                          backgroundColor: 'var(--color-secundario)',
+                          color: 'var(--color-primario)',
+                          '& .MuiAvatar-root': {
+                            bgcolor: 'var(--color-primario)!important',
+                            color: 'var(--color-secundario)!important'
+                          }
+                        }
                       }}
                     />
                   </Tooltip>
                 </IconButton>
+
+                {/* 🔽 Menú USUARIO - Pantalla grande */}
                 <Menu
                   id="menu-appbar-user"
                   anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'right'
                   }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right'
+                  }}
                   anchorEl={anchorElUser}
                   keepMounted
                   open={isMenuUserOpen}
+                  hideBackdrop
                   sx={{
-                    display: { xs: 'none', md: 'block' },
-                    width: '10rem',
-                    height: '12rem',
-                    right: '-3rem !important',
-                    '& .MuiPopover-paper': {
-                      left: `${anchorElUser?.getBoundingClientRect().x + 16}px !important`
+                    '& .MuiPaper-root': {
+                      width: '200px',
+                      backgroundColor: 'var(--color-secundario-80)!important',
+                      borderRadius: '1rem',
+                      padding: '0.5rem',
+                      boxShadow: 'var(--box-shadow)!important',
+                      color: 'var(--color-primario)',
+                      border: '1px solid var(--color-primario)'
                     }
                   }}
-                  hideBackdrop
                 >
+                  {/* 🔽Fin  Menú USUARIO - Pantalla grande */}
+
                   <MenuItem
                     key={'menu-nav-user-profile'}
                     onClick={() => {
@@ -346,9 +433,13 @@ export const Header = () => {
                       navigate(`/perfil/${idUser}`)
                     }}
                   >
+                    <AssignmentIndRoundedIcon
+                      sx={{ marginRight: 1, fontSize: 20 }}
+                    />
                     <Typography textAlign="center">Mi Perfil</Typography>
                   </MenuItem>
                   <MenuItem key={`menu-nav-close-session`} onClick={logOut}>
+                    <LogoutRoundedIcon sx={{ marginRight: 1, fontSize: 20 }} />
                     <Typography textAlign="center">Cerrar sesión</Typography>
                   </MenuItem>
                 </Menu>
@@ -357,10 +448,31 @@ export const Header = () => {
               <Tooltip title="Iniciar sesión">
                 <Button
                   variant="contained"
-                  sx={{ borderRadius: '.25rem', padding: '.5rem .5rem' }}
                   onClick={() => navigationTo('/autentificacion')}
+                  sx={{
+                    borderRadius: '.5rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
                 >
-                  <Typography textAlign="center" sx={{ fontWeight: 'bold' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '2rem',
+                      height: '2rem'
+                    }}
+                  >
+                    <LoginRoundedIcon margin="1px" className="vibrate-2" />
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontWeight: 'bold',
+                      fontSize: '0.95rem'
+                    }}
+                  >
                     Iniciar sesión
                   </Typography>
                 </Button>
