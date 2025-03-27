@@ -27,6 +27,16 @@ export const ScreenModal = ({
       onClose={handleClose}
       TransitionComponent={Transition}
       maxWidth="md"
+      PaperProps={{
+        sx: {
+          width: '90%',
+          maxWidth: '800px',
+          margin: 'auto',
+          borderRadius: 3,
+          padding: 2,
+          boxShadow: 'var(--box-shadow)'
+        }
+      }}
     >
       <IconButton
         aria-label="close"
@@ -39,7 +49,7 @@ export const ScreenModal = ({
           zIndex: 1300
         }}
       >
-        <CloseIcon />
+        <CloseIcon sx={{ fontSize: '40px' }} />
       </IconButton>
       {children}
     </Dialog>
@@ -47,8 +57,8 @@ export const ScreenModal = ({
 }
 
 ScreenModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired, // Indica si el modal está abierto, obligatorio
-  onClose: PropTypes.func.isRequired, // Función para cerrar el modal, obligatorio
-  children: PropTypes.node.isRequired, // Contenido del modal, obligatorio
-  fullScreen: PropTypes.bool // Indica si el modal ocupa toda la pantalla, opcional
-};
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+  fullScreen: PropTypes.bool
+}
