@@ -68,6 +68,13 @@ export const headCellsReservas = [
 ]
 
  export const headCellsInstrument = [
+
+  {
+    id: 'imageUrl',
+    numeric: true,
+    disablePadding: false,
+    label: 'Imagen'
+  },
   {
     id: 'idInstrument',
     numeric: true,

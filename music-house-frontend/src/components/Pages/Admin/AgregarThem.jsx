@@ -13,7 +13,7 @@ export const AgregarTheme = () => {
   return (
     <main>
       <CreateWrapper isHeaderVisible={isHeaderVisible}>
-        <Typography sx={{ fontSize: '35px' }}>Crear Tematica asi </Typography>
+        <Typography sx={{ fontSize: '35px' }}>Crear Tematica</Typography>
         <NewThemeForm />
       </CreateWrapper>
       <Box

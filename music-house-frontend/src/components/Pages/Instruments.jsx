@@ -64,7 +64,7 @@ export const Instruments = () => {
 
   useEffect(() => {
     setRows(instruments.result)
-    
+
     setLoading(false)
   }, [instruments])
 
@@ -116,6 +116,9 @@ export const Instruments = () => {
 
   const emptyRows = getEmptyRows(page, rowsPerPage, rows)
   const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
+  rows.forEach((imagen) => {
+    console.log(imagen?.imageUrls[0].imageUrl)
+  })
 
   if (loading) return <Loader title="Cargando instrumentos..." />
 
@@ -192,10 +195,29 @@ export const Instruments = () => {
                               handleClick(event, row.idInstrument)
                             }
                             inputProps={{
-                               'aria-labelledby': labelId 
-                              }}
+                              'aria-labelledby': labelId
+                            }}
                           />
                         </TableCell>
+
+                        <TableCell align="left">
+                          <img
+                            src={
+                              row.imageUrls?.[0]?.imageUrl ||
+                              '/images/default-placeholder.png'
+                            }
+                            alt="Instrumento"
+                            style={{
+                              width: '80px',
+                              height: '80px',
+                              objectFit: 'cover',
+                              borderRadius: '40px',
+                              border: '1px solid #ccc',
+                              boxShadow: 'var(--box-shadow)'
+                            }}
+                          />
+                        </TableCell>
+
                         <TableCell
                           component="th"
                           id={labelId}
@@ -206,6 +228,7 @@ export const Instruments = () => {
                         </TableCell>
 
                         <TableCell align="left">{row.name}</TableCell>
+
                         <TableCell align="left">
                           <Box
                             style={{
@@ -217,9 +240,9 @@ export const Instruments = () => {
                           >
                             <Tooltip title="Editar">
                               <IconButton
-                                onClick={(event) =>{
-                                   handleEdit(row.idInstrument)
-                                   event.stopPropagation()
+                                onClick={(event) => {
+                                  handleEdit(row.idInstrument)
+                                  event.stopPropagation()
                                 }}
                               >
                                 <EditIcon />
@@ -228,11 +251,10 @@ export const Instruments = () => {
 
                             <Tooltip title="Eliminar">
                               <IconButton
-                                onClick={(event) =>{
+                                onClick={(event) => {
                                   handleConfirmDelete(row.idInstrument)
                                   event.stopPropagation()
-                                }
-                                }
+                                }}
                               >
                                 <DeleteIcon />
                               </IconButton>
