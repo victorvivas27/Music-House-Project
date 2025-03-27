@@ -30,28 +30,27 @@ export const Instrument = () => {
   const [showGallery, setShowGallery] = useState(false)
   const { isUser, isUserAdmin } = useAuth()
 
-
   useEffect(() => {
-    setIsLoading(true);
+    setIsLoading(true)
     getInstrumentById(id)
       .then((instrument) => {
-        setInstrument(instrument); 
+        setInstrument(instrument)
       })
       .catch(() => {
-        setInstrument(undefined);
-        navigate('/noDisponible');
-      });
-  }, [id, navigate]);
-  
+        setInstrument(undefined)
+        navigate('/noDisponible')
+      })
+  }, [id, navigate])
+
   useEffect(() => {
-    if (!instrument?.result) return;
-  
-    setInstrumentSelected(instrument.result); 
-    setIsLoading(false);
+    if (!instrument?.result) return
+
+    setInstrumentSelected(instrument.result)
+    setIsLoading(false)
     if (window) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
-  }, [instrument]);
+  }, [instrument])
 
   const onClose = () => {
     setShowGallery(false)
@@ -60,21 +59,20 @@ export const Instrument = () => {
   return (
     <main>
       <MainWrapper>
-       {loading && <Loader title="Cargando detalle del instrumento" />}
+        {loading && <Loader title="Cargando detalle del instrumento" />}
         {!loading && (
           <>
             <InstrumentDetailWrapper>
-              
-              <ArrowBack/>
+              <ArrowBack />
               {/*Contenedor de la imagen,de los datos y del iciono de favoritos */}
               <Box
                 sx={{
                   ...flexRowContainer,
                   width: '100%',
-                  height: '100%'
+                  height: '100%',
+                  boxShadow: 'var(--box-shadow)',
                 }}
-                >
-              
+              >
                 {/* Datos del instrumento */}
                 <Box
                   sx={{
@@ -95,10 +93,10 @@ export const Instrument = () => {
                       md: '40%',
                       lg: '45%',
                       xl: '50%'
-                    }
+                    },
+                    boxShadow: 'var(--box-shadow)',
                   }}
                 >
-                  
                   {/* Descripción */}
                   <Typography
                     sx={{
@@ -123,7 +121,10 @@ export const Instrument = () => {
                   {/* Otras características */}
                   {[
                     { label: 'Medida', value: instrumentSelected?.measures },
-                    { label: 'Peso', value: instrumentSelected?.formattedWeight },
+                    {
+                      label: 'Peso',
+                      value: instrumentSelected?.formattedWeight
+                    },
                     {
                       label: 'Tipo',
                       value: instrumentSelected?.category?.categoryName
@@ -172,10 +173,10 @@ export const Instrument = () => {
                       lg: '20%',
                       xl: '30%'
                     },
-                    margin:1
+                    margin: 1,
+                    boxShadow: 'var(--box-shadow)',
                   }}
                 >
-                  
                   {/* Nombre del instrumento */}
                   <Typography
                     variant="h2"
@@ -186,14 +187,14 @@ export const Instrument = () => {
                         md: '1rem',
                         lg: '1.1rem',
                         xl: '1.5rem'
-                      }, 
+                      },
                       textAlign: 'center',
-                      fontWeight: 'bold', 
-                      textTransform: 'uppercase', 
-                      letterSpacing: '2px', 
-                      textShadow: '2px 2px 5px rgba(0,0,0,0.2)', 
+                      fontWeight: 'bold',
+                      textTransform: 'uppercase',
+                      letterSpacing: '2px',
+                      textShadow: '2px 2px 5px rgba(0,0,0,0.2)',
                       padding: 1,
-                      width: 'fit-content', 
+                      width: 'fit-content',
                       margin: '0 auto'
                     }}
                   >
@@ -216,15 +217,13 @@ export const Instrument = () => {
                         }
                         alt={instrumentSelected?.name}
                         sx={{
-                          width: '100%', 
+                          width: '100%',
                           height: 'auto',
                           objectFit: 'contain',
                           display: 'block',
                           borderRadius: '8px',
-                      
-                          mixBlendMode: 'multiply'
-                      
-                          
+                          mixBlendMode: 'multiply',
+                          boxShadow: 'var(--box-shadow)',
                         }}
                       />
                     </Button>
@@ -251,8 +250,7 @@ export const Instrument = () => {
                     md: '80%',
                     lg: '99%'
                   },
-                  boxShadow:
-                    ' rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset',
+                  boxShadow: 'var(--box-shadow)',
                   padding: 1,
                   borderRadius: 2
                 }}
@@ -270,11 +268,11 @@ export const Instrument = () => {
                     },
                     fontWeight: 'bold',
 
-                    letterSpacing: '1px', 
-                    textTransform: 'uppercase', 
-                    mb: 2, 
+                    letterSpacing: '1px',
+                    textTransform: 'uppercase',
+                    mb: 2,
                     textAlign: 'center',
-                    fontStyle: 'italic' 
+                    fontStyle: 'italic'
                   }}
                 >
                   Características
@@ -295,7 +293,8 @@ export const Instrument = () => {
                         sx={{
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center'
+                          justifyContent: 'center',
+                          
                         }}
                       >
                         <Tooltip title={characteristic.name}>
@@ -304,7 +303,7 @@ export const Instrument = () => {
                             className="instrument-characteristic-image"
                           />
                         </Tooltip>
-                       
+
                         {instrumentSelected?.characteristics[
                           characteristic.id
                         ] === 'si' ? (
@@ -329,20 +328,20 @@ export const Instrument = () => {
                     justifyContent: 'center',
                     width: '100%',
                     maxWidth: {
-                      xs: '100%', 
-                      sm: '450px', 
-                      md: '650px', 
-                      lg: '1200px', 
-                      xl: '1400px' 
+                      xs: '100%',
+                      sm: '450px',
+                      md: '650px',
+                      lg: '1200px',
+                      xl: '1400px'
                     },
                     padding: '2rem',
                     borderRadius: '12px',
                     backgroundColor: 'var(--background-color)',
-                    boxShadow: '4px 4px 12px rgba(0,0,0,0.1)',
+                    boxShadow: 'var(--box-shadow)',
                     textAlign: 'center',
-                    transition: 'all 0.3s ease-in-out', 
+                    transition: 'all 0.3s ease-in-out',
                     '&:hover': {
-                      boxShadow: '6px 6px 14px rgba(0,0,0,0.2)' 
+                      boxShadow: '6px 6px 14px rgba(0,0,0,0.2)'
                     }
                   }}
                 >
@@ -357,10 +356,10 @@ export const Instrument = () => {
                         xl: '2rem'
                       },
                       fontWeight: 'bold',
-                      color: '#333', 
-                      letterSpacing: '1px', 
-                      textTransform: 'uppercase', 
-                      mb: 2 
+                      color: '#333',
+                      letterSpacing: '1px',
+                      textTransform: 'uppercase',
+                      mb: 2
                     }}
                   >
                     📅 Calendario de Disponibilidad
@@ -385,10 +384,10 @@ export const Instrument = () => {
                         xl: '550px'
                       },
                       borderRadius: '10px',
-                     
+
                       overflow: 'hidden',
                       backgroundColor: 'var(--background-color)',
-                      boxShadow: '2px 2px 8px rgba(0,0,0,0.15)' 
+                      boxShadow: 'var(--box-shadow)'
                     }}
                   >
                     <MyCalendar instrument={instrument} />
@@ -398,7 +397,7 @@ export const Instrument = () => {
               {/*Fin del calendario ADMIN*/}
 
               {/* 📌 Sección para el usuario */}
-              
+
               {/* 📌 Contenedor del Calendario */}
               {isUser && (
                 <Box
@@ -408,9 +407,8 @@ export const Instrument = () => {
                     padding: '1.5rem',
                     gap: '1.5rem',
                     backgroundColor: 'var(--background-color)',
-                    borderRadius: '12px', 
-                    boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)', 
-                  
+                    borderRadius: '12px',
+                    boxShadow: 'var(--box-shadow)',
 
                     height: {
                       xs: '800px',
@@ -450,18 +448,15 @@ export const Instrument = () => {
               <Box
                 sx={{
                   width: '100%',
-                  height: '100%',
-                 
+                  height: '100%'
                 }}
               >
                 <Divider sx={{ width: '100%' }} />
                 <InstrumentTerms />
               </Box>
-              
             </InstrumentDetailWrapper>
           </>
         )}
-       
       </MainWrapper>
       <ScreenModal isOpen={showGallery} onClose={onClose}>
         <InstrumentGallery itemData={instrumentSelected?.imageUrls} />

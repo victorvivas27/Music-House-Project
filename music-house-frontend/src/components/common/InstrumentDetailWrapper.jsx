@@ -9,8 +9,9 @@ export const InstrumentDetailWrapper = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
   flexWrap: 'wrap',
   gap: '1.5rem',
-  width: '100%',
-  padding: '1rem', // Ajustado para mejor espaciamiento en móviles
+  width: '99%',
+  padding: '1rem',
+  boxShadow: 'var(--box-shadow)',
 
   [theme.breakpoints.up('md')]: {
     flexDirection: 'row', // 📌 En pantallas medianas/grandes, cambia a fila
