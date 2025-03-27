@@ -17,10 +17,12 @@ import { useAppStates } from '../utils/global.context'
 import '../styles/crearInstrumento.styles.css'
 import PropTypes from 'prop-types'
 import ValidatedTextField from '../Pages/Admin/common/ValidatedTextField'
-import ImageUpload from '../common/ImageUpload '
+
 import { inputStyles } from '../styles/styleglobal'
 import ArrowBack from '../utils/ArrowBack'
 import { CustomButton } from './formUsuario/CustomComponents'
+import ImageUpload from '../common/imageUrls/ImageUpload '
+import ImageUrlsEdit from '../common/imageUrls/ImageUrlsEdit'
 
 const InstrumentForm = ({
   initialFormData,
@@ -264,13 +266,24 @@ const InstrumentForm = ({
                 
                 
               />
+              <ImageUrlsEdit idInstrument={formData.idInstrument}/>
             </Grid>
             {/*-----------------------Fin formulario lado derecho--------------*/}
           </Grid>
 
           {/*-----------------------Input imagen--------------*/}
-          {!isEditing && (
-            <Grid item xs={12} md={6} sx={{ padding: 2, width: '100%' }}>
+          
+            <Grid item 
+            xs={12}
+             md={6} 
+             sx={{
+               padding: 2,
+                width: '100%',
+                height:"230px",
+               boxShadow:"var(--box-shadow)",
+               borderRadius:4
+
+                }}>
               <ImageUpload
                 onImagesChange={(files) =>
                   setFormData((prev) => ({ ...prev, imageUrls: files }))
@@ -283,7 +296,7 @@ const InstrumentForm = ({
                 </Typography>
               )}
             </Grid>
-          )}
+          
           {/*-----------------------Fin input imagen--------------*/}
 
           <Divider />

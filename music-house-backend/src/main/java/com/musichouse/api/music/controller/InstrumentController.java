@@ -41,7 +41,7 @@ public class InstrumentController {
     public ResponseEntity<ApiResponse<?>> createInstrument(
             @RequestPart("instrument") String instrumentJson,
             @RequestPart(value = "files", required = false) List<MultipartFile> files) throws JsonProcessingException, ResourceNotFoundException {
-        try{
+
 
             // 📌 Convertir JSON a Objeto
             InstrumentDtoEntrance instrumentDtoEntrance = objectMapper.readValue(instrumentJson, InstrumentDtoEntrance.class);
@@ -57,17 +57,7 @@ public class InstrumentController {
                             .error(null)
                             .result(instrumentDtoExit)
                             .build());
-    } catch (DataIntegrityViolationException e) {
 
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(ApiResponse.<String>builder()
-                        .status(HttpStatus.CONFLICT)
-                        .statusCode(HttpStatus.CONFLICT.value())
-                        .message("El nombre del instrumento ya existe en la base de datos.")
-                        .error(e.getRootCause() != null ? e.getRootCause().getMessage() : e.getMessage())
-                        .result(instrumentJson)
-                        .build());
-    }
 
     }
 

@@ -36,7 +36,7 @@ public class User implements UserDetails {
      * Identificador único para el usuario.
      */
     @Id
-    @GeneratedValue(generator = "UUID")
+    @Column(name = "id_user", updatable = false, nullable = false)
     private UUID idUser;
 
     /**

@@ -16,11 +16,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AWSS3Service implements AWSS3Interface {
@@ -40,117 +40,80 @@ public class AWSS3Service implements AWSS3Interface {
     }
 
 
-    @Override
-    public String uploadFileToS3(MultipartFile file,UserDtoEntrance userDtoEntrance) {
+    public String uploadFileToS3User(MultipartFile file, UUID idUser) {
         try {
-            // Crear el path del usuario en S3
-            String userFolder = (userDtoEntrance.getName() + "-" + userDtoEntrance.getLastName())
-                    .toLowerCase()
-                    .replaceAll("\\s+", "-")   // ✅ Reemplaza espacios múltiples por un solo guion
-                    .replaceAll("-$", "");     // ✅ Elimina un guion si está al final
-
-            String newFilename = userFolder + "/" + System.currentTimeMillis() + file.getOriginalFilename();
+            String userFolder = "usuarios/" + idUser;
+            String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());
             metadata.setContentType(file.getContentType());
 
-            // Subir archivo a S3 con la estructura de path: {bucket}/usuarios/{nombre}/{archivo}
             amazonS3.putObject(new PutObjectRequest(bucketName, newFilename, file.getInputStream(), metadata));
 
-            // Retornar la URL correcta con el path del usuario
             return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + newFilename;
+
         } catch (IOException e) {
-            LOGGER.error("Error al cargar el archivo a S3", e);
             throw new RuntimeException("Error al cargar el archivo a S3", e);
         }
     }
 
-    public List<String> uploadFilesToS3Instrument(List<MultipartFile> files, InstrumentDtoEntrance instrumentDtoEntrance) {
+    public List<String> uploadFilesToS3Instrument(List<MultipartFile> files, UUID idInstrument) {
         List<String> imageUrls = new ArrayList<>();
 
         if (files == null || files.isEmpty()) {
-            return imageUrls; // Si no hay archivos, devolver una lista vacía
+            return imageUrls;
         }
 
         for (MultipartFile file : files) {
             try {
-                // Crear el path en S3
-                String userFolder = (instrumentDtoEntrance.getName() )
-                        .toLowerCase()
-                        .replaceAll("\\s+", "-")   // ✅ Reemplaza espacios múltiples por un solo guion
-                        .replaceAll("-$", "");     // ✅ Elimina un guion si está al final
 
-                String newFilename = userFolder + "/" + System.currentTimeMillis() + file.getOriginalFilename();
+                String instrumentFolder = "instruments/"+idInstrument;
+
+
+                String newFilename = instrumentFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
                 ObjectMetadata metadata = new ObjectMetadata();
                 metadata.setContentLength(file.getSize());
                 metadata.setContentType(file.getContentType());
 
-                // Subir archivo a S3
+
                 amazonS3.putObject(new PutObjectRequest(bucketName, newFilename, file.getInputStream(), metadata));
 
-                // Agregar la URL generada a la lista
+
                 String imageUrl = "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + newFilename;
+
                 imageUrls.add(imageUrl);
+
             } catch (IOException e) {
-                LOGGER.error("Error al cargar el archivo a S3", e);
+
                 throw new RuntimeException("Error al cargar el archivo a S3", e);
             }
         }
 
-        return imageUrls; // ✅ Retornar la lista de URLs generadas
+        return imageUrls;
     }
 
-    @Override
-    public String uploadFileToS3Admin(MultipartFile file, UserAdminDtoEntrance userAdminDtoEntrance) {
-        try {
-            // Crear el path del usuario en S3
-            String userFolder = (userAdminDtoEntrance.getName() + "-" + userAdminDtoEntrance.getLastName())
-                    .toLowerCase()
-                    .replaceAll("\\s+", "-")   // ✅ Reemplaza espacios múltiples por un solo guion
-                    .replaceAll("-$", "");     // ✅ Elimina un guion si está al final
 
-            String newFilename = userFolder + "/" + System.currentTimeMillis() + file.getOriginalFilename();
 
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(file.getSize());
-            metadata.setContentType(file.getContentType());
 
-            // Subir archivo a S3 con la estructura de path: {bucket}/usuarios/{nombre}/{archivo}
-            amazonS3.putObject(new PutObjectRequest(bucketName, newFilename, file.getInputStream(), metadata));
-
-            // Retornar la URL correcta con el path del usuario
-            return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + newFilename;
-        } catch (IOException e) {
-            LOGGER.error("Error al cargar el archivo a S3", e);
-            throw new RuntimeException("Error al cargar el archivo a S3", e);
-        }
-    }
-
-   
 
     public String uploadUserModifyFileToS3(MultipartFile file, UserDtoModify userDtoModify) {
         try {
-            // Crear el path del usuario en S3
-            String userFolder = (userDtoModify.getName() + "-" + userDtoModify.getLastName())
-                    .toLowerCase()
-                    .replaceAll("\\s+", "-")   // ✅ Reemplaza espacios múltiples por un solo guion
-                    .replaceAll("-$", "");     // ✅ Elimina un guion si está al final
+            String userFolder = "usuarios/" + userDtoModify.getIdUser();
 
-            String newFilename = userFolder + "/" + System.currentTimeMillis() + file.getOriginalFilename();
+            String newFilename = userFolder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());
             metadata.setContentType(file.getContentType());
 
-            // Subir archivo a S3 con la estructura de path: {bucket}/usuarios/{nombre}/{archivo}
             amazonS3.putObject(new PutObjectRequest(bucketName, newFilename, file.getInputStream(), metadata));
 
-            // Retornar la URL correcta con el path del usuario
             return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + newFilename;
+
         } catch (IOException e) {
-            LOGGER.error("Error al cargar el archivo a S3", e);
+
             throw new RuntimeException("Error al cargar el archivo a S3", e);
         }
     }
@@ -184,9 +147,9 @@ public class AWSS3Service implements AWSS3Interface {
             }
 
             amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
-            LOGGER.info("Archivo eliminado de S3: {}", key);
+
         } catch (AmazonS3Exception e) {
-            LOGGER.error("Error al eliminar el archivo de S3: {}", key, e);
+
             throw new RuntimeException("No se pudo eliminar el archivo de S3", e);
         }
     }

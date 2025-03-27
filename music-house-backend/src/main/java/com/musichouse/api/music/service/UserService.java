@@ -1,7 +1,6 @@
 package com.musichouse.api.music.service;
 
 import com.musichouse.api.music.dto.dto_entrance.LoginDtoEntrance;
-import com.musichouse.api.music.dto.dto_entrance.UserAdminDtoEntrance;
 import com.musichouse.api.music.dto.dto_entrance.UserDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.TokenDtoExit;
 import com.musichouse.api.music.dto.dto_exit.UserDtoExit;
@@ -11,10 +10,13 @@ import com.musichouse.api.music.entity.User;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.infra.MailManager;
 import com.musichouse.api.music.interfaces.UserInterface;
-import com.musichouse.api.music.repository.*;
+import com.musichouse.api.music.repository.AddressRepository;
+import com.musichouse.api.music.repository.FavoriteRepository;
+import com.musichouse.api.music.repository.PhoneRepository;
+import com.musichouse.api.music.repository.UserRepository;
+import com.musichouse.api.music.s3utils.S3UrlParser;
 import com.musichouse.api.music.security.JwtService;
 import com.musichouse.api.music.telegramchat.TelegramService;
-import com.musichouse.api.music.util.RoleConstants;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -33,11 +35,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,45 +58,38 @@ public class UserService implements UserInterface {
     private final MailManager mailManager;
 
 
-    @Transactional
     @Override
+    @Transactional
     public TokenDtoExit createUser(UserDtoEntrance userDtoEntrance, MultipartFile file)
             throws DataIntegrityViolationException, MessagingException {
 
-        // 1️⃣ **Verificar si el usuario ya existe antes de subir la imagen o enviar mensaje**
         if (userRepository.existsByEmail(userDtoEntrance.getEmail())) {
-            throw new DataIntegrityViolationException("El correo electrónico: "+userDtoEntrance.getEmail());
+            throw new DataIntegrityViolationException("El correo electrónico: " + userDtoEntrance.getEmail());
         }
 
-        // 2️⃣ **Si el usuario no existe, continuar con el registro**
         User user = modelMapper.map(userDtoEntrance, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        UUID generatedId = UUID.randomUUID(); // 🔑 Generás el ID
+        user.setIdUser(generatedId);
 
-        // 3️⃣ Asignar los roles desde el DTO
         Set<Roles> roles = userDtoEntrance.getRoles() != null && !userDtoEntrance.getRoles().isEmpty()
                 ? new HashSet<>(userDtoEntrance.getRoles())
-                : Set.of(Roles.USER); // Asigna USER por defecto
-
+                : Set.of(Roles.USER);
         user.setRoles(roles);
 
-
         user.setTelegramChatId(userDtoEntrance.getTelegramChatId());
-
         user.getAddresses().forEach(address -> address.setUser(user));
-
         user.getPhones().forEach(phone -> phone.setUser(user));
 
-        // 4️⃣ **Subir la imagen a AWS S3 solo después de verificar el usuario**
-        String fileUrl = awss3Service.uploadFileToS3(file,userDtoEntrance);
+        // 🔄 Subís imagen usando el ID generado
+        String fileUrl = awss3Service.uploadFileToS3User(file, generatedId);
         user.setPicture(fileUrl);
 
-        // 5️⃣ **Guardar usuario en la base de datos**
+        // 🗂️ Guardás el usuario
         User userSaved = userRepository.save(user);
 
-        // 6️⃣ **Generar token**
         String token = jwtService.generateToken(userSaved);
 
-        // 7️⃣ **Enviar mensaje de bienvenida por correo**
         try {
             sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName());
         } catch (MessagingException e) {
@@ -107,32 +97,25 @@ public class UserService implements UserInterface {
             throw new MessagingException(errorMessage, e);
         }
 
-        // 8️⃣ **Enviar mensaje de bienvenida en Telegram**
         telegramService.enviarMensajeDeBienvenida(
                 userSaved.getTelegramChatId(),
                 userSaved.getName(),
                 userSaved.getLastName(),
                 userSaved.getEmail()
-
         );
 
-        // 9️⃣ **Construcción con Builder**
         return TokenDtoExit.builder()
                 .idUser(userSaved.getIdUser())
-                //.name(userSaved.getName())
-                //.lastName(userSaved.getLastName())
-                //.roles(userSaved.getRoles().stream().map(Roles::name).toList())
                 .token(token)
                 .build();
     }
-
 
 
     @Override
     public TokenDtoExit loginUserAndCheckEmail(LoginDtoEntrance loginDtoEntrance) throws ResourceNotFoundException, AuthenticationException {
         Optional<User> userOptional = userRepository.findByEmail(loginDtoEntrance.getEmail());
         if (userOptional.isEmpty()) {
-            throw new ResourceNotFoundException("Usuario no encontrado con el correo electrónico: "+loginDtoEntrance.getEmail());
+            throw new ResourceNotFoundException("Usuario no encontrado con el correo electrónico: " + loginDtoEntrance.getEmail());
         }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDtoEntrance.getEmail(), loginDtoEntrance.getPassword())
@@ -201,7 +184,7 @@ public class UserService implements UserInterface {
 
             // 📌 Eliminar imagen anterior solo si existe
             if (currentImageUrl != null && !currentImageUrl.isEmpty()) {
-                String key = extractKeyFromS3Url(currentImageUrl);
+                String key = S3UrlParser.extractKeyFromS3Url(currentImageUrl);
                 awss3Service.deleteFileFromS3(key);
             }
 
@@ -224,23 +207,23 @@ public class UserService implements UserInterface {
         if (usuarioOptional.isPresent()) {
             User usuario = usuarioOptional.get();
 
-           // 🟢 1️⃣ Obtener la URL de la imagen guardada en S3
+            // 🟢 Obtener la URL de la imagen guardada en S3
             String imageUrl = usuario.getPicture();
 
-
-            // 🟢 2️⃣ Extraer la clave del archivo S3 desde la URL
+            // 🟢 Si la imagen existe, intentar eliminarla (sin interrumpir el flujo si falla)
             if (imageUrl != null && !imageUrl.isEmpty()) {
-                String key = extractKeyFromS3Url(imageUrl);
-                // 🟢 3️⃣ Eliminar la imagen de S3
+
+                String key = S3UrlParser.extractKeyFromS3Url(imageUrl);
                 awss3Service.deleteFileFromS3(key);
+
             }
 
-            // 🟢 4️⃣ Eliminar favoritos y relaciones antes de borrar el usuario
+            // 🟢 Eliminar relaciones del usuario
             favoriteRepository.deleteByUserId(idUser);
             usuario.getRoles().clear();
             userRepository.save(usuario);
 
-            // 🟢 5️⃣ Eliminar al usuario de la base de datos
+            // 🟢 Eliminar usuario
             userRepository.deleteById(idUser);
 
         } else {
@@ -252,28 +235,6 @@ public class UserService implements UserInterface {
     public void sendMessageUser(String email, String name, String lastName) throws MessagingException {
         mailManager.sendMessage(email, name, lastName);
 
-    }
-
-    private String extractKeyFromS3Url(String imageUrl) {
-        if (imageUrl == null || imageUrl.isEmpty()) {
-            return null;
-        }
-
-        try {
-            // 🟢 1️⃣ Reemplazar espacios en la URL con "%20" para asegurar compatibilidad
-            String encodedUrl = imageUrl.replace(" ", "%20");
-
-            // 🟢 2️⃣ Convertir la URL en un objeto URI
-            URI uri = new URI(encodedUrl);
-
-            // 🟢 3️⃣ Extraer el path (clave completa en S3) y decodificar caracteres especiales
-            String key = URLDecoder.decode(uri.getPath().substring(1), StandardCharsets.UTF_8.name());
-
-            //LOGGER.info("ESTA ES LA KEY CORRECTA: " + key);
-            return key;
-        } catch (URISyntaxException | UnsupportedEncodingException e) {
-            throw new RuntimeException("Error al procesar la URL de la imagen", e);
-        }
     }
 
 

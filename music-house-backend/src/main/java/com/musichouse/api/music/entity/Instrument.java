@@ -26,13 +26,13 @@ public class Instrument {
      * Identificador único del instrumento.
      */
     @Id
-    @GeneratedValue(generator = "UUID")
+    @Column(name = "id_instrument", updatable = false, nullable = false)
     private UUID idInstrument;
 
     /**
      * Nombre del instrumento.
      */
-    @Column(length = 100,unique = true)
+    @Column(length = 100, unique = true)
     private String name;
 
     /**
@@ -85,6 +85,7 @@ public class Instrument {
     @OneToMany(
             mappedBy = "instrument",
             cascade = CascadeType.ALL,
+            orphanRemoval = true,
             fetch = FetchType.EAGER
     )
     @JsonIgnore

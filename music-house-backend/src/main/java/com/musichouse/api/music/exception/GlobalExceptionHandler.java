@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ApiResponse<Void>> handleResourceNotFound(ResourceNotFoundException e) {
-        return buildResponse(HttpStatus.NOT_FOUND, "Recurso no encontrado: " + e.getMessage());
+        return buildResponse(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     // 🔹 Manejo de validaciones de Spring (@Valid)

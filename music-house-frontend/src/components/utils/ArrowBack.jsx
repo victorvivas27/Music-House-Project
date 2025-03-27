@@ -16,28 +16,31 @@ const ArrowBack = () => {
     <Box
       onClick={handleBackClick}
       sx={{
-        width: '30px',
-        height: '30px',
+        position: 'fixed', // 👉 Esto la deja flotante
+        top:200,
+        left: 16,
+        zIndex: 9999, // 👈 Asegura que quede por encima de todo
+       padding:"1px",
         display: 'flex',
-        margin: 5,
+        margin: 1,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'var(--color-primario)', // Amarillo dorado
         borderRadius: '50%', // Hace que el botón sea redondo
         cursor: 'pointer',
-        boxShadow: '3px 3px 10px rgba(0, 0, 0, 0.2)',
+        boxShadow: 'var(--box-shadow)',
         transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
         animation: 'pulse 1.5s infinite ease-in-out',
        
         '&:hover': {
           transform: 'scale(1.1)', // Efecto de crecimiento suave
-          boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.3)'
+          boxShadow: 'var(--box-shadow)'
         }
       }}
     >
       <ArrowBackIcon sx={{ 
-        color: 'var(--texto-inverso)',
-         fontSize: '30px' ,
+        color: 'var(--color-secundario)',
+         fontSize: '20px' ,
        
          }} />
     </Box>

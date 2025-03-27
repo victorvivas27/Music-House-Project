@@ -64,6 +64,7 @@ export const Instrument = () => {
         {!loading && (
           <>
             <InstrumentDetailWrapper>
+              
               <ArrowBack/>
               {/*Contenedor de la imagen,de los datos y del iciono de favoritos */}
               <Box
@@ -72,7 +73,8 @@ export const Instrument = () => {
                   width: '100%',
                   height: '100%'
                 }}
-              >
+                >
+              
                 {/* Datos del instrumento */}
                 <Box
                   sx={{
@@ -96,6 +98,7 @@ export const Instrument = () => {
                     }
                   }}
                 >
+                  
                   {/* Descripción */}
                   <Typography
                     sx={{
@@ -454,7 +457,7 @@ export const Instrument = () => {
                 <Divider sx={{ width: '100%' }} />
                 <InstrumentTerms />
               </Box>
-              <ArrowBack/>
+              
             </InstrumentDetailWrapper>
           </>
         )}

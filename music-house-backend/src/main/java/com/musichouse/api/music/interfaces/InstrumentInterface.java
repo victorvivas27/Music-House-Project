@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface InstrumentInterface {
-    InstrumentDtoExit createInstrument(List<MultipartFile> files, InstrumentDtoEntrance instrumentsDtoEntrance)
-            throws ResourceNotFoundException;
+
+    InstrumentDtoExit createInstrument(
+            List<MultipartFile> files, InstrumentDtoEntrance instrumentsDtoEntrance
+    ) throws ResourceNotFoundException;
 
     List<InstrumentDtoExit> getAllInstruments();
 

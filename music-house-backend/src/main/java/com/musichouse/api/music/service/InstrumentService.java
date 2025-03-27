@@ -8,6 +8,7 @@ import com.musichouse.api.music.entity.*;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.interfaces.InstrumentInterface;
 import com.musichouse.api.music.repository.*;
+import com.musichouse.api.music.s3utils.S3UrlParser;
 import lombok.AllArgsConstructor;
 
 import org.modelmapper.ModelMapper;
@@ -49,8 +50,11 @@ public class InstrumentService implements InstrumentInterface {
         Theme theme = themeRepository.findById(instrumentDtoEntrance.getIdTheme())
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró la temática con el ID proporcionado"));
 
+
         // Crear entidad Instrument
         Instrument instrument = new Instrument();
+        UUID generatedId = UUID.randomUUID(); // 🔑 Generás el ID
+        instrument.setIdInstrument(generatedId);
         instrument.setName(instrumentDtoEntrance.getName());
         instrument.setDescription(instrumentDtoEntrance.getDescription());
         instrument.setRentalPrice(instrumentDtoEntrance.getRentalPrice());
@@ -71,7 +75,7 @@ public class InstrumentService implements InstrumentInterface {
         instrument.setCharacteristics(characteristics);
 
         // 📌 Subir imágenes a S3 y guardar URLs en la entidad
-        List<String> imageUrls = awss3Service.uploadFilesToS3Instrument(files, instrumentDtoEntrance);
+        List<String> imageUrls = awss3Service.uploadFilesToS3Instrument(files,generatedId);
 
         List<ImageUrls> imageUrlEntities = imageUrls.stream().map(url -> {
             ImageUrls imageUrlEntity = new ImageUrls();
@@ -164,21 +168,21 @@ public class InstrumentService implements InstrumentInterface {
                 .map(ImageUrls::getImageUrl)
                 .collect(Collectors.toList());
 
-        LOGGER.info("🟢 IMÁGENES A ELIMINAR: " + imageUrls);
+
 
         // 📌 Eliminar el instrumento de la base de datos primero
         instrumentRepository.delete(instrument);
-        LOGGER.info("✅ INSTRUMENTO ELIMINADO CON ÉXITO DE LA BASE DE DATOS");
+
 
         // 📌 Ahora que el instrumento se eliminó, proceder con la eliminación de imágenes en S3
         for (String imageUrl : imageUrls) {
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 try {
-                    String key = extractKeyFromS3Url(imageUrl);
+                    String key = S3UrlParser.extractKeyFromS3Url(imageUrl);
                     awss3Service.deleteFileFromS3(key);
-                    LOGGER.info("✅ Imagen eliminada de S3: " + key);
+
                 } catch (Exception e) {
-                    LOGGER.warn("⚠️ No se pudo eliminar la imagen en S3: " + imageUrl + ". Error: " + e.getMessage());
+
                 }
             }
         }
@@ -192,29 +196,5 @@ public class InstrumentService implements InstrumentInterface {
                 .map(instrument -> mapper.map(instrument, InstrumentDtoExit.class))
                 .collect(Collectors.toList());
     }
-
-
-
-    private String extractKeyFromS3Url(String imageUrl) {
-        if (imageUrl == null || imageUrl.isEmpty()) {
-            return null;
-        }
-
-        try {
-            // 📌 Asegurar compatibilidad con espacios y caracteres especiales
-            String encodedUrl = imageUrl.replace(" ", "%20");
-            URI uri = new URI(encodedUrl);
-
-            // 📌 Obtener el path de la URL y remover la primera barra "/"
-            String key = URLDecoder.decode(uri.getPath().substring(1), StandardCharsets.UTF_8.name());
-
-            LOGGER.info("🟢 Clave de imagen extraída: " + key);
-            return key;
-        } catch (URISyntaxException | UnsupportedEncodingException e) {
-            throw new RuntimeException("Error al procesar la URL de la imagen", e);
-        }
-    }
-
-
 
 }

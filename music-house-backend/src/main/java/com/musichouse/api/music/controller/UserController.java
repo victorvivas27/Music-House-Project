@@ -176,8 +176,8 @@ public class UserController {
 
     // 🔹 ELIMINAR USUARIO
     @DeleteMapping("/delete/{idUser}")
-    public ResponseEntity<ApiResponse<?>> deleteUser(@PathVariable UUID idUser) {
-        try {
+    public ResponseEntity<ApiResponse<?>> deleteUser(@PathVariable UUID idUser) throws ResourceNotFoundException {
+
             if (idUser == null) {
                 throw new IllegalArgumentException("El ID del usuario no puede ser nulo.");
             }
@@ -191,27 +191,6 @@ public class UserController {
                     .result(null)
                     .build());
 
-        } catch (ResourceNotFoundException e) {
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.<Void>builder()
-                            .status(HttpStatus.NOT_FOUND)
-                            .statusCode(HttpStatus.NOT_FOUND.value())
-                            .message("El usuario con el ID proporcionado no se encontró.")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
-
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<Void>builder()
-                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                            .message("Ocurrió un error al procesar la solicitud.")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
-        }
     }
 }

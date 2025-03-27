@@ -1,5 +1,7 @@
 package com.musichouse.api.music.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.ImagesUrlsDtoExit;
 import com.musichouse.api.music.dto.dto_modify.ImageUrlsDtoModify;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,19 +28,27 @@ public class ImageUrlsController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageUrlsController.class);
     private final ImageUrlsService imageUrlsService;
+    private final ObjectMapper objectMapper;
 
     // 🔹 AGREGAR IMAGENES
     @PostMapping("/add_image")
-    public ResponseEntity<ApiResponse<ImagesUrlsDtoExit>> createImageUrls(@RequestBody @Valid ImageUrlsDtoEntrance imageUrlsDtoEntrance) throws ResourceNotFoundException {
-        ImagesUrlsDtoExit imagesUrlsDtoExit = imageUrlsService.addImageUrls(imageUrlsDtoEntrance);
+    public ResponseEntity<ApiResponse<List<ImagesUrlsDtoExit>>> createImageUrls(
+            @RequestPart("files") List<MultipartFile> files,
+            @RequestPart("data") String jsonData
+    ) throws ResourceNotFoundException, JsonProcessingException {
+
+        // Parseás vos con ObjectMapper
+        ImageUrlsDtoEntrance imageUrlsDtoEntrance = objectMapper.readValue(jsonData, ImageUrlsDtoEntrance.class);
+
+        List<ImagesUrlsDtoExit> result = imageUrlsService.addImageUrls(files, imageUrlsDtoEntrance);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.<ImagesUrlsDtoExit>builder()
+                .body(ApiResponse.<List<ImagesUrlsDtoExit>>builder()
                         .status(HttpStatus.CREATED)
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Imágenes agregadas exitosamente.")
                         .error(null)
-                        .result(imagesUrlsDtoExit)
+                        .result(result)
                         .build());
     }
 
@@ -85,8 +96,12 @@ public class ImageUrlsController {
     }
 
     // 🔹 ELIMINAR IMAGEN
-    @DeleteMapping("/delete/{idInstrument}/{idImage}")
-    public ResponseEntity<ApiResponse<Void>> deleteImageUrls(@PathVariable UUID idInstrument, @PathVariable UUID idImage) throws ResourceNotFoundException {
+    @DeleteMapping("/delete/{idInstrument}/image-id/{idImage}")
+    public ResponseEntity<ApiResponse<Void>> deleteImageUrls(
+            @PathVariable UUID idInstrument,
+            @PathVariable UUID idImage)
+            throws ResourceNotFoundException {
+
         imageUrlsService.deleteImageUrls(idInstrument, idImage);
 
         return ResponseEntity.ok(ApiResponse.<Void>builder()
@@ -95,6 +110,23 @@ public class ImageUrlsController {
                 .message("Imagen eliminada exitosamente.")
                 .error(null)
                 .result(null)
+                .build());
+    }
+
+    @GetMapping("/by-instrument/{instrumentId}")
+    public ResponseEntity<ApiResponse<List<ImagesUrlsDtoExit>>> getImageUrlsByInstrumentId(@PathVariable UUID instrumentId) {
+        List<ImagesUrlsDtoExit> imagesUrlsDtoExits = imageUrlsService.getImageUrlsByInstrumentId(instrumentId);
+
+        String message = imagesUrlsDtoExits.isEmpty()
+                ? "No se encontraron imagenes para el instrumento con ID: " + instrumentId
+                : "Imagenes encontrados con éxito para el instrument con ID: " + instrumentId;
+
+        return ResponseEntity.ok(ApiResponse.<List<ImagesUrlsDtoExit>>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message(message)
+                .error(null)
+                .result(imagesUrlsDtoExits)
                 .build());
     }
 }

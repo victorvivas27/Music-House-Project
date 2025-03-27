@@ -7,12 +7,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 
 public interface AWSS3Interface {
-    String uploadFileToS3(MultipartFile file, UserDtoEntrance userDtoEntrance);
-    String uploadFileToS3Admin(MultipartFile file, UserAdminDtoEntrance userAdminDtoEntrance);
+    String uploadFileToS3User(MultipartFile file, UUID idUser);
 
-     List<String> uploadFilesToS3Instrument(List<MultipartFile> files, InstrumentDtoEntrance instrumentDtoEntrance);
+
+     List<String> uploadFilesToS3Instrument(List<MultipartFile> files, UUID idInstrument) ;
 
     List<String> getObjectFromS3();
 

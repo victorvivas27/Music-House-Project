@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
+import java.util.UUID;
 
 @Builder
 @Getter
@@ -14,6 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDtoEntrance {
+
+    private UUID idUser;
 
     //@NotNull(message = "Debes volocar un imagen de perfil")
     @Size(min = 1, max = 2048, message = "La imagen de perfil debe tener entre 1 y 2048 caracteres")

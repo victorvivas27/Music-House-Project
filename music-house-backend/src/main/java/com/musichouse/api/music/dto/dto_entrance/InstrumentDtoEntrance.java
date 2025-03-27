@@ -20,6 +20,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class InstrumentDtoEntrance {
 
+    private UUID idInstrumnet;
+
     @NotBlank(message = "El nombre del instrumento es obligatorio")
     @Size(max = 100, message = "El nombre del instrumento debe tener como máximo {max} caracteres")
     private String name;

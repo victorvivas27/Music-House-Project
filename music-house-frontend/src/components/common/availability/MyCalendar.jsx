@@ -15,6 +15,7 @@ import PropTypes from 'prop-types'
 import { Alert, Box, Snackbar, Typography } from '@mui/material'
 import { getErrorMessage } from '../../../api/getErrorMessage'
 
+
 const MyCalendar = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
   const [error, setError] = useState('')
@@ -196,13 +197,14 @@ const MyCalendar = ({ instrument }) => {
           </Box>
         </Box>
       </Box>
+     
 
       {/* Snackbar para errores */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
         onClose={handleCloseSnackbar}
-      >
+        >
         <Alert
           onClose={handleCloseSnackbar}
           severity="warning"
@@ -213,7 +215,7 @@ const MyCalendar = ({ instrument }) => {
             fontSize: '1rem',
             borderRadius: '8px'
           }}
-        >
+          >
           {error}
         </Alert>
       </Snackbar>

@@ -8,6 +8,7 @@ const ImageUpload = ({ onImagesChange }) => {
   const [selectedFiles, setSelectedFiles] = useState([])
 
   const handleFileChange = (event) => {
+    
     const newFiles = Array.from(event.target.files).filter(
       (file) => file.size <= 5 * 1024 * 1024
     )
@@ -88,7 +89,7 @@ const ImageUpload = ({ onImagesChange }) => {
                 height: '100%',
                 objectFit: 'cover',
                 borderRadius: '8px',
-                border: '2px solid #ddd'
+                border: '2px solid var(--color-primario)'
               }}
             />
             <IconButton
