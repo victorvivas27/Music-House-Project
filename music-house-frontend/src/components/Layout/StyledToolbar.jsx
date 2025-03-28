@@ -12,7 +12,7 @@ export const UpperStyledToolbar = styled(Toolbar)(({ theme }) => ({
   }
 }))
 
-export const MiddleStyledToolbar = styled(Toolbar)(({ theme }) => ({
+export const MiddleStyledToolbar = styled(Toolbar)(() => ({
   alignItems: 'flex-start',
   flexDirection: 'row-reverse',
   paddingTop: 0,

@@ -92,8 +92,6 @@ export const Instruments = () => {
       showError('Error', 'No hay instrumentos seleccionados para eliminar.')
       return
     }
-
-    // Mostrar el modal de confirmación
     const isConfirmed = await showConfirm({
       title: `¿Eliminar ${selectedIds.length} instrumento(s)?`,
       text: 'Esta acción no se puede deshacer.'
@@ -116,10 +114,6 @@ export const Instruments = () => {
 
   const emptyRows = getEmptyRows(page, rowsPerPage, rows)
   const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
-  rows.forEach((imagen) => {
-    console.log(imagen?.imageUrls[0].imageUrl)
-  })
-
   if (loading) return <Loader title="Cargando instrumentos..." />
 
   return (
@@ -292,11 +286,11 @@ export const Instruments = () => {
               page={Math.min(
                 page,
                 Math.max(0, Math.ceil(rows.length / rowsPerPage) - 1)
-              )} // Evita errores cuando cambia la cantidad de filas
+              )}
               onPageChange={(event, newPage) => setPage(newPage)}
               onRowsPerPageChange={(event) => {
                 setRowsPerPage(parseInt(event.target.value, 10))
-                setPage(0) // Reinicia la paginación al cambiar el número de filas
+                setPage(0)
               }}
               labelRowsPerPage="Filas por página"
               sx={{

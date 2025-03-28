@@ -7,7 +7,6 @@ import Close from '@mui/icons-material/Close'
 import { IconButton } from '@mui/material'
 import { searchInstrumentsByName } from '../../../api/instruments'
 import { InputFinder } from './InputFinder'
-//import { ButtonFinder } from './ButtonFinder'
 import { Link, useLocation } from 'react-router-dom'
 import Draggable from 'react-draggable'
 
@@ -23,7 +22,6 @@ export const Finder = () => {
     width: '100%'
   })
 
-  // 🧠 Actualizar posición cuando cambia input
   useEffect(() => {
     if (inputRef.current) {
       const rect = inputRef.current.getBoundingClientRect()
@@ -35,7 +33,6 @@ export const Finder = () => {
     }
   }, [searchPattern])
 
-  // 🔍 Buscar en tiempo real con debounce
   useEffect(() => {
     const fetchInstruments = async () => {
       if (searchPattern.trim() === '') {
@@ -73,11 +70,6 @@ export const Finder = () => {
     if (keyCode === 9) setShowSugests(false)
   }
 
-  /*const handleSubmitSearch = () => {
-    if (!searchPattern.trim()) return
-    setSearchPattern((prev) => prev + ' ') // Forzar cambio y que dispare el useEffect
-  }*/
-
   const clearFinder = () => {
     setSearchPattern('')
     setInstruments([])
@@ -86,7 +78,6 @@ export const Finder = () => {
   const location = useLocation()
 
   useEffect(() => {
-    // Si el usuario se va del home, ocultar el desplegable
     if (location.pathname !== '/') {
       setSearchPattern('')
       setInstruments([])
@@ -114,15 +105,6 @@ export const Finder = () => {
         inputRef={inputRef}
         onClose={clearFinder}
       />
-
-      {/*<ButtonFinder
-        variant="contained"
-        onClick={handleSubmitSearch}
-        disabled={!searchPattern}
-      >
-        Buscar
-      </ButtonFinder>*/}
-
       {showSugests && found && (
         <Draggable handle=".drag-header">
           <Box

@@ -26,7 +26,7 @@ const ModalUpdatePhone = ({
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const { showSuccess} = useAlert()
+  const { showSuccess } = useAlert()
   const isMobile = useMediaQuery('(max-width:600px)')
 
   const style = {
@@ -70,7 +70,7 @@ const ModalUpdatePhone = ({
         handleCloseModalPhoneUpdate()
         showSuccess(
           'Teléfono modificado',
-          'El teléfono ha sido modificado con éxito.',
+          'El teléfono ha sido modificado con éxito.'
         )
       }, 1500)
     } catch (error) {
@@ -122,13 +122,13 @@ const ModalUpdatePhone = ({
               type="submit"
               disabled={loading}
               sx={{
-                minWidth: '150px', // Ancho suficiente para acomodar el texto y el spinner
+                minWidth: '150px',
                 minHeight: '40px',
 
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '10px' // Agrega un pequeño espacio entre el spinner y el texto
+                gap: '10px'
               }}
             >
               {loading ? (

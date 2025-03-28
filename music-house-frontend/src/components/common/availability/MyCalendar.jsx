@@ -15,11 +15,10 @@ import PropTypes from 'prop-types'
 import { Alert, Box, Snackbar, Typography } from '@mui/material'
 import { getErrorMessage } from '../../../api/getErrorMessage'
 
-
 const MyCalendar = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
   const [error, setError] = useState('')
-  const [openSnackbar, setOpenSnackbar] = useState(false) 
+  const [openSnackbar, setOpenSnackbar] = useState(false)
   const id = instrument?.result.idInstrument
 
   useEffect(() => {
@@ -28,22 +27,21 @@ const MyCalendar = ({ instrument }) => {
       try {
         const response = await getAllAvailableDatesByInstrument(id)
         const dates = response.result || []
-        
+
         const filteredDates = dates
           .filter((item) => item.available)
           .map((item) => dayjs(item.dateAvailable).format('YYYY-MM-DD'))
-        
+
         setAvailableDates(filteredDates)
       } catch (error) {
         setError(`❌ ${getErrorMessage(error)}`)
-        setOpenSnackbar(true) 
+        setOpenSnackbar(true)
       }
     }
 
     fetchAvailableDates()
   }, [id])
 
- 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false)
   }
@@ -58,33 +56,29 @@ const MyCalendar = ({ instrument }) => {
     const newDate = {
       idInstrument: id,
       dateAvailable: formattedDay,
-      available: !isAlreadyAvailable 
+      available: !isAlreadyAvailable
     }
 
     try {
-      await addAvailableDates([newDate]) 
+      await addAvailableDates([newDate])
 
-      setAvailableDates(
-        (prevDates) =>
-          isAlreadyAvailable
-            ? prevDates.filter((date) => date !== formattedDay) 
-            : [...prevDates, formattedDay] 
+      setAvailableDates((prevDates) =>
+        isAlreadyAvailable
+          ? prevDates.filter((date) => date !== formattedDay)
+          : [...prevDates, formattedDay]
       )
     } catch (error) {
-       
-
       setError(`❌ ${getErrorMessage(error)}`)
       setOpenSnackbar(true)
     }
   }
 
-  
   const CustomDayComponent = (props) => {
     const { day, selected, ...other } = props
     const formattedDay = day.format('YYYY-MM-DD')
     const isAvailable = availableDates.includes(formattedDay)
-    const today = dayjs() 
-    const isPastDate = day.isBefore(today, 'day') 
+    const today = dayjs()
+    const isPastDate = day.isBefore(today, 'day')
 
     return (
       <PickersDay
@@ -94,19 +88,17 @@ const MyCalendar = ({ instrument }) => {
         onClick={() => handleDayClick(day)}
         sx={{
           bgcolor: isPastDate
-            ? 'var(--calendario-color-no-disponible) !important' 
+            ? 'var(--calendario-color-no-disponible) !important'
             : isAvailable
-              ? 'var( --color-exito) !important' 
-              : 'var( --calendario-fondo-no-disponible)!important', 
+              ? 'var( --color-exito) !important'
+              : 'var( --calendario-fondo-no-disponible)!important',
 
-          color: isPastDate
-            ? '#7a7a7a !important' 
-            : '#ffffff !important',
+          color: isPastDate ? '#7a7a7a !important' : '#ffffff !important',
 
           borderRadius: '50%',
-          opacity: isPastDate ? 0.6 : 1, 
-          border: selected ? '3px solid var( --color-primario)' : 'none', 
-          transition: 'all 0.3s ease' 
+          opacity: isPastDate ? 0.6 : 1,
+          border: selected ? '3px solid var( --color-primario)' : 'none',
+          transition: 'all 0.3s ease'
         }}
       />
     )
@@ -197,25 +189,24 @@ const MyCalendar = ({ instrument }) => {
           </Box>
         </Box>
       </Box>
-     
 
       {/* Snackbar para errores */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
         onClose={handleCloseSnackbar}
-        >
+      >
         <Alert
           onClose={handleCloseSnackbar}
           severity="warning"
           sx={{
-            backgroundColor: 'var(--color-advertencia)', 
+            backgroundColor: 'var(--color-advertencia)',
             color: 'var(--color-error)',
             fontWeight: 'bold',
             fontSize: '1rem',
             borderRadius: '8px'
           }}
-          >
+        >
           {error}
         </Alert>
       </Snackbar>
@@ -223,7 +214,6 @@ const MyCalendar = ({ instrument }) => {
   )
 }
 
-// Definimos los PropTypes
 MyCalendar.propTypes = {
   instrument: PropTypes.shape({
     result: PropTypes.shape({

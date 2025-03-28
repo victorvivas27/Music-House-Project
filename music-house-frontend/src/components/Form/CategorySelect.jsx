@@ -3,22 +3,21 @@ import { useEffect, useState } from 'react'
 import { getCategories } from '../../api/categories'
 import { Loader } from '../common/loader/Loader'
 import PropTypes from 'prop-types'
-//import useAlert from '../../hook/useAlert'
-
-const CategorySelect = ({label, onChange,selectedCategoryId = undefined}) => {
-  const [categories, setCategories] = useState([]) 
+const CategorySelect = ({
+  label,
+  onChange,
+  selectedCategoryId = undefined
+}) => {
+  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('')
 
-
-  // ✅ Obtener categorias del backend
   useEffect(() => {
     const fetchCategory = async () => {
       try {
         const response = await getCategories()
         setCategories(response.result || [])
       } catch (error) {
-      
         setCategories([])
       } finally {
         setLoading(false)
@@ -28,7 +27,6 @@ const CategorySelect = ({label, onChange,selectedCategoryId = undefined}) => {
     fetchCategory()
   }, [])
 
-  // ✅ Establecer la categoría seleccionada desde prop
   useEffect(() => {
     if (!selectedCategoryId || categories.length === 0) return
 
@@ -40,7 +38,6 @@ const CategorySelect = ({label, onChange,selectedCategoryId = undefined}) => {
     }
   }, [selectedCategoryId, categories])
 
-  // ✅ Comunicar cambio al padre
   useEffect(() => {
     if (loading || !selectedCategory) return
     if (typeof onChange === 'function') {

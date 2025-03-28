@@ -18,7 +18,7 @@ export const InstrumentGallery = ({ itemData }) => {
                 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
               '&:hover': {
                 transform: 'scale(1.03)',
-                boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.15)'
+                boxShadow: 'var(--box-shadow)'
               }
             }}
           >

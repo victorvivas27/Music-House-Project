@@ -1,13 +1,7 @@
 import { Select, MenuItem, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-
-
 import PropTypes from 'prop-types'
 import { roleList } from '../../utils/roles/constants'
-
-
-
-
 export const RoleSelect = ({ onChange, selectedRole = '' }) => {
   const [roleValue, setRoleValue] = useState(selectedRole)
 
@@ -30,7 +24,12 @@ export const RoleSelect = ({ onChange, selectedRole = '' }) => {
   }
 
   return (
-    <Select displayEmpty value={roleValue} onChange={handleRoleChange} fullWidth>
+    <Select
+      displayEmpty
+      value={roleValue}
+      onChange={handleRoleChange}
+      fullWidth
+    >
       <MenuItem value="" disabled>
         <Typography variant="h6">Asignar Rol</Typography>
       </MenuItem>

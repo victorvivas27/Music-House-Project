@@ -132,13 +132,11 @@ const Login = ({ onSwitch }) => {
                 fullWidth
                 margin="normal"
                 sx={{
-                  //minHeight: '60px',
                   ...inputStyles
                 }}
               >
                 <TextField
                   id="outlined-multiline-flexible"
-                  //placeholder="Email"
                   label="📧 Email"
                   name="email"
                   onChange={formik.handleChange}
@@ -148,7 +146,6 @@ const Login = ({ onSwitch }) => {
                   helperText={
                     (formik.touched.email && formik.errors.email) || ' '
                   }
-                 
                 />
               </FormControl>
 
@@ -156,7 +153,6 @@ const Login = ({ onSwitch }) => {
                 fullWidth
                 margin="normal"
                 sx={{
-                  // minHeight: '60px',
                   ...inputStyles
                 }}
               >
@@ -261,7 +257,6 @@ const Login = ({ onSwitch }) => {
     </>
   )
 }
-// Definición de los tipos de props esperados
 Login.propTypes = {
   onSwitch: PropTypes.func.isRequired
 }

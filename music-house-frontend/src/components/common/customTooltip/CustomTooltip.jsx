@@ -1,6 +1,6 @@
 import { styled, Tooltip, tooltipClasses } from "@mui/material";
 
-// 🔧 Estilo personalizado al tooltip interno
+
 const StyledTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(() => ({

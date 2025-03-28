@@ -43,7 +43,7 @@ export const NewCategoryForm = () => {
           })
         }
       } catch (error) {
-       showError(`❌ ${getErrorMessage(error)}`)
+        showError(`❌ ${getErrorMessage(error)}`)
       } finally {
         setTimeout(() => {
           dispatch({ type: actions.SET_LOADING, payload: false })

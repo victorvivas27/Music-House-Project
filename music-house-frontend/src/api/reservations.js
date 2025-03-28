@@ -1,11 +1,10 @@
 
 import axios from 'axios';
 import { handleApiError } from './handleApiError';
-//const URL_RESERVATIONS = 'https://music-house.up.railway.app/api/reservations'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 
-// Obtener todas las reservas
+
 export const getReservations = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/reservations/all`);
@@ -15,7 +14,7 @@ export const getReservations = async () => {
   }
 };
 
-// Obtener reservas por ID de usuario
+
 export const getReservationById = async (id) => {
   try {
     const response = await axios.get(`${BASE_URL}/reservations/search/user/${id}`);
@@ -25,7 +24,7 @@ export const getReservationById = async (id) => {
   }
 };
 
-// Eliminar una reserva
+
 export const deleteReservation = async (idInstrument, idUser, idReservation) => {
   try {
     const response = await axios.delete(
@@ -37,7 +36,7 @@ export const deleteReservation = async (idInstrument, idUser, idReservation) => 
   }
 };
 
-// Crear una nueva reserva
+
 export const createReservation = async (idUser, idInstrument, startDate, endDate) => {
   try {
     const response = await axios.post(`${BASE_URL}/reservations/create`, {

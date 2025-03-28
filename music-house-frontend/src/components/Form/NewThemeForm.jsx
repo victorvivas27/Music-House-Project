@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 import { createTheme } from '../../api/theme'
-
 import { useAppStates } from '../utils/global.context'
 import { actions } from '../utils/actions'
 import { ThemeForm } from './ThemeForm'

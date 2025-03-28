@@ -8,21 +8,17 @@ export const BoxFormUnder = styled(Grid)(({ theme }) => ({
   justifyContent: 'center',
   margin: 'auto',
   padding: '10px',
-  
 
-  // Estilos para pantallas pequeñas
   [theme.breakpoints.down('sm')]: {
     width: '99%',
     height: 'auto'
   },
 
-  // Estilos para tablets (pantallas medianas)
   [theme.breakpoints.between('sm', 'md')]: {
     width: '95%',
     height: '95%'
   },
 
-  // Estilos para pantallas grandes
   [theme.breakpoints.up('md')]: {
     alignItems: 'flex-end',
     justifyContent: 'center',

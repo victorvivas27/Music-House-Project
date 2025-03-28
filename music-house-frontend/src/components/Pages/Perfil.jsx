@@ -63,13 +63,13 @@ const Perfil = () => {
   const handleCloseModalUser = () => setOpenModalUser(false)
 
   const handleOpenModalPhoneUpdate = (phone) => {
-    setSelectedPhone(phone) // 📌 Guardar el teléfono seleccionado
+    setSelectedPhone(phone)
     setOpenModalPhoneUpdate(true)
   }
 
   const handleCloseModalPhoneUpdate = () => {
     setOpenModalPhoneUpdate(false)
-    setSelectedPhone(null) // 📌 Limpiar el estado al cerrar
+    setSelectedPhone(null)
   }
 
   const handleOpenModalDireccionUpdate = (address) => {
@@ -79,10 +79,9 @@ const Perfil = () => {
 
   const handleCloseModalDireccionUpdate = () => {
     setOpenModalDireccionUpdate(false)
-    setSelectedDireccion(null) // 📌 Limpiar el estado al cerrar
+    setSelectedDireccion(null)
   }
 
-  // Función para cargar los datos del usuario
   const fetchUser = async () => {
     if (!idUser) return
 
@@ -103,12 +102,10 @@ const Perfil = () => {
     }
   }
 
-  // Llamar la función cuando el componente se monte
   useEffect(() => {
     fetchUser()
   }, [idUser])
 
-  // Cerrar el snackbar de error
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false)
   }
@@ -123,7 +120,7 @@ const Perfil = () => {
         alignItems: 'center',
         minHeight: '100vh',
         paddingTop: isMobile ? '200px' : '360px',
-        paddingBottom: isMobile ? '100px' : '150px' // 📌 Ajuste de padding en móvil
+        paddingBottom: isMobile ? '100px' : '150px'
       }}
     >
       {!loading && userData && (
@@ -134,15 +131,15 @@ const Perfil = () => {
               borderRadius: '12px',
               boxShadow:
                 ' rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;',
-              maxWidth: isMobile ? '95%' : 1300 // 📌 Ajuste de ancho en móvil
+              maxWidth: isMobile ? '95%' : 1300
             }}
           >
             <Grid container justifyContent="center">
               <Card
                 sx={{
-                  width: isMobile ? '100%' : '900px', // 📌 Ancho dinámico según pantalla
+                  width: isMobile ? '100%' : '900px',
                   minHeight: '500px',
-                  p: isMobile ? 2 : 4, // 📌 Padding reducido en móviles
+                  p: isMobile ? 2 : 4,
                   boxShadow: 4,
                   borderRadius: 4
                 }}
@@ -163,7 +160,7 @@ const Perfil = () => {
                           fontSize: 40
                         }}
                         onClick={handleOpenModalUser}
-                        src={userData?.picture} // La imagen del usuario si existe
+                        src={userData?.picture}
                       >
                         {userData?.picture ? null : userData?.name?.[0]}
                         {/* Si hay imagen, no muestra texto; si no hay imagen, muestra la inicial del nombre */}
@@ -392,7 +389,6 @@ const Perfil = () => {
                                   <IconButton
                                     onClick={async () => {
                                       if (userData.addresses.length > 1) {
-                                        // Evita eliminar la última dirección
                                         const isConfirm = await showConfirm(
                                           '¿Estás seguro?',
                                           'Esta acción eliminará la dirección de forma permanente.'
@@ -420,11 +416,11 @@ const Perfil = () => {
                                       opacity:
                                         userData.addresses.length === 1
                                           ? 0.5
-                                          : 1, // 🔹 Reduce opacidad cuando está deshabilitado
+                                          : 1,
                                       cursor:
                                         userData.addresses.length === 1
                                           ? 'not-allowed'
-                                          : 'pointer' // 🔹 Cambia el cursor
+                                          : 'pointer'
                                     }}
                                   >
                                     <DeleteIcon
@@ -432,7 +428,7 @@ const Perfil = () => {
                                         color:
                                           userData.addresses.length === 1
                                             ? 'gray'
-                                            : 'var(--color-error)' // 🔹 Cambia color del ícono
+                                            : 'var(--color-error)'
                                       }}
                                     />
                                   </IconButton>

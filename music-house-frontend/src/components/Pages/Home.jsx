@@ -16,15 +16,15 @@ export const Home = () => {
   const [selectedInstruments, setSelectedInstruments] = useState([])
   const [loading, setLoading] = useState(true)
   const [instruments, setInstruments] = useState([])
-  
+
   useEffect(() => {
     const fetchInstruments = async () => {
       setLoading(true)
       try {
-        const { result} = await getInstruments()
+        const { result } = await getInstruments()
         setInstruments(result)
       } catch (error) {
-        toast.error(error);
+        toast.error(error)
       } finally {
         setTimeout(() => setLoading(false), 500)
       }
@@ -61,7 +61,7 @@ export const Home = () => {
   if (loading) return <Loader title="Un momento por favor..." />
 
   return (
-    <main >
+    <main>
       {!loading && (
         <>
           <MainWrapper>

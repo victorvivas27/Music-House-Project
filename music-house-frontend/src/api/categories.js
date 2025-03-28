@@ -1,10 +1,7 @@
 import axios from 'axios';
 import { handleApiError } from './handleApiError';
-
-//const URL_CATEGORIES = 'https://music-house.up.railway.app/api/category'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Obtener todas las categorías
 export const getCategories = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/category/all`);
@@ -14,7 +11,7 @@ export const getCategories = async () => {
   }
 };
 
-// Obtener una categoría por ID
+
 export const getCategoryById = async (idCategory) => {
   try {
     const response = await axios.get(`${BASE_URL}/category/search/${idCategory}`);
@@ -24,7 +21,7 @@ export const getCategoryById = async (idCategory) => {
   }
 };
 
-// Crear una nueva categoría
+
 export const createCategory = async ({ categoryName, description }) => {
   try {
     const response = await axios.post(`${BASE_URL}/category/create`, {
@@ -37,7 +34,7 @@ export const createCategory = async ({ categoryName, description }) => {
   }
 };
 
-// Actualizar una categoría existente
+
 export const updateCategory = async ({ idCategory, categoryName, description }) => {
   try {
     const response = await axios.put(`${BASE_URL}/category/update`, {
@@ -51,7 +48,7 @@ export const updateCategory = async ({ idCategory, categoryName, description }) 
   }
 };
 
-// Eliminar una categoría
+
 export const deleteCategory = async (idCategory) => {
   try {
     const response = await axios.delete(`${BASE_URL}/category/delete/${idCategory}`);

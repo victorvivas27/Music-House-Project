@@ -10,7 +10,7 @@ export const InputFinder = ({
   setValue,
   onKeyUp,
   onKeyDown,
-  inputRef,
+  inputRef
 }) => {
   const handleKeyUp = (event) => {
     const keyCode = event.keyCode
@@ -30,13 +30,8 @@ export const InputFinder = ({
     if (typeof setValue === 'function') setValue(value.trim())
   }
 
- 
-
   return (
-    <Search
-     ref={inputRef}
-    
-     >
+    <Search ref={inputRef}>
       <SearchIconWrapper>
         <SearchIcon />
       </SearchIconWrapper>
@@ -57,14 +52,11 @@ export const InputFinder = ({
           right: 0,
           '& svg': { height: '1.5rem' }
         }}
-      >
-       
-      </Box>
+      ></Box>
     </Search>
   )
 }
 
-// 🔹 Agregamos validación de `PropTypes`
 InputFinder.propTypes = {
   value: PropTypes.string,
   setValue: PropTypes.func.isRequired,
@@ -75,4 +67,4 @@ InputFinder.propTypes = {
     PropTypes.shape({ current: PropTypes.instanceOf(Element) })
   ]),
   onClose: PropTypes.func
-};
+}

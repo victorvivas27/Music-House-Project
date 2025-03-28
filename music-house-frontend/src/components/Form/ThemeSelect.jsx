@@ -9,14 +9,12 @@ const ThemeSelect = ({ label, onChange, selectedThemeId = undefined }) => {
   const [loading, setLoading] = useState(true)
   const [selectedTheme, setSelectedTheme] = useState('')
 
-  // ✅ Obtener temáticas del backend
   useEffect(() => {
     const fetchThemes = async () => {
       try {
         const response = await getThemes()
         setThemes(response.result || [])
       } catch (error) {
-        
         setThemes([])
       } finally {
         setLoading(false)
@@ -26,17 +24,15 @@ const ThemeSelect = ({ label, onChange, selectedThemeId = undefined }) => {
     fetchThemes()
   }, [])
 
-  // ✅ Establecer el tema seleccionado desde la prop si viene
   useEffect(() => {
     if (!selectedThemeId || themes.length === 0) return
 
-    const foundTheme = themes.find(theme => theme.idTheme === selectedThemeId)
+    const foundTheme = themes.find((theme) => theme.idTheme === selectedThemeId)
     if (foundTheme) {
       setSelectedTheme(foundTheme)
     }
   }, [selectedThemeId, themes])
 
-  // ✅ Comunicar cambio al padre
   useEffect(() => {
     if (loading || !selectedTheme) return
     if (typeof onChange === 'function') {
@@ -49,12 +45,10 @@ const ThemeSelect = ({ label, onChange, selectedThemeId = undefined }) => {
     }
   }, [selectedTheme, loading, onChange])
 
-  // ✅ Manejador de cambios en el select
   const handleThemeChange = (event) => {
     setSelectedTheme(event.target.value)
   }
 
-  // ✅ Mostrar loader mientras se carga
   if (loading) {
     return <Loader fullSize={false} />
   }

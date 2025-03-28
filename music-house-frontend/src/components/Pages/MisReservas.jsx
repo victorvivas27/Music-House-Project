@@ -104,9 +104,9 @@ const MisReservas = () => {
           mx: 'auto',
           width: 'fit-content',
           fontSize: {
-            xs: '1.5rem', // mobile
-            sm: '2rem', // tablets
-            md: '2.5rem' // desktop
+            xs: '1.5rem',
+            sm: '2rem',
+            md: '2.5rem'
           }
         }}
       >

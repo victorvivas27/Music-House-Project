@@ -1,9 +1,15 @@
-import { styled } from '@mui/material/styles'
-import { Container, CircularProgress, Typography } from '@mui/material'
+import { keyframes, styled } from '@mui/material/styles'
+import { Container, CircularProgress, Typography, Box } from '@mui/material'
 import PropTypes from 'prop-types'
 
+// Animación sutil en el texto
+const fadeIn = keyframes`
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+`
+
 const CustomLoader = styled(CircularProgress)(({ theme }) => ({
-  color: theme.palette.secondary.main
+  color: theme.palette.primary.main,
 }))
 
 export const Loader = ({ title, fullSize = true }) => {
@@ -16,15 +22,29 @@ export const Loader = ({ title, fullSize = true }) => {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
-        gap: title ? '2rem' : '0'
+        gap: title ? '1.5rem' : 0,
+        backgroundColor: fullSize ? 'transparent' : 'var(--color-primario)',
       }}
     >
-      <CustomLoader disableShrink size={fullSize ? '4rem' : '1.5rem'} />
+      <Box sx={{ position: 'relative' }}>
+        <CustomLoader
+          disableShrink
+          size={fullSize ? '4rem' : '2rem'}
+          thickness={4}
+        />
+      </Box>
+
       {title && (
         <Typography
           variant="h5"
           component="h2"
-          sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' } }}
+          sx={{
+            fontWeight: 500,
+            fontSize: { xs: '1.2rem', sm: '1.5rem' },
+            color: 'var(--color-exito)',
+            animation: `${fadeIn} 0.6s ease-in-out`,
+            textAlign: 'center',
+          }}
         >
           {title}
         </Typography>
@@ -32,7 +52,8 @@ export const Loader = ({ title, fullSize = true }) => {
     </Container>
   )
 }
- Loader.propTypes={
-  title:PropTypes.string,
-  fullSize:PropTypes.bool
- }
+
+Loader.propTypes = {
+  title: PropTypes.string,
+  fullSize: PropTypes.bool,
+}

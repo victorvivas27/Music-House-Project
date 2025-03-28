@@ -33,7 +33,7 @@ const EditUser = ({ onSwitch }) => {
     setLoading(true)
     try {
       const userData = await UsersApi.getUserById(id)
-      const result = userData.result 
+      const result = userData.result
       setUser(userData)
       setFormData({
         idUser: id,
@@ -43,7 +43,7 @@ const EditUser = ({ onSwitch }) => {
         email: result.email || '',
         addresses: result.addresses?.length ? result.addresses : [],
         phones: result.phones?.length ? result.phones : [],
-        telegramChatId:result.telegramChatId || '',
+        telegramChatId: result.telegramChatId || '',
         roles: result.roles || [],
         selectedRole: ''
       })
@@ -86,10 +86,8 @@ const EditUser = ({ onSwitch }) => {
       if (picture instanceof File) {
         formDataToSend.append('file', picture)
       }
-
       const response = await UsersApi.updateUser(formDataToSend)
 
-      // ✅ Actualizar dirección
       if (formData.addresses.length > 0) {
         const address = formData.addresses[0]
         await updateAddress({
@@ -117,7 +115,7 @@ const EditUser = ({ onSwitch }) => {
         }, 1100)
       }
     } catch (error) {
-     showError(`❌ ${getErrorMessage(error)}`)
+      showError(`❌ ${getErrorMessage(error)}`)
     } finally {
       setTimeout(() => {
         setIsSubmitting(false)

@@ -55,10 +55,10 @@ const NewInstrumentForm = () => {
         characteristic: formDataToCharacteristics(formData)
       })
 
-      // ✅ Agregar JSON correctamente como un Blob con application/json
-      formDataToSend.append( 'instrument',new Blob([instrumentJson], { type: 'application/json' }))
-
-      // ✅ Agregar imágenes correctamente
+      formDataToSend.append(
+        'instrument',
+        new Blob([instrumentJson], { type: 'application/json' })
+      )
       if (formData.imageUrls && formData.imageUrls.length > 0) {
         for (let file of formData.imageUrls) {
           if (file instanceof File) {
@@ -69,7 +69,7 @@ const NewInstrumentForm = () => {
 
       try {
         const response = await createInstrument(formDataToSend)
-        showSuccess(`✅ ${response.message}`) 
+        showSuccess(`✅ ${response.message}`)
 
         setTimeout(() => {
           navigate('/instruments')

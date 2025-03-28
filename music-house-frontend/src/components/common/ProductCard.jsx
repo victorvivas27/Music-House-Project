@@ -74,11 +74,11 @@ const ProductCard = ({ name, imageUrl, id }) => {
 
       <CustomTooltip
         title={
-          <Typography 
-          sx={{
-            fontFamily:"Roboto",
-            fontSize:10
-          }}
+          <Typography
+            sx={{
+              fontFamily: 'Roboto',
+              fontSize: 10
+            }}
           >
             <strong>✅ Más info</strong>
           </Typography>
@@ -86,39 +86,39 @@ const ProductCard = ({ name, imageUrl, id }) => {
         arrow
       >
         <Link to={`/instrument/${id}`} className="product-link">
-        {!imgError ? (
-  <CardMedia
-    component="img"
-    sx={{
-      width: 150,
-      height: 150,
-      objectFit: 'cover',
-      borderRadius: '50%',
-      boxShadow: 'var(--box-shadow)'
-    }}
-    image={imageUrl || '/default-image.jpg'}
-    alt={name}
-    onError={() => setImgError(true)}
-  />
-) : (
-  <Box
-    sx={{
-      width: 150,
-      height: 150,
-      borderRadius: '50%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#eee',
-      fontSize: '0.75rem',
-      textAlign: 'center',
-      padding: 1,
-      boxShadow: 'var(--box-shadow)'
-    }}
-  >
-    Imagen no disponible: {name}
-  </Box>
-)}
+          {!imgError ? (
+            <CardMedia
+              component="img"
+              sx={{
+                width: 150,
+                height: 150,
+                objectFit: 'cover',
+                borderRadius: '50%',
+                boxShadow: 'var(--box-shadow)'
+              }}
+              image={imageUrl || '/default-image.jpg'}
+              alt={name}
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <Box
+              sx={{
+                width: 150,
+                height: 150,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#eee',
+                fontSize: '0.75rem',
+                textAlign: 'center',
+                padding: 1,
+                boxShadow: 'var(--box-shadow)'
+              }}
+            >
+              Imagen no disponible: {name}
+            </Box>
+          )}
         </Link>
       </CustomTooltip>
       {/* ✅ Título debajo de la imagen */}
@@ -145,8 +145,7 @@ const ProductCard = ({ name, imageUrl, id }) => {
           alignItems: 'center',
           height: 30,
           width: '100%',
-          marginTop: 'auto',
-         
+          marginTop: 'auto'
         }}
       >
         {isUser && (

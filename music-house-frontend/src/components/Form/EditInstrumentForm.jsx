@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { Box } from '@mui/material'
 import InstrumentForm from './InstrumentForm'
 import { getInstrumentById, updateInstrument } from '../../api/instruments'
-
 import {
   characteristicsToFormData,
   formDataToCharacteristics
@@ -15,34 +14,32 @@ import useAlert from '../../hook/useAlert'
 import { getErrorMessage } from '../../api/getErrorMessage'
 import { addImage } from '../../api/images'
 
-
 const EditInstrumentForm = ({ id }) => {
-  const [instrument, setInstrument] = useState(null);
-  const [initialFormData, setInitialFormData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-  const { showSuccess, showError } = useAlert();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [instrument, setInstrument] = useState(null)
+  const [initialFormData, setInitialFormData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+  const { showSuccess, showError } = useAlert()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // ✅ Obtener instrumento por ID
   const getInstrument = useCallback(() => {
-    setLoading(true);
+    setLoading(true)
 
     getInstrumentById(id)
       .then((response) => {
-        setInstrument(response.result || null);
+        setInstrument(response.result || null)
       })
       .catch(() => {
-        setInstrument(null);
-      });
-  }, [id]);
+        setInstrument(null)
+      })
+  }, [id])
 
   useEffect(() => {
-    getInstrument();
-  }, [getInstrument]);
+    getInstrument()
+  }, [getInstrument])
 
   useEffect(() => {
-    if (!instrument?.idInstrument) return;
+    if (!instrument?.idInstrument) return
 
     const data = {
       idInstrument: instrument.idInstrument || '',
@@ -54,29 +51,27 @@ const EditInstrumentForm = ({ id }) => {
       idCategory: instrument.category?.idCategory || '',
       idTheme: instrument.theme?.idTheme || '',
       characteristics: characteristicsToFormData({ result: instrument })
-    };
-    setInitialFormData(data);
-    setLoading(false);
-  }, [instrument]);
+    }
+    setInitialFormData(data)
+    setLoading(false)
+  }, [instrument])
 
-  // ✅ Enviar actualización
   const onSubmit = async (formData) => {
-    if (!formData) return;
+    if (!formData) return
 
     const data = {
       ...formData,
       characteristic: formDataToCharacteristics(formData)
-    };
+    }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     try {
-      const response = await updateInstrument(data);
+      const response = await updateInstrument(data)
 
       if (response?.result) {
-        // 🟢 Si hay imágenes nuevas, subilas a S3
         if (formData.imageUrls && formData.imageUrls.length > 0) {
-          const formDataImages = new FormData();
+          const formDataImages = new FormData()
 
           formDataImages.append(
             'data',
@@ -84,30 +79,30 @@ const EditInstrumentForm = ({ id }) => {
               [JSON.stringify({ idInstrument: formData.idInstrument })],
               { type: 'application/json' }
             )
-          );
+          )
 
           formData.imageUrls.forEach((file) => {
-            formDataImages.append('files', file);
-          });
+            formDataImages.append('files', file)
+          })
 
-          await addImage(formDataImages); // ✅ Usamos tu función reutilizable
+          await addImage(formDataImages)
         }
 
         setTimeout(() => {
-          showSuccess(`✅ ${response.message}`);
-          navigate('/instruments');
-        }, 1100);
+          showSuccess(`✅ ${response.message}`)
+          navigate('/instruments')
+        }, 1100)
       } else {
-        showError(response?.message);
+        showError(response?.message)
       }
     } catch (error) {
-      showError(`❌ ${getErrorMessage(error)}`);
+      showError(`❌ ${getErrorMessage(error)}`)
     } finally {
-      setTimeout(() => setIsSubmitting(false), 1100);
+      setTimeout(() => setIsSubmitting(false), 1100)
     }
-  };
+  }
 
-  if (loading) return <Loader title="Un momento por favor..." />;
+  if (loading) return <Loader title="Un momento por favor..." />
 
   return (
     <Box
@@ -126,12 +121,12 @@ const EditInstrumentForm = ({ id }) => {
         isEditing={true}
       />
     </Box>
-  );
-};
+  )
+}
 
-export default EditInstrumentForm;
+export default EditInstrumentForm
 
 EditInstrumentForm.propTypes = {
   id: PropTypes.string.isRequired,
   onSaved: PropTypes.func
-};
+}

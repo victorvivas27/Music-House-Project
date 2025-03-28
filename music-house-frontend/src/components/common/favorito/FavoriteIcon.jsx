@@ -46,7 +46,6 @@ const FavoriteIcon = ({ idInstrument }) => {
       setIsFavorite(newStatus)
 
       if (newStatus) {
-        // ✅ Se agregó
         const newFavorite = {
           instrument: { idInstrument: id },
           isFavorite: true

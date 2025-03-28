@@ -11,16 +11,13 @@ export const Search = styled('div')(({ theme }) => ({
   marginLeft: 0,
   width: '100%',
   height: '3.5rem',
-  
-
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(3),
-    width: '80%' // 🔹 Más amplio en sm
+    width: '80%'
   },
-
   [theme.breakpoints.up('md')]: {
     margin: 0,
-    width: '500px', // 🔹 Tamaño fijo para desktop (podés ajustar esto)
+    width: '500px',
     maxWidth: '90%'
   },
 

@@ -36,7 +36,6 @@ const InstrumentForm = ({
   const title = isEditing ? 'Editar Instrumento' : 'Registrar Instrumento'
   const titleDelLoader = isEditing ? 'Editando...' : 'Creando...'
 
-  // Refs para auto-focus en errores
   const fieldRefs = {
     name: useRef(),
     description: useRef(),
@@ -145,12 +144,15 @@ const InstrumentForm = ({
             }}
           >
             {/*-----------------------Formulario lado izquierdo------------------------ */}
-            <Grid 
-            item xs={12} md={6}
-             sx={{
-               padding: 2,
-              width: '90%' 
-              }}>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{
+                padding: 2,
+                width: '90%'
+              }}
+            >
               <Typography variant="h6">{title}</Typography>
 
               <ValidatedTextField
@@ -181,7 +183,6 @@ const InstrumentForm = ({
                 value={formData.measures}
                 inputRef={fieldRefs.measures}
                 error={errors.measures}
-               
               />
 
               <ValidatedTextField
@@ -203,7 +204,6 @@ const InstrumentForm = ({
             {/*---------------------Formulario lado derecho----------------*/}
             <Grid item xs={12} md={6} sx={{ padding: 2, width: '90%' }}>
               <FormControl
-              
                 margin="normal"
                 sx={{
                   ...inputStyles,
@@ -230,7 +230,6 @@ const InstrumentForm = ({
               </FormControl>
 
               <FormControl
-              
                 margin="normal"
                 sx={{
                   ...inputStyles,
@@ -263,40 +262,39 @@ const InstrumentForm = ({
                 value={formData.rentalPrice}
                 inputRef={fieldRefs.rentalPrice}
                 error={errors.rentalPrice}
-                
-                
               />
-              <ImageUrlsEdit idInstrument={formData.idInstrument}/>
+              <ImageUrlsEdit idInstrument={formData.idInstrument} />
             </Grid>
             {/*-----------------------Fin formulario lado derecho--------------*/}
           </Grid>
 
           {/*-----------------------Input imagen--------------*/}
-          
-            <Grid item 
-            xs={12}
-             md={6} 
-             sx={{
-               padding: 2,
-                width: '100%',
-                height:"230px",
-               boxShadow:"var(--box-shadow)",
-               borderRadius:4
 
-                }}>
-              <ImageUpload
-                onImagesChange={(files) =>
-                  setFormData((prev) => ({ ...prev, imageUrls: files }))
-                }
-              />
-              {/* 📌 Mensaje de error si el usuario no sube una imagen */}
-              {errors.imageUrlsText && (
-                <Typography color="var(--color-error)" variant="body1">
-                  {errors.imageUrlsText}
-                </Typography>
-              )}
-            </Grid>
-          
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{
+              padding: 2,
+              width: '100%',
+              height: '230px',
+              boxShadow: 'var(--box-shadow)',
+              borderRadius: 4
+            }}
+          >
+            <ImageUpload
+              onImagesChange={(files) =>
+                setFormData((prev) => ({ ...prev, imageUrls: files }))
+              }
+            />
+            {/* 📌 Mensaje de error si el usuario no sube una imagen */}
+            {errors.imageUrlsText && (
+              <Typography color="var(--color-error)" variant="body1">
+                {errors.imageUrlsText}
+              </Typography>
+            )}
+          </Grid>
+
           {/*-----------------------Fin input imagen--------------*/}
 
           <Divider />
@@ -383,8 +381,6 @@ const InstrumentForm = ({
 }
 
 export default InstrumentForm
-
-// **Aquí agregamos la validación de Props**
 InstrumentForm.propTypes = {
   initialFormData: PropTypes.object,
   onSubmit: PropTypes.func,

@@ -4,7 +4,7 @@ import { Box } from '@mui/material'
 
 export const InstrumentDetailWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'column', // 📌 Por defecto en móviles es en columna
+  flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   flexWrap: 'wrap',
@@ -14,7 +14,7 @@ export const InstrumentDetailWrapper = styled(Box)(({ theme }) => ({
   boxShadow: 'var(--box-shadow)',
 
   [theme.breakpoints.up('md')]: {
-    flexDirection: 'row', // 📌 En pantallas medianas/grandes, cambia a fila
+    flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     gap: '2rem',
@@ -22,7 +22,6 @@ export const InstrumentDetailWrapper = styled(Box)(({ theme }) => ({
   },
 
   [theme.breakpoints.up('lg')]: {
-    //maxWidth: '1200px',
     margin: '0 auto',
     padding: '3rem'
   }

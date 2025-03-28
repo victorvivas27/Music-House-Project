@@ -26,7 +26,7 @@ export const WhatsAppContact = () => {
   const [isAdmin, setIsAdmin] = useState(false)
   const handleMouseEnter = () => {
     setHover(true)
-    const width = elementRef.current.getBoundingClientRect().width
+   
   }
 
   useEffect(() => {

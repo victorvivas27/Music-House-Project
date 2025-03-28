@@ -28,7 +28,7 @@ const ModalNewPhone = ({
   refreshPhoneData
 }) => {
   const [formData, setFormData] = useState({
-    countryCode: '', 
+    countryCode: '',
     phoneNumber: ''
   })
 
@@ -48,24 +48,22 @@ const ModalNewPhone = ({
     boxShadow: 24,
     p: isMobile ? 3 : 4
   }
-  // 📌 Restablece el formulario cuando se cierra el modal
+
   useEffect(() => {
     if (!open) {
       setFormData({ countryCode: '', phoneNumber: '' })
-      setError(null) // También limpia errores al cerrar
+      setError(null)
     }
   }, [open])
 
-  // 📌 Manejo del cambio en el código de país
   const handleCountryCodeChange = (event) => {
     setFormData({
       countryCode: event.target.value,
-      phoneNumber: '' // 🔹 Borra el número al cambiar el código de país
+      phoneNumber: ''
     })
     setError(null)
   }
 
-  // 📌 Manejo del cambio en el número de teléfono
   const handlePhoneChange = (event) => {
     let value = event.target.value.replace(/\D/g, '') // 🔹 Solo permite números
 
@@ -81,7 +79,6 @@ const ModalNewPhone = ({
     }))
   }
 
-  // 📌 Validación antes de enviar
   const validatePhoneNumber = () => {
     const minLength = 7
     const maxLength = 15
@@ -97,7 +94,6 @@ const ModalNewPhone = ({
     return true
   }
 
-  // 📌 Manejo del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -124,16 +120,15 @@ const ModalNewPhone = ({
         handleCloseModalPhone()
 
         showSuccess(
-           'Teléfono agregado',
-          'El teléfono ha sido agregado con éxito.',
-           )
+          'Teléfono agregado',
+          'El teléfono ha sido agregado con éxito.'
+        )
 
-        setFormData({ countryCode: '', phoneNumber: '' }) 
+        setFormData({ countryCode: '', phoneNumber: '' })
       }, 1500)
       await refreshPhoneData()
     } catch (error) {
       setError(`❌ ${getErrorMessage(error)}`)
-      // showError(`❌ ${getErrorMessage(error)}`)
       setLoading(false)
     }
   }
@@ -195,7 +190,7 @@ const ModalNewPhone = ({
             margin="normal"
             required
             multiline
-            disabled={!formData.countryCode} // 🔹 Bloquea el input hasta que se seleccione un código
+            disabled={!formData.countryCode}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -222,13 +217,13 @@ const ModalNewPhone = ({
               type="submit"
               disabled={loading}
               sx={{
-                minWidth: '150px', // Ancho suficiente para acomodar el texto y el spinner
+                minWidth: '150px',
                 minHeight: '40px',
-               
+
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '10px' // Agrega un pequeño espacio entre el spinner y el texto
+                gap: '10px'
               }}
             >
               {loading ? (

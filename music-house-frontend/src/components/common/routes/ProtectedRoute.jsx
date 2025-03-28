@@ -10,7 +10,7 @@ export const ProtectedRoute = ({ redirectPath = '/', role, children }) => {
   const hasAccess = 
     (role === ROLE_ADMIN && isUserAdmin) || 
     (role === ROLE_USER && isUser) || 
-    (!role); // Si no se requiere un rol específico, permitir acceso
+    (!role); 
 
   if (!hasAccess) {
     return <Navigate to={redirectPath} replace />;

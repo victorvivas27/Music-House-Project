@@ -37,7 +37,7 @@ export const EditCategoryForm = ({ id }) => {
         setLoading(false)
       }
     } catch (error) {
-       setInitialFormData(null)
+      setInitialFormData(null)
       setLoading(false)
     }
   }, [id])
@@ -82,13 +82,11 @@ export const EditCategoryForm = ({ id }) => {
         alignItems: 'center'
       }}
     >
-       
-        <CategoryForm
-          initialFormData={initialFormData}
-          onSubmit={onSubmit}
-          loading={state.loading}
-        />
-    
+      <CategoryForm
+        initialFormData={initialFormData}
+        onSubmit={onSubmit}
+        loading={state.loading}
+      />
     </Box>
   )
 }

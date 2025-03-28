@@ -8,7 +8,6 @@ const ImageUpload = ({ onImagesChange }) => {
   const [selectedFiles, setSelectedFiles] = useState([])
 
   const handleFileChange = (event) => {
-    
     const newFiles = Array.from(event.target.files).filter(
       (file) => file.size <= 5 * 1024 * 1024
     )
@@ -22,7 +21,6 @@ const ImageUpload = ({ onImagesChange }) => {
     setPreview((prev) => [...prev, ...newPreviews])
     setSelectedFiles((prev) => [...prev, ...newFiles])
 
-    // 📌 Notificar a `InstrumentForm` sobre las imágenes seleccionadas
     onImagesChange([...selectedFiles, ...newFiles])
   }
 
@@ -30,13 +28,11 @@ const ImageUpload = ({ onImagesChange }) => {
     setPreview((prev) => prev.filter((_, i) => i !== index))
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index))
 
-    // 📌 Notificar a `InstrumentForm` después de eliminar
     onImagesChange(selectedFiles.filter((_, i) => i !== index))
   }
 
   return (
     <Box sx={{ textAlign: 'center', width: '100%' }}>
-      {/* 📌 Botón para subir imágenes */}
       <input
         type="file"
         accept="image/*"
@@ -100,7 +96,7 @@ const ImageUpload = ({ onImagesChange }) => {
                 right: 0,
                 backgroundColor: 'rgba(255, 255, 255, 0.8)',
                 borderRadius: '50%',
-                '&:hover': { backgroundColor: 'rgba(255, 0, 0, 0.8)' }
+                '&:hover': { backgroundColor: 'var(--color-error)' }
               }}
             >
               <Delete color="error" />

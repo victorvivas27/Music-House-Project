@@ -397,8 +397,6 @@ export const UserForm = ({
     })
 
     if (!isConfirmed) return
-
-    // Actualizamos solo el formData, ya no el backend directamente
     setFormData((prev) => ({
       ...prev,
       roles: prev.roles.filter((r) => r !== roleToRemove)
@@ -596,7 +594,6 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           ...inputStyles
-                          // minHeight: '60px'
                         }}
                       >
                         <TextField
@@ -619,7 +616,6 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           ...inputStyles
-                          // minHeight: '60px'
                         }}
                       >
                         <TextField
@@ -642,7 +638,6 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           ...inputStyles
-                          //minHeight: '60px'
                         }}
                       >
                         <TextField
@@ -687,7 +682,6 @@ export const UserForm = ({
                         margin="normal"
                         sx={{
                           ...inputStyles
-                          // minHeight: '60px'
                         }}
                       >
                         <TextField
@@ -796,7 +790,6 @@ export const UserForm = ({
                   margin="normal"
                   sx={{
                     ...inputStyles
-                    // minHeight: '60px'
                   }}
                 >
                   <TextField
@@ -864,132 +857,129 @@ export const UserForm = ({
                 )}
 
                 {showPasswordFields && (
-                    <>
-                      {/* Campo de contraseña */}
-                      <FormControl
-                        margin="normal"
-                        sx={{
-                          ...inputStyles
-                        }}
-                      >
-                        <TextField
-                          label="🔒 Contraseña"
-                          name="password"
-                          onChange={handleChange}
-                          value={formData.password}
-                          type={showPassword ? 'text' : 'password'}
-                          error={Boolean(allErrors.password)}
-                          helperText={allErrors.password || ' '}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  onClick={() => setShowPassword(!showPassword)}
-                                  edge="end"
-                                >
-                                  {showPassword ? (
-                                    <VisibilityOff
-                                      sx={{
-                                        color: 'var(--color-exito)',
-                                        fontSize: 40
-                                      }}
-                                    />
-                                  ) : (
-                                    <Visibility
-                                      sx={{
-                                        color: 'var(--color-secundario)',
-                                        fontSize: 40
-                                      }}
-                                    />
-                                  )}
-                                </IconButton>
-                              </InputAdornment>
-                            )
-                          }}
-                        />
-                      </FormControl>
-
-                      {/* Campo de repetir contraseña */}
-                      <FormControl margin="normal" sx={{ ...inputStyles }}>
-                        <TextField
-                          label="🔓 Repetir Contraseña"
-                          name="repeatPassword"
-                          onChange={handleChange}
-                          value={formData.repeatPassword}
-                          type={showPasswordRepeat ? 'text' : 'password'}
-                          error={Boolean(allErrors.repeatPassword)} // ✅ Muestra error solo aquí
-                          helperText={
-                            allErrors.repeatPassword ||
-                            success.repeatPassword ||
-                            ' '
-                          } // ✅ Muestra mensaje de éxito si no hay error
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  onClick={() =>
-                                    setShowPasswordRepeat(!showPasswordRepeat)
-                                  }
-                                  edge="end"
-                                >
-                                  {showPasswordRepeat ? (
-                                    <VisibilityOff
-                                      sx={{
-                                        color: 'var(--color-exito)',
-                                        fontSize: 40
-                                      }}
-                                    />
-                                  ) : (
-                                    <Visibility
-                                      sx={{
-                                        color: 'var(--color-secundario)',
-                                        fontSize: 40
-                                      }}
-                                    />
-                                  )}
-                                </IconButton>
-                              </InputAdornment>
-                            )
-                          }}
-                        />
-                      </FormControl>
-
-                    
-                    </>
-                  )}
+                  <>
+                    {/* Campo de contraseña */}
                     <FormControl
-                        margin="normal"
-                        sx={{
-                          ...inputStyles
-                          //minHeight: '60px'
+                      margin="normal"
+                      sx={{
+                        ...inputStyles
+                      }}
+                    >
+                      <TextField
+                        label="🔒 Contraseña"
+                        name="password"
+                        onChange={handleChange}
+                        value={formData.password}
+                        type={showPassword ? 'text' : 'password'}
+                        error={Boolean(allErrors.password)}
+                        helperText={allErrors.password || ' '}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={() => setShowPassword(!showPassword)}
+                                edge="end"
+                              >
+                                {showPassword ? (
+                                  <VisibilityOff
+                                    sx={{
+                                      color: 'var(--color-exito)',
+                                      fontSize: 40
+                                    }}
+                                  />
+                                ) : (
+                                  <Visibility
+                                    sx={{
+                                      color: 'var(--color-secundario)',
+                                      fontSize: 40
+                                    }}
+                                  />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          )
                         }}
-                      >
-                        <TextField
-                          label="🔢Código de Telegram"
-                          name="telegramChatId"
-                          onChange={handleChange}
-                          value={formData.telegramChatId}
-                          error={Boolean(errors.telegramChatId)}
-                          helperText={errors.telegramChatId || ' '}
-                          type="tel"
-                          inputProps={{ maxLength: 15, pattern: '[0-9]*' }}
-                        />
-                      </FormControl>
+                      />
+                    </FormControl>
 
-                      <Typography sx={{ fontSize: '14px', marginTop: '5px' }}>
-                        ¿No sabes tu código?{' '}
-                        <Link
-                          href="https://t.me/MyBotJva_bot"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          sx={{
-                            fontWeight: 'bold',
-                            color: 'var(--color-azul)'
-                          }}
-                        >
-                          Haz clic aquí para obtenerlo en Telegram
-                        </Link>
-                      </Typography>
+                    {/* Campo de repetir contraseña */}
+                    <FormControl margin="normal" sx={{ ...inputStyles }}>
+                      <TextField
+                        label="🔓 Repetir Contraseña"
+                        name="repeatPassword"
+                        onChange={handleChange}
+                        value={formData.repeatPassword}
+                        type={showPasswordRepeat ? 'text' : 'password'}
+                        error={Boolean(allErrors.repeatPassword)}
+                        helperText={
+                          allErrors.repeatPassword ||
+                          success.repeatPassword ||
+                          ' '
+                        }
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={() =>
+                                  setShowPasswordRepeat(!showPasswordRepeat)
+                                }
+                                edge="end"
+                              >
+                                {showPasswordRepeat ? (
+                                  <VisibilityOff
+                                    sx={{
+                                      color: 'var(--color-exito)',
+                                      fontSize: 40
+                                    }}
+                                  />
+                                ) : (
+                                  <Visibility
+                                    sx={{
+                                      color: 'var(--color-secundario)',
+                                      fontSize: 40
+                                    }}
+                                  />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          )
+                        }}
+                      />
+                    </FormControl>
+                  </>
+                )}
+                <FormControl
+                  margin="normal"
+                  sx={{
+                    ...inputStyles
+                  }}
+                >
+                  <TextField
+                    label="🔢Código de Telegram"
+                    name="telegramChatId"
+                    onChange={handleChange}
+                    value={formData.telegramChatId}
+                    error={Boolean(errors.telegramChatId)}
+                    helperText={errors.telegramChatId || ' '}
+                    type="tel"
+                    inputProps={{ maxLength: 15, pattern: '[0-9]*' }}
+                  />
+                </FormControl>
+
+                <Typography sx={{ fontSize: '14px', marginTop: '5px' }}>
+                  ¿No sabes tu código?{' '}
+                  <Link
+                    href="https://t.me/MyBotJva_bot"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      fontWeight: 'bold',
+                      color: 'var(--color-azul)'
+                    }}
+                  >
+                    Haz clic aquí para obtenerlo en Telegram
+                  </Link>
+                </Typography>
               </Grid>
             </Grid>
             {!formData.idUser && !isUserAdmin && (
@@ -1084,44 +1074,9 @@ export const UserForm = ({
 
 UserForm.propTypes = {
   onSwitch: PropTypes.func,
-  initialFormData: PropTypes.shape({
-    idUser: PropTypes.string,
-    name: PropTypes.string,
-    lastName: PropTypes.string,
-    email: PropTypes.string,
-    password: PropTypes.string,
-    repeatPassword: PropTypes.string,
-    telegramChatId: PropTypes.string,
-    addresses: PropTypes.arrayOf(
-      PropTypes.shape({
-        street: PropTypes.string,
-        number: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        city: PropTypes.string,
-        state: PropTypes.string,
-        country: PropTypes.string
-      })
-    ),
-    phones: PropTypes.arrayOf(
-      PropTypes.shape({
-        phoneNumber: PropTypes.string
-      })
-    ),
-    idRol: PropTypes.number
-  }),
+  initialFormData: PropTypes.object,
   loading: PropTypes.bool,
   onSubmit: PropTypes.func,
   isSubmitting: PropTypes.bool,
-
-  // Agregar la validación de `user`
-  user: PropTypes.shape({
-    data: PropTypes.shape({
-      roles: PropTypes.arrayOf(
-        PropTypes.shape({
-          rol: PropTypes.string.isRequired
-        })
-      ).isRequired,
-      idUser: PropTypes.string.isRequired
-    })
-  }),
-  setUser: PropTypes.func
+  user: PropTypes.object
 }

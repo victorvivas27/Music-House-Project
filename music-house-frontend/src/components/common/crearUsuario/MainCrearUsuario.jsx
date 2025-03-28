@@ -13,11 +13,5 @@ export const MainCrearUsuario = styled(Grid)(() => ({
   backgroundPosition: 'left bottom',
   height: '100%',
   minHeight: '100vh',
-  transition: 'background-image 1s ease-in-out',
- /*   // Ajuste para dispositivos móviles
-   '@media (max-width: 415px)': {
-    backgroundSize: 'contain', // Ajusta la imagen sin recortarla
-    backgroundPosition: 'center', // Centra la imagen
-    
-  } */
+  transition: 'background-image 1s ease-in-out'
 }))

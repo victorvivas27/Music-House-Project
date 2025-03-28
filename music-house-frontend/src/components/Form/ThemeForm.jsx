@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import {
   Box,
- FormControl,
+  FormControl,
   TextField,
   Typography,
   Grid,
@@ -51,7 +51,7 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
     if (!submitData) return
 
     if (typeof onSubmit === 'function') onSubmit(formData)
-      setSubmitData(false)
+    setSubmitData(false)
   }, [formData, onSubmit, submitData])
 
   return (

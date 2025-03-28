@@ -62,29 +62,27 @@ export const Header = () => {
     setAnchorElNav(event.currentTarget)
     setIsMenuopen(true)
 
-    // 🔄 Reinicia el temporizador cada vez que se abre el menú
     clearTimeout(menuTimeout)
     const timeout = setTimeout(() => {
       setIsMenuopen(false)
       setAnchorElNav(null)
-    }, 3000) // ⏳ Cierra después de 5 segundos de inactividad
+    }, 3000)
     setMenuTimeout(timeout)
   }
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget)
     setIsMenuUserOpen(true)
 
-    // 🔄 Reinicia el temporizador cada vez que se abre el menú
     clearTimeout(userMenuTimeout)
     const timeout = setTimeout(() => {
       setIsMenuUserOpen(false)
       setAnchorElUser(null)
-    }, 3000) // ⏳ Cierra después de 5 segundos de inactividad
+    }, 3000)
     setUserMenuTimeout(timeout)
   }
 
   const handleCloseNavMenu = () => {
-    clearTimeout(menuTimeout) // 🔹 Cancela el cierre automático
+    clearTimeout(menuTimeout)
     setIsMenuopen(false)
   }
 
@@ -215,8 +213,8 @@ export const Header = () => {
                   <MenuItem
                     key={'menu-nav-user-profile'}
                     onClick={() => {
-                      navigate(`/perfil/${idUser}`) // Luego navega a la página
-                      handleCloseUserMenu() // Cierra el menú primero
+                      navigate(`/perfil/${idUser}`)
+                      handleCloseUserMenu()
                     }}
                   >
                     <AssignmentIndRoundedIcon
@@ -428,8 +426,8 @@ export const Header = () => {
                   <MenuItem
                     key={'menu-nav-user-profile'}
                     onClick={() => {
-                      setIsMenuUserOpen(false) // Cerrar el menú de usuario
-                      setAnchorElUser(null) // Reiniciar el ancla del menú
+                      setIsMenuUserOpen(false)
+                      setAnchorElUser(null)
                       navigate(`/perfil/${idUser}`)
                     }}
                   >

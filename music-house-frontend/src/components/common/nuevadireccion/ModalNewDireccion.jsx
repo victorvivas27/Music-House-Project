@@ -40,7 +40,6 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
     p: isMobile ? 3 : 4
   }
 
-  // 📌 Restablece el formulario cuando se cierra el modal
   useEffect(() => {
     if (!open) {
       setFormData({
@@ -50,7 +49,7 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
         state: '',
         country: ''
       })
-      setError(null) // También limpia errores al cerrar
+      setError(null)
     }
   }, [open])
 
@@ -83,7 +82,7 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
         handleClose()
         showSuccess(
           'Dirección agregada',
-           'La dirección ha sido agregada con éxito.'
+          'La dirección ha sido agregada con éxito.'
         )
       }, 1500)
     } catch (error) {
@@ -175,13 +174,13 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
               type="submit"
               disabled={loading}
               sx={{
-                minWidth: '150px', // Ancho suficiente para acomodar el texto y el spinner
+                minWidth: '150px',
                 minHeight: '40px',
 
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '10px' // Agrega un pequeño espacio entre el spinner y el texto
+                gap: '10px'
               }}
             >
               {loading ? (
