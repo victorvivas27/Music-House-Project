@@ -1,296 +1,186 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Paper,
-  Typography,
-  Checkbox,
   Box,
-  Tooltip,
-  IconButton
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  IconButton,
+  Stack,
+  Grid,
+  CircularProgress
 } from '@mui/material'
-
-import MainWrapper from '../common/MainWrapper'
 import DeleteIcon from '@mui/icons-material/Delete'
 
-import {
-  EnhancedTableHead,
-  isSelected,
-  handleSort,
-  handleSelected,
-  getEmptyRows,
-  useVisibleRows,
-  handleSelectAll,
-  EnhancedTableToolbar
-} from '../Pages/Admin/common/tableHelper'
-
-import { Loader } from '../common/loader/Loader'
-
 import { deleteReservation, getReservationById } from '../../api/reservations'
-import PropTypes from 'prop-types'
-import { headCellsReservas } from '../utils/types/HeadCells'
-
-import ArrowBack from '../utils/ArrowBack'
 import useAlert from '../../hook/useAlert'
-import { paginationStyles } from '../styles/styleglobal'
 import { useAuth } from '../../hook/useAuth'
 import { getErrorMessage } from '../../api/getErrorMessage'
 
 const MisReservas = () => {
-  const [reservations, setReservations] = useState({ result: [] })
-  const [rows, setRows] = useState([])
+  const [reservas, setReservas] = useState([])
   const [loading, setLoading] = useState(true)
-  const [order, setOrder] = useState('desc')
-  const [orderBy, setOrderBy] = useState('idReservation')
-  const [selected, setSelected] = useState([])
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(5)
   const { idUser } = useAuth()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
 
   const getAllReservations = useCallback(async () => {
     setLoading(true)
     try {
-      const fetchedReservas = await getReservationById(idUser)
-
-      setReservations(fetchedReservas)
-      setRows(fetchedReservas.result || [])
+      const response = await getReservationById(idUser)
+      setReservas(response.result || [])
     } catch {
-      setReservations({ result: [] })
+      setReservas([])
     } finally {
       setTimeout(() => setLoading(false), 500)
     }
   }, [idUser])
 
   useEffect(() => {
-    setRows(reservations.result)
-
-    setLoading(false)
-  }, [reservations])
-
-  useEffect(() => {
     getAllReservations()
   }, [getAllReservations])
 
-  const handleSelectAllClick = (event) => {
-    handleSelectAll(event, rows, 'idReservation', setSelected)
-  }
+  const handleDelete = async (idReservation) => {
+    const reserva = reservas.find((r) => r.idReservation === idReservation)
+    if (!reserva) return
 
-  const handleClick = (event, id) => {
-    handleSelected(event, id, selected, setSelected)
-  }
-
-  const handleRequestSort = (event, property) => {
-    handleSort(event, property, orderBy, order, setOrderBy, setOrder)
-  }
-
-  const handleConfirmDelete = async (idReservation = null) => {
-    const selectedIds = idReservation ? [idReservation] : selected
-
-    if (selectedIds.length === 0) {
-      showError('Error', 'No hay reservas seleccionados para eliminar.')
-      return
-    }
-
-    // Mostrar el modal de confirmación
     const isConfirmed = await showConfirm({
-      title: `¿Eliminar ${selectedIds.length} reserva(s)?`,
+      title: '¿Eliminar reserva?',
       text: 'Esta acción no se puede deshacer.'
     })
     if (!isConfirmed) return
 
     showLoading('Eliminando...', 'Por favor espera.')
     try {
-      await Promise.all(
-        selectedIds.map((id) => {
-          const reserva = rows.find((row) => row.idReservation === id)
-          return deleteReservation(
-            reserva.idInstrument,
-            reserva.idUser,
-            reserva.idReservation
-          )
-        })
+      await deleteReservation(
+        reserva.idInstrument,
+        reserva.idUser,
+        reserva.idReservation
       )
-      showSuccess(
-        '¡Eliminado(s)!',
-        `${selectedIds.length} reserva(s) eliminada(s) correctamente.`
-      )
-      setSelected([])
+      showSuccess('✅ Reserva eliminada correctamente.')
       getAllReservations()
     } catch (error) {
       showError(`❌ ${getErrorMessage(error)}`)
     }
   }
 
-  const emptyRows = getEmptyRows(page, rowsPerPage, rows)
-  const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
-
-  if (loading) return <Loader title="Cargando reservas" />
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    )
+  }
 
   return (
-    <>
-      {!loading && (
-        <MainWrapper sx={{ padding: 2 }}>
-          <Paper
-            sx={{
-              display: { xs: 'none', lg: 'initial' },
-              width: '90%',
-              margin: 'auto',
-              boxShadow: 'var(--box-shadow)',
-              borderRadius: 4
-            }}
-          >
-            <ArrowBack />
+    <Box
+      sx={{
+        mt: { xs: 20, sm: 12, md: 40 },
+        p: 2,
+        backgroundColor: '#f5f5f5',
+        borderRadius: 4,
+        margin: 2,
+        boxShadow: 'var(--box-shadow)'
+      }}
+    >
+      <Typography
+        variant="h4"
+        align="center"
+        gutterBottom
+        sx={{
+          fontFamily: 'Roboto',
+          fontWeight: 'bold',
+          color: 'var(--color-primario)',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+          backgroundColor: '#fff',
+          borderRadius: 2,
+          px: 3,
+          py: 1,
+          display: 'inline-block',
+          mx: 'auto',
+          width: 'fit-content',
+          fontSize: {
+            xs: '1.5rem', // mobile
+            sm: '2rem', // tablets
+            md: '2.5rem' // desktop
+          }
+        }}
+      >
+        🎸Reservas
+      </Typography>
 
-            <EnhancedTableToolbar
-              title="Reservas"
-              numSelected={selected.length}
-              handleConfirmDelete={() => handleConfirmDelete()}
-            />
-
-            <TableContainer>
-              <Table aria-labelledby="tableTitle" size="medium">
-                <EnhancedTableHead
-                  headCells={headCellsReservas}
-                  numSelected={selected.length}
-                  order={order}
-                  orderBy={orderBy}
-                  onRequestSort={handleRequestSort}
-                  rowCount={rows?.length}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {visibleRows.map((row, index) => {
-                    const isItemSelected = isSelected(
-                      row.idReservation,
-                      selected
-                    )
-                    const labelId = `enhanced-table-checkbox-${index}`
-                    const isRowEven = index % 2 === 0
-
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.idReservation}
-                        selected={isItemSelected}
-                        className={
-                          isRowEven ? 'table-row-even' : 'table-row-odd'
-                        }
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            color="primary"
-                            checked={isItemSelected}
-                            onChange={(event) =>
-                              handleClick(event, row.idReservation)
-                            }
-                            inputProps={{ 'aria-labelledby': labelId }}
-                          />
-                        </TableCell>
-
-                        <TableCell align="left">
-                          <img
-                            src={row.imageUrl}
-                            alt="Instrumento"
-                            width="80"
-                          />
-                        </TableCell>
-                        <TableCell align="left">{row.instrumentName}</TableCell>
-                        <TableCell align="left">{row.startDate} </TableCell>
-                        <TableCell align="left">{row.endDate}</TableCell>
-                        <TableCell align="left">${row.totalPrice}</TableCell>
-                        <TableCell align="left">${row.email}</TableCell>
-                        <TableCell align="left">
-                          <Box
-                            style={{
-                              opacity: selected.length > 0 ? 0 : 1,
-                              pointerEvents:
-                                selected.length > 0 ? 'none' : 'auto',
-                              transition: 'opacity 0.5s ease-in-out'
-                            }}
-                          >
-                            <Tooltip title="Eliminar">
-                              <IconButton
-                                onClick={() =>
-                                  handleConfirmDelete(row.idReservation)
-                                }
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: 53 * emptyRows
-                      }}
-                    >
-                      <TableCell colSpan={3} />
-                    </TableRow>
-                  )}
-                  {page === 0 && rows.length === 0 && (
-                    <TableRow
-                      style={{
-                        height: 53 * emptyRows
-                      }}
-                    >
-                      <TableCell colSpan={7}>
-                        <Typography align="center">
-                          No se encontraron reservas
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            <TablePagination
-              rowsPerPageOptions={[
-                5,
-                10,
-                25,
-                { label: 'Todos', value: rows.length }
-              ]}
-              component="div"
-              count={rows.length}
-              rowsPerPage={rowsPerPage}
-              page={Math.min(
-                page,
-                Math.max(0, Math.ceil(rows.length / rowsPerPage) - 1)
-              )} // Evita errores cuando cambia la cantidad de filas
-              onPageChange={(event, newPage) => setPage(newPage)}
-              onRowsPerPageChange={(event) => {
-                setRowsPerPage(parseInt(event.target.value, 10))
-                setPage(0) // Reinicia la paginación al cambiar el número de filas
-              }}
-              labelRowsPerPage="Filas por página"
+      <Grid container spacing={1} justifyContent="center">
+        {reservas.map((reserva) => (
+          <Grid item key={reserva.idReservation} xs={6} sm={4} md={3} lg={2}>
+            <Card
               sx={{
-                ...paginationStyles
+                maxWidth: '100%',
+                mx: 'auto',
+                boxShadow: 'var(--box-shadow)',
+                borderRadius: 4,
+                transition: 'transform 0.3s',
+                height: '95%',
+                '&:hover': {
+                  transform: 'scale(1.05)'
+                }
               }}
-            />
-          </Paper>
-        </MainWrapper>
-      )}
-    </>
-  )
-}
+            >
+              <CardMedia
+                component="img"
+                image={reserva.imageUrl || '/images/default-placeholder.png'}
+                alt={reserva.instrumentName}
+                sx={{
+                  height: 200,
+                  objectFit: 'contain',
+                  borderRadius: '4px 4px 0 0'
+                }}
+              />
+              <CardContent>
+                <Stack spacing={1}>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontFamily: 'Roboto', fontWeight: 'bold' }}
+                  >
+                    {reserva.instrumentName}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Inicio:</strong> {reserva.startDate}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Fin:</strong> {reserva.endDate}
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    sx={{ color: '#d32f2f' }}
+                  >
+                    Total: ${reserva.totalPrice}
+                  </Typography>
+                </Stack>
 
-// ✅ Definición de PropTypes para MisReservas
-MisReservas.propTypes = {
-  idUser: PropTypes.string
+                <IconButton
+                  color="error"
+                  onClick={() => handleDelete(reserva.idReservation)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      {reservas.length === 0 && (
+        <Typography mt={6} textAlign="center" sx={{ color: '#757575' }}>
+          No tienes reservas activas.
+        </Typography>
+      )}
+    </Box>
+  )
 }
 
 export default MisReservas

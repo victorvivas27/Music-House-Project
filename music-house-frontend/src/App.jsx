@@ -22,7 +22,7 @@ import AuthPage from './components/Pages/AuthPage'
 import { NotFoundPage } from './components/Pages/NotFound'
 import { ServerError } from './components/Pages/ServerError'
 import { ProtectedRoute } from './components/common/routes/ProtectedRoute'
-import MisReservas from './components/Pages/MisReservas'
+
 import {
   AdminLayout,
   UserLayout,
@@ -35,7 +35,8 @@ import { EditarTheme } from './components/Pages/Admin/EditarTheme'
 import Perfil from './components/Pages/Perfil'
 import { AuthProvider } from './components/utils/context/AuthProvider'
 import { ROLE_ADMIN } from './components/utils/roles/constants'
-//import { jwtDecode } from 'jwt-decode'
+import MisReservas from './components/Pages/MisReservas'
+
 
 export const App = () => {
   return (
