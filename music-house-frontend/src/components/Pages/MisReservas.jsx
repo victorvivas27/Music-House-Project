@@ -16,11 +16,14 @@ import { deleteReservation, getReservationById } from '../../api/reservations'
 import useAlert from '../../hook/useAlert'
 import { useAuth } from '../../hook/useAuth'
 import { getErrorMessage } from '../../api/getErrorMessage'
+import TooltipMy from '../common/toolTip/ToolTipMy'
+
 
 const MisReservas = () => {
   const [reservas, setReservas] = useState([])
   const [loading, setLoading] = useState(true)
   const { idUser } = useAuth()
+ 
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
 
   const getAllReservations = useCallback(async () => {
@@ -134,7 +137,8 @@ const MisReservas = () => {
                 image={reserva.imageUrl || '/images/default-placeholder.png'}
                 alt={reserva.instrumentName}
                 sx={{
-                  height: 200,
+                  padding: 1,
+
                   objectFit: 'contain',
                   borderRadius: '4px 4px 0 0'
                 }}
@@ -161,17 +165,27 @@ const MisReservas = () => {
                     Total: ${reserva.totalPrice}
                   </Typography>
                 </Stack>
-
-                <IconButton
-                  color="error"
-                  onClick={() => handleDelete(reserva.idReservation)}
+               
+                <TooltipMy
+                  message="¿Seguro que deseas quitar esto de tus reservas? "
+                  backgroundColor="var(--color-primario)"
+                  textColor="var(--color-error)"
+                  fontSize="0.9rem"
+                  width="300px"
                 >
-                  <DeleteIcon />
-                </IconButton>
+                  <IconButton
+                    color="error"
+                    onClick={() => handleDelete(reserva.idReservation)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </TooltipMy>
+               
               </CardContent>
             </Card>
           </Grid>
         ))}
+        <div style={{ display: 'flex', gap: '1rem', padding: '2rem' }}></div>
       </Grid>
 
       {reservas.length === 0 && (

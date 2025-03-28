@@ -111,7 +111,11 @@
  border: 4px solid !important;
 }
 
-
+/* Esto fuerza que cualquier MUI Card permita desbordar su contenido */
+.MuiCard-root {
+  overflow: visible !important;
+ 
+}
 
 
 
@@ -236,7 +240,7 @@ a {
 }
 
 /* 🧹 Elimina bordes predeterminados en todos los elementos de formulario */
-/* input[type="text"],
+ input[type="text"],
 input[type="email"],
 input[type="password"],
 textarea {
@@ -244,7 +248,7 @@ textarea {
   -webkit-appearance: none;
   -moz-appearance: none;
   border-radius: 4px;
-}  */
+}  
 
 /* 📌 Personalización de la barra de desplazamiento */
 ::-webkit-scrollbar {
