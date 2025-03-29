@@ -17,7 +17,7 @@ import {
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import { styled } from '@mui/material/styles'
-import { CustomButton } from './CustomComponents'
+
 import { RoleSelect } from './RoleSelect'
 import PropTypes from 'prop-types'
 
@@ -29,28 +29,7 @@ import { countryCodes } from '../../utils/codepaises/CountryCodes'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
 import LoadingText from '../../common/loadingText/LoadingText'
-
-const ContainerForm = styled(Grid)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  [theme.breakpoints.up('md')]: {
-    alignItems: 'flex-end !important',
-    flexDirection: 'column'
-  }
-}))
-
-const ContainerBottom = styled(Grid)(({ theme }) => ({
-  width: '100%',
-  height: '100px',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  flexDirection: 'column',
-  [theme.breakpoints.down('md')]: {
-    flexDirection: 'column',
-    width: '100%'
-  }
-}))
+import { ContainerBottom, ContainerForm, CustomButton } from './CustomButton'
 
 const buttonStyleRoles = {
   backgroundColor: 'var(--color-error)',
@@ -410,7 +389,7 @@ export const UserForm = ({
   }, [formData.picture])
 
   return (
-    <form onSubmit={handleSubmit} style={{ margin: 'auto', width: '100%' }}>
+    <form onSubmit={handleSubmit} style={{ border: '2px solid yellow' }}>
       <ContainerForm>
         <Grid
           sx={{
@@ -448,7 +427,7 @@ export const UserForm = ({
                 width: '99%',
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: { xs: 'center', md: 'flex-end' },
+                alignItems: 'center',
                 flexDirection: { md: 'row', xs: 'column' },
                 gap: '10px'
               }}
@@ -1022,14 +1001,19 @@ export const UserForm = ({
             )}
           </Grid>
 
-          <ContainerBottom>
-            <CustomButton
-             type="submit"
-             >
+          <ContainerBottom
+            sx={{
+              width: '40%'
+            }}
+          >
+            <CustomButton 
+            type="submit"
+            disabled={loading}
+            >
               {combinedLoading ? (
                 <>
-                 <LoadingText text= {buttonTextLoading} />
-                  
+                  <LoadingText text={buttonTextLoading} />
+
                   <CircularProgress
                     size={30}
                     sx={{ color: 'var(--color-azul)' }}
@@ -1044,14 +1028,17 @@ export const UserForm = ({
               <Link
                 href=""
                 underline="always"
+                onClick={onSwitch}
                 sx={{
                   color: 'var(--texto-primario)',
                   marginTop: { xs: '40px', md: '20px' }
                 }}
-                onClick={onSwitch}
               >
                 <Typography
-                  sx={{ fontWeight: '600', color: 'var(--color-azul)' }}
+                  sx={{
+                    fontWeight: '600',
+                    color: 'var(--color-azul)'
+                  }}
                 >
                   Ya tengo una cuenta
                 </Typography>

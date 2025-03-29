@@ -1,7 +1,6 @@
 import {
   Avatar,
   Box,
-  Button,
   CircularProgress,
   FormControl,
   Modal,
@@ -12,10 +11,14 @@ import {
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import { UsersApi } from '../../../api/users'
-import { CustomButton } from '../../Form/formUsuario/CustomComponents'
+
 import useAlert from '../../../hook/useAlert'
 import { getErrorMessage } from '../../../api/getErrorMessage'
 import LoadingText from '../loadingText/LoadingText'
+import {
+  ContainerBottom,
+  CustomButton
+} from '../../Form/formUsuario/CustomButton'
 
 const ModalUpdateUser = ({
   open,
@@ -101,8 +104,9 @@ const ModalUpdateUser = ({
         handleCloseModalUser()
         showSuccess(
           'Usuario modificado',
-          'El usuario ha sido modificado con éxito.', () => {
-      })
+          'El usuario ha sido modificado con éxito.',
+          () => {}
+        )
       }, 4500)
     } catch (error) {
       setError(`❌ ${getErrorMessage(error)}`)
@@ -216,34 +220,43 @@ const ModalUpdateUser = ({
             disabled
           />
 
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ m: 2 }}>
             Para modificar tu correo, contacta con soporte.
           </Typography>
 
           {error && <Typography color="error">{error}</Typography>}
 
-          <Box mt={2} display="flex" justifyContent="space-between">
-            <Button onClick={handleCloseModalUser} color="secondary">
-              Cancelar
-            </Button>
-            <CustomButton
-             type="submit"
-              disabled={loading}
-            >
+          <ContainerBottom>
+            <CustomButton type="submit" disabled={loading}>
               {loading ? (
                 <>
-                <LoadingText text="Guardando" />
+                  <LoadingText text="Guardando" />
                   <CircularProgress
                     size={25}
                     sx={{ color: 'var(--color-exito)' }}
                   />
-                 
                 </>
               ) : (
                 'Guardar'
               )}
             </CustomButton>
-          </Box>
+
+            <Typography
+              onClick={handleCloseModalUser}
+              sx={{
+                cursor: 'pointer', // 👈 esto hace que aparezca la manito
+                fontWeight: '600',
+                color: 'var(--color-azul)',
+                marginTop: { xs: '40px', md: '20px' },
+                '&:hover': {
+                  textDecoration: 'underline',
+                  opacity: 0.8
+                }
+              }}
+            >
+              Cancelar
+            </Typography>
+          </ContainerBottom>
         </form>
       </Box>
     </Modal>

@@ -20,12 +20,18 @@ import {
   getReservationById
 } from '../../../api/reservations'
 import { useNavigate } from 'react-router-dom'
-import { CustomButton } from '../../Form/formUsuario/CustomComponents'
+
 import { flexColumnContainer } from '../../styles/styleglobal'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
 import { getErrorMessage } from '../../../api/getErrorMessage'
+import {
+  ContainerBottom,
+  CustomButton
+} from '../../Form/formUsuario/CustomButton'
+
+import LoadingText from '../loadingText/LoadingText'
 
 const formatDate = (date) => dayjs(date).format('YYYY-MM-DD')
 
@@ -276,14 +282,9 @@ const CalendarReserva = ({ instrument }) => {
           </Typography>
         </Box>
 
-        <Box
+        <ContainerBottom
           sx={{
-            height: '50px',
-            width: '270px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '60px'
+            width: '30%'
           }}
         >
           <CustomButton
@@ -303,7 +304,8 @@ const CalendarReserva = ({ instrument }) => {
           >
             {loading ? (
               <>
-                Cargando Reserva...
+                <LoadingText text="Cargando Reserva" />
+
                 <CircularProgress
                   size={20}
                   sx={{ color: 'var(--color-azul)', ml: 1 }}
@@ -313,7 +315,7 @@ const CalendarReserva = ({ instrument }) => {
               'Reservar'
             )}
           </CustomButton>
-        </Box>
+        </ContainerBottom>
 
         {/* Snackbar para errores reales */}
         <Snackbar

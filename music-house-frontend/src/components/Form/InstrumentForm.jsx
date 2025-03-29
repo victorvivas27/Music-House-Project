@@ -20,9 +20,10 @@ import ValidatedTextField from '../Pages/Admin/common/ValidatedTextField'
 
 import { inputStyles } from '../styles/styleglobal'
 import ArrowBack from '../utils/ArrowBack'
-import { CustomButton } from './formUsuario/CustomComponents'
+
 import ImageUpload from '../common/imageUrls/ImageUpload '
 import ImageUrlsEdit from '../common/imageUrls/ImageUrlsEdit'
+import { CustomButton } from './formUsuario/CustomButton'
 
 const InstrumentForm = ({
   initialFormData,

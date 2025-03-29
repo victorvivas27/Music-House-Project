@@ -11,8 +11,9 @@ import {
 import '../styles/crearInstrumento.styles.css'
 import PropTypes from 'prop-types'
 import ArrowBack from '../utils/ArrowBack'
-import { CustomButton } from './formUsuario/CustomComponents'
+
 import { flexRowContainer, inputStyles } from '../styles/styleglobal'
+import { CustomButton } from './formUsuario/CustomButton'
 
 export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
   const [formData, setFormData] = useState({ ...initialFormData })

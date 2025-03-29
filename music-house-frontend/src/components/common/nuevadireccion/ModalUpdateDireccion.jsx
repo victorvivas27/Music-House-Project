@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   CircularProgress,
   Modal,
   TextField,
@@ -10,9 +9,13 @@ import {
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import { updateAddress } from '../../../api/addresses'
-import { CustomButton } from '../../Form/formUsuario/CustomComponents'
+
 import useAlert from '../../../hook/useAlert'
 import { getErrorMessage } from '../../../api/getErrorMessage'
+import {
+  ContainerBottom,
+  CustomButton
+} from '../../Form/formUsuario/CustomButton'
 
 const ModalUpdateDireccion = ({
   open,
@@ -164,10 +167,7 @@ const ModalUpdateDireccion = ({
 
           {error && <Typography color="error">{error}</Typography>}
 
-          <Box mt={2} display="flex" justifyContent="space-between">
-            <Button onClick={handleCloseModalDireccionUpdate} color="secondary">
-              Cancelar
-            </Button>
+          <ContainerBottom>
             <CustomButton
               variant="contained"
               type="submit"
@@ -194,7 +194,23 @@ const ModalUpdateDireccion = ({
                 'Guardar'
               )}
             </CustomButton>
-          </Box>
+
+            <Typography
+              onClick={handleCloseModalDireccionUpdate}
+              sx={{
+                cursor: 'pointer',
+                fontWeight: '600',
+                color: 'var(--color-azul)',
+                marginTop: { xs: '40px', md: '20px' },
+                '&:hover': {
+                  textDecoration: 'underline',
+                  opacity: 0.8
+                }
+              }}
+            >
+              Cancelar
+            </Typography>
+          </ContainerBottom>
         </form>
       </Box>
     </Modal>

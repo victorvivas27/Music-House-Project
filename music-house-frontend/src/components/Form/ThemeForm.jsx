@@ -12,7 +12,8 @@ import '../styles/crearInstrumento.styles.css'
 import PropTypes from 'prop-types'
 import ArrowBack from '../utils/ArrowBack'
 import { flexRowContainer, inputStyles } from '../styles/styleglobal'
-import { CustomButton } from './formUsuario/CustomComponents'
+import { CustomButton } from './formUsuario/CustomButton'
+
 
 export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
   const [formData, setFormData] = useState({ ...initialFormData })

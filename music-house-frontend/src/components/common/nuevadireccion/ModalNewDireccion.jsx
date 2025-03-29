@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   CircularProgress,
   Modal,
   TextField,
@@ -10,9 +9,15 @@ import {
 import PropTypes from 'prop-types'
 import { addAddress } from '../../../api/addresses'
 import { useEffect, useState } from 'react'
-import { CustomButton } from '../../Form/formUsuario/CustomComponents'
+
 import useAlert from '../../../hook/useAlert'
 import { getErrorMessage } from '../../../api/getErrorMessage'
+import {
+  ContainerBottom,
+  CustomButton
+} from '../../Form/formUsuario/CustomButton'
+
+import LoadingText from '../loadingText/LoadingText'
 
 const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
   const [formData, setFormData] = useState({
@@ -165,37 +170,36 @@ const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
 
           {error && <Typography color="error">{error}</Typography>}
 
-          <Box mt={2} display="flex" justifyContent="space-between">
-            <Button onClick={handleClose} color="secondary">
-              Cancelar
-            </Button>
-            <CustomButton
-              variant="contained"
-              type="submit"
-              disabled={loading}
-              sx={{
-                minWidth: '150px',
-                minHeight: '40px',
-
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px'
-              }}
-            >
+          <ContainerBottom>
+            <CustomButton type="submit" disabled={loading}>
               {loading ? (
                 <>
+                  <LoadingText text="Cargando" />
                   <CircularProgress
                     size={20}
                     sx={{ color: 'var(--color-azul)' }}
                   />
-                  Cargando...
                 </>
               ) : (
                 'Agregar'
               )}
             </CustomButton>
-          </Box>
+            <Typography
+              onClick={handleClose}
+              sx={{
+                cursor: 'pointer',
+                fontWeight: '600',
+                color: 'var(--color-azul)',
+                marginTop: { xs: '40px', md: '20px' },
+                '&:hover': {
+                  textDecoration: 'underline',
+                  opacity: 0.8
+                }
+              }}
+            >
+              Cancelar
+            </Typography>
+          </ContainerBottom>
         </form>
       </Box>
     </Modal>

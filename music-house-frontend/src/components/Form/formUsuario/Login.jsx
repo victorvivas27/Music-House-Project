@@ -8,8 +8,7 @@ import {
   TextField
 } from '@mui/material'
 import Link from '@mui/material/Link'
-import { styled } from '@mui/material/styles'
-import { CustomButton } from './CustomComponents'
+import { ContainerBottom, ContainerForm, CustomButton } from './CustomButton'
 import { useFormik } from 'formik'
 import { UsersApi } from '../../../api/users'
 import loginValidationSchema from './LoginValidation'
@@ -22,36 +21,6 @@ import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
 import { getErrorMessage } from '../../../api/getErrorMessage'
 import LoadingText from '../../common/loadingText/LoadingText'
-
-const ContainerForm = styled(Grid)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100vw',
-  height: '80vh',
-  marginTop: '30px',
-  justifyContent: 'center',
-  alignItems: 'flex-end',
-  padding: '0px',
-
-  [theme.breakpoints.down('md')]: {
-    flexDirection: 'row'
-  }
-}))
-
-const ContainerBottom = styled(Grid)(({ theme }) => ({
-  width: '100%',
-  height: '100px',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  flexDirection: 'column',
-
-  [theme.breakpoints.down('md')]: {
-    flexDirection: 'column',
-    width: '100%',
-    marginLeft: '0px'
-  }
-}))
 
 const Login = ({ onSwitch }) => {
   const navigate = useNavigate()
@@ -98,154 +67,150 @@ const Login = ({ onSwitch }) => {
   })
 
   return (
-    <>
-      <form onSubmit={formik.handleSubmit}>
-        <ContainerForm>
+    <form onSubmit={formik.handleSubmit} style={{ border: '2px solid blue' }}>
+      <ContainerForm>
+        <Grid
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '10px',
+            width: '90%',
+            borderRadius: '8px',
+            padding: '20px'
+          }}
+        >
+          <Typography
+            variant="h3"
+            sx={{ color: { xs: 'white', md: 'black' }, fontWeight: 'light' }}
+          >
+            Iniciar Sesión
+          </Typography>
           <Grid
-            item
-            xs={12}
-            md={6}
             sx={{
-              padding: 3,
-              width: { md: '40%', xs: '90%' },
-              height: '100%',
+              width: '100%',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
-              gap: '20px',
-              marginRight: { md: '5rem' }
+              alignItems: 'center'
             }}
           >
-            <Typography
-              variant="h3"
-              sx={{ color: { xs: 'white', md: 'black' }, fontWeight: 'light' }}
-            >
-              Iniciar Sesión
-            </Typography>
-            <Grid
+            <FormControl
+              fullWidth
+              margin="normal"
               sx={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center'
+                ...inputStyles
               }}
             >
-              <FormControl
-                fullWidth
-                margin="normal"
-                sx={{
-                  ...inputStyles
-                }}
-              >
-                <TextField
-                  id="outlined-multiline-flexible"
-                  label="📧 Email"
-                  name="email"
-                  onChange={formik.handleChange}
-                  value={formik.values.email}
-                  type="email"
-                  error={formik.touched.email && Boolean(formik.errors.email)}
-                  helperText={
-                    (formik.touched.email && formik.errors.email) || ' '
-                  }
-                />
-              </FormControl>
+              <TextField
+                id="outlined-multiline-flexible"
+                label="📧 Email"
+                name="email"
+                onChange={formik.handleChange}
+                value={formik.values.email}
+                type="email"
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={
+                  (formik.touched.email && formik.errors.email) || ' '
+                }
+              />
+            </FormControl>
 
-              <FormControl
-                fullWidth
-                margin="normal"
+            <FormControl
+              fullWidth
+              margin="normal"
+              sx={{
+                ...inputStyles
+              }}
+            >
+              <TextField
                 sx={{
-                  ...inputStyles
+                  borderRadius: '5px',
+                  padding: '5px'
                 }}
-              >
-                <TextField
-                  sx={{
-                    borderRadius: '5px',
-                    padding: '5px'
-                  }}
-                  label="🔒 Password"
-                  name="password"
-                  onChange={formik.handleChange}
-                  value={formik.values.password}
-                  type={showPassword ? 'text' : 'password'}
-                  error={
-                    formik.touched.password && Boolean(formik.errors.password)
-                  }
-                  helperText={
-                    (formik.touched.password && formik.errors.password) || ' '
-                  }
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label={
-                            showPassword ? 'Hide password' : 'Show password'
-                          }
-                          onClick={handleClickShowPassword}
-                          edge="end"
-                        >
-                          {showPassword ? (
-                            <VisibilityOff
-                              sx={{
-                                color: 'var(--color-exito)',
-                                fontSize: 30,
-                                marginRight: 1
-                              }}
-                            />
-                          ) : (
-                            <Visibility
-                              sx={{
-                                color: 'var(--color-secundario)',
-                                fontSize: 30,
-                                marginRight: 1
-                              }}
-                            />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    )
-                  }}
-                />
-              </FormControl>
-            </Grid>
-            <ContainerBottom>
-              <CustomButton type="submit" disabled={loading}>
-                {loading ? (
-                  <>
-                    <LoadingText text="Iniciando sesión" />
-                    <CircularProgress
-                      size={30}
-                      sx={{ color: 'var(--color-azul)' }}
-                    />
-                  </>
-                ) : (
-                  'Iniciar Sesión'
-                )}
-              </CustomButton>
-              <Link
-                href=""
-                underline="always"
+                label="🔒 Password"
+                name="password"
+                onChange={formik.handleChange}
+                value={formik.values.password}
+                type={showPassword ? 'text' : 'password'}
+                error={
+                  formik.touched.password && Boolean(formik.errors.password)
+                }
+                helperText={
+                  (formik.touched.password && formik.errors.password) || ' '
+                }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label={
+                          showPassword ? 'Hide password' : 'Show password'
+                        }
+                        onClick={handleClickShowPassword}
+                        edge="end"
+                      >
+                        {showPassword ? (
+                          <VisibilityOff
+                            sx={{
+                              color: 'var(--color-exito)',
+                              fontSize: 30,
+                              marginRight: 1
+                            }}
+                          />
+                        ) : (
+                          <Visibility
+                            sx={{
+                              color: 'var(--color-secundario)',
+                              fontSize: 30,
+                              marginRight: 1
+                            }}
+                          />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+            </FormControl>
+          </Grid>
+
+          <ContainerBottom
+            sx={{
+              width: '38%'
+            }}
+          >
+            <CustomButton
+             type="submit" 
+             disabled={loading}
+             >
+              {loading ? (
+                <>
+                  <LoadingText text="Iniciando sesión" />
+                  <CircularProgress
+                    size={30}
+                    sx={{ color: 'var(--color-azul)' }}
+                  />
+                </>
+              ) : (
+                'Iniciar Sesión'
+              )}
+            </CustomButton>
+            <Link href="" underline="always" onClick={onSwitch}>
+              <Typography
                 sx={{
-                  color: { xs: 'white', md: 'black' },
+                  fontWeight: '600',
+                  color: 'var(--color-azul)',
                   marginTop: { xs: '40px', md: '20px' }
                 }}
-                onClick={onSwitch}
               >
-                <Typography
-                  sx={{
-                    fontWeight: '600',
-                    color: 'var(--color-azul)'
-                  }}
-                >
-                  No tienes una cuenta? Regístrate
-                </Typography>
-              </Link>
-            </ContainerBottom>
-          </Grid>
-        </ContainerForm>
-      </form>
-    </>
+                No tienes una cuenta? Regístrate
+              </Typography>
+            </Link>
+          </ContainerBottom>
+        </Grid>
+      </ContainerForm>
+    </form>
   )
 }
 Login.propTypes = {

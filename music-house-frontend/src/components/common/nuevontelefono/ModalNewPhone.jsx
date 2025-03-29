@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   CircularProgress,
   FormControl,
   InputAdornment,
@@ -17,9 +16,14 @@ import { useEffect, useState } from 'react'
 
 import { addPhone } from '../../../api/phones'
 import { countryCodes } from '../../utils/codepaises/CountryCodes'
-import { CustomButton } from '../../Form/formUsuario/CustomComponents'
+
 import { getErrorMessage } from '../../../api/getErrorMessage'
 import useAlert from '../../../hook/useAlert'
+import {
+  ContainerBottom,
+  CustomButton
+} from '../../Form/formUsuario/CustomButton'
+import LoadingText from '../loadingText/LoadingText'
 
 const ModalNewPhone = ({
   open,
@@ -208,10 +212,7 @@ const ModalNewPhone = ({
             {error || ' '}
           </Typography>
 
-          <Box mt={2} display="flex" justifyContent="space-between">
-            <Button onClick={handleCloseModalPhone} color="secondary">
-              Cancelar
-            </Button>
+          <ContainerBottom>
             <CustomButton
               variant="contained"
               type="submit"
@@ -228,17 +229,33 @@ const ModalNewPhone = ({
             >
               {loading ? (
                 <>
+                  <LoadingText text="Cargando" />
                   <CircularProgress
                     size={20}
                     sx={{ color: 'var(--color-azul)' }}
                   />
-                  Cargando...
                 </>
               ) : (
                 'Agregar'
               )}
             </CustomButton>
-          </Box>
+
+            <Typography
+              onClick={handleCloseModalPhone}
+              sx={{
+                cursor: 'pointer', 
+                fontWeight: '600',
+                color: 'var(--color-azul)',
+                marginTop: { xs: '40px', md: '20px' },
+                '&:hover': {
+                  textDecoration: 'underline',
+                  opacity: 0.8
+                }
+              }}
+            >
+              Cancelar
+            </Typography>
+          </ContainerBottom>
         </form>
       </Box>
     </Modal>
