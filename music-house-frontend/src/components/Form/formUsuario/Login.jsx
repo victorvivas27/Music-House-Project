@@ -12,18 +12,16 @@ import { styled } from '@mui/material/styles'
 import { CustomButton } from './CustomComponents'
 import { useFormik } from 'formik'
 import { UsersApi } from '../../../api/users'
-
 import loginValidationSchema from './LoginValidation'
 import { useNavigate } from 'react-router-dom'
-
 import PropTypes from 'prop-types'
-
 import { useState } from 'react'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { inputStyles } from '../../styles/styleglobal'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
 import { getErrorMessage } from '../../../api/getErrorMessage'
+import LoadingText from '../../common/loadingText/LoadingText'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -77,17 +75,22 @@ const Login = ({ onSwitch }) => {
 
         if (response?.result?.token) {
           setAuthData({ token: response.result.token })
-          showSuccess(`✅${response.message}`)
 
           setTimeout(() => {
+            setLoading(false)
             navigate('/')
-          }, 2000)
+            showSuccess(`✅ ${response.message}`, null, () => {
+              setSubmitting(false)
+              setLoading(false)
+            })
+          }, 5000)
         } else {
-          showError(`❌${response.message}`)
+          showError(`❌ ${response.message}`)
+          setSubmitting(false)
+          setLoading(false)
         }
       } catch (error) {
         showError(`❌ ${getErrorMessage(error)}`)
-      } finally {
         setSubmitting(false)
         setLoading(false)
       }
@@ -207,22 +210,10 @@ const Login = ({ onSwitch }) => {
               </FormControl>
             </Grid>
             <ContainerBottom>
-              <CustomButton
-                variant="contained"
-                color="primary"
-                type="submit"
-                disabled={formik.isSubmitting}
-                sx={{
-                  minWidth: '150px',
-                  minHeight: '50px',
-                  color: 'var(--color-secundario)',
-                  background: 'var(--color-primario)',
-                  gap: '10px'
-                }}
-              >
+              <CustomButton type="submit" disabled={loading}>
                 {loading ? (
                   <>
-                    Cargando...
+                    <LoadingText text="Iniciando sesión" />
                     <CircularProgress
                       size={30}
                       sx={{ color: 'var(--color-azul)' }}

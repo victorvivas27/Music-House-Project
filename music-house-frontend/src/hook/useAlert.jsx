@@ -94,31 +94,35 @@ const useAlert = () => {
   }
 
   // ✅ Alerta de éxito
-  const showSuccess = (
-    title = '¡Éxito!',
-    text //= 'Operación realizada correctamente.'
-  ) => {
-    Swal.fire({
-      title,
-      text,
-      icon: 'success',
-      confirmButtonColor: '#3085d6',
-      showConfirmButton: false,
-      timer: 2100,
-      timerProgressBar: true,
-      background: 'var(--color-secundario)',
-      color: 'var(--color-primario)',
-      showClass: {
-        popup: 'animate__animated animate__fadeInDown'
-      },
-      hideClass: {
-        popup: 'animate__animated animate__fadeOutUp'
-      },
-      customClass: {
-        popup: 'custom-swal'
-      }
-    })
-  }
+const showSuccess = (
+  title = '¡Éxito!',
+  text,
+  onClose // ✅ callback opcional
+) => {
+  Swal.fire({
+    title,
+    text,
+    icon: 'success',
+    confirmButtonColor: '#3085d6',
+    showConfirmButton: false,
+    timer: 2050,
+    timerProgressBar: true,
+    background: 'var(--color-secundario)',
+    color: 'var(--color-primario)',
+    showClass: {
+      popup: 'animate__animated animate__fadeInDown'
+    },
+    hideClass: {
+      popup: 'animate__animated animate__fadeOutUp'
+    },
+    customClass: {
+      popup: 'custom-swal'
+    },
+    didClose: () => {
+      if (onClose) onClose()
+    }
+  })
+}
 
   // ✅ Alerta de error
   const showError = (title = 'Error',text) => {

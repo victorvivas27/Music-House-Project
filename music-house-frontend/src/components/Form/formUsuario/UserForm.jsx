@@ -28,13 +28,11 @@ import { inputStyles } from '../../styles/styleglobal'
 import { countryCodes } from '../../utils/codepaises/CountryCodes'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
+import LoadingText from '../../common/loadingText/LoadingText'
 
 const ContainerForm = styled(Grid)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
-  width: '100%',
-
-  justifyContent: 'center',
   [theme.breakpoints.up('md')]: {
     alignItems: 'flex-end !important',
     flexDirection: 'column'
@@ -54,7 +52,7 @@ const ContainerBottom = styled(Grid)(({ theme }) => ({
   }
 }))
 
-const buttonStyle = {
+const buttonStyleRoles = {
   backgroundColor: 'var(--color-error)',
   color: 'var(--texto-inverso)',
   padding: '10px 15px',
@@ -115,7 +113,7 @@ export const UserForm = ({
   const combinedLoading = loading || isSubmitting
   const buttonText = formData.idUser || isUserAdmin ? 'Guardar' : 'Registrar'
   const buttonTextLoading =
-    formData.idUser || isUserAdmin ? 'Guardardando...' : 'Registrando...'
+    formData.idUser || isUserAdmin ? 'Guardardando' : 'Registrando'
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]
@@ -422,7 +420,6 @@ export const UserForm = ({
             alignItems: 'center',
             gap: '10px',
             width: '90%',
-            boxShadow: 'var(--box-shadow)',
             borderRadius: '8px',
             padding: '20px'
           }}
@@ -830,7 +827,7 @@ export const UserForm = ({
                             {formData.roles.map((role) => (
                               <Button
                                 key={role}
-                                style={buttonStyle}
+                                style={buttonStyleRoles}
                                 onClick={() => handleRemoveRole(role)}
                               >
                                 Quitar {role}
@@ -1027,17 +1024,12 @@ export const UserForm = ({
 
           <ContainerBottom>
             <CustomButton
-              variant="contained"
-              type="submit"
-              sx={{
-                minWidth: '150px',
-                minHeight: '50px',
-                gap: '10px'
-              }}
-            >
+             type="submit"
+             >
               {combinedLoading ? (
                 <>
-                  {buttonTextLoading}
+                 <LoadingText text= {buttonTextLoading} />
+                  
                   <CircularProgress
                     size={30}
                     sx={{ color: 'var(--color-azul)' }}

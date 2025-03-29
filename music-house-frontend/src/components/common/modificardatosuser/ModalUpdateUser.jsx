@@ -15,6 +15,7 @@ import { UsersApi } from '../../../api/users'
 import { CustomButton } from '../../Form/formUsuario/CustomComponents'
 import useAlert from '../../../hook/useAlert'
 import { getErrorMessage } from '../../../api/getErrorMessage'
+import LoadingText from '../loadingText/LoadingText'
 
 const ModalUpdateUser = ({
   open,
@@ -100,9 +101,9 @@ const ModalUpdateUser = ({
         handleCloseModalUser()
         showSuccess(
           'Usuario modificado',
-          'El usuario ha sido modificado con éxito.'
-        )
-      }, 1500)
+          'El usuario ha sido modificado con éxito.', () => {
+      })
+      }, 4500)
     } catch (error) {
       setError(`❌ ${getErrorMessage(error)}`)
       setLoading(false)
@@ -226,25 +227,17 @@ const ModalUpdateUser = ({
               Cancelar
             </Button>
             <CustomButton
-              variant="contained"
-              type="submit"
+             type="submit"
               disabled={loading}
-              sx={{
-                minWidth: '150px',
-                minHeight: '40px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px'
-              }}
             >
               {loading ? (
                 <>
+                <LoadingText text="Guardando" />
                   <CircularProgress
-                    size={20}
-                    sx={{ color: 'var(--color-azul)' }}
+                    size={25}
+                    sx={{ color: 'var(--color-exito)' }}
                   />
-                  Cargando...
+                 
                 </>
               ) : (
                 'Guardar'
