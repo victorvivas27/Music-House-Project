@@ -8,7 +8,12 @@ import {
   TextField
 } from '@mui/material'
 import Link from '@mui/material/Link'
-import { ContainerBottom, ContainerForm, CustomButton } from './CustomButton'
+import {
+  ContainerBottom,
+  ContainerForm,
+  CustomButton,
+  TitleResponsive
+} from './CustomButton'
 import { useFormik } from 'formik'
 import { UsersApi } from '../../../api/users'
 import loginValidationSchema from './LoginValidation'
@@ -21,6 +26,7 @@ import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
 import { getErrorMessage } from '../../../api/getErrorMessage'
 import LoadingText from '../../common/loadingText/LoadingText'
+import ContactSupportRoundedIcon from '@mui/icons-material/ContactSupportRounded';
 
 const Login = ({ onSwitch }) => {
   const navigate = useNavigate()
@@ -67,35 +73,12 @@ const Login = ({ onSwitch }) => {
   })
 
   return (
-    <form onSubmit={formik.handleSubmit} style={{ border: '2px solid blue' }}>
+    <form onSubmit={formik.handleSubmit}>
+     <fieldset disabled={loading} style={{ border: 'none', padding: 0, margin: 0 }}>
       <ContainerForm>
-        <Grid
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '10px',
-            width: '90%',
-            borderRadius: '8px',
-            padding: '20px'
-          }}
-        >
-          <Typography
-            variant="h3"
-            sx={{ color: { xs: 'white', md: 'black' }, fontWeight: 'light' }}
-          >
-            Iniciar Sesión
-          </Typography>
-          <Grid
-            sx={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
+        <Grid>
+          <TitleResponsive>Iniciar Sesión</TitleResponsive>
+          <Grid>
             <FormControl
               fullWidth
               margin="normal"
@@ -125,11 +108,7 @@ const Login = ({ onSwitch }) => {
               }}
             >
               <TextField
-                sx={{
-                  borderRadius: '5px',
-                  padding: '5px'
-                }}
-                label="🔒 Password"
+               label="🔒 Password"
                 name="password"
                 onChange={formik.handleChange}
                 value={formik.values.password}
@@ -154,7 +133,12 @@ const Login = ({ onSwitch }) => {
                           <VisibilityOff
                             sx={{
                               color: 'var(--color-exito)',
-                              fontSize: 30,
+                              fontSize: {
+                                xs: '20px',
+                                sm: '24px',
+                                md: '28px',
+                                lg: '32px'
+                              },
                               marginRight: 1
                             }}
                           />
@@ -162,7 +146,12 @@ const Login = ({ onSwitch }) => {
                           <Visibility
                             sx={{
                               color: 'var(--color-secundario)',
-                              fontSize: 30,
+                              fontSize: {
+                                xs: '20px',
+                                sm: '24px',
+                                md: '28px',
+                                lg: '32px'
+                              },
                               marginRight: 1
                             }}
                           />
@@ -176,19 +165,14 @@ const Login = ({ onSwitch }) => {
           </Grid>
 
           <ContainerBottom
-            sx={{
-              width: '38%'
-            }}
+           
           >
-            <CustomButton
-             type="submit" 
-             disabled={loading}
-             >
+            <CustomButton type="submit" disabled={loading}>
               {loading ? (
                 <>
                   <LoadingText text="Iniciando sesión" />
                   <CircularProgress
-                    size={30}
+                    size={20}
                     sx={{ color: 'var(--color-azul)' }}
                   />
                 </>
@@ -201,15 +185,17 @@ const Login = ({ onSwitch }) => {
                 sx={{
                   fontWeight: '600',
                   color: 'var(--color-azul)',
-                  marginTop: { xs: '40px', md: '20px' }
+                  marginTop: '1rem',  
                 }}
               >
-                No tienes una cuenta? Regístrate
+                No tienes una cuenta? Regístrate 
+                <ContactSupportRoundedIcon/>
               </Typography>
             </Link>
           </ContainerBottom>
         </Grid>
       </ContainerForm>
+      </fieldset>
     </form>
   )
 }

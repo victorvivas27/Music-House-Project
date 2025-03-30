@@ -4,12 +4,9 @@ import { Grid } from '@mui/material'
 export const BoxLogoSuperior = styled(Grid)(() => ({
   display: 'flex',
   flexDirection: 'column',
-  marginRight: '50px',
-  justifyContent: 'center',
-  alignItems: 'flex-end',
-  marginTop: '20px',
-  height: '100px',
-  width: '100vw'
+ alignItems: 'flex-end',
+ marginTop:20,
+ border:"4px solid green"
 }))
 
 export default BoxLogoSuperior

@@ -21,7 +21,7 @@
 
   --texto-primario: #000000;
   --texto-secundario: #616161;
-  --texto-inverso: #ffffff;
+  --texto-inverso: #aeaeae;
   --background-color: #f9f9f9;
   --color-primario-active:#eb3828;
   --background-dark: #ffffff;
@@ -36,6 +36,10 @@
     rgba(0, 0, 0, 0.17) 0px 12px 13px,
     rgba(0, 0, 0, 0.09) 0px -3px 5px;
 
+}
+[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 * {

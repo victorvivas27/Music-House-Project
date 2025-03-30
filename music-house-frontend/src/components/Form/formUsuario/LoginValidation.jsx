@@ -7,7 +7,7 @@ const loginValidationSchema = Yup.object().shape({
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
       '❌ El email no tiene un formato válido'
     )
-    .required('❌ Por favor inicie sesión con un email válido'),
+    .required('❌ El email es obligatorio'),
 
   password: Yup.string()
     .min(6, '❌ La contraseña debe tener al menos 6 caracteres')

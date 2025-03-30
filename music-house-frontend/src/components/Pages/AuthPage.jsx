@@ -1,4 +1,4 @@
-import  { useState } from 'react'
+import { useState } from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import Login from '../Form/formUsuario/Login'
 import { MainCrearUsuario } from '../common/crearUsuario/MainCrearUsuario'
@@ -9,6 +9,8 @@ import BoxFormUnder from '../common/crearUsuario/BoxFormUnder'
 import { useNavigate, Link } from 'react-router-dom'
 
 import '../styles/transitions.css'
+
+import { ContainerLogo } from '../Form/formUsuario/CustomButton'
 
 const AuthPage = () => {
   const navigate = useNavigate()
@@ -27,7 +29,9 @@ const AuthPage = () => {
     <MainCrearUsuario>
       <BoxLogoSuperior>
         <Link to="/" onClick={homeNavigate}>
-          <Logo />
+          <ContainerLogo>
+            <Logo />
+          </ContainerLogo>
         </Link>
       </BoxLogoSuperior>
       <TransitionGroup>

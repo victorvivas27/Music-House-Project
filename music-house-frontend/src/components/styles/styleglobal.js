@@ -1,36 +1,32 @@
 export const inputStyles = {
-  width: "100%", // ✅ Se asegura de que ocupe todo el ancho disponible
-  maxWidth: "500px", // 🔹 Opcional: limita el ancho máximo si es necesario
-  transition: 'all 0.3s ease-in-out', // Suaviza las transiciones
-  color: 'var(--color-azul)', // Color del texto
-  boxSizing: 'border-box', // Evita desbordes por bordes gruesos
+  width: "90%", 
+  color: 'var(--color-azul)', 
   '& .MuiInputBase-input': {
-    color: 'var(--color-azul)', // Color del texto principal
+    color: 'var(--color-azul)',
+    height:"10px",
+  
   },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
-      borderColor: 'var(--color-secundario)', // Borde normal
+      borderColor: 'var(--color-secundario)',
       borderWidth: '2px',
       borderRadius: '8px',
     },
     '&:hover fieldset': {
-      borderColor: 'var(--color-primario)', // Color más fuerte en hover
-      borderWidth: '2.5px',
+      borderColor: 'var(--color-primario)',
+     
     },
     '&.Mui-focused fieldset': {
-      borderColor: 'var(--color-exito)', // Color en foco
-      borderWidth: '1px',
+      borderColor: 'var(--color-exito)', 
     },
   },
 
   '& .MuiInputLabel-root': {
-    color: 'var(--color--azul)', // Color del label normal
-    fontSize: '1rem',
-    transition: 'all 0.3s ease-in-out',
+    color: 'var(--color--azul)',
   },
 
   '& .MuiInputLabel-root.Mui-focused': {
-    color: 'var(--color-azul)', // Color al enfocar
+    color: 'var(--color-azul)', 
   },
 };
 
@@ -41,7 +37,7 @@ export const flexRowContainer = {
   borderRadius: '10px',
   flexWrap: 'wrap',
   boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.1)',
-  padding: '10px', // Espaciado interno mejorado
+  padding: '10px',
 };
 
 export const flexColumnContainer = {
@@ -49,36 +45,34 @@ export const flexColumnContainer = {
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'space-evenly',
-  // backgroundColor: 'rgba(245, 245, 245, 0.8)',
   boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.1)',
   borderRadius: '12px',
-  padding: '15px', // Mejora en espaciado interno
-  maxWidth: '100%', // Evita desbordes en pantallas pequeñas
+  padding: '15px', 
+  maxWidth: '100%', 
 };
 
 export const paginationStyles = {
   '& .MuiTablePagination-toolbar': { 
-    backgroundColor: 'lightgray', // Fondo gris en la barra de paginación
-    //borderRadius: '8px',
-    padding: '10px' // Espaciado interno mejorado
+    backgroundColor: 'lightgray', 
+    padding: '10px' 
   },
   '& .MuiTablePagination-selectLabel': { 
-    fontWeight: 'bold', // Texto "Filas por página" en negrita
+    fontWeight: 'bold',
     color: 'var(--color-azul)'
   },
   '& .MuiTablePagination-input': { 
-    fontSize: '16px', // Aumentar el tamaño del input
-    color: 'var(--color-error)' // Cambiar color del texto del input
+    fontSize: '16px',
+    color: 'var(--color-error)' 
   },
   '& .MuiTablePagination-displayedRows': { 
-    fontStyle: 'italic', // Poner en itálica el "1–10 of 24"
+    fontStyle: 'italic',
     fontSize:15,
     color: 'var(--color-exito)'
   },
   '& .MuiTablePagination-actions': { 
-    color: 'var(--color-secundario)', // Color azul en los botones de navegación
+    color: 'var(--color-secundario)',
     '& button': {
-      borderRadius: '50%', // Hacer los botones redondos
+      borderRadius: '50%', 
       margin:1,
       backgroundColor: 'var(--color-primario)',
       transition: '0.3s',
