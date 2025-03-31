@@ -7,8 +7,6 @@ import {
   Grid,
   CircularProgress
 } from '@mui/material'
-
-import '../styles/crearInstrumento.styles.css'
 import PropTypes from 'prop-types'
 import ArrowBack from '../utils/ArrowBack'
 import { flexRowContainer, inputStyles } from '../styles/styleglobal'

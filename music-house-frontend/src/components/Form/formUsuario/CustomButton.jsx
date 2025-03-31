@@ -90,23 +90,23 @@ export const TitleResponsive = styled(Typography, {
 })(({ theme, sx = {} }) => ({
   color: 'var(--texto-inverso)',
   fontWeight: 300,
-  fontSize: '1.5rem',
+  fontSize: '1rem',
 
   [theme.breakpoints.up('sm')]: {
     fontWeight: 350,
-    fontSize: '2.2rem'
+    fontSize: '1.1rem'
   },
   [theme.breakpoints.up('md')]: {
     fontWeight: 400,
-    fontSize: '2.5rem'
+    fontSize: '1.2rem'
   },
   [theme.breakpoints.up('lg')]: {
     fontWeight: 450,
-    fontSize: '2.8rem'
+    fontSize: '1.4rem'
   },
   [theme.breakpoints.up('xl')]: {
     fontWeight: 500,
-    fontSize: '2.5rem'
+    fontSize: '1.5rem'
   },
 
   ...sx
@@ -138,27 +138,28 @@ export const ContainerLogo = styled(Box, {
 export const ParagraphResponsive = styled(Typography, {
   shouldForwardProp: (prop) => prop !== 'sx'
 })(({ theme, sx = {} }) => ({
-  color: 'var(--texto-normal)', // podés ajustar este token si tenés uno
+
   fontWeight: 300,
-  fontSize: '0.6rem',
-  lineHeight: 1.6,
-  textAlign: 'justify',
+  fontSize: '0.8rem',
+  fontStyle: 'italic',
+  
 
   [theme.breakpoints.up('sm')]: {
-    fontSize: '0.5rem',
+    fontSize: '0.8rem',
     lineHeight: 1.7
   },
   [theme.breakpoints.up('md')]: {
-    fontSize: '0.6rem',
+    fontSize: '0.9rem',
     lineHeight: 1.8
   },
   [theme.breakpoints.up('lg')]: {
-    fontSize: '0.7rem',
+    fontSize: '1.1rem',
     lineHeight: 1.9
   },
   [theme.breakpoints.up('xl')]: {
-    fontSize: '0.9rem',
-    lineHeight: 2
+    fontSize: '1.2rem',
+    lineHeight: 2,
+   
   },
 
   ...sx

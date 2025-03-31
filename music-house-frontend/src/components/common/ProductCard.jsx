@@ -12,7 +12,7 @@ import {
 
 import ShareIcon from '@mui/icons-material/Share'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import '../styles/product.styles.css'
+
 import PropTypes from 'prop-types'
 import { red } from '@mui/material/colors'
 import { CustomTooltip } from './customTooltip/CustomTooltip'

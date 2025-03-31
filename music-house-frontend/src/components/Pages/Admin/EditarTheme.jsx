@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom'
 import CreateWrapper from '../../common/crearProd/createWrapper'
 import { Box, Typography } from '@mui/material'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
-import '../../styles/crearInstrumento.styles.css'
 import { EditThemeForm } from '../../Form/EditThemeForm'
 
 export const EditarTheme = () => {

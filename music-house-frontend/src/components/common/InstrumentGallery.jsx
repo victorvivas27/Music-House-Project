@@ -1,7 +1,6 @@
 import ImageList from '@mui/material/ImageList'
 import ImageListItem from '@mui/material/ImageListItem'
 import { Box } from '@mui/material'
-import '../styles/instrumentGallery.styles.css'
 import PropTypes from 'prop-types'
 
 export const InstrumentGallery = ({ itemData }) => {

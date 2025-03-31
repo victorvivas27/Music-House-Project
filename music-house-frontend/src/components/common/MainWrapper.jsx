@@ -9,6 +9,7 @@ export const MainWrapper = styled(Box)(() => ({
   width: '98vw',
   marginTop: 310, 
   marginBottom: 50,
+  border:"1px solid blue"
   
 }))
 

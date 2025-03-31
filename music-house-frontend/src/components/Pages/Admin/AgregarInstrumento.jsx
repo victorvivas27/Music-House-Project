@@ -3,7 +3,6 @@ import CreateWrapper from '../../common/crearProd/createWrapper'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 import NewInstrumentForm from '../../Form/NewInstrumentForm'
 
-import '../../styles/crearInstrumento.styles.css'
 
 export const AgregarInstrumento = () => {
   const { isHeaderVisible } = useHeaderVisibility()

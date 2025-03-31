@@ -36,15 +36,14 @@ export const flexRowContainer = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  flexDirection: 'row',
-  flexWrap: 'wrap',
+ 
 };
 
 export const flexColumnContainer = {
   display: 'flex',
   alignItems: 'center',
   flexDirection: 'column',
- 
+  justifyContent: 'center',
 };
 
 export const paginationStyles = {

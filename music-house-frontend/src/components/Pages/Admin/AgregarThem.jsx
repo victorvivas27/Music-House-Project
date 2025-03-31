@@ -4,7 +4,7 @@ import CreateWrapper from '../../common/crearProd/createWrapper'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 
 
-import '../../styles/crearInstrumento.styles.css'
+
 import { NewThemeForm } from '../../Form/NewThemeForm'
 
 export const AgregarTheme = () => {

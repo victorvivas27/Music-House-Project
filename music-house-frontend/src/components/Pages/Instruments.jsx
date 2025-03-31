@@ -30,7 +30,6 @@ import {
   getEmptyRows,
   useVisibleRows
 } from './Admin/common/tableHelper'
-import '../styles/instruments.styles.css'
 import ArrowBack from '../utils/ArrowBack'
 import useAlert from '../../hook/useAlert'
 import { headCellsInstrument } from '../utils/types/HeadCells'

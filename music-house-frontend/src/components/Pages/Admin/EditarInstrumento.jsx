@@ -3,7 +3,6 @@ import CreateWrapper from '../../common/crearProd/createWrapper'
 import { Box, Typography } from '@mui/material'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 import EditInstrumentForm from '../../Form/EditInstrumentForm'
-import '../../styles/crearInstrumento.styles.css'
 export const EditarInstrumento = () => {
   const { isHeaderVisible } = useHeaderVisibility()
   const { id } = useParams()

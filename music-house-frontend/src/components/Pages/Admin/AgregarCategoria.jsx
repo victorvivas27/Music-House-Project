@@ -4,7 +4,6 @@ import CreateWrapper from '../../common/crearProd/createWrapper'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 import { NewCategoryForm } from '../../Form/NewCategoryForm'
 
-import '../../styles/crearInstrumento.styles.css'
 
 export const AgregarCategoria = () => {
   const { isHeaderVisible } = useHeaderVisibility()

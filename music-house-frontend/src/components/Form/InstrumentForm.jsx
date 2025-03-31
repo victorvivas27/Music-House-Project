@@ -13,8 +13,6 @@ import {
 import CategorySelect from './CategorySelect'
 import ThemeSelect from './ThemeSelect'
 import { useAppStates } from '../utils/global.context'
-
-import '../styles/crearInstrumento.styles.css'
 import PropTypes from 'prop-types'
 import ValidatedTextField from '../Pages/Admin/common/ValidatedTextField'
 

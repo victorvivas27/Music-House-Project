@@ -3,7 +3,6 @@ import {
   Box,
   CircularProgress,
   Snackbar,
-  Typography
 } from '@mui/material'
 import {
   DateCalendar,
@@ -21,14 +20,16 @@ import {
 } from '../../../api/reservations'
 import { useNavigate } from 'react-router-dom'
 
-import { flexColumnContainer } from '../../styles/styleglobal'
+import { flexColumnContainer} from '../../styles/styleglobal'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
 import { getErrorMessage } from '../../../api/getErrorMessage'
 import {
   ContainerBottom,
-  CustomButton
+  CustomButton,
+  ParagraphResponsive,
+  TitleResponsive
 } from '../../Form/formUsuario/CustomButton'
 
 import LoadingText from '../loadingText/LoadingText'
@@ -225,8 +226,9 @@ const CalendarReserva = ({ instrument }) => {
       <Box
         sx={{
           ...flexColumnContainer,
-          minHeight: '90%',
-          minWidth: '300px'
+          gap: 2,
+          padding: 2,
+       
         }}
       >
         <DateCalendar
@@ -235,7 +237,7 @@ const CalendarReserva = ({ instrument }) => {
           }}
           sx={{
             boxShadow: 'var(--box-shadow)',
-            borderRadius: 5
+          
           }}
         />
 
@@ -249,42 +251,34 @@ const CalendarReserva = ({ instrument }) => {
             p: 2,
             backgroundColor: 'var(--color-exito)',
             borderRadius: 2,
-            boxShadow: 'var(--box-shadow)',
             color: 'var(--texto-inverso)',
             textAlign: 'center',
-            border: '1px solid red',
-            width: '30%',
-            height: '100%'
+           
+            width: {
+              xs: '100%',
+              sm: '100%',
+              md: '90%',
+              lg: '72%',
+              xl: '70%'
+            }
           }}
           className={selectedDates.length > 0 ? 'fade-in-up' : 'fade-out-soft'}
         >
-          <Typography
-            variant="body1"
-            sx={{
-              fontWeight: 'bold',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 1
-            }}
-          >
+          <TitleResponsive >
             📅 Fechas seleccionadas:
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              mt: 1,
-              fontSize: { xs: '0.85rem', sm: '0.9rem' },
-              wordWrap: 'break-word'
-            }}
-          >
-            {selectedDates.join(' • ')}
-          </Typography>
+          </TitleResponsive>
+          <ParagraphResponsive>{selectedDates.join(' • ')}</ParagraphResponsive>
         </Box>
 
         <ContainerBottom
           sx={{
-            width: '30%'
+            width: {
+              xs: '100%',
+              sm: '100%',
+              md: '90%',
+              lg: '70%',
+              xl: '50%'
+            }
           }}
         >
           <CustomButton
@@ -305,10 +299,9 @@ const CalendarReserva = ({ instrument }) => {
             {loading ? (
               <>
                 <LoadingText text="Cargando Reserva" />
-
                 <CircularProgress
                   size={20}
-                  sx={{ color: 'var(--color-azul)', ml: 1 }}
+                  sx={{ color: 'var(--color-azul)'}}
                 />
               </>
             ) : (

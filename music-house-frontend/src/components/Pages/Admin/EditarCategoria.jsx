@@ -4,7 +4,6 @@ import CreateWrapper from '../../common/crearProd/createWrapper'
 import { Box, Typography } from '@mui/material'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 import { EditCategoryForm } from '../../Form/EditCategoryForm'
-import '../../styles/crearInstrumento.styles.css'
 export const EditarCategoria = () => {
  const { isHeaderVisible } = useHeaderVisibility()
 const { id } = useParams()
