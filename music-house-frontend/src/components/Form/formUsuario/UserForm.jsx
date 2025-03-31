@@ -17,19 +17,27 @@ import {
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import { styled } from '@mui/material/styles'
-
 import { RoleSelect } from './RoleSelect'
 import PropTypes from 'prop-types'
-
-import Swal from 'sweetalert2'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import usePasswordValidation from '../../../hook/usePasswordValidation'
-import { inputStyles } from '../../styles/styleglobal'
+import {
+  flexColumnContainer,
+  flexRowContainer,
+  fontSizeResponsi,
+  inputStyles
+} from '../../styles/styleglobal'
 import { countryCodes } from '../../utils/codepaises/CountryCodes'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
 import LoadingText from '../../common/loadingText/LoadingText'
-import { ContainerBottom, ContainerForm, CustomButton } from './CustomButton'
+import {
+  ContainerBottom,
+  ContainerForm,
+  CustomButton,
+  ParagraphResponsive,
+  TitleResponsive
+} from './CustomButton'
 
 const buttonStyleRoles = {
   backgroundColor: 'var(--color-error)',
@@ -349,11 +357,7 @@ export const UserForm = ({
           telegramChatId: backendErrors.telegramChatId || prev.telegramChatId
         }))
       } else {
-        Swal.fire({
-          title: 'Error',
-          text: 'Ocurrió un problema al enviar el formulario.',
-          icon: 'error'
-        })
+        showError('Error', 'Ocurrió un problema al enviar el formulario.')
       }
     }
   }
@@ -389,45 +393,27 @@ export const UserForm = ({
   }, [formData.picture])
 
   return (
-    <form onSubmit={handleSubmit} style={{ border: '2px solid yellow' }}>
-      <ContainerForm>
-        <Grid
+    <form onSubmit={handleSubmit}>
+      <fieldset
+        disabled={loading}
+        style={{ border: 'none', padding: 0, margin: 0 }}
+      >
+        <ContainerForm
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '10px',
-            width: '90%',
-            borderRadius: '8px',
-            padding: '20px'
+            width: {
+              sm: '95vw',
+              md: '95vw',
+              lg: '90vw',
+              xl: '85vw'
+            }
           }}
         >
-          <Typography
-            variant="h4"
-            sx={{
-              color: { xs: 'white', md: 'var(--texto-primario)' },
-              fontWeight: 'light'
-            }}
-          >
-            {title}
-          </Typography>
+          <Grid>
+            <TitleResponsive> {title}</TitleResponsive>
 
-          <Grid
-            sx={{
-              width: '99%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
             <Grid
               sx={{
-                width: '99%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
+                ...flexColumnContainer,
                 flexDirection: { md: 'row', xs: 'column' },
                 gap: '10px'
               }}
@@ -435,26 +421,20 @@ export const UserForm = ({
               {/*Comienzo contenedor formulario lado izquierdo*/}
               <Grid
                 sx={{
-                  width: '90%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center'
+                  ...flexColumnContainer
                 }}
               >
                 {/* Contenedor del avatar y la subida de imagen */}
                 <FormControl
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    height: '160px'
+                    ...flexColumnContainer,
+                    margin: 1
                   }}
                 >
                   <Box
                     sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center'
+                      ...flexColumnContainer,
+                      margin: 1
                     }}
                   >
                     {/* 📌 Avatar que dispara la subida de imagen */}
@@ -516,14 +496,20 @@ export const UserForm = ({
                 {/*Input Name*/}
 
                 <FormControl
-                  fullWidth
-                  margin="normal"
                   sx={{
                     ...inputStyles
-                    //minHeight: '60px'
                   }}
                 >
                   <TextField
+                    sx={{
+                      width: {
+                        xs: '100%',
+                        sm: '65%',
+                        md: '70%',
+                        lg: '69%',
+                        xl: '72%'
+                      }
+                    }}
                     label="🏷️Nombre"
                     name="name"
                     value={formData.name}
@@ -537,13 +523,20 @@ export const UserForm = ({
 
                 {/*Input last name*/}
                 <FormControl
-                  margin="normal"
                   sx={{
                     ...inputStyles
-                    //minHeight: '60px'
                   }}
                 >
                   <TextField
+                    sx={{
+                      width: {
+                        xs: '100%',
+                        sm: '65%',
+                        md: '70%',
+                        lg: '69%',
+                        xl: '72%'
+                      }
+                    }}
                     label="👤Apellido"
                     name="lastName"
                     value={formData.lastName}
@@ -567,7 +560,6 @@ export const UserForm = ({
                     <Grid item xs={12} sm={6}>
                       <FormControl
                         key={index}
-                        margin="normal"
                         sx={{
                           ...inputStyles
                         }}
@@ -589,7 +581,6 @@ export const UserForm = ({
                     <Grid item xs={12} sm={6}>
                       <FormControl
                         key={index}
-                        margin="normal"
                         sx={{
                           ...inputStyles
                         }}
@@ -611,7 +602,6 @@ export const UserForm = ({
                     <Grid item xs={12} sm={4}>
                       <FormControl
                         key={index}
-                        margin="normal"
                         sx={{
                           ...inputStyles
                         }}
@@ -632,10 +622,8 @@ export const UserForm = ({
                     <Grid item xs={12} sm={4}>
                       <FormControl
                         key={index}
-                        margin="normal"
                         sx={{
-                          ...inputStyles,
-                          minHeight: '60px'
+                          ...inputStyles
                         }}
                       >
                         <TextField
@@ -655,7 +643,6 @@ export const UserForm = ({
                     <Grid item xs={12} sm={4}>
                       <FormControl
                         key={index}
-                        margin="normal"
                         sx={{
                           ...inputStyles
                         }}
@@ -691,6 +678,16 @@ export const UserForm = ({
                       }}
                     >
                       <Select
+                        sx={{
+                          width: {
+                            xs: '50%',
+                            sm: '40%',
+                            md: '45%',
+                            lg: '46%',
+                            xl: '45%'
+                          },
+                          height: '40px'
+                        }}
                         displayEmpty
                         value={phone.countryCode}
                         onChange={(e) =>
@@ -734,7 +731,16 @@ export const UserForm = ({
                       error={Boolean(allErrors[`phone_${index}`])}
                       helperText={errors[`phone_${index}`] || ' '}
                       type="text"
-                      sx={{ ...inputStyles }}
+                      sx={{
+                        ...inputStyles,
+                        width: {
+                          xs: '100%',
+                          sm: '65%',
+                          md: '70%',
+                          lg: '69%',
+                          xl: '72%'
+                        }
+                      }}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -753,22 +759,25 @@ export const UserForm = ({
               <Grid
                 sx={{
                   width: '99%',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  gap: 1
+                  ...flexColumnContainer
                 }}
               >
                 {/*Input email*/}
                 <FormControl
-                  margin="normal"
                   sx={{
                     ...inputStyles
                   }}
                 >
                   <TextField
+                    sx={{
+                      width: {
+                        xs: '100%',
+                        sm: '65%',
+                        md: '70%',
+                        lg: '50%',
+                        xl: '72%'
+                      }
+                    }}
                     label="📧 Email"
                     name="email"
                     onChange={handleChange}
@@ -780,16 +789,52 @@ export const UserForm = ({
                 </FormControl>
                 {/*Fin input email*/}
 
+                <FormControl
+                  sx={{
+                    ...inputStyles
+                  }}
+                >
+                  <TextField
+                    sx={{
+                      width: {
+                        xs: '50%',
+                        sm: '40%',
+                        md: '40%',
+                        lg: '40%',
+                        xl: '40%'
+                      }
+                    }}
+                    label="🔢Código de Telegram"
+                    name="telegramChatId"
+                    onChange={handleChange}
+                    value={formData.telegramChatId}
+                    error={Boolean(errors.telegramChatId)}
+                    helperText={errors.telegramChatId || ' '}
+                    type="tel"
+                    inputProps={{ maxLength: 15, pattern: '[0-9]*' }}
+                  />
+                </FormControl>
+                <ParagraphResponsive>
+                  ¿No sabes tu código?{' '}
+                  <Link
+                    href="https://t.me/MyBotJva_bot"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      fontWeight: 'bold',
+                      color: 'var(--color-azul)'
+                    }}
+                  >
+                    Haz clic aquí para obtenerlo en Telegram
+                  </Link>
+                </ParagraphResponsive>
+
                 {/* 📌 Verificamos si `formData.idUser` es válido antes de renderizar */}
 
                 {/* ✅ Solo mostrar si hay usuario seleccionado */}
                 {formData?.idUser && (
                   <Box
-                    sx={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      justifyContent: 'space-evenly'
-                    }}
+                   sx={{width:"70%"}}
                   >
                     {/* ✅ Si soy admin, mostrar los botones de gestión de roles */}
                     {isUserAdmin && (
@@ -797,10 +842,7 @@ export const UserForm = ({
                         {formData.roles?.length > 0 && isUserAdmin && (
                           <Box
                             sx={{
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              gap: 1,
-                              mt: 1
+                              ...flexRowContainer
                             }}
                           >
                             {formData.roles.map((role) => (
@@ -814,10 +856,10 @@ export const UserForm = ({
                             ))}
                           </Box>
                         )}
+                        
 
                         {/* 📌 Select para asignar roles */}
                         <FormControl
-                          margin="normal"
                           sx={{
                             ...inputStyles
                           }}
@@ -836,12 +878,20 @@ export const UserForm = ({
                   <>
                     {/* Campo de contraseña */}
                     <FormControl
-                      margin="normal"
                       sx={{
                         ...inputStyles
                       }}
                     >
                       <TextField
+                        sx={{
+                          width: {
+                            xs: '100%',
+                            sm: '65%',
+                            md: '70%',
+                            lg: '50%',
+                            xl: '72%'
+                          }
+                        }}
                         label="🔒 Contraseña"
                         name="password"
                         onChange={handleChange}
@@ -860,14 +910,14 @@ export const UserForm = ({
                                   <VisibilityOff
                                     sx={{
                                       color: 'var(--color-exito)',
-                                      fontSize: 40
+                                      ...fontSizeResponsi
                                     }}
                                   />
                                 ) : (
                                   <Visibility
                                     sx={{
                                       color: 'var(--color-secundario)',
-                                      fontSize: 40
+                                      ...fontSizeResponsi
                                     }}
                                   />
                                 )}
@@ -879,8 +929,17 @@ export const UserForm = ({
                     </FormControl>
 
                     {/* Campo de repetir contraseña */}
-                    <FormControl margin="normal" sx={{ ...inputStyles }}>
+                    <FormControl sx={{ ...inputStyles }}>
                       <TextField
+                        sx={{
+                          width: {
+                            xs: '100%',
+                            sm: '65%',
+                            md: '70%',
+                            lg: '50%',
+                            xl: '72%'
+                          }
+                        }}
                         label="🔓 Repetir Contraseña"
                         name="repeatPassword"
                         onChange={handleChange}
@@ -905,14 +964,14 @@ export const UserForm = ({
                                   <VisibilityOff
                                     sx={{
                                       color: 'var(--color-exito)',
-                                      fontSize: 40
+                                      ...fontSizeResponsi
                                     }}
                                   />
                                 ) : (
                                   <Visibility
                                     sx={{
                                       color: 'var(--color-secundario)',
-                                      fontSize: 40
+                                      ...fontSizeResponsi
                                     }}
                                   />
                                 )}
@@ -924,46 +983,13 @@ export const UserForm = ({
                     </FormControl>
                   </>
                 )}
-                <FormControl
-                  margin="normal"
-                  sx={{
-                    ...inputStyles
-                  }}
-                >
-                  <TextField
-                    label="🔢Código de Telegram"
-                    name="telegramChatId"
-                    onChange={handleChange}
-                    value={formData.telegramChatId}
-                    error={Boolean(errors.telegramChatId)}
-                    helperText={errors.telegramChatId || ' '}
-                    type="tel"
-                    inputProps={{ maxLength: 15, pattern: '[0-9]*' }}
-                  />
-                </FormControl>
-
-                <Typography sx={{ fontSize: '14px', marginTop: '5px' }}>
-                  ¿No sabes tu código?{' '}
-                  <Link
-                    href="https://t.me/MyBotJva_bot"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      fontWeight: 'bold',
-                      color: 'var(--color-azul)'
-                    }}
-                  >
-                    Haz clic aquí para obtenerlo en Telegram
-                  </Link>
-                </Typography>
+              
               </Grid>
             </Grid>
             {!formData.idUser && !isUserAdmin && (
               <Box
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center'
+                  ...flexColumnContainer
                 }}
               >
                 {/* 📌 Checkbox de términos y condiciones */}
@@ -975,9 +1001,9 @@ export const UserForm = ({
                     />
                   }
                   label={
-                    <Typography sx={{ fontWeight: 'bold' }}>
+                    <ParagraphResponsive sx={{ fontWeight: 'bold' }}>
                       Acepto los términos y condiciones del servicio
-                    </Typography>
+                    </ParagraphResponsive>
                   }
                   sx={{
                     color: 'var(--texto-primario)',
@@ -999,54 +1025,46 @@ export const UserForm = ({
                 </Typography>
               </Box>
             )}
-          </Grid>
 
-          <ContainerBottom
-            sx={{
-              width: '40%'
-            }}
-          >
-            <CustomButton 
-            type="submit"
-            disabled={loading}
-            >
-              {combinedLoading ? (
-                <>
-                  <LoadingText text={buttonTextLoading} />
+            <ContainerBottom>
+              <CustomButton type="submit" disabled={loading}>
+                {combinedLoading ? (
+                  <>
+                    <LoadingText text={buttonTextLoading} />
+                    <CircularProgress
+                      size={30}
+                      sx={{ color: 'var(--color-azul)' }}
+                    />
+                  </>
+                ) : (
+                  buttonText
+                )}
+              </CustomButton>
 
-                  <CircularProgress
-                    size={30}
-                    sx={{ color: 'var(--color-azul)' }}
-                  />
-                </>
-              ) : (
-                buttonText
-              )}
-            </CustomButton>
-
-            {!formData.idUser && !isUserAdmin && (
-              <Link
-                href=""
-                underline="always"
-                onClick={onSwitch}
-                sx={{
-                  color: 'var(--texto-primario)',
-                  marginTop: { xs: '40px', md: '20px' }
-                }}
-              >
-                <Typography
+              {!formData.idUser && !isUserAdmin && (
+                <Link
+                  href=""
+                  underline="always"
+                  onClick={onSwitch}
                   sx={{
-                    fontWeight: '600',
-                    color: 'var(--color-azul)'
+                    color: 'var(--texto-primario)',
+                    marginTop: { xs: '40px', md: '20px' }
                   }}
                 >
-                  Ya tengo una cuenta
-                </Typography>
-              </Link>
-            )}
-          </ContainerBottom>
-        </Grid>
-      </ContainerForm>
+                  <ParagraphResponsive
+                    sx={{
+                      fontWeight: '600',
+                      color: 'var(--color-azul)'
+                    }}
+                  >
+                    Ya tengo una cuenta
+                  </ParagraphResponsive>
+                </Link>
+              )}
+            </ContainerBottom>
+          </Grid>
+        </ContainerForm>
+      </fieldset>
     </form>
   )
 }

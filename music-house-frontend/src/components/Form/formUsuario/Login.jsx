@@ -1,6 +1,5 @@
 import {
   FormControl,
-  Typography,
   Grid,
   InputAdornment,
   IconButton,
@@ -12,6 +11,7 @@ import {
   ContainerBottom,
   ContainerForm,
   CustomButton,
+  ParagraphResponsive,
   TitleResponsive
 } from './CustomButton'
 import { useFormik } from 'formik'
@@ -21,7 +21,7 @@ import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
-import { inputStyles } from '../../styles/styleglobal'
+import { fontSizeResponsi, inputStyles } from '../../styles/styleglobal'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
 import { getErrorMessage } from '../../../api/getErrorMessage'
@@ -76,9 +76,9 @@ const Login = ({ onSwitch }) => {
     <form onSubmit={formik.handleSubmit}>
      <fieldset disabled={loading} style={{ border: 'none', padding: 0, margin: 0 }}>
       <ContainerForm>
-        <Grid>
+        <Grid >
           <TitleResponsive>Iniciar Sesión</TitleResponsive>
-          <Grid>
+          <Grid >
             <FormControl
               fullWidth
               margin="normal"
@@ -133,26 +133,14 @@ const Login = ({ onSwitch }) => {
                           <VisibilityOff
                             sx={{
                               color: 'var(--color-exito)',
-                              fontSize: {
-                                xs: '20px',
-                                sm: '24px',
-                                md: '28px',
-                                lg: '32px'
-                              },
-                              marginRight: 1
+                              ...fontSizeResponsi 
                             }}
                           />
                         ) : (
                           <Visibility
                             sx={{
                               color: 'var(--color-secundario)',
-                              fontSize: {
-                                xs: '20px',
-                                sm: '24px',
-                                md: '28px',
-                                lg: '32px'
-                              },
-                              marginRight: 1
+                            ...fontSizeResponsi                           
                             }}
                           />
                         )}
@@ -164,10 +152,11 @@ const Login = ({ onSwitch }) => {
             </FormControl>
           </Grid>
 
-          <ContainerBottom
-           
-          >
-            <CustomButton type="submit" disabled={loading}>
+          <ContainerBottom>
+            <CustomButton 
+            type="submit"
+             disabled={loading}
+             >
               {loading ? (
                 <>
                   <LoadingText text="Iniciando sesión" />
@@ -181,16 +170,16 @@ const Login = ({ onSwitch }) => {
               )}
             </CustomButton>
             <Link href="" underline="always" onClick={onSwitch}>
-              <Typography
+              <ParagraphResponsive
                 sx={{
                   fontWeight: '600',
                   color: 'var(--color-azul)',
-                  marginTop: '1rem',  
+                  
                 }}
               >
                 No tienes una cuenta? Regístrate 
                 <ContactSupportRoundedIcon/>
-              </Typography>
+              </ParagraphResponsive>
             </Link>
           </ContainerBottom>
         </Grid>
