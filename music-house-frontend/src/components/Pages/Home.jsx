@@ -61,8 +61,8 @@ export const Home = () => {
   if (loading) return <Loader title="Un momento por favor..." />
 
   return (
-    <main>
-      {!loading && (
+    
+     
         <>
           <MainWrapper>
             {state.tematics?.map((tematic, index) => (
@@ -101,7 +101,7 @@ export const Home = () => {
             )}
           </ProductsWrapper>
         </>
-      )}
-    </main>
+     
+    
   )
 }

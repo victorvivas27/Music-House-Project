@@ -17,6 +17,8 @@ public class ImagesUrlsDtoExit {
 
     private UUID idInstrument;
 
+    private UUID idTheme;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date registDate;
 

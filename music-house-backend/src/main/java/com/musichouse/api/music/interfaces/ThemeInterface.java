@@ -4,13 +4,15 @@ import com.musichouse.api.music.dto.dto_entrance.ThemeDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.ThemeDtoExit;
 import com.musichouse.api.music.dto.dto_modify.ThemeDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface ThemeInterface {
 
-    ThemeDtoExit createTheme(ThemeDtoEntrance themeDtoEntrance);
+    ThemeDtoExit createTheme(List<MultipartFile> files, ThemeDtoEntrance themeDtoEntrance
+    ) throws ResourceNotFoundException;
 
     List<ThemeDtoExit> getAllThemes();
 

@@ -91,6 +91,7 @@ export const TitleResponsive = styled(Typography, {
   color: 'var(--texto-inverso-black)',
   fontWeight: 300,
   fontSize: '1rem',
+  textShadow: '0 1px 2px var(--color-primario)',
 
   [theme.breakpoints.up('sm')]: {
     fontWeight: 350,
@@ -142,7 +143,7 @@ export const ParagraphResponsive = styled(Typography, {
   fontWeight: 300,
   fontSize: '0.8rem',
   fontStyle: 'italic',
-  
+  textShadow: '0 1px 2px var(--color-primario)',
 
   [theme.breakpoints.up('sm')]: {
     fontSize: '0.8rem',

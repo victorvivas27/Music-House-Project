@@ -1,5 +1,7 @@
 package com.musichouse.api.music.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musichouse.api.music.dto.dto_entrance.ThemeDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.ThemeDtoExit;
 import com.musichouse.api.music.dto.dto_modify.ThemeDtoModify;
@@ -13,8 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,42 +31,29 @@ public class ThemeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThemeController.class);
     private final ThemeService themeService;
+    private final ObjectMapper objectMapper;
 
     // 🔹 CREAR TEMÁTICA
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<ThemeDtoExit>> createTheme(@RequestBody @Valid ThemeDtoEntrance themeDtoEntrance) {
-        try {
-            ThemeDtoExit themeDtoExit = themeService.createTheme(themeDtoEntrance);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponse.<ThemeDtoExit>builder()
-                            .status(HttpStatus.CREATED)
-                            .statusCode(HttpStatus.CREATED.value())
-                            .message("Temática creada exitosamente.")
-                            .error(null)
-                            .result(themeDtoExit)
-                            .build());
-        } catch (DataIntegrityViolationException e) {
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<?>> createTheme(
+            @RequestPart("theme") String themeJson,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) throws ResourceNotFoundException, JsonProcessingException {
+        // 📌 Convertir JSON a Objeto
+        ThemeDtoEntrance themeDtoEntrance = objectMapper.readValue(themeJson, ThemeDtoEntrance.class);
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.<ThemeDtoExit>builder()
-                            .status(HttpStatus.BAD_REQUEST)
-                            .statusCode(HttpStatus.BAD_REQUEST.value())
-                            .message("La temática ya existe en la base de datos.")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
-        } catch (Exception e) {
+        // 📌 Llamar al servicio
+        ThemeDtoExit themeDtoExit = themeService.createTheme(files, themeDtoEntrance);
 
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<ThemeDtoExit>builder()
-                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                            .message("Ocurrió un error al procesar la solicitud.")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<ThemeDtoExit>builder()
+                        .status(HttpStatus.CREATED)
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Thematica creado exitosamente.")
+                        .error(null)
+                        .result(themeDtoExit)
+                        .build());
     }
+
 
     // 🔹 OBTENER TODAS LAS TEMÁTICAS
     @GetMapping("/all")
@@ -126,7 +117,7 @@ public class ThemeController {
                             .error(e.getMessage())
                             .result(themeDtoModify.getIdTheme())
                             .build());
-        }catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.<String>builder()
@@ -141,37 +132,18 @@ public class ThemeController {
 
     // 🔹 ELIMINAR TEMÁTICA
     @DeleteMapping("/delete/{idTheme}")
-    public ResponseEntity<ApiResponse<Void>> deleteTheme(@PathVariable UUID idTheme) {
-        try {
-            themeService.deleteTheme(idTheme);
-            return ResponseEntity.ok(ApiResponse.<Void>builder()
-                    .status(HttpStatus.OK)
-                    .statusCode(HttpStatus.OK.value())
-                    .message("Temática con ID " + idTheme + " eliminada exitosamente.")
-                    .error(null)
-                    .result(null)
-                    .build());
-        } catch (ResourceNotFoundException e) {
+    public ResponseEntity<ApiResponse<Void>> deleteTheme(@PathVariable UUID idTheme) throws ResourceNotFoundException {
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.<Void>builder()
-                            .status(HttpStatus.NOT_FOUND)
-                            .statusCode(HttpStatus.NOT_FOUND.value())
-                            .message("La temática con el ID " + idTheme + " no se encontró.")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
-        } catch (Exception e) {
+        themeService.deleteTheme(idTheme);
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Temática con ID " + idTheme + " eliminada exitosamente.")
+                .error(null)
+                .result(null)
+                .build());
 
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<Void>builder()
-                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                            .message("Ocurrió un error al procesar la solicitud.")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
-        }
+
     }
 
     // 🔹 BUSCAR TEMÁTICA POR NOMBRE

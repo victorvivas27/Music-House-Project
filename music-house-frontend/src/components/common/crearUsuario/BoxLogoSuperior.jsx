@@ -6,7 +6,7 @@ export const BoxLogoSuperior = styled(Grid)(() => ({
   flexDirection: 'column',
  alignItems: 'flex-end',
  marginTop:20,
-
+ 
 }))
 
 export default BoxLogoSuperior

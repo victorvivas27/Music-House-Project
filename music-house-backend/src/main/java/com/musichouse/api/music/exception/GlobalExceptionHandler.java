@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -97,6 +96,11 @@ public class GlobalExceptionHandler {
     // 🔹 Excepción cuando un email ya existe (puede ser 400 o 409 según prefieras)
     @ExceptionHandler(DuplicateEmailException.class)
     public ResponseEntity<ApiResponse<Void>> handleDuplicateEmailException(DuplicateEmailException e) {
+        return buildResponse(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    @ExceptionHandler(DuplicateNameException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateNameException(DuplicateNameException e) {
         return buildResponse(HttpStatus.CONFLICT, e.getMessage());
     }
 

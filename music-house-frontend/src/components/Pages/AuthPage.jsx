@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import Login from '../Form/formUsuario/Login'
 import { MainCrearUsuario } from '../common/crearUsuario/MainCrearUsuario'
@@ -14,41 +14,55 @@ import { ContainerLogo } from '../Form/formUsuario/CustomButton'
 
 const AuthPage = () => {
   const navigate = useNavigate()
-
   const [showLogin, setShowLogin] = useState(true)
+  const contentRef = useRef(null)
+  const [contentHeight, setContentHeight] = useState(0)
+
   const handleSwitch = (e) => {
     e.preventDefault()
     setShowLogin(!showLogin)
   }
 
-  const homeNavigate = () => {
-    navigate('/')
-  }
+  useEffect(() => {
+    if (contentRef.current) {
+      setContentHeight(contentRef.current.scrollHeight)
+    }
+  }, [showLogin])
 
   return (
-    <MainCrearUsuario>
+    <MainCrearUsuario container>
       <BoxLogoSuperior>
-        <Link to="/" onClick={homeNavigate}>
+        <Link to="/" onClick={() => navigate('/')}>
           <ContainerLogo>
             <Logo />
           </ContainerLogo>
         </Link>
       </BoxLogoSuperior>
-      <TransitionGroup>
-        <CSSTransition
-          key={showLogin ? 'Login' : 'NewUser'}
-          timeout={500}
-          classNames="fade"
-        >
-          <BoxFormUnder className="auth-container">
-            {showLogin ? (
-              <Login onSwitch={handleSwitch} />
-            ) : (
-              <NewUser onSwitch={handleSwitch} />
-            )}
-          </BoxFormUnder>
-        </CSSTransition>
-      </TransitionGroup>
+
+      <BoxFormUnder
+       
+        sx={{
+          height: contentHeight,
+         
+        }}
+      >
+        <TransitionGroup component={null}>
+          <CSSTransition
+            key={showLogin ? 'Login' : 'NewUser'}
+            timeout={1000}
+            classNames="fade"
+            unmountOnExit
+          >
+            <div ref={contentRef}>
+              {showLogin ? (
+                <Login onSwitch={handleSwitch} />
+              ) : (
+                <NewUser onSwitch={handleSwitch} />
+              )}
+            </div>
+          </CSSTransition>
+        </TransitionGroup>
+      </BoxFormUnder>
     </MainCrearUsuario>
   )
 }

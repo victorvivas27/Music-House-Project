@@ -78,7 +78,9 @@ const Login = ({ onSwitch }) => {
       <ContainerForm>
         <Grid >
           <TitleResponsive>Iniciar Sesión</TitleResponsive>
-          <Grid >
+          <Grid 
+          
+          >
             <FormControl
               fullWidth
               margin="normal"
@@ -87,6 +89,13 @@ const Login = ({ onSwitch }) => {
               }}
             >
               <TextField
+                sx={{
+                  width: {
+                    xs: '90%',
+                   
+                  },
+                  marginLeft:2,
+                }}
                 id="outlined-multiline-flexible"
                 label="📧 Email"
                 name="email"
@@ -108,6 +117,13 @@ const Login = ({ onSwitch }) => {
               }}
             >
               <TextField
+               sx={{
+                width: {
+                  xs: '90%',
+                 
+                },
+                marginLeft:2,
+              }}
                label="🔒 Password"
                 name="password"
                 onChange={formik.handleChange}
