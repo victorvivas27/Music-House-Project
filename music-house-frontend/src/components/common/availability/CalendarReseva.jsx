@@ -207,7 +207,7 @@ const CalendarReserva = ({ instrument }) => {
               : isAvailable
                 ? 'var(--color-exito) !important'
                 : 'var(--calendario-color-no-disponible) !important',
-          color: 'var(--texto-inverso) !important',
+          color: 'var(--texto-inverso-black) !important',
           borderRadius: '50%',
           pointerEvents: isReserved ? 'none' : 'auto',
           cursor: isReserved ? 'not-allowed' : 'pointer'
@@ -251,7 +251,7 @@ const CalendarReserva = ({ instrument }) => {
             p: 2,
             backgroundColor: 'var(--color-exito)',
             borderRadius: 2,
-            color: 'var(--texto-inverso)',
+            color: 'var(--texto-inverso-black)',
             textAlign: 'center',
            
             width: {
@@ -322,12 +322,12 @@ const CalendarReserva = ({ instrument }) => {
             severity="error"
             sx={{
               backgroundColor: 'var(--color-error)',
-              color: 'var(--texto-inverso)',
+              color: 'var(--texto-inverso-black)',
               fontWeight: 'bold',
               fontSize: '1rem',
               borderRadius: '8px'
             }}
-            icon={<ErrorOutlineIcon sx={{ color: 'var(--texto-inverso)' }} />}
+            icon={<ErrorOutlineIcon sx={{ color: 'var(--texto-inverso-black)' }} />}
           >
             {error}
           </Alert>
@@ -345,12 +345,12 @@ const CalendarReserva = ({ instrument }) => {
             severity="info"
             sx={{
               backgroundColor: 'var(--color-azul)',
-              color: 'var(--texto-inverso)',
+              color: 'var(--texto-inverso-black)',
               fontWeight: 'bold',
               fontSize: '1rem',
               borderRadius: '8px'
             }}
-            icon={<ErrorOutlineIcon sx={{ color: 'var(--texto-inverso)' }} />}
+            icon={<ErrorOutlineIcon sx={{ color: 'var(--texto-inverso-black)' }} />}
           >
             {infoMessage}
           </Alert>

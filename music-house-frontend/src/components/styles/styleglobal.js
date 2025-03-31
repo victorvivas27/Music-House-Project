@@ -1,8 +1,9 @@
 export const inputStyles = {
   width: "99%",
-  color: 'var(--color-azul)',
+  color: 'var(--texto-inverso-black)',
+  textShadow: '0 1px 2px var(--color-primario)',
   '& .MuiInputBase-input': {
-    color: 'var(--color-azul)',
+    color: 'var(--texto-inverso-black)',
     height: "10px",
 
   },
@@ -23,12 +24,14 @@ export const inputStyles = {
   },
 
   '& .MuiInputLabel-root': {
-    color: 'var(--color--azul)',
+    color: 'var(--texto-inverso-black)',
+    textShadow: '0 1px 2px var(--color-primario)',
 
   },
 
   '& .MuiInputLabel-root.Mui-focused': {
-    color: 'var(--color-azul)',
+    color: 'var(--texto-inverso-black)',
+    textShadow: '0 1px 2px var(--color-primario)',
   },
 };
 

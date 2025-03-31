@@ -31,6 +31,7 @@ import { countryCodes } from '../../utils/codepaises/CountryCodes'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
 import LoadingText from '../../common/loadingText/LoadingText'
+import ContactSupportRoundedIcon from '@mui/icons-material/ContactSupportRounded'
 import {
   ContainerBottom,
   ContainerForm,
@@ -41,7 +42,7 @@ import {
 
 const buttonStyleRoles = {
   backgroundColor: 'var(--color-error)',
-  color: 'var(--texto-inverso)',
+  color: 'var(--texto-inverso-black)',
   padding: '10px 15px',
   borderRadius: '5px',
   cursor: 'pointer',
@@ -473,7 +474,8 @@ export const UserForm = ({
                       sx={{
                         textAlign: 'center',
                         color: 'var(--texto-primario)',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        textShadow: '0 1px 2px var(--color-primario)',
                       }}
                     >
                       Máximo 5MB - Formatos permitidos: JPG, PNG
@@ -507,7 +509,7 @@ export const UserForm = ({
                         sm: '65%',
                         md: '70%',
                         lg: '69%',
-                        xl: '72%'
+                        xl: '70%'
                       }
                     }}
                     label="🏷️Nombre"
@@ -534,7 +536,7 @@ export const UserForm = ({
                         sm: '65%',
                         md: '70%',
                         lg: '69%',
-                        xl: '72%'
+                        xl: '70%'
                       }
                     }}
                     label="👤Apellido"
@@ -673,7 +675,7 @@ export const UserForm = ({
                         '& .MuiInputBase-input': {
                           color: phone.countryCode
                             ? 'var(--color-azul)'
-                            : 'var(--texto-inverso)'
+                            : 'var(--texto-inverso-black)'
                         }
                       }}
                     >
@@ -711,7 +713,7 @@ export const UserForm = ({
                             sx={{
                               '&:hover': {
                                 backgroundColor: 'var(--color-primario)',
-                                color: 'var(--texto-inverso)'
+                                color: 'var(--texto-inverso-black)'
                               }
                             }}
                           >
@@ -738,7 +740,7 @@ export const UserForm = ({
                           sm: '65%',
                           md: '70%',
                           lg: '69%',
-                          xl: '72%'
+                          xl: '60%'
                         }
                       }}
                       InputProps={{
@@ -775,7 +777,7 @@ export const UserForm = ({
                         sm: '65%',
                         md: '70%',
                         lg: '50%',
-                        xl: '72%'
+                        xl: '50%'
                       }
                     }}
                     label="📧 Email"
@@ -833,9 +835,7 @@ export const UserForm = ({
 
                 {/* ✅ Solo mostrar si hay usuario seleccionado */}
                 {formData?.idUser && (
-                  <Box
-                   sx={{width:"70%"}}
-                  >
+                  <Box sx={{ width: '70%' }}>
                     {/* ✅ Si soy admin, mostrar los botones de gestión de roles */}
                     {isUserAdmin && (
                       <>
@@ -856,7 +856,6 @@ export const UserForm = ({
                             ))}
                           </Box>
                         )}
-                        
 
                         {/* 📌 Select para asignar roles */}
                         <FormControl
@@ -889,7 +888,7 @@ export const UserForm = ({
                             sm: '65%',
                             md: '70%',
                             lg: '50%',
-                            xl: '72%'
+                            xl: '50%'
                           }
                         }}
                         label="🔒 Contraseña"
@@ -937,7 +936,7 @@ export const UserForm = ({
                             sm: '65%',
                             md: '70%',
                             lg: '50%',
-                            xl: '72%'
+                            xl: '50%'
                           }
                         }}
                         label="🔓 Repetir Contraseña"
@@ -983,7 +982,6 @@ export const UserForm = ({
                     </FormControl>
                   </>
                 )}
-              
               </Grid>
             </Grid>
             {!formData.idUser && !isUserAdmin && (
@@ -1027,7 +1025,19 @@ export const UserForm = ({
             )}
 
             <ContainerBottom>
-              <CustomButton type="submit" disabled={loading}>
+              <CustomButton
+                sx={{
+                  width: {
+                    xs: '70%',
+                    sm: '27%',
+                    md: '28%',
+                    lg: '29%',
+                    xl: '30%'
+                  }
+                }}
+                type="submit"
+                disabled={loading}
+              >
                 {combinedLoading ? (
                   <>
                     <LoadingText text={buttonTextLoading} />
@@ -1058,6 +1068,7 @@ export const UserForm = ({
                     }}
                   >
                     Ya tengo una cuenta
+                    <ContactSupportRoundedIcon />
                   </ParagraphResponsive>
                 </Link>
               )}

@@ -88,7 +88,7 @@ export const ContainerForm = styled(Grid, {
 export const TitleResponsive = styled(Typography, {
   shouldForwardProp: (prop) => prop !== 'sx'
 })(({ theme, sx = {} }) => ({
-  color: 'var(--texto-inverso)',
+  color: 'var(--texto-inverso-black)',
   fontWeight: 300,
   fontSize: '1rem',
 

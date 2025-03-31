@@ -21,7 +21,8 @@
 
   --texto-primario: #000000;
   --texto-secundario: #616161;
-  --texto-inverso: #000000;
+  --texto-inverso-black: #000000;
+  --texto-inverso-white: #ffffff;
   --background-color: #f9f9f9;
   --color-primario-active:#eb3828;
   --background-dark: #ffffff;
