@@ -11,7 +11,6 @@ import { No } from '../Images/No'
 import { InstrumentTerms } from '../common/terms/InstrumentTerms'
 import { Loader } from '../common/loader/Loader'
 import FavoriteIcon from '../common/favorito/FavoriteIcon'
-import MyCalendar from '../common/availability/MyCalendar'
 import CalendarReserva from '../common/availability/CalendarReseva'
 import { flexRowContainer, flexColumnContainer } from '../styles/styleglobal'
 import ArrowBack from '../utils/ArrowBack'
@@ -20,6 +19,7 @@ import {
   ParagraphResponsive,
   TitleResponsive
 } from '../Form/formUsuario/CustomButton'
+import CalendarAdmin from '../common/availability/CalendarAdmin'
 export const Instrument = () => {
   const { id } = useParams()
   const { state } = useAppStates()
@@ -268,84 +268,6 @@ export const Instrument = () => {
         {isUserAdmin && (
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              maxWidth: {
-                xs: '100%',
-                sm: '450px',
-                md: '650px',
-                lg: '1200px',
-                xl: '1400px'
-              },
-              padding: '2rem',
-              borderRadius: '12px',
-              backgroundColor: 'var(--background-color)',
-              boxShadow: 'var(--box-shadow)',
-              textAlign: 'center',
-              transition: 'all 0.3s ease-in-out',
-              '&:hover': {
-                boxShadow: '6px 6px 14px rgba(0,0,0,0.2)'
-              }
-            }}
-          >
-            {/* 📌 Título del calendario */}
-            <Typography
-              sx={{
-                fontSize: {
-                  xs: '1rem',
-                  sm: '1.6rem',
-                  md: '1rem',
-                  lg: '1.4rem',
-                  xl: '2rem'
-                },
-                fontWeight: 'bold',
-
-                textTransform: 'uppercase'
-              }}
-            >
-              📅 Calendario de Disponibilidad
-            </Typography>
-
-            {/* 📌 Contenedor del Calendario */}
-            <Box
-              sx={{
-                width: '100%',
-                maxWidth: {
-                  xs: '100%',
-                  sm: '400px',
-                  md: '550px',
-                  lg: '850px',
-                  xl: '1050px'
-                },
-                height: {
-                  xs: '520px',
-                  sm: '380px',
-                  md: '450px',
-                  lg: '500px',
-                  xl: '550px'
-                },
-                borderRadius: '10px',
-
-                overflow: 'hidden',
-                backgroundColor: 'var(--background-color)',
-                boxShadow: 'var(--box-shadow)'
-              }}
-            >
-              <MyCalendar instrument={instrument} />
-            </Box>
-          </Box>
-        )}
-        {/*Fin del calendario ADMIN*/}
-
-        {/* 📌 Sección para el usuario */}
-
-        {/* 📌 Contenedor del Calendario */}
-        {isUser && (
-          <Box
-            sx={{
               width: {
                 xs: '100%',
                 sm: '69%',
@@ -355,44 +277,91 @@ export const Instrument = () => {
               }
             }}
           >
-            {/* 🔹 Precio por día */}
-            <Typography
-              variant="h5"
+            {/* 📌 Título del calendario */}
+            <TitleResponsive
               sx={{
-                textAlign: 'center',
-                fontWeight: 'bold',
-                margin: 2
+                textTransform: 'uppercase'
               }}
             >
-              Este instrumento tiene un valor por día de alquiler:{' '}
-              <span style={{ color: 'var(--color-azul)', fontWeight: 'bold' }}>
-                $ {instrumentSelected?.rentalPrice}
-              </span>
-            </Typography>
-            {/* 🔹Fin  Precio por día */}
-
+              📅 Calendario para agregar Disponibilidad
+            </TitleResponsive>
             <Divider sx={{ width: '100%' }} />
 
-            <CalendarReserva instrument={instrument} />
+            {/* 📌 Contenedor del Calendario */}
+            <Box
+              sx={{
+                width: {
+                  xs: '100%',
+                  sm: '69%',
+                  md: '70%',
+                  lg: '72%',
+                  xl: '75%'
+                }
+              }}
+            >
+              <CalendarAdmin instrument={instrument} />
+            </Box>
           </Box>
         )}
-        {/* 📌 Fin Contenedor del Calendario */}
+        {/*Fin del calendario ADMIN*/}
 
-        {/* 📌 Términos del Instrumento */}
-        <Box
-          sx={{
-            width: '100%',
-            height: '100%'
-          }}
-        >
-          <Divider sx={{ width: '100%' }} />
-          <InstrumentTerms />
-        </Box>
+        {/* 📌 Sección para el usuario */}
+
+        {/* 📌 Contenedor del Calendario */}
+        {isUser && (
+          <>
+            <Box
+              sx={{
+                width: {
+                  xs: '100%',
+                  sm: '69%',
+                  md: '70%',
+                  lg: '72%',
+                  xl: '75%'
+                }
+              }}
+            >
+              {/* 🔹 Precio por día */}
+              <Typography
+                variant="h5"
+                sx={{
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                  margin: 2
+                }}
+              >
+                Este instrumento tiene un valor por día de alquiler:{' '}
+                <span
+                  style={{ color: 'var(--color-azul)', fontWeight: 'bold' }}
+                >
+                  $ {instrumentSelected?.rentalPrice}
+                </span>
+              </Typography>
+              {/* 🔹Fin  Precio por día */}
+
+              <Divider sx={{ width: '100%' }} />
+
+              <CalendarReserva instrument={instrument} />
+            </Box>
+            {/* 📌 Fin Contenedor del Calendario */}
+
+            
+            {/* 📌 Términos del Instrumento */}
+            <Box
+              sx={{
+                width: '100%',
+                height: '100%'
+              }}
+            >
+              <Divider sx={{ width: '100%' }} />
+              <InstrumentTerms />
+            </Box>
+            <ScreenModal isOpen={showGallery} onClose={onClose}>
+              <InstrumentGallery itemData={instrumentSelected?.imageUrls} />
+            </ScreenModal>
+          </>
+        )}
       </InstrumentDetailWrapper>
-
-      <ScreenModal isOpen={showGallery} onClose={onClose}>
-        <InstrumentGallery itemData={instrumentSelected?.imageUrls} />
-      </ScreenModal>
     </>
   )
 }

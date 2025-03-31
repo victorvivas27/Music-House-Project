@@ -14,8 +14,9 @@ import dayjs from 'dayjs'
 import PropTypes from 'prop-types'
 import { Alert, Box, Snackbar, Typography } from '@mui/material'
 import { getErrorMessage } from '../../../api/getErrorMessage'
+import { TitleResponsive } from '../../Form/formUsuario/CustomButton'
 
-const MyCalendar = ({ instrument }) => {
+const CalendarAdmin = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
   const [error, setError] = useState('')
   const [openSnackbar, setOpenSnackbar] = useState(false)
@@ -120,17 +121,12 @@ const MyCalendar = ({ instrument }) => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '0.8rem',
-          marginTop: '1rem',
-          padding: '1rem',
-          backgroundColor: 'var(--background-color)',
-          borderRadius: '8px',
-          boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)'
+          gap: '2rem'
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+        <TitleResponsive >
           Leyenda del Calendario
-        </Typography>
+        </TitleResponsive>
 
         <Box
           sx={{
@@ -214,7 +210,7 @@ const MyCalendar = ({ instrument }) => {
   )
 }
 
-MyCalendar.propTypes = {
+CalendarAdmin.propTypes = {
   instrument: PropTypes.shape({
     result: PropTypes.shape({
       idInstrument: PropTypes.string.isRequired
@@ -222,4 +218,4 @@ MyCalendar.propTypes = {
   })
 }
 
-export default MyCalendar
+export default CalendarAdmin
