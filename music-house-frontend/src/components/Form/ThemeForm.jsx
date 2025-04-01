@@ -7,7 +7,6 @@ import {
   ContainerBottom,
   CustomButton,
   ParagraphResponsive,
-  TitleResponsive
 } from './formUsuario/CustomButton'
 
 import ImageUpload from '../common/imageUrls/ImageUpload '
@@ -49,7 +48,7 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
       newErrors.description = 'Este campo es obligatorio.'
 
     if (!formData.imageUrls || formData.imageUrls.length === 0) {
-      newErrors.imageUrlsText = 'Este campo es obligatorio.'
+      newErrors.imageUrlsText = 'Se requiere una imagen.'
     }
 
     setErrors(newErrors)
@@ -79,7 +78,7 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          maxWidth: '700px',
+          width: '700px',
           margin: '0 auto',
           p: 4,
           border: '1px solid #ccc',
@@ -91,7 +90,6 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
           gap: 3
         }}
       >
-        <TitleResponsive>{title}</TitleResponsive>
 
         <FormControl>
           <TextField
@@ -148,7 +146,6 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
           {errors.imageUrlsText && (
             <ParagraphResponsive
               color="var(--color-error)"
-              variant="body2"
               mt={1}
             >
               {errors.imageUrlsText}
@@ -161,7 +158,7 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
           <CustomButton disabled={loading} type="submit">
             {loading ? (
               <>
-                <LoadingText text="Creando tematica" />
+                <LoadingText text={title} />
                 <CircularProgress
                   size={24}
                   sx={{ ml: 1, color: 'var(--color-azul)' }}

@@ -2,9 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import {
   Box,
   FormControl,
-  Typography,
   Grid,
-  Divider,
   Tooltip,
   Checkbox,
   FormHelperText,
@@ -15,13 +13,17 @@ import ThemeSelect from './ThemeSelect'
 import { useAppStates } from '../utils/global.context'
 import PropTypes from 'prop-types'
 import ValidatedTextField from '../Pages/Admin/common/ValidatedTextField'
-
 import { inputStyles } from '../styles/styleglobal'
 import ArrowBack from '../utils/ArrowBack'
-
 import ImageUpload from '../common/imageUrls/ImageUpload '
 import ImageUrlsEdit from '../common/imageUrls/ImageUrlsEdit'
-import { CustomButton } from './formUsuario/CustomButton'
+import {
+  ContainerBottom,
+  CustomButton,
+  ParagraphResponsive,
+  TitleResponsive
+} from './formUsuario/CustomButton'
+import LoadingText from '../common/loadingText/LoadingText'
 
 const InstrumentForm = ({
   initialFormData,
@@ -32,8 +34,8 @@ const InstrumentForm = ({
   const [formData, setFormData] = useState({ ...initialFormData })
   const { state } = useAppStates()
   const [errors, setErrors] = useState({})
-  const title = isEditing ? 'Editar Instrumento' : 'Registrar Instrumento'
-  const titleDelLoader = isEditing ? 'Editando...' : 'Creando...'
+  const title = isEditing ? 'Editar Instrumento' : 'Crear Instrumento'
+  const titleDelLoader = isEditing ? 'Editando' : 'Creando Instrumento'
 
   const fieldRefs = {
     name: useRef(),
@@ -63,8 +65,6 @@ const InstrumentForm = ({
     setErrors((prev) => ({ ...prev, [name]: '' }))
   }
 
-  
-
   const handleCheckChange = (id) => {
     setFormData((prev) => ({
       ...prev,
@@ -79,8 +79,10 @@ const InstrumentForm = ({
     let newErrors = {}
 
     if (!formData.name) newErrors.name = 'Este campo es obligatorio.'
+
     if (!formData.description)
       newErrors.description = 'Este campo es obligatorio.'
+
     if (!formData.measures) newErrors.measures = 'Este campo es obligatorio.'
 
     if (!formData.weight) {
@@ -101,6 +103,10 @@ const InstrumentForm = ({
         formData.idCategory.trim() === '')
     ) {
       newErrors.idCategory = 'Debes seleccionar una categoría.'
+    }
+
+    if (!formData.imageUrls || formData.imageUrls.length === 0) {
+      newErrors.imageUrlsText = 'Se requiere una imagen.'
     }
 
     setErrors(newErrors)
@@ -125,201 +131,227 @@ const InstrumentForm = ({
   }
 
   return (
-    <>
+    <fieldset
+      disabled={loading}
+      style={{ border: 'none', padding: 0, margin: 0 }}
+    >
       {/*Contenedor formulario carga de nuevo instrumento*/}
-      <Grid
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
         sx={{
-          width: '80%',
-          borderRadius: '10px',
+          width: '1000px',
+          margin: '0 auto',
+          p: 4,
+          borderRadius: 4,
+          boxShadow: 3,
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: 'var(--box-shadow)'
+          flexDirection: 'column',
+          gap: 3
         }}
       >
-        <form onSubmit={handleSubmit} className="formulario">
-          <Grid
-            sx={{
-              display: 'flex',
-              flexDirection: 'row'
-            }}
-          >
-            {/*-----------------------Formulario lado izquierdo------------------------ */}
-            <Grid
-              item
-              xs={12}
-              md={6}
-              sx={{
-                padding: 2,
-                width: '90%'
-              }}
-            >
-              <Typography variant="h6">{title}</Typography>
-
-              <ValidatedTextField
-                label="Nombre"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                inputRef={fieldRefs.name}
-                error={errors.name}
-              />
-
-              <ValidatedTextField
-                label="Descripción"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                inputRef={fieldRefs.description}
-                error={errors.description}
-                multiline
-                minRows={3}
-                maxRows={10}
-              />
-
-              <ValidatedTextField
-                label="Medidas"
-                name="measures"
-                onChange={handleChange}
-                value={formData.measures}
-                inputRef={fieldRefs.measures}
-                error={errors.measures}
-              />
-
-              <ValidatedTextField
-                label="Peso"
-                name="weight"
-                onChange={handleChange}
-                value={formData.weight}
-                inputRef={fieldRefs.weight}
-                error={errors.weight}
-              />
-              <FormHelperText>
-                ℹ️ Formato: Menos de 1 kg se mostrará en gramos (ej: 0.3 → 300
-                gramos). 1 kg o más se mostrará como kilos y gramos (ej: 1.4 → 1
-                kilo 400 gramos).
-              </FormHelperText>
-            </Grid>
-            {/*---------------------Fin formulario lado izquierdo----------------*/}
-
-            {/*---------------------Formulario lado derecho----------------*/}
-            <Grid item xs={12} md={6} sx={{ padding: 2, width: '90%' }}>
-              <FormControl
-                margin="normal"
-                sx={{
-                  ...inputStyles,
-                  '& .MuiInputBase-input': {
-                    color: 'var(--color-azul)'
-                  }
-                }}
-              >
-                <CategorySelect
-                  onChange={handleChange}
-                  selectedCategoryId={formData?.idCategory}
-                  label=""
-                />
-                {/* 📌 Leyenda debajo del select */}
-                <FormHelperText
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    color: 'orange'
-                  }}
-                >
-                  ⚠️ Recuerda seleccionar una categoría antes de continuar.
-                </FormHelperText>
-              </FormControl>
-
-              <FormControl
-                margin="normal"
-                sx={{
-                  ...inputStyles,
-                  '& .MuiInputBase-input': {
-                    color: 'var(--color-azul)'
-                  }
-                }}
-              >
-                <ThemeSelect
-                  onChange={handleChange}
-                  selectedThemeId={formData?.idTheme}
-                  label=""
-                />
-                {/* 📌 Leyenda debajo del select */}
-                <FormHelperText
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    color: 'orange'
-                  }}
-                >
-                  ⚠️ No olvides elegir una temática para tu instrumento.
-                </FormHelperText>
-              </FormControl>
-
-              <ValidatedTextField
-                label="Precio"
-                name="rentalPrice"
-                onChange={handleChange}
-                value={formData.rentalPrice}
-                inputRef={fieldRefs.rentalPrice}
-                error={errors.rentalPrice}
-              />
-              <ImageUrlsEdit idInstrument={formData.idInstrument} />
-            </Grid>
-            {/*-----------------------Fin formulario lado derecho--------------*/}
-          </Grid>
-
-          {/*-----------------------Input imagen--------------*/}
-
+        <Grid container spacing={2}>
+          {/*-----------------------Formulario lado izquierdo------------------------ */}
           <Grid
             item
             xs={12}
             md={6}
             sx={{
+              padding: 2
+            }}
+          >
+           
+
+            <ValidatedTextField
+              label="Nombre"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              inputRef={fieldRefs.name}
+              error={errors.name}
+            />
+
+            <ValidatedTextField
+              label="Descripción"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              inputRef={fieldRefs.description}
+              error={errors.description}
+              multiline
+              minRows={3}
+              maxRows={10}
+            />
+
+            <ValidatedTextField
+              label="Medidas"
+              name="measures"
+              onChange={handleChange}
+              value={formData.measures}
+              inputRef={fieldRefs.measures}
+              error={errors.measures}
+            />
+
+            <ValidatedTextField
+              label="Peso"
+              name="weight"
+              onChange={handleChange}
+              value={formData.weight}
+              inputRef={fieldRefs.weight}
+              error={errors.weight}
+            />
+            <FormHelperText>
+              ℹ️ Formato: Menos de 1 kg se mostrará en gramos (ej: 0.3 → 300
+              gramos). 1 kg o más se mostrará como kilos y gramos (ej: 1.4 → 1
+              kilo 400 gramos).
+            </FormHelperText>
+          </Grid>
+          {/*---------------------Fin formulario lado izquierdo----------------*/}
+
+          {/*---------------------Formulario lado derecho----------------*/}
+          <Grid
+            item
+            xs={12}
+            md={6}
+          >
+            <FormControl
+              margin="normal"
+              sx={{
+                ...inputStyles,
+                '& .MuiInputBase-input': {
+                  color: 'var(--color-azul)'
+                }
+              }}
+            >
+              <CategorySelect
+                onChange={handleChange}
+                selectedCategoryId={formData?.idCategory}
+                label=""
+              />
+              {/* 📌 Leyenda debajo del select */}
+              <FormHelperText
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: 'orange'
+                }}
+              >
+                ⚠️ Recuerda seleccionar una categoría antes de continuar.
+              </FormHelperText>
+            </FormControl>
+
+            <FormControl
+              margin="normal"
+              sx={{
+                ...inputStyles,
+                '& .MuiInputBase-input': {
+                  color: 'var(--color-azul)'
+                }
+              }}
+            >
+              <ThemeSelect
+                onChange={handleChange}
+                selectedThemeId={formData?.idTheme}
+                label=""
+              />
+              {/* 📌 Leyenda debajo del select */}
+              <FormHelperText
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: 'orange'
+                }}
+              >
+                ⚠️ No olvides elegir una temática para tu instrumento.
+              </FormHelperText>
+            </FormControl>
+
+            <ValidatedTextField
+              label="Precio"
+              name="rentalPrice"
+              onChange={handleChange}
+              value={formData.rentalPrice}
+              inputRef={fieldRefs.rentalPrice}
+              error={errors.rentalPrice}
+            />
+            <ImageUrlsEdit idInstrument={formData.idInstrument} />
+          </Grid>
+          {/*-----------------------Fin formulario lado derecho--------------*/}
+
+          {/*-----------------------Input imagen--------------*/}
+
+          <Box
+            sx={{
+              border: '1px dashed #aaa',
+              borderRadius: 2,
               padding: 2,
+             
               width: '100%',
-              height: '230px',
-              boxShadow: 'var(--box-shadow)',
-              borderRadius: 4
+              height: '300px'
             }}
           >
             <ImageUpload
-              onImagesChange={(files) =>
+              onImagesChange={(files) => {
                 setFormData((prev) => ({ ...prev, imageUrls: files }))
-              }
+                if (files.length > 0) {
+                  setErrors((prev) => ({ ...prev, imageUrlsText: '' }))
+                }
+              }}
             />
             {/* 📌 Mensaje de error si el usuario no sube una imagen */}
             {errors.imageUrlsText && (
-              <Typography color="var(--color-error)" variant="body1">
+              <ParagraphResponsive color="var(--color-error)" mt={1}>
                 {errors.imageUrlsText}
-              </Typography>
+              </ParagraphResponsive>
             )}
-          </Grid>
+          </Box>
 
           {/*-----------------------Fin input imagen--------------*/}
 
-          <Divider />
+          <Box sx={{ width: '100%', paddingBottom: '1rem' }}>
+            <TitleResponsive gutterBottom>
+              Características
+            </TitleResponsive>
 
-          <Box>
-            <Typography variant="h6">Características</Typography>
             <Box
               sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                paddingBottom: '1rem',
-                justifyContent: 'space-evenly'
+                justifyContent: 'space-evenly',
+                gap: 2
               }}
             >
               {state?.characteristics?.map((characteristic) => (
                 <Box
                   key={characteristic.id}
-                  sx={{ display: 'flex', alignItems: 'center' }}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                  }}
                 >
                   <Tooltip title={characteristic.name}>
                     <img
                       src={characteristic.image}
-                      className="characteristic-image"
                       alt={characteristic.name}
+                      style={{
+                        width: '90px',
+                        height: '90px',
+                        objectFit: 'cover',
+                        border: '2px solid #ccc',
+                        borderRadius: '8px',
+                        padding: '4px',
+                        backgroundColor: '#fff',
+                        boxShadow: 'var(--box-shadow)',
+                        transition: 'transform 0.2s ease-in-out',
+                        cursor: 'pointer'
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = 'scale(1.1)')
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = 'scale(1)')
+                      }
                     />
                   </Tooltip>
                   <Checkbox
@@ -334,50 +366,27 @@ const InstrumentForm = ({
             </Box>
           </Box>
 
-          <Divider />
           <ArrowBack />
 
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-              paddingRight: '1rem',
-              paddingTop: '1rem'
-            }}
-          >
-            <CustomButton
-              variant="contained"
-              type="submit"
-              disabled={loading}
-              sx={{
-                width: '280px',
-                height: '50px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px'
-              }}
-            >
-              <Box sx={{ width: '100%', textAlign: 'center' }}>
-                {loading ? (
-                  <>
-                    {titleDelLoader}
-                    <CircularProgress
-                      size={25}
-                      sx={{ color: 'var(--color-azul)', ml: 1 }}
-                    />
-                  </>
-                ) : (
-                  title
-                )}
-              </Box>
+          <ContainerBottom>
+            <CustomButton type="submit" disabled={loading}>
+              {loading ? (
+                <>
+                  <LoadingText text={titleDelLoader} />
+
+                  <CircularProgress
+                    size={25}
+                    sx={{ color: 'var(--color-azul)', ml: 1 }}
+                  />
+                </>
+              ) : (
+                title
+              )}
             </CustomButton>
-          </Box>
-        </form>
-      </Grid>
-    </>
+          </ContainerBottom>
+        </Grid>
+      </Box>
+    </fieldset>
   )
 }
 

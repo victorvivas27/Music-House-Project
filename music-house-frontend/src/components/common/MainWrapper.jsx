@@ -6,10 +6,9 @@ export const MainWrapper = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'flex-start', 
   alignItems: 'center', 
-  width: '98vw',
-  marginTop: 310, 
+  width: '100vw',
+  marginTop: 300, 
   marginBottom: 50,
-  border:"1px solid blue"
   
 }))
 

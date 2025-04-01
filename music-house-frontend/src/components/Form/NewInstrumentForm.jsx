@@ -91,6 +91,7 @@ const NewInstrumentForm = () => {
         initialFormData={initialFormData}
         onSubmit={onSubmit}
         loading={loading}
+       
       />
     </>
   )

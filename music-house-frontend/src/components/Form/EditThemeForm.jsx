@@ -81,13 +81,13 @@ export const EditThemeForm = ({ id }) => {
         alignItems: 'center'
       }}
     >
-      {!loading && (
+     
         <ThemeForm
           initialFormData={initialFormData}
           onSubmit={onSubmit}
           loading={state.loading}
         />
-      )}
+     
     </Box>
   )
 }

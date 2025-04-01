@@ -7,7 +7,6 @@ import { inputStyles } from '../styles/styleglobal'
 import {
   ContainerBottom,
   CustomButton,
-  TitleResponsive
 } from './formUsuario/CustomButton'
 import LoadingText from '../common/loadingText/LoadingText'
 
@@ -89,7 +88,7 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
           gap: 3
         }}
       >
-        <TitleResponsive>{title}</TitleResponsive>
+        
 
         <FormControl>
           <TextField
@@ -132,7 +131,7 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
           <CustomButton disabled={loading} type="submit">
             {loading ? (
               <>
-                <LoadingText text="Creando tematica" />
+                <LoadingText text={title} />
                 <CircularProgress
                   size={30}
                   sx={{ ml: 1, color: 'var(--color-azul)' }}

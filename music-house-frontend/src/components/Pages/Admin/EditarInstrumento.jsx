@@ -3,6 +3,7 @@ import CreateWrapper from '../../common/crearProd/createWrapper'
 import { Box, Typography } from '@mui/material'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 import EditInstrumentForm from '../../Form/EditInstrumentForm'
+import { TitleResponsive } from '../../Form/formUsuario/CustomButton'
 export const EditarInstrumento = () => {
   const { isHeaderVisible } = useHeaderVisibility()
   const { id } = useParams()
@@ -10,7 +11,7 @@ export const EditarInstrumento = () => {
   return (
     <main>
       <CreateWrapper isHeaderVisible={isHeaderVisible}>
-        <Typography sx={{ fontSize: '35px' }}>Editar Instrumento</Typography>
+        <TitleResponsive>Editar Instrumento</TitleResponsive>
         <EditInstrumentForm id={id} />
       </CreateWrapper>
       <Box

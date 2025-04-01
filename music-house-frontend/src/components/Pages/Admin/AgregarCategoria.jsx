@@ -1,9 +1,8 @@
-
 import { Box, Typography } from '@mui/material'
 import CreateWrapper from '../../common/crearProd/createWrapper'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 import { NewCategoryForm } from '../../Form/NewCategoryForm'
-
+import { TitleResponsive } from '../../Form/formUsuario/CustomButton'
 
 export const AgregarCategoria = () => {
   const { isHeaderVisible } = useHeaderVisibility()
@@ -11,7 +10,7 @@ export const AgregarCategoria = () => {
   return (
     <main>
       <CreateWrapper isHeaderVisible={isHeaderVisible}>
-        <Typography sx={{ fontSize: '35px' }}>Crear Categoría</Typography>
+        <TitleResponsive>Crear Categoría</TitleResponsive>
         <NewCategoryForm />
       </CreateWrapper>
       <Box

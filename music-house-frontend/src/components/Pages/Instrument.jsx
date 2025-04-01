@@ -356,11 +356,15 @@ export const Instrument = () => {
               <Divider sx={{ width: '100%' }} />
               <InstrumentTerms />
             </Box>
-            <ScreenModal isOpen={showGallery} onClose={onClose}>
-              <InstrumentGallery itemData={instrumentSelected?.imageUrls} />
-            </ScreenModal>
           </>
         )}
+            <ScreenModal
+             isOpen={showGallery} 
+             onClose={onClose}
+             
+             >
+              <InstrumentGallery itemData={instrumentSelected?.imageUrls} />
+            </ScreenModal>
       </InstrumentDetailWrapper>
     </>
   )

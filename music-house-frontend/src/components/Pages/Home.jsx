@@ -3,13 +3,14 @@ import { Typography } from '@mui/material'
 import { useAppStates } from '../utils/global.context'
 import { getInstruments } from '../../api/instruments'
 import { actions } from '../utils/actions'
-import MainWrapper from '../common/MainWrapper'
-import TematicCard from '../common/TematicCard'
+
 import ProductsWrapper from '../common/ProductsWrapper'
 import ProductCard from '../common/ProductCard'
 import { Loader } from '../common/loader/Loader'
 import { toast } from 'react-toastify'
 import { getTheme } from '../../api/theme'
+import AutoScrollCarousel from '../common/autoScrollCarousel/AutoScrollCarousel'
+import MainWrapper from '../common/MainWrapper'
 
 export const Home = () => {
   const { state, dispatch } = useAppStates()
@@ -17,7 +18,7 @@ export const Home = () => {
   const [selectedInstruments, setSelectedInstruments] = useState([])
   const [loading, setLoading] = useState(true)
   const [instruments, setInstruments] = useState([])
-  const [themes, setThemes]=useState([])
+  const [themes, setThemes] = useState([])
 
   useEffect(() => {
     const fetchInstruments = async () => {
@@ -74,62 +75,41 @@ export const Home = () => {
     }
 
     fetchTheme()
-    
   }, [])
-  
-
-
-
-
   if (loading) return <Loader title="Un momento por favor..." />
 
   return (
-    
-     
-        <>
-          <MainWrapper>
-            {themes?.map((tematic, index) => (
-              <TematicCard
-                key={`tematic-card-${index}`}
-                title={tematic.themeName}
-                paragraph={tematic.description}
-                imageUrl={
-                  tematic.imageUrls?.length > 0
-                    ? tematic.imageUrls[0].imageUrl
-                    : '/default-theme.jpg' 
-                }
-              />
-            ))}
-          </MainWrapper>
+    <>
+      <MainWrapper>
+        <AutoScrollCarousel themes={themes} />
+      </MainWrapper>
 
-          <ProductsWrapper>
-            {selectedInstruments.length > 0 ? (
-              selectedInstruments.map((instrument, index) => (
-                <ProductCard
-                  key={`product-card-${index}`}
-                  name={instrument.name}
-                  imageUrl={
-                    instrument.imageUrls?.length > 0
-                      ? instrument.imageUrls[0].imageUrl
-                      : '/default-image.jpg'
-                  }
-                  id={instrument.idInstrument}
-                />
-              ))
-            ) : (
-              <Typography
-                gutterBottom
-                variant="h6"
-                component="h6"
-                textAlign="center"
-                sx={{ paddingBottom: 1, fontWeight: 'bold' }}
-              >
-                No se han encontrado instrumentos
-              </Typography>
-            )}
-          </ProductsWrapper>
-        </>
-     
-    
+      <ProductsWrapper>
+        {selectedInstruments.length > 0 ? (
+          selectedInstruments.map((instrument, index) => (
+            <ProductCard
+              key={`product-card-${index}`}
+              name={instrument.name}
+              imageUrl={
+                instrument.imageUrls?.length > 0
+                  ? instrument.imageUrls[0].imageUrl
+                  : '/default-image.jpg'
+              }
+              id={instrument.idInstrument}
+            />
+          ))
+        ) : (
+          <Typography
+            gutterBottom
+            variant="h6"
+            component="h6"
+            textAlign="center"
+            sx={{ paddingBottom: 1, fontWeight: 'bold' }}
+          >
+            No se han encontrado instrumentos
+          </Typography>
+        )}
+      </ProductsWrapper>
+    </>
   )
 }

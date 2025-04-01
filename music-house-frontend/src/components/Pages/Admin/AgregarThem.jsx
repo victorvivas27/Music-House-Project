@@ -1,11 +1,9 @@
-
 import { Box, Typography } from '@mui/material'
 import CreateWrapper from '../../common/crearProd/createWrapper'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 
-
-
 import { NewThemeForm } from '../../Form/NewThemeForm'
+import { TitleResponsive } from '../../Form/formUsuario/CustomButton'
 
 export const AgregarTheme = () => {
   const { isHeaderVisible } = useHeaderVisibility()
@@ -13,7 +11,7 @@ export const AgregarTheme = () => {
   return (
     <main>
       <CreateWrapper isHeaderVisible={isHeaderVisible}>
-        <Typography sx={{ fontSize: '35px' }}>Crear Tematica</Typography>
+        <TitleResponsive>Crear Tematica</TitleResponsive>
         <NewThemeForm />
       </CreateWrapper>
       <Box

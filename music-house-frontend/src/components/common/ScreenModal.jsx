@@ -4,7 +4,6 @@ import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import Slide from '@mui/material/Slide'
 import PropTypes from 'prop-types'
-
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />
 })
@@ -29,9 +28,8 @@ export const ScreenModal = ({
       maxWidth="md"
       PaperProps={{
         sx: {
-          width: '90%',
-          maxWidth: '800px',
-          margin: 'auto',
+          width: '90vw',
+      margin: 'auto',
           borderRadius: 3,
           padding: 2,
           boxShadow: 'var(--box-shadow)'

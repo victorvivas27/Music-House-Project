@@ -4,6 +4,7 @@ import CreateWrapper from '../../common/crearProd/createWrapper'
 import { Box, Typography } from '@mui/material'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 import { EditThemeForm } from '../../Form/EditThemeForm'
+import { TitleResponsive } from '../../Form/formUsuario/CustomButton'
 
 export const EditarTheme = () => {
   const [key, setKey] = useState(0)
@@ -17,7 +18,7 @@ export const EditarTheme = () => {
   return (
     <main>
       <CreateWrapper isHeaderVisible={isHeaderVisible}>
-        <Typography sx={{ fontSize: '35px' }}>Editar Tematica</Typography>
+        <TitleResponsive>Editar Tematica</TitleResponsive>
         <EditThemeForm key={key} id={id} onSaved={onClose} />
       </CreateWrapper>
       <Box

@@ -88,7 +88,7 @@ export const ContainerForm = styled(Grid, {
 export const TitleResponsive = styled(Typography, {
   shouldForwardProp: (prop) => prop !== 'sx'
 })(({ theme, sx = {} }) => ({
-  color: 'var(--texto-inverso-black)',
+  color: 'var(--texto-inverso-white)',
   fontWeight: 300,
   fontSize: '1rem',
   textShadow: '0 1px 2px var(--color-primario)',
@@ -107,7 +107,8 @@ export const TitleResponsive = styled(Typography, {
   },
   [theme.breakpoints.up('xl')]: {
     fontWeight: 500,
-    fontSize: '1.5rem'
+    fontSize: '2rem',
+    
   },
 
   ...sx
@@ -141,25 +142,25 @@ export const ParagraphResponsive = styled(Typography, {
 })(({ theme, sx = {} }) => ({
 
   fontWeight: 300,
-  fontSize: '0.8rem',
+  fontSize: '0.7rem',
   fontStyle: 'italic',
   textShadow: '0 1px 2px var(--color-primario)',
 
   [theme.breakpoints.up('sm')]: {
-    fontSize: '0.8rem',
-    lineHeight: 1.7
+    fontSize: '0.7rem',
+   
   },
   [theme.breakpoints.up('md')]: {
-    fontSize: '0.9rem',
-    lineHeight: 1.8
+    fontSize: '0.8rem',
+   
   },
   [theme.breakpoints.up('lg')]: {
-    fontSize: '1.1rem',
-    lineHeight: 1.9
+    fontSize: '0.9rem',
+    
   },
   [theme.breakpoints.up('xl')]: {
     fontSize: '1.2rem',
-    lineHeight: 2,
+   
    
   },
 

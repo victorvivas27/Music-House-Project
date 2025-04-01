@@ -4,6 +4,7 @@ import CreateWrapper from '../../common/crearProd/createWrapper'
 import { Box, Typography } from '@mui/material'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 import { EditCategoryForm } from '../../Form/EditCategoryForm'
+import { TitleResponsive } from '../../Form/formUsuario/CustomButton'
 export const EditarCategoria = () => {
  const { isHeaderVisible } = useHeaderVisibility()
 const { id } = useParams()
@@ -11,7 +12,7 @@ const { id } = useParams()
 return (
     <main>
       <CreateWrapper isHeaderVisible={isHeaderVisible}>
-        <Typography sx={{ fontSize: '35px' }}>Editar Categoría</Typography>
+        <TitleResponsive>Editar Categoría</TitleResponsive>
         <EditCategoryForm  id={id}  />
       </CreateWrapper>
       <Box

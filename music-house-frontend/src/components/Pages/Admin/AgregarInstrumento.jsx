@@ -2,25 +2,24 @@ import { Box, Typography } from '@mui/material'
 import CreateWrapper from '../../common/crearProd/createWrapper'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 import NewInstrumentForm from '../../Form/NewInstrumentForm'
-
+import { TitleResponsive } from '../../Form/formUsuario/CustomButton'
 
 export const AgregarInstrumento = () => {
   const { isHeaderVisible } = useHeaderVisibility()
+  ;('Crear Instrumento')
 
   return (
     <>
-      <CreateWrapper 
-      isHeaderVisible={isHeaderVisible}>
-        <Typography sx={{ fontSize: '35px' }}>Crear Instrumento</Typography>
+      <CreateWrapper isHeaderVisible={isHeaderVisible}>
+        <TitleResponsive> Crear Instrumento</TitleResponsive>
+
         <NewInstrumentForm />
       </CreateWrapper>
       <Box
         sx={{
           display: { xs: 'flex', lg: 'none' },
           justifyContent: 'center',
-          alignItems: 'center',
-         
-         
+          alignItems: 'center'
         }}
       >
         <Typography
