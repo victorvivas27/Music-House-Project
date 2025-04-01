@@ -48,6 +48,8 @@ export const Instruments = () => {
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
   const navigate = useNavigate()
 
+ 
+
   const getAllInstruments = async () => {
     setLoading(true)
     try {

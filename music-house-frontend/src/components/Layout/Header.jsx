@@ -26,7 +26,7 @@ import { MenuWrapper, MenuUserWrapper } from './MenuWrapper'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useHeaderVisibility } from '../utils/context/HeaderVisibilityGlobal'
 import AssignmentIndRoundedIcon from '@mui/icons-material/AssignmentIndRounded'
-import '../styles/header.styles.css'
+
 import background from '../../assets/background.svg'
 import { useAuth } from '../../hook/useAuth'
 import { pagesDesktop, pagesMobile } from './NavBar'

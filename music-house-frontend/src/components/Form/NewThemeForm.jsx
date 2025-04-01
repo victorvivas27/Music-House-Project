@@ -15,38 +15,50 @@ export const NewThemeForm = () => {
   const initialFormData = {
     idTheme: '',
     themeName: '',
-    description: ''
+    description: '',
+    imageUrls: []
   }
 
   const onSubmit = useCallback(
     async (formData) => {
-      if (!formData) return
-
       dispatch({ type: actions.SET_LOADING, payload: true })
 
-      try {
-        const response = await createTheme({
-          themeName: formData.themeName,
-          description: formData.description
-        })
+      if (!formData) {
+        showError('⚠️ Formulario inválido.')
+        dispatch({ type: actions.SET_LOADING, payload: false })
+        return
+      }
 
-        if (response?.message) {
-          setTimeout(() => {
-            showSuccess(`✅ ${response.message}`)
-            navigate('/theme')
-          }, 1100)
+      const formDataToSend = new FormData()
 
-          dispatch({
-            type: actions.THEME_CREATED,
-            payload: { created: true }
-          })
+      const themeJson = JSON.stringify({
+        themeName: formData.themeName || '',
+        description: formData.description || ''
+      })
+
+      formDataToSend.append(
+        'theme',
+        new Blob([themeJson], { type: 'application/json' })
+      )
+      if (formData.imageUrls && formData.imageUrls.length > 0) {
+        for (let file of formData.imageUrls) {
+          if (file instanceof File) {
+            formDataToSend.append('files', file)
+          }
         }
+      }
+
+      try {
+        const response = await createTheme(formDataToSend )
+        showSuccess(`✅ ${response.message}`)
+
+        setTimeout(() => {
+          navigate('/theme')
+        }, 1100)
       } catch (error) {
         showError(`❌ ${getErrorMessage(error)}`)
       } finally {
-        setTimeout(() => {
-          dispatch({ type: actions.SET_LOADING, payload: false })
-        }, 1000)
+        dispatch({ type: actions.SET_LOADING, payload: false })
       }
     },
     [dispatch, navigate, showError, showSuccess]

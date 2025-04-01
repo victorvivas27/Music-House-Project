@@ -5,23 +5,24 @@ import { inputStyles } from "../../../styles/styleglobal";
 const ValidatedTextField = ({ name, label, value, onChange, error, inputRef,  ...props }) => {
     return (
       <FormControl  margin="normal" error={!!error} sx={{ ...inputStyles}}>
-        <TextField
-          label={label}
-          name={name}
-          value={value}
-          onChange={onChange}
-          inputRef={inputRef}
-          
-          {...props}
-        sx={{
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': { borderColor: error ? 'red' : '' },
-              '&:hover fieldset': { borderColor: error ? 'red' : '' },
-              '&.Mui-focused fieldset': { borderColor: error ? 'red' : '' },
-            },
-           
-          }}
-        />
+       <TextField
+  label={label}
+  name={name}
+  value={value}
+  onChange={onChange}
+  inputRef={inputRef}
+  error={!!error}                     // 🔥 esto activa el estado de error en el input
+  helperText={error}                 // 🔥 esto muestra el mensaje debajo del input
+  {...props}
+  sx={{
+    ...inputStyles,
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': { borderColor: error ? 'red' : '' },
+      '&:hover fieldset': { borderColor: error ? 'red' : '' },
+      '&.Mui-focused fieldset': { borderColor: error ? 'red' : '' },
+    },
+  }}
+/>
         <FormHelperText>{error}</FormHelperText>
       </FormControl>
     );

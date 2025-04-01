@@ -190,6 +190,25 @@ export const Theme = () => {
                             }}
                           />
                         </TableCell>
+
+                        <TableCell align="left">
+                          <img
+                            src={
+                              row.imageUrls?.[0]?.imageUrl ||
+                              '/images/default-placeholder.png'
+                            }
+                            alt="Imagen tematica"
+                            style={{
+                              width: '80px',
+                              height: '80px',
+                              objectFit: 'cover',
+                              borderRadius: '40px',
+                              border: '1px solid #ccc',
+                              boxShadow: 'var(--box-shadow)'
+                            }}
+                          />
+                        </TableCell>
+
                         <TableCell
                           component="th"
                           id={labelId}

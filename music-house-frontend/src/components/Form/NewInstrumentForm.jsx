@@ -74,6 +74,7 @@ const NewInstrumentForm = () => {
         setTimeout(() => {
           navigate('/instruments')
         }, 1000)
+        
       } catch (error) {
         showError(`❌ ${getErrorMessage(error)}`)
       } finally {

@@ -202,33 +202,31 @@ public class UserService implements UserInterface {
 
     @Override
     public void deleteUser(UUID idUser) throws ResourceNotFoundException {
-        Optional<User> usuarioOptional = userRepository.findById(idUser);
 
-        if (usuarioOptional.isPresent()) {
-            User usuario = usuarioOptional.get();
+        User user = userRepository.findById(idUser)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No se encontró el usuario con el ID proporcionado: " + idUser));
 
-            // 🟢 Obtener la URL de la imagen guardada en S3
-            String imageUrl = usuario.getPicture();
+        String imageUrl = user.getPicture();
 
-            // 🟢 Si la imagen existe, intentar eliminarla (sin interrumpir el flujo si falla)
-            if (imageUrl != null && !imageUrl.isEmpty()) {
 
-                String key = S3UrlParser.extractKeyFromS3Url(imageUrl);
-                awss3Service.deleteFileFromS3(key);
+        favoriteRepository.deleteByUserId(idUser);
 
-            }
 
-            // 🟢 Eliminar relaciones del usuario
-            favoriteRepository.deleteByUserId(idUser);
-            usuario.getRoles().clear();
-            userRepository.save(usuario);
+        user.getRoles().clear();
 
-            // 🟢 Eliminar usuario
-            userRepository.deleteById(idUser);
+        userRepository.save(user);
 
-        } else {
-            throw new ResourceNotFoundException("User not found with id: " + idUser);
+
+        userRepository.delete(user);
+
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+
+            String key = S3UrlParser.extractKeyFromS3Url(imageUrl);
+            awss3Service.deleteFileFromS3(key);
+
         }
+
     }
 
 

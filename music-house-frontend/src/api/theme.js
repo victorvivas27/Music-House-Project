@@ -23,11 +23,13 @@ export const getThemeById = async (idTheme) => {
 };
 
 
-export const createTheme = async ({ themeName, description }) => {
+export const createTheme = async (formData) => {
   try {
-    const response = await axios.post(`${BASE_URL}/theme/create`, {
-      themeName,
-      description
+    const response = await axios.post(`${BASE_URL}/theme/create`,formData ,{
+      headers:{
+        'Content-Type': 'multipart/form-data',
+      }
+     
     });
     return response.data;
   } catch (error) {

@@ -3,8 +3,10 @@ export const inputStyles = {
   color: 'var(--texto-inverso-black)',
   textShadow: '0 1px 2px var(--color-primario)',
   '& .MuiInputBase-input': {
-    color: 'var(--texto-inverso-black)',
+    color: 'var(--color-exito)',
     height: "10px",
+    fontSize:21,
+   
 
   },
   '& .MuiOutlinedInput-root': {
@@ -12,9 +14,11 @@ export const inputStyles = {
       borderColor: 'var(--color-secundario)',
       borderWidth: '2px',
       borderRadius: '8px',
+    
     },
     '&:hover fieldset': {
       borderColor: 'var(--color-primario)',
+      textShadow: '0 1px 2px var(--color-primario)',
 
     },
     '&.Mui-focused fieldset': {

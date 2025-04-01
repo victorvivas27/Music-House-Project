@@ -134,6 +134,13 @@ export const headCellsCategory = [
 
 
 export const headCellsTheme = [
+
+  {
+    id: 'imageUrl',
+    numeric: true,
+    disablePadding: false,
+    label: 'Imagen'
+  },
   {
     id: 'idTheme',
     numeric: true,

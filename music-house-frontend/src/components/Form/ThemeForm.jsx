@@ -1,134 +1,172 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Box,
-  FormControl,
+  CircularProgress,
   TextField,
-  Typography,
-  Grid,
-  CircularProgress
+  FormControl
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import ArrowBack from '../utils/ArrowBack'
-import { flexRowContainer, inputStyles } from '../styles/styleglobal'
-import { CustomButton } from './formUsuario/CustomButton'
+import { inputStyles } from '../styles/styleglobal'
+import { ContainerBottom, CustomButton, ParagraphResponsive, TitleResponsive } from './formUsuario/CustomButton'
 
+import ImageUpload from '../common/imageUrls/ImageUpload '
+import LoadingText from '../common/loadingText/LoadingText'
 
 export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
   const [formData, setFormData] = useState({ ...initialFormData })
-  const [submitData, setSubmitData] = useState(false)
+
+  const [errors, setErrors] = useState({})
   const title = formData.idTheme ? 'Editar Tematica' : 'Registrar Tematica'
+
+  const fileRefs = {
+    themeName: useRef(),
+    description: useRef(),
+    imageUrlsText: useRef()
+  }
+
+  useEffect(() => {
+    if (!formData) {
+      setFormData(initialFormData)
+    }
+  }, [formData, initialFormData])
 
   const handleChange = (event) => {
     const { name, value } = event.target
 
-    setFormData({ ...formData, [name]: value })
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value || ''
+    }))
+    setErrors((prev) => ({ ...prev, [name]: '' }))
+  }
+
+  const validateForm = () => {
+    let newErrors = {}
+    if (!formData.themeName) newErrors.themeName = 'Este campo es obligatorio.'
+
+    if (!formData.description)
+      newErrors.description = 'Este campo es obligatorio.'
+
+    if (!formData.imageUrls || formData.imageUrls.length === 0) {
+      newErrors.imageUrlsText = 'Este campo es obligatorio.'
+    }
+
+    setErrors(newErrors)
+
+    const firstError = Object.keys(newErrors)[0]
+    if (firstError && fileRefs[firstError]?.current) {
+      fileRefs[firstError].current.focus()
+      return false
+    }
+    return true
   }
 
   const handleSubmit = (event) => {
     event.preventDefault()
-
-    const data = {
-      idTheme: formData.idTheme,
-      themeName: formData.themeName,
-      description: formData.description
+    if (!validateForm()) {
+      return
     }
-
-    setFormData(data)
-    setSubmitData(true)
-
-    setTimeout(() => {
-      setFormData({
-        idTheme: '',
-        themeName: '',
-        description: ''
-      })
-      setSubmitData(false)
-    }, 500)
+    onSubmit(formData)
   }
 
-  useEffect(() => {
-    if (!submitData) return
-
-    if (typeof onSubmit === 'function') onSubmit(formData)
-    setSubmitData(false)
-  }, [formData, onSubmit, submitData])
-
   return (
-    <Grid
+    <fieldset
+      disabled={loading}
+      style={{ border: 'none', padding: 0, margin: 0 }}
+    >
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
       sx={{
-        width: '80%',
-        borderRadius: '10px',
-        ...flexRowContainer
+        maxWidth: '700px',
+        margin: '0 auto',
+        p: 4,
+        border: '1px solid #ccc',
+        borderRadius: 4,
+        boxShadow: 3,
+        backgroundColor: '#fff',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3
       }}
     >
-      <form onSubmit={handleSubmit}>
-        <Grid sx={{ ...flexRowContainer }}>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{ padding: 2, width: '60%', height: '100%' }}
-          >
-            <Typography variant="h6">{title}</Typography>
-
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="Nombre"
-                name="themeName"
-                value={formData.themeName}
-                onChange={handleChange}
-                required
-                type="text"
-                color="secondary"
-                multiline
-                minRows={1}
-                maxRows={5}
-                sx={{ ...inputStyles, width: '900px' }}
-              />
-            </FormControl>
-
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="Descripción"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-                type="text"
-                color="secondary"
-                multiline
-                minRows={3}
-                maxRows={10}
-                sx={{ ...inputStyles, width: '900px' }}
-              />
-            </FormControl>
-          </Grid>
-        </Grid>
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            alignItems: 'center'
+      <TitleResponsive>{title}</TitleResponsive>
+  
+      <FormControl>
+        <TextField
+          label="Nombre"
+          name="themeName"
+          value={formData.themeName}
+          onChange={handleChange}
+          type="text"
+          inputRef={fileRefs.themeName}
+          error={Boolean(errors.themeName)}
+          helperText={errors.themeName}
+          multiline
+          minRows={1}
+          maxRows={5}
+          fullWidth
+          sx={{ ...inputStyles }}
+        />
+      </FormControl>
+  
+      <FormControl>
+        <TextField
+          label="Descripción"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          inputRef={fileRefs.description}
+          error={Boolean(errors.description)}
+          helperText={errors.description}
+          type="text"
+          multiline
+          minRows={3}
+          maxRows={10}
+          fullWidth
+          sx={{ ...inputStyles }}
+        />
+      </FormControl>
+  
+      <Box
+        sx={{
+          border: '1px dashed #aaa',
+          borderRadius: 2,
+          padding: 2,
+          backgroundColor: '#fafafa'
+        }}
+      >
+        <ImageUpload
+          onImagesChange={(files) => {
+            setFormData((prev) => ({ ...prev, imageUrls: files }))
+            if (files.length > 0) {
+              setErrors((prev) => ({ ...prev, imageUrlsText: '' }))
+            }
           }}
-        >
-          <ArrowBack />
-          <CustomButton variant="contained" type="submit">
-            {loading ? (
-              <>
-                Enviando...
-                <CircularProgress
-                  size={30}
-                  sx={{ color: 'var(--color-azul)' }}
-                />
-              </>
-            ) : (
-              'Enviar'
-            )}
-          </CustomButton>
-        </Box>
-      </form>
-    </Grid>
+        />
+        {errors.imageUrlsText && (
+          <ParagraphResponsive color="var(--color-error)" variant="body2" mt={1}>
+            {errors.imageUrlsText}
+          </ParagraphResponsive>
+        )}
+      </Box>
+  
+      <ContainerBottom>
+        <ArrowBack />
+        <CustomButton disabled={loading} type="submit">
+          {loading ? (
+            <>
+            <LoadingText text='Creando tematica'/>
+              <CircularProgress size={24} sx={{ ml: 1, color: 'var(--color-azul)' }} />
+            </>
+          ) : (
+            'Enviar'
+          )}
+        </CustomButton>
+      </ContainerBottom>
+    </Box>
+      </fieldset>
   )
 }
 
