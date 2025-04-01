@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import {
-  Box,
-  CircularProgress,
-  TextField,
-  FormControl
-} from '@mui/material'
+import { Box, CircularProgress, TextField, FormControl } from '@mui/material'
 import PropTypes from 'prop-types'
 import ArrowBack from '../utils/ArrowBack'
 import { inputStyles } from '../styles/styleglobal'
-import { ContainerBottom, CustomButton, ParagraphResponsive, TitleResponsive } from './formUsuario/CustomButton'
+import {
+  ContainerBottom,
+  CustomButton,
+  ParagraphResponsive,
+  TitleResponsive
+} from './formUsuario/CustomButton'
 
 import ImageUpload from '../common/imageUrls/ImageUpload '
 import LoadingText from '../common/loadingText/LoadingText'
@@ -75,98 +75,105 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
       disabled={loading}
       style={{ border: 'none', padding: 0, margin: 0 }}
     >
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        maxWidth: '700px',
-        margin: '0 auto',
-        p: 4,
-        border: '1px solid #ccc',
-        borderRadius: 4,
-        boxShadow: 3,
-        backgroundColor: '#fff',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 3
-      }}
-    >
-      <TitleResponsive>{title}</TitleResponsive>
-  
-      <FormControl>
-        <TextField
-          label="Nombre"
-          name="themeName"
-          value={formData.themeName}
-          onChange={handleChange}
-          type="text"
-          inputRef={fileRefs.themeName}
-          error={Boolean(errors.themeName)}
-          helperText={errors.themeName}
-          multiline
-          minRows={1}
-          maxRows={5}
-          fullWidth
-          sx={{ ...inputStyles }}
-        />
-      </FormControl>
-  
-      <FormControl>
-        <TextField
-          label="Descripción"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          inputRef={fileRefs.description}
-          error={Boolean(errors.description)}
-          helperText={errors.description}
-          type="text"
-          multiline
-          minRows={3}
-          maxRows={10}
-          fullWidth
-          sx={{ ...inputStyles }}
-        />
-      </FormControl>
-  
       <Box
+        component="form"
+        onSubmit={handleSubmit}
         sx={{
-          border: '1px dashed #aaa',
-          borderRadius: 2,
-          padding: 2,
-          backgroundColor: '#fafafa'
+          maxWidth: '700px',
+          margin: '0 auto',
+          p: 4,
+          border: '1px solid #ccc',
+          borderRadius: 4,
+          boxShadow: 3,
+          backgroundColor: '#fff',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 3
         }}
       >
-        <ImageUpload
-          onImagesChange={(files) => {
-            setFormData((prev) => ({ ...prev, imageUrls: files }))
-            if (files.length > 0) {
-              setErrors((prev) => ({ ...prev, imageUrlsText: '' }))
-            }
+        <TitleResponsive>{title}</TitleResponsive>
+
+        <FormControl>
+          <TextField
+            label="Nombre"
+            name="themeName"
+            value={formData.themeName}
+            onChange={handleChange}
+            type="text"
+            inputRef={fileRefs.themeName}
+            error={Boolean(errors.themeName)}
+            helperText={errors.themeName}
+            multiline
+            minRows={1}
+            maxRows={5}
+            fullWidth
+            sx={{ ...inputStyles }}
+          />
+        </FormControl>
+
+        <FormControl>
+          <TextField
+            label="Descripción"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            inputRef={fileRefs.description}
+            error={Boolean(errors.description)}
+            helperText={errors.description}
+            type="text"
+            multiline
+            minRows={3}
+            maxRows={10}
+            fullWidth
+            sx={{ ...inputStyles }}
+          />
+        </FormControl>
+
+        <Box
+          sx={{
+            border: '1px dashed #aaa',
+            borderRadius: 2,
+            padding: 2,
+            backgroundColor: '#fafafa'
           }}
-        />
-        {errors.imageUrlsText && (
-          <ParagraphResponsive color="var(--color-error)" variant="body2" mt={1}>
-            {errors.imageUrlsText}
-          </ParagraphResponsive>
-        )}
-      </Box>
-  
-      <ContainerBottom>
-        <ArrowBack />
-        <CustomButton disabled={loading} type="submit">
-          {loading ? (
-            <>
-            <LoadingText text='Creando tematica'/>
-              <CircularProgress size={24} sx={{ ml: 1, color: 'var(--color-azul)' }} />
-            </>
-          ) : (
-            'Enviar'
+        >
+          <ImageUpload
+            onImagesChange={(files) => {
+              setFormData((prev) => ({ ...prev, imageUrls: files }))
+              if (files.length > 0) {
+                setErrors((prev) => ({ ...prev, imageUrlsText: '' }))
+              }
+            }}
+          />
+          {errors.imageUrlsText && (
+            <ParagraphResponsive
+              color="var(--color-error)"
+              variant="body2"
+              mt={1}
+            >
+              {errors.imageUrlsText}
+            </ParagraphResponsive>
           )}
-        </CustomButton>
-      </ContainerBottom>
-    </Box>
-      </fieldset>
+        </Box>
+
+        <ContainerBottom>
+          <ArrowBack />
+          <CustomButton disabled={loading} type="submit">
+            {loading ? (
+              <>
+                <LoadingText text="Creando tematica" />
+                <CircularProgress
+                  size={24}
+                  sx={{ ml: 1, color: 'var(--color-azul)' }}
+                />
+              </>
+            ) : (
+              'Enviar'
+            )}
+          </CustomButton>
+        </ContainerBottom>
+      </Box>
+    </fieldset>
   )
 }
 

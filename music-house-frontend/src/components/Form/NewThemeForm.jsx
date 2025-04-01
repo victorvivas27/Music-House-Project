@@ -49,7 +49,7 @@ export const NewThemeForm = () => {
       }
 
       try {
-        const response = await createTheme(formDataToSend )
+        const response = await createTheme(formDataToSend)
         showSuccess(`✅ ${response.message}`)
 
         setTimeout(() => {

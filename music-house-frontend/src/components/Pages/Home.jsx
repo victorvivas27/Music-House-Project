@@ -9,6 +9,7 @@ import ProductsWrapper from '../common/ProductsWrapper'
 import ProductCard from '../common/ProductCard'
 import { Loader } from '../common/loader/Loader'
 import { toast } from 'react-toastify'
+import { getTheme } from '../../api/theme'
 
 export const Home = () => {
   const { state, dispatch } = useAppStates()
@@ -16,6 +17,7 @@ export const Home = () => {
   const [selectedInstruments, setSelectedInstruments] = useState([])
   const [loading, setLoading] = useState(true)
   const [instruments, setInstruments] = useState([])
+  const [themes, setThemes]=useState([])
 
   useEffect(() => {
     const fetchInstruments = async () => {
@@ -58,6 +60,27 @@ export const Home = () => {
     }
   }, [instruments, searchOptions])
 
+  useEffect(() => {
+    const fetchTheme = async () => {
+      setLoading(true)
+      try {
+        const { result } = await getTheme()
+        setThemes(result)
+      } catch (error) {
+        toast.error(error)
+      } finally {
+        setTimeout(() => setLoading(false), 500)
+      }
+    }
+
+    fetchTheme()
+    
+  }, [])
+  
+
+
+
+
   if (loading) return <Loader title="Un momento por favor..." />
 
   return (
@@ -65,11 +88,16 @@ export const Home = () => {
      
         <>
           <MainWrapper>
-            {state.tematics?.map((tematic, index) => (
+            {themes?.map((tematic, index) => (
               <TematicCard
                 key={`tematic-card-${index}`}
-                title={tematic.name}
-                imageUrl={tematic.image}
+                title={tematic.themeName}
+                paragraph={tematic.description}
+                imageUrl={
+                  tematic.imageUrls?.length > 0
+                    ? tematic.imageUrls[0].imageUrl
+                    : '/default-theme.jpg' 
+                }
               />
             ))}
           </MainWrapper>

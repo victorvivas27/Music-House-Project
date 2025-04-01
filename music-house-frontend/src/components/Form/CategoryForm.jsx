@@ -1,22 +1,44 @@
-import { useEffect, useState } from 'react'
-import {
-  Box,
-  FormControl,
-  TextField,
-  Typography,
-  Grid,
-  CircularProgress
-} from '@mui/material'
+import { useEffect, useRef, useState } from 'react'
+import { Box, FormControl, TextField, CircularProgress } from '@mui/material'
 import PropTypes from 'prop-types'
 import ArrowBack from '../utils/ArrowBack'
 
-import { flexRowContainer, inputStyles } from '../styles/styleglobal'
-import { CustomButton } from './formUsuario/CustomButton'
+import { inputStyles } from '../styles/styleglobal'
+import {
+  ContainerBottom,
+  CustomButton,
+  TitleResponsive
+} from './formUsuario/CustomButton'
+import LoadingText from '../common/loadingText/LoadingText'
 
 export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
   const [formData, setFormData] = useState({ ...initialFormData })
   const [submitData, setSubmitData] = useState(false)
+  const [errors, setErrors] = useState({})
   const title = formData.idCategory ? 'Editar Categoría' : 'Registrar Categoría'
+
+  const fileRefs = {
+    categoryName: useRef(),
+    description: useRef()
+  }
+
+  const validateForm = () => {
+    let newErrors = {}
+    if (!formData.categoryName)
+      newErrors.categoryName = 'Este campo es obligatorio.'
+
+    if (!formData.description)
+      newErrors.description = 'Este campo es obligatorio.'
+
+    setErrors(newErrors)
+
+    const firstError = Object.keys(newErrors)[0]
+    if (firstError && fileRefs[firstError]?.current) {
+      fileRefs[firstError].current.focus()
+      return false
+    }
+    return true
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -32,6 +54,9 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
       categoryName: formData.categoryName,
       description: formData.description
     }
+    if (!validateForm()) {
+      return
+    }
     setFormData(data)
     setSubmitData(true)
   }
@@ -44,82 +69,82 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
   }, [formData, onSubmit, submitData])
 
   return (
-    <Grid
-      sx={{
-        width: '80%',
-        borderRadius: '10px',
-        ...flexRowContainer
-      }}
+    <fieldset
+      disabled={loading}
+      style={{ border: 'none', padding: 0, margin: 0 }}
     >
-      <form onSubmit={handleSubmit}>
-        <Grid sx={{ ...flexRowContainer }}>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{ padding: 2, width: '60%', height: '100%' }}
-          >
-            <Typography variant="h6">{title}</Typography>
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{
+          width: '600px',
+          margin: '0 auto',
+          p: 4,
+          border: '1px solid #ccc',
+          borderRadius: 4,
+          boxShadow: 3,
+          backgroundColor: '#fff',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 3
+        }}
+      >
+        <TitleResponsive>{title}</TitleResponsive>
 
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="Nombre"
-                name="categoryName"
-                value={formData.categoryName}
-                onChange={handleChange}
-                required
-                type="text"
-                color="secondary"
-                multiline
-                minRows={1}
-                maxRows={8}
-                sx={{ ...inputStyles, width: '900px' }}
-              />
-            </FormControl>
+        <FormControl>
+          <TextField
+            label="Nombre"
+            name="categoryName"
+            value={formData.categoryName}
+            onChange={handleChange}
+            type="text"
+            inputRef={fileRefs.categoryName}
+            error={Boolean(errors.categoryName)}
+            helperText={errors.categoryName}
+            multiline
+            minRows={1}
+            maxRows={5}
+            fullWidth
+            sx={{ ...inputStyles }}
+          />
+        </FormControl>
 
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="Descripción"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-                type="text"
-                color="secondary"
-                multiline
-                minRows={3}
-                maxRows={10}
-                sx={{ ...inputStyles, width: '900px' }}
-              />
-            </FormControl>
-          </Grid>
-        </Grid>
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            alignItems: 'center'
-          }}
-        >
+        <FormControl>
+          <TextField
+            label="Descripción"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            type="text"
+            inputRef={fileRefs.description}
+            error={Boolean(errors.description)}
+            helperText={errors.description}
+            multiline
+            minRows={3}
+            maxRows={10}
+            sx={{ ...inputStyles }}
+          />
+        </FormControl>
+
+        <ContainerBottom>
           <ArrowBack />
 
-          <CustomButton variant="contained" type="submit">
+          <CustomButton disabled={loading} type="submit">
             {loading ? (
               <>
-                Enviando...
+                <LoadingText text="Creando tematica" />
                 <CircularProgress
                   size={30}
-                  sx={{ color: 'var(--color-azul)' }}
+                  sx={{ ml: 1, color: 'var(--color-azul)' }}
                 />
               </>
             ) : (
               'Enviar'
             )}
           </CustomButton>
-        </Box>
-      </form>
-    </Grid>
+        </ContainerBottom>
+      </Box>
+    </fieldset>
   )
 }
 

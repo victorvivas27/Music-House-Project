@@ -1,10 +1,5 @@
 import { createContext, useContext, useReducer, useMemo } from 'react'
 import { actions } from './actions'
-
-import alternative from '../../assets/alternative.svg'
-import classic from '../../assets/classic.svg'
-import ancestral from '../../assets/ancestral.svg'
-
 import instrumentCase from '../../assets/instrumentCase.svg'
 import support from '../../assets/support.svg'
 import tuner from '../../assets/tuner.svg'
@@ -16,11 +11,7 @@ const initialState = {
   instruments: [],
   favorites: [],
   loading: false,
-  tematics: [
-    { name: 'Alternativo', image: alternative },
-    { name: 'Clásico', image: classic },
-    { name: 'Ancestral', image: ancestral }
-  ],
+ 
   characteristics: [
     { name: 'Estuche', image: instrumentCase, id: 'instrumentCase' },
     { name: 'Soporte', image: support, id: 'support' },
@@ -30,11 +21,7 @@ const initialState = {
   ],
   searchOptions: {
     found: undefined
-  },
-  categoryCreated: undefined,
-  categoryUpdated: undefined,
-  themeCreated: undefined,
-  bookingInfo: undefined
+  }
 }
 
 const ContextGlobal = createContext()
@@ -53,35 +40,6 @@ const appReducer = (state, action) => {
         searchOptions: {
           found: action.payload.found
         }
-      }
-
-    case actions.CATEGORY_CREATED:
-      return {
-        ...state,
-        categoryCreated: action.payload.created
-      }
-
-    case actions.CATEGORY_UPDATED:
-      return {
-        ...state,
-        categoryUpdated: action.payload.updated
-      }
-    case actions.THEME_CREATED:
-      return {
-        ...state,
-        themeCreated: action.payload.created
-      }
-
-    case actions.BOOKING_CONFIRM:
-      return {
-        ...state,
-        bookingInfo: action.payload
-      }
-
-    case actions.BOOKING_UPDATE:
-      return {
-        ...state,
-        bookingInfo: action.payload
       }
 
     case actions.UPDATE_FAVORITES:
