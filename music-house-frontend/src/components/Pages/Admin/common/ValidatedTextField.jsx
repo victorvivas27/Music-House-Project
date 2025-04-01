@@ -11,8 +11,7 @@ const ValidatedTextField = ({ name, label, value, onChange, error, inputRef,  ..
   value={value}
   onChange={onChange}
   inputRef={inputRef}
-  error={!!error}                     // 🔥 esto activa el estado de error en el input
-  helperText={error}                 // 🔥 esto muestra el mensaje debajo del input
+
   {...props}
   sx={{
     ...inputStyles,
