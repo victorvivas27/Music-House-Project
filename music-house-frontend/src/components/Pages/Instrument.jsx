@@ -15,11 +15,8 @@ import CalendarReserva from '../common/availability/CalendarReseva'
 import { flexRowContainer, flexColumnContainer } from '../styles/styleglobal'
 import ArrowBack from '../utils/ArrowBack'
 import { useAuth } from '../../hook/useAuth'
-import {
-  ParagraphResponsive,
-  TitleResponsive
-} from '../Form/formUsuario/CustomButton'
 import CalendarAdmin from '../common/availability/CalendarAdmin'
+import { ParagraphResponsive, TitleResponsive } from '../styles/ResponsiveComponents'
 export const Instrument = () => {
   const { id } = useParams()
   const { state } = useAppStates()

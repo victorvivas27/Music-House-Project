@@ -2,10 +2,8 @@ import Card from '@mui/material/Card'
 import CardMedia from '@mui/material/CardMedia'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
-import {
-  TitleResponsive,
-  ParagraphResponsive
-} from '../Form/formUsuario/CustomButton'
+import { ParagraphResponsive, TitleResponsive } from '../styles/ResponsiveComponents'
+
 
 const TematicCard = ({ title, imageUrl, paragraph }) => {
   return (

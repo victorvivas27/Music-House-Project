@@ -7,13 +7,6 @@ import {
   TextField
 } from '@mui/material'
 import Link from '@mui/material/Link'
-import {
-  ContainerBottom,
-  ContainerForm,
-  CustomButton,
-  ParagraphResponsive,
-  TitleResponsive
-} from './CustomButton'
 import { useFormik } from 'formik'
 import { UsersApi } from '../../../api/users'
 import loginValidationSchema from './LoginValidation'
@@ -27,6 +20,7 @@ import { useAuth } from '../../../hook/useAuth'
 import { getErrorMessage } from '../../../api/getErrorMessage'
 import LoadingText from '../../common/loadingText/LoadingText'
 import ContactSupportRoundedIcon from '@mui/icons-material/ContactSupportRounded';
+import { ContainerBottom, ContainerForm, CustomButton, ParagraphResponsive, TitleResponsive } from '../../styles/ResponsiveComponents'
 
 const Login = ({ onSwitch }) => {
   const navigate = useNavigate()

@@ -17,13 +17,8 @@ import { inputStyles } from '../styles/styleglobal'
 import ArrowBack from '../utils/ArrowBack'
 import ImageUpload from '../common/imageUrls/ImageUpload '
 import ImageUrlsEdit from '../common/imageUrls/ImageUrlsEdit'
-import {
-  ContainerBottom,
-  CustomButton,
-  ParagraphResponsive,
-  TitleResponsive
-} from './formUsuario/CustomButton'
 import LoadingText from '../common/loadingText/LoadingText'
+import { ContainerBottom, CustomButton, ParagraphResponsive, TitleResponsive } from '../styles/ResponsiveComponents'
 
 const InstrumentForm = ({
   initialFormData,

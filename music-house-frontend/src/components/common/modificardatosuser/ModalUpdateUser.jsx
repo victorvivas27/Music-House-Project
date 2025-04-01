@@ -15,10 +15,8 @@ import { UsersApi } from '../../../api/users'
 import useAlert from '../../../hook/useAlert'
 import { getErrorMessage } from '../../../api/getErrorMessage'
 import LoadingText from '../loadingText/LoadingText'
-import {
-  ContainerBottom,
-  CustomButton
-} from '../../Form/formUsuario/CustomButton'
+import { ContainerBottom, CustomButton } from '../../styles/ResponsiveComponents'
+
 
 const ModalUpdateUser = ({
   open,

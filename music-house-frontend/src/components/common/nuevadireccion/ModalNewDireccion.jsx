@@ -12,12 +12,8 @@ import { useEffect, useState } from 'react'
 
 import useAlert from '../../../hook/useAlert'
 import { getErrorMessage } from '../../../api/getErrorMessage'
-import {
-  ContainerBottom,
-  CustomButton
-} from '../../Form/formUsuario/CustomButton'
-
 import LoadingText from '../loadingText/LoadingText'
+import { ContainerBottom, CustomButton } from '../../styles/ResponsiveComponents'
 
 const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
   const [formData, setFormData] = useState({

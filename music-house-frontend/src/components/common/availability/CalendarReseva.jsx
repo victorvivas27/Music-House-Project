@@ -25,14 +25,8 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
 import { getErrorMessage } from '../../../api/getErrorMessage'
-import {
-  ContainerBottom,
-  CustomButton,
-  ParagraphResponsive,
-  TitleResponsive
-} from '../../Form/formUsuario/CustomButton'
-
 import LoadingText from '../loadingText/LoadingText'
+import { ContainerBottom, CustomButton, ParagraphResponsive, TitleResponsive } from '../../styles/ResponsiveComponents'
 
 const formatDate = (date) => dayjs(date).format('YYYY-MM-DD')
 
@@ -264,7 +258,7 @@ const CalendarReserva = ({ instrument }) => {
           }}
           className={selectedDates.length > 0 ? 'fade-in-up' : 'fade-out-soft'}
         >
-          <TitleResponsive >
+          <TitleResponsive>
             📅 Fechas seleccionadas:
           </TitleResponsive>
           <ParagraphResponsive>{selectedDates.join(' • ')}</ParagraphResponsive>

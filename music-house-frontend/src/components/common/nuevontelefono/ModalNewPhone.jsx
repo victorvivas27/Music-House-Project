@@ -19,11 +19,9 @@ import { countryCodes } from '../../utils/codepaises/CountryCodes'
 
 import { getErrorMessage } from '../../../api/getErrorMessage'
 import useAlert from '../../../hook/useAlert'
-import {
-  ContainerBottom,
-  CustomButton
-} from '../../Form/formUsuario/CustomButton'
+
 import LoadingText from '../loadingText/LoadingText'
+import { ContainerBottom, CustomButton } from '../../styles/ResponsiveComponents'
 
 const ModalNewPhone = ({
   open,

@@ -14,8 +14,7 @@ import dayjs from 'dayjs'
 import PropTypes from 'prop-types'
 import { Alert, Box, Snackbar, Typography } from '@mui/material'
 import { getErrorMessage } from '../../../api/getErrorMessage'
-import { TitleResponsive } from '../../Form/formUsuario/CustomButton'
-
+import { TitleResponsive } from '../../styles/ResponsiveComponents'
 const CalendarAdmin = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
   const [error, setError] = useState('')
@@ -124,7 +123,7 @@ const CalendarAdmin = ({ instrument }) => {
           gap: '2rem'
         }}
       >
-        <TitleResponsive >
+        <TitleResponsive>
           Leyenda del Calendario
         </TitleResponsive>
 

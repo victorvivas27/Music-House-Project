@@ -2,7 +2,8 @@ import { Box, Typography } from '@mui/material'
 import CreateWrapper from '../../common/crearProd/createWrapper'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 import NewInstrumentForm from '../../Form/NewInstrumentForm'
-import { TitleResponsive } from '../../Form/formUsuario/CustomButton'
+import { TitleResponsive } from '../../styles/ResponsiveComponents'
+
 
 export const AgregarInstrumento = () => {
   const { isHeaderVisible } = useHeaderVisibility()

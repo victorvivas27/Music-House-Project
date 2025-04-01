@@ -3,14 +3,9 @@ import { Box, CircularProgress, TextField, FormControl } from '@mui/material'
 import PropTypes from 'prop-types'
 import ArrowBack from '../utils/ArrowBack'
 import { inputStyles } from '../styles/styleglobal'
-import {
-  ContainerBottom,
-  CustomButton,
-  ParagraphResponsive,
-} from './formUsuario/CustomButton'
-
 import ImageUpload from '../common/imageUrls/ImageUpload '
 import LoadingText from '../common/loadingText/LoadingText'
+import { ContainerBottom, CustomButton, ParagraphResponsive } from '../styles/ResponsiveComponents'
 
 export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
   const [formData, setFormData] = useState({ ...initialFormData })

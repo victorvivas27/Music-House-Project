@@ -3,7 +3,8 @@ import CreateWrapper from '../../common/crearProd/createWrapper'
 import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
 
 import { NewThemeForm } from '../../Form/NewThemeForm'
-import { TitleResponsive } from '../../Form/formUsuario/CustomButton'
+import { TitleResponsive } from '../../styles/ResponsiveComponents'
+
 
 export const AgregarTheme = () => {
   const { isHeaderVisible } = useHeaderVisibility()

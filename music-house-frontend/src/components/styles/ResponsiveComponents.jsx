@@ -1,6 +1,6 @@
 import { styled } from '@mui/system'
 import { Box, Button, Grid, Typography } from '@mui/material'
-import { flexColumnContainer } from '../../styles/styleglobal'
+import { flexColumnContainer } from './styleglobal'
 
 export const CustomButton = styled(Button, {
   shouldForwardProp: (prop) => prop !== 'sx'

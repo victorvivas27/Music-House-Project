@@ -12,10 +12,8 @@ import { updateAddress } from '../../../api/addresses'
 
 import useAlert from '../../../hook/useAlert'
 import { getErrorMessage } from '../../../api/getErrorMessage'
-import {
-  ContainerBottom,
-  CustomButton
-} from '../../Form/formUsuario/CustomButton'
+import { ContainerBottom, CustomButton } from '../../styles/ResponsiveComponents'
+
 
 const ModalUpdateDireccion = ({
   open,

@@ -9,8 +9,9 @@ import BoxFormUnder from '../common/crearUsuario/BoxFormUnder'
 import { useNavigate, Link } from 'react-router-dom'
 
 import '../styles/transitions.css'
+import { ContainerLogo } from '../styles/ResponsiveComponents'
 
-import { ContainerLogo } from '../Form/formUsuario/CustomButton'
+
 
 const AuthPage = () => {
   const navigate = useNavigate()

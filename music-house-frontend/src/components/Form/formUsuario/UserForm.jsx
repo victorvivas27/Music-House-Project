@@ -32,13 +32,8 @@ import useAlert from '../../../hook/useAlert'
 import { useAuth } from '../../../hook/useAuth'
 import LoadingText from '../../common/loadingText/LoadingText'
 import ContactSupportRoundedIcon from '@mui/icons-material/ContactSupportRounded'
-import {
-  ContainerBottom,
-  ContainerForm,
-  CustomButton,
-  ParagraphResponsive,
-  TitleResponsive
-} from './CustomButton'
+import { ContainerBottom, ContainerForm, CustomButton, ParagraphResponsive, TitleResponsive } from '../../styles/ResponsiveComponents'
+
 
 const buttonStyleRoles = {
   backgroundColor: 'var(--color-error)',

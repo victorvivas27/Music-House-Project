@@ -4,11 +4,9 @@ import PropTypes from 'prop-types'
 import ArrowBack from '../utils/ArrowBack'
 
 import { inputStyles } from '../styles/styleglobal'
-import {
-  ContainerBottom,
-  CustomButton,
-} from './formUsuario/CustomButton'
+
 import LoadingText from '../common/loadingText/LoadingText'
+import { ContainerBottom, CustomButton } from '../styles/ResponsiveComponents'
 
 export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
   const [formData, setFormData] = useState({ ...initialFormData })

@@ -7,7 +7,7 @@ export const MainWrapper = styled(Box)(() => ({
   justifyContent: 'flex-start', 
   alignItems: 'center', 
   width: '100vw',
-  marginTop: 300, 
+  marginTop: 305, 
   marginBottom: 50,
   
 }))
