@@ -3,7 +3,7 @@ export const inputStyles = {
   color: 'var(--texto-inverso-black)',
   textShadow: '0 1px 2px var(--color-primario)',
   '& .MuiInputBase-input': {
-    color: 'var(--color-exito)',
+    color: 'var( --texto-inverso-black)',
     height: "10px",
     fontSize:21,
    },
