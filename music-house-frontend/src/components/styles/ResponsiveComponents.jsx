@@ -24,8 +24,7 @@ export const CustomButton = styled(Button, {
     backgroundColor: 'var(--color-primario-active)'
   },
   '&:disabled': {
-    backgroundColor: 'var(--background-disabled)',
-    opacity: 0.7,
+   
     cursor: 'not-allowed'
   },
 
