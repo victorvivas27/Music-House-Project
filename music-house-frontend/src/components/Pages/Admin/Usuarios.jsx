@@ -183,6 +183,24 @@ export const Usuarios = () => {
                             }}
                           />
                         </TableCell>
+
+                        <TableCell align="left">
+                          <img
+                            src={
+                              row?.picture ||
+                              '/src/assets/avatar_general_02.png'
+                            }
+                            alt="Instrumento"
+                            style={{
+                              width: '80px',
+                              height: '80px',
+                              objectFit: 'cover',
+                              borderRadius: '40px',
+                              border: '1px solid #ccc',
+                              boxShadow: 'var(--box-shadow)'
+                            }}
+                          />
+                        </TableCell>
                         <TableCell
                           component="th"
                           id={labelId}

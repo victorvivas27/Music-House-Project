@@ -199,7 +199,7 @@ export const Instruments = () => {
                           <img
                             src={
                               row.imageUrls?.[0]?.imageUrl ||
-                              '/images/default-placeholder.png'
+                              '/src/assets/instrumento_general_03.jpg'
                             }
                             alt="Instrumento"
                             style={{

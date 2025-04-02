@@ -166,7 +166,7 @@ export const Instrument = () => {
                   src={
                     instrumentSelected?.imageUrls?.length
                       ? instrumentSelected.imageUrls[0].imageUrl
-                      : '/images/default-placeholder.png'
+                      : '/src/assets/instrumento_general_03.jpg'
                   }
                   alt={instrumentSelected?.name}
                   sx={{

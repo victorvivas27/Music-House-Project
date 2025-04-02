@@ -67,8 +67,7 @@ export const headCellsReservas = [
   }
 ]
 
- export const headCellsInstrument = [
-
+export const headCellsInstrument = [
   {
     id: 'imageUrl',
     numeric: true,
@@ -95,7 +94,8 @@ export const headCellsReservas = [
   }
 ]
 
- export const headCellsUser = [
+export const headCellsUser = [
+  {id: 'imageUrl', numeric: true,disablePadding: false,label: 'Imagen'},
   { id: 'idUser', numeric: true, disablePadding: false, label: 'ID' },
   { id: 'rol', numeric: false, disablePadding: false, label: 'Rol' },
   { id: 'name', numeric: false, disablePadding: false, label: 'Nombre' },
@@ -103,7 +103,6 @@ export const headCellsReservas = [
   { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
   { id: 'actions', numeric: false, disablePadding: false, label: 'Acciones' }
 ]
-
 
 export const headCellsCategory = [
   {
@@ -132,9 +131,7 @@ export const headCellsCategory = [
   }
 ]
 
-
 export const headCellsTheme = [
-
   {
     id: 'imageUrl',
     numeric: true,

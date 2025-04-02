@@ -94,7 +94,7 @@ const ProductCard = ({ name, imageUrl, id }) => {
                 borderRadius: '50%',
                 boxShadow: 'var(--box-shadow)'
               }}
-              image={imageUrl || '/default-image.jpg'}
+              image={imageUrl || '/src/assets/instrumento_general_03.jpg'}
               alt={name}
               onError={() => setImgError(true)}
             />

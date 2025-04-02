@@ -91,7 +91,7 @@ export const Home = () => {
               imageUrl={
                 instrument.imageUrls?.length > 0
                   ? instrument.imageUrls[0].imageUrl
-                  : '/default-image.jpg'
+                  : '/src/assets/instrumento_general_03.jpg'
               }
               id={instrument.idInstrument}
             />
