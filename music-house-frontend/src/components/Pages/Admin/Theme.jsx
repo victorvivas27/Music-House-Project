@@ -202,10 +202,10 @@ export const Theme = () => {
                             }
                             alt="Imagen tematica"
                             style={{
-                              width: '80px',
-                              height: '80px',
+                              width: '90px',
+                              height: '75px',
                               objectFit: 'cover',
-                              borderRadius: '40px',
+                              borderRadius: '80%',
                               border: '1px solid #ccc',
                               boxShadow: 'var(--box-shadow)'
                             }}

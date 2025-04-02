@@ -3,16 +3,16 @@ import {
   Avatar,
   Card,
   CardContent,
-  Grid,
   Typography,
   Box,
   Divider,
-  CssBaseline,
   Snackbar,
   Alert,
   Tooltip,
   IconButton,
-  useMediaQuery
+  useMediaQuery,
+  Stack,
+  Skeleton
 } from '@mui/material'
 import EmailIcon from '@mui/icons-material/Email'
 import PhoneIcon from '@mui/icons-material/Phone'
@@ -32,7 +32,13 @@ import useAlert from '@/hook/useAlert'
 import { UsersApi } from '@/api/users'
 import { getErrorMessage } from '@/api/getErrorMessage'
 import { removeAddress } from '@/api/addresses'
-
+import {
+  MainWrapper,
+  ParagraphResponsive,
+  TitleResponsive
+} from '../styles/ResponsiveComponents'
+import { flexRowContainer, fontSizeResponsi } from '../styles/styleglobal'
+import useImageLoader from '@/hook/useImageLoader'
 
 const Perfil = () => {
   const { idUser } = useAuth()
@@ -49,6 +55,7 @@ const Perfil = () => {
   const [selectedPhone, setSelectedPhone] = useState(null)
   const [selectedDireccion, setSelectedDireccion] = useState(null)
   const { showSuccess, showConfirm } = useAlert()
+  const avatarLoaded = useImageLoader(userData?.picture, 500)
 
   const isMobile = useMediaQuery('(max-width:600px)')
 
@@ -112,389 +119,416 @@ const Perfil = () => {
   if (loading) return <Loader title="Un momento por favor..." />
 
   return (
-    <main
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        paddingTop: isMobile ? '200px' : '360px',
-        paddingBottom: isMobile ? '100px' : '150px'
+    <MainWrapper
+      sx={{
+        marginLeft: {
+          xs: '1%',
+          sm: '8%',
+          md: '3%',
+          lg: '3%',
+          xl: '3%'
+        }
       }}
     >
-      {!loading && userData && (
-        <>
-          <CssBaseline />
+      <Card
+        sx={{
+          borderRadius: 4,
+          boxShadow: 'var(--box-shadow)',
+          width: {
+            xs: '95%',
+            sm: '85%',
+            md: '90%',
+            lg: '90%',
+            xl: '90%'
+          }
+        }}
+      >
+        <CardContent>
+          {/* Encabezado con Avatar y Email */}
           <Box
-            sx={{
-              borderRadius: '12px',
-              boxShadow:
-                ' rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;',
-              maxWidth: isMobile ? '95%' : 1300
-            }}
+            display="flex"
+            alignItems="center"
+            flexDirection={isMobile ? 'column' : 'row'}
+            gap={2}
           >
-            <Grid container justifyContent="center">
-              <Card
-                sx={{
-                  width: isMobile ? '100%' : '900px',
-                  minHeight: '500px',
-                  p: isMobile ? 2 : 4,
-                  boxShadow: 4,
-                  borderRadius: 4
-                }}
-              >
-                <CardContent>
-                  {/* Encabezado con Avatar y Email */}
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    flexDirection={isMobile ? 'column' : 'row'}
-                    mb={2}
+            <Tooltip title="Editar tus datos">
+              <Stack spacing={1}>
+                {!avatarLoaded && (
+                  <Skeleton
+                    variant="circular"
+                    width={isMobile ? 70 : 90}
+                    height={isMobile ? 70 : 90}
+                    sx={{
+                      bgcolor: 'var(--color-primario)',
+                      animation: 'pulse 1.5s ease-in-out infinite'
+                    }}
+                  />
+                )}
+
+                {avatarLoaded && (
+                  <Avatar
+                    sx={{
+                      width: isMobile ? 70 : 90,
+                      height: isMobile ? 70 : 90
+                    }}
+                    onClick={handleOpenModalUser}
+                    src={userData?.picture || undefined}
                   >
-                    <Tooltip title="Editar tus datos">
-                      <Avatar
+                    {!userData?.picture && userData?.name?.[0]}
+                  </Avatar>
+                )}
+              </Stack>
+            </Tooltip>
+
+            <Box>
+              <TitleResponsive sx={{ color: 'var(--texto-inverso-black)' }}>
+                {userData?.name || 'Nombre no disponible'}{' '}
+                {userData?.lastName || ''}
+              </TitleResponsive>
+
+              <Box display="flex" alignItems="center">
+                <EmailIcon sx={{ color: 'var(--color-azul)', mr: 1 }} />
+                <ParagraphResponsive>
+                  {userData?.email || 'Correo no disponible'}
+                </ParagraphResponsive>
+              </Box>
+            </Box>
+          </Box>
+
+          <Divider sx={{ my: 4 }} />
+
+          {/* Teléfono */}
+
+          <Box>
+            <Box
+              sx={{
+                ...flexRowContainer
+              }}
+            >
+              <Tooltip title="Agregar un nuevo telefono">
+                <IconButton onClick={handleOpenModalPhone}>
+                  <AddIcon
+                    sx={{
+                      backgroundColor: 'ButtonShadow',
+                      borderRadius: 20,
+                      color: 'var(--color-secundario)',
+                      ...fontSizeResponsi
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+              <PhoneIcon
+                sx={{
+                  color: 'var(--color-exito)',
+                  ...fontSizeResponsi
+                }}
+              />
+              <TitleResponsive sx={{ color: 'var(--texto-inverso-black)' }}>
+                Telefonos:
+              </TitleResponsive>
+            </Box>
+
+            <Box
+              sx={{
+                ...flexRowContainer,
+                justifyContent: 'space-evenly'
+              }}
+            >
+              {userData?.phones?.length > 0 ? (
+                userData.phones.map((phone) => {
+                  return (
+                    <Box key={phone.idPhone}>
+                      <Card
                         sx={{
-                          width: isMobile ? 70 : 90,
-                          height: isMobile ? 70 : 90,
-                          fontSize: 40
+                          boxShadow: 'var(--box-shadow)',
+                          borderRadius: '8px',
+                          margin: 1
                         }}
-                        onClick={handleOpenModalUser}
-                        src={userData?.picture}
                       >
-                        {userData?.picture ? null : userData?.name?.[0]}
-                        {/* Si hay imagen, no muestra texto; si no hay imagen, muestra la inicial del nombre */}
-                      </Avatar>
-                    </Tooltip>
+                        <CardContent>
+                          <Box sx={{ ...flexRowContainer }}>
+                            {/* 📌 Número de teléfono clickeable para llamadas */}
+                            <ParagraphResponsive>
+                              <a
+                                href={`tel:${phone.phoneNumber}`}
+                                style={{
+                                  textDecoration: 'none',
+                                  color: 'var(--color-azul)'
+                                }}
+                              >
+                                {phone.phoneNumber}
+                              </a>
+                            </ParagraphResponsive>
 
-                    <Box
-                      ml={isMobile ? 0 : 2}
-                      textAlign={isMobile ? 'center' : 'left'}
-                    >
-                      <Typography
-                        variant={isMobile ? 'h6' : 'h5'}
-                        fontWeight="bold"
-                      >
-                        {userData?.name || 'Nombre no disponible'}{' '}
-                        {userData?.lastName || ''}
-                      </Typography>
+                            <Box>
+                              {/* Botón de editar */}
+                              <IconButton
+                                onClick={() =>
+                                  handleOpenModalPhoneUpdate(phone)
+                                }
+                              >
+                                <EditIcon
+                                  sx={{
+                                    color: 'var(--color-primario)'
+                                  }}
+                                />
+                              </IconButton>
 
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        mt={0.5}
-                        justifyContent={isMobile ? 'center' : 'start'}
-                      >
-                        <EmailIcon sx={{ color: 'var(--color-azul)', mr: 1 }} />
-                        <Typography variant="body2" color="text.secondary">
-                          {userData?.email || 'Correo no disponible'}
-                        </Typography>
-                      </Box>
+                              {/* Botón de eliminar con confirmación */}
+                              <IconButton
+                                onClick={async () => {
+                                  if (userData.phones.length > 1) {
+                                    const isConfirmed = await showConfirm(
+                                      '¿Estás seguro?',
+                                      'Esta acción eliminará el teléfono.'
+                                    )
+
+                                    if (isConfirmed) {
+                                      await removePhone(phone.idPhone)
+                                      await fetchUser()
+                                      showSuccess(
+                                        'Eliminado',
+                                        'El teléfono ha sido eliminado correctamente.'
+                                      )
+                                    }
+                                  }
+                                }}
+                                color="error"
+                                disabled={userData.phones.length === 1}
+                                sx={{
+                                  opacity:
+                                    userData.phones.length === 1 ? 0.5 : 1,
+                                  cursor:
+                                    userData.phones.length === 1
+                                      ? 'not-allowed'
+                                      : 'pointer'
+                                }}
+                              >
+                                <DeleteIcon
+                                  sx={{
+                                    color:
+                                      userData.phones.length === 1
+                                        ? 'gray'
+                                        : 'var(--color-error)'
+                                  }}
+                                />
+                              </IconButton>
+                            </Box>
+                          </Box>
+                        </CardContent>
+                      </Card>
                     </Box>
-                  </Box>
+                  )
+                })
+              ) : (
+                <Typography variant="body2" sx={{ mt: 2 }}>
+                  No hay teléfonos registrados.
+                </Typography>
+              )}
+            </Box>
+          </Box>
+          <Divider sx={{ my: 4 }} />
+          {/* Sección de Direcciones con Grid */}
+          <Box>
+            <Box
+              sx={{
+                ...flexRowContainer
+              }}
+            >
+              <Tooltip title="Agregar nueva dirección">
+                <IconButton onClick={handleOpenModal}>
+                  <AddIcon
+                    sx={{
+                      backgroundColor: 'ButtonShadow',
+                      borderRadius: 20,
+                      color: 'var(--color-secundario)',
+                      ...fontSizeResponsi
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+              <HomeIcon
+                sx={{
+                  color: 'var(--color-primario)',
+                  ...fontSizeResponsi
+                }}
+              />
+              <TitleResponsive sx={{ color: 'var(--texto-inverso-black)' }}>
+                Direcciones:
+              </TitleResponsive>
+            </Box>
 
-                  <Divider sx={{ my: 2 }} />
+            <Box
+              sx={{
+                ...flexRowContainer,
+                justifyContent: 'space-evenly'
+              }}
+            >
+              {userData?.addresses?.length > 0 ? (
+                userData.addresses.map((address) => (
+                  <Box key={address.idAddress}>
+                    <Card
+                      sx={{
+                        boxShadow: 'var(--box-shadow)',
+                        borderRadius: '8px',
+                        margin: 1
+                      }}
+                    >
+                      <CardContent>
+                        <Box sx={{ ...flexRowContainer }}>
+                          <TitleResponsive
+                            sx={{ color: 'var(--texto-inverso-black)' }}
+                          >
+                            {address.street}
+                          </TitleResponsive>
+                          {/* Botón de editar */}
+                          <IconButton
+                            onClick={() => {
+                              handleOpenModalDireccionUpdate(address)
+                            }}
+                          >
+                            <EditIcon sx={{ color: 'var(--color-primario)' }} />
+                          </IconButton>
+                          {/* Botón de eliminar con confirmación */}
+                          <IconButton
+                            onClick={async () => {
+                              if (userData.addresses.length > 1) {
+                                const isConfirm = await showConfirm(
+                                  '¿Estás seguro?',
+                                  'Esta acción eliminará la dirección de forma permanente.'
+                                )
 
-                  {/* Teléfono */}
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <Box sx={{ width: 900 }}>
-                      <Box display="flex" alignItems="center">
-                        <Tooltip title="Agregar un nuevo telefono">
-                          <IconButton onClick={handleOpenModalPhone}>
-                            <AddIcon
+                                if (isConfirm) {
+                                  await removeAddress(address.idAddress)
+                                  await fetchUser()
+                                  showSuccess(
+                                    'Eliminado',
+                                    'La dirección ha sido eliminada correctamente.'
+                                  )
+                                }
+                              }
+                            }}
+                            color="error"
+                            disabled={userData.addresses.length === 1}
+                            sx={{
+                              opacity:
+                                userData.addresses.length === 1 ? 0.5 : 1,
+                              cursor:
+                                userData.addresses.length === 1
+                                  ? 'not-allowed'
+                                  : 'pointer'
+                            }}
+                          >
+                            <DeleteIcon
                               sx={{
-                                color: 'var(--color-secundario)',
-                                fontSize: '40px'
+                                color:
+                                  userData.addresses.length === 1
+                                    ? 'gray'
+                                    : 'var(--color-error)'
                               }}
                             />
                           </IconButton>
-                        </Tooltip>
-                        <PhoneIcon
-                          sx={{
-                            color: 'var(--color-exito)',
-                            mr: 1,
-                            fontSize: '50px'
-                          }}
-                        />
-                        <Typography variant="subtitle1">
-                          <strong>Telefonos:</strong>
-                        </Typography>
-                      </Box>
-
-                      <Grid container spacing={isMobile ? 1 : 3} sx={{ mt: 2 }}>
-                        {userData?.phones?.length > 0 ? (
-                          userData.phones.map((phone) => {
-                            return (
-                              <Grid item xs={12} sm={5} key={phone.idPhone}>
-                                <Card
-                                  sx={{
-                                    p: 1,
-                                    borderRadius: '8px',
-                                    boxShadow: 3
-                                  }}
-                                >
-                                  <CardContent>
-                                    <Box
-                                      display="flex"
-                                      justifyContent="space-between"
-                                      alignItems="center"
-                                    >
-                                      {/* 📌 Número de teléfono clickeable para llamadas */}
-                                      <Typography
-                                        variant="h6"
-                                        fontWeight="bold"
-                                      >
-                                        <a
-                                          href={`tel:${phone.phoneNumber}`}
-                                          style={{
-                                            textDecoration: 'none',
-                                            color: 'var(--color-azul)',
-                                            fontWeight: 'bold'
-                                          }}
-                                        >
-                                          {phone.phoneNumber}
-                                        </a>
-                                      </Typography>
-
-                                      <Box>
-                                        {/* Botón de editar */}
-                                        <IconButton
-                                          onClick={() =>
-                                            handleOpenModalPhoneUpdate(phone)
-                                          }
-                                        >
-                                          <EditIcon
-                                            sx={{
-                                              color: 'var(--color-primario)'
-                                            }}
-                                          />
-                                        </IconButton>
-
-                                        {/* Botón de eliminar con confirmación */}
-                                        <IconButton
-                                          onClick={async () => {
-                                            if (userData.phones.length > 1) {
-                                              const isConfirmed =
-                                                await showConfirm(
-                                                  '¿Estás seguro?',
-                                                  'Esta acción eliminará el teléfono.'
-                                                )
-
-                                              if (isConfirmed) {
-                                                await removePhone(phone.idPhone)
-                                                await fetchUser()
-                                                showSuccess(
-                                                  'Eliminado',
-                                                  'El teléfono ha sido eliminado correctamente.'
-                                                )
-                                              }
-                                            }
-                                          }}
-                                          color="error"
-                                          disabled={
-                                            userData.phones.length === 1
-                                          }
-                                          sx={{
-                                            opacity:
-                                              userData.phones.length === 1
-                                                ? 0.5
-                                                : 1,
-                                            cursor:
-                                              userData.phones.length === 1
-                                                ? 'not-allowed'
-                                                : 'pointer'
-                                          }}
-                                        >
-                                          <DeleteIcon
-                                            sx={{
-                                              color:
-                                                userData.phones.length === 1
-                                                  ? 'gray'
-                                                  : 'var(--color-error)'
-                                            }}
-                                          />
-                                        </IconButton>
-                                      </Box>
-                                    </Box>
-                                  </CardContent>
-                                </Card>
-                              </Grid>
-                            )
-                          })
-                        ) : (
-                          <Typography variant="body2" sx={{ mt: 2 }}>
-                            No hay teléfonos registrados.
-                          </Typography>
-                        )}
-                      </Grid>
-                    </Box>
-                  </Box>
-
-                  {/* Sección de Direcciones con Grid */}
-                  <Box sx={{ width: isMobile ? '100%' : 900 }}>
-                    <Box display="flex" alignItems="center">
-                      <Tooltip title="Agregar nueva dirección">
-                        <IconButton onClick={handleOpenModal}>
-                          <AddIcon
-                            sx={{
-                              color: 'var(--color-secundario)',
-                              fontSize: '40px'
+                        </Box>
+                        <ParagraphResponsive>
+                          <strong>Número:</strong>{' '}
+                          <em
+                            style={{
+                              fontStyle: 'italic',
+                              fontWeight: 'inherit'
                             }}
-                          />
-                        </IconButton>
-                      </Tooltip>
-                      <HomeIcon
-                        sx={{
-                          color: 'var(--color-primario)',
-                          mr: 1,
-                          fontSize: '50px'
-                        }}
-                      />
-                      <Typography variant="subtitle1">
-                        <strong>Direcciones:</strong>
-                      </Typography>
-                    </Box>
+                          >
+                            {address.number}
+                          </em>
+                        </ParagraphResponsive>
 
-                    <Grid container spacing={isMobile ? 1 : 3} sx={{ mt: 2 }}>
-                      {userData?.addresses?.length > 0 ? (
-                        userData.addresses.map((address) => (
-                          <Grid item xs={12} sm={5} key={address.idAddress}>
-                            <Card
-                              sx={{
-                                p: 1,
-                                borderRadius: '8px',
-                                boxShadow: 3
-                              }}
-                            >
-                              <CardContent>
-                                <Box
-                                  display="flex"
-                                  justifyContent="space-between"
-                                  alignItems="center"
-                                >
-                                  <Typography variant="h6" fontWeight="bold">
-                                    {address.street}
-                                  </Typography>
-                                  {/* Botón de editar */}
-                                  <IconButton
-                                    onClick={() => {
-                                      handleOpenModalDireccionUpdate(address)
-                                    }}
-                                  >
-                                    <EditIcon
-                                      sx={{ color: 'var(--color-primario)' }}
-                                    />
-                                  </IconButton>
-                                  {/* Botón de eliminar con confirmación */}
-                                  <IconButton
-                                    onClick={async () => {
-                                      if (userData.addresses.length > 1) {
-                                        const isConfirm = await showConfirm(
-                                          '¿Estás seguro?',
-                                          'Esta acción eliminará la dirección de forma permanente.'
-                                        )
+                        <ParagraphResponsive>
+                          <strong> Ciudad:</strong>{' '}
+                          <em
+                            style={{
+                              fontFamily: 'italica',
+                              fontWeight: 'inherit'
+                            }}
+                          >
+                            {address.city}
+                          </em>
+                        </ParagraphResponsive>
 
-                                        if (isConfirm) {
-                                          await removeAddress(address.idAddress)
-                                          await fetchUser()
-                                          showSuccess(
-                                            'Eliminado',
-                                            'La dirección ha sido eliminada correctamente.'
-                                          )
-                                        }
-                                      } 
-                                    }}
-                                    color="error"
-                                    disabled={userData.addresses.length === 1}
-                                    sx={{
-                                      opacity:
-                                        userData.addresses.length === 1
-                                          ? 0.5
-                                          : 1,
-                                      cursor:
-                                        userData.addresses.length === 1
-                                          ? 'not-allowed'
-                                          : 'pointer'
-                                    }}
-                                  >
-                                    <DeleteIcon
-                                      sx={{
-                                        color:
-                                          userData.addresses.length === 1
-                                            ? 'gray'
-                                            : 'var(--color-error)'
-                                      }}
-                                    />
-                                  </IconButton>
-                                </Box>
-                                <Typography variant="body2">
-                                  Número: {address.number}
-                                </Typography>
-                                <Typography variant="body2">
-                                  Ciudad: {address.city}
-                                </Typography>
-                                <Typography variant="body2">
-                                  Estado: {address.state}
-                                </Typography>
-                                <Typography variant="body2">
-                                  País: {address.country}
-                                </Typography>
-                              </CardContent>
-                            </Card>
-                          </Grid>
-                        ))
-                      ) : (
-                        <Typography variant="body2" sx={{ mt: 2 }}>
-                          No hay direcciones registradas.
-                        </Typography>
-                      )}
-                    </Grid>
+                        <ParagraphResponsive>
+                          <strong> Estado:</strong>{' '}
+                          <em
+                            style={{
+                              fontFamily: 'italica',
+                              fontWeight: 'inherit'
+                            }}
+                          >
+                            {address.state}
+                          </em>
+                        </ParagraphResponsive>
+
+                        <ParagraphResponsive>
+                          <strong> País:</strong>{' '}
+                          <em
+                            style={{
+                              fontFamily: 'italica',
+                              fontWeight: 'inherit'
+                            }}
+                          >
+                            {address.country}
+                          </em>
+                        </ParagraphResponsive>
+                      </CardContent>
+                    </Card>
                   </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Modal para agregar nueva dirección */}
-            <ModalNewDireccion
-              open={openModal}
-              handleClose={handleCloseModal}
-              idUser={idUser}
-              refreshUserData={fetchUser}
-            />
-
-            {/* Modal para agregar nuevo telefono */}
-            <ModalNewPhone
-              open={openModalPhone}
-              handleCloseModalPhone={handleCloseModalPhone}
-              idUser={idUser}
-              refreshPhoneData={fetchUser}
-            />
-
-            {/* Modal para modificar datos del usuario */}
-            <ModalUpdateUser
-              open={openModalUser}
-              handleCloseModalUser={handleCloseModalUser}
-              idUser={idUser}
-              refreshUserData={fetchUser}
-              userData={userData}
-            />
-
-            {/* Modal para modificar datos del telefono  */}
-            <ModalUpdatePhone
-              open={openModalPhoneUpdate}
-              handleCloseModalPhoneUpdate={handleCloseModalPhoneUpdate}
-              refreshUserData={fetchUser}
-              selectedPhone={selectedPhone} // 📌 Pasa el teléfono seleccionado
-            />
-            {/* Modal para modificar datos de la direccion*/}
-            <ModalUpdateDireccion
-              open={openModalDireccionUpdate}
-              handleCloseModalDireccionUpdate={handleCloseModalDireccionUpdate}
-              refreshUserData={fetchUser}
-              selectedDireccion={selectedDireccion}
-            />
+                ))
+              ) : (
+                <Typography variant="body2" sx={{ mt: 2 }}>
+                  No hay direcciones registradas.
+                </Typography>
+              )}
+            </Box>
           </Box>
-        </>
-      )}
+        </CardContent>
+      </Card>
+
+      {/* Modal para agregar nueva dirección */}
+      <ModalNewDireccion
+        open={openModal}
+        handleClose={handleCloseModal}
+        idUser={idUser}
+        refreshUserData={fetchUser}
+      />
+
+      {/* Modal para agregar nuevo telefono */}
+      <ModalNewPhone
+        open={openModalPhone}
+        handleCloseModalPhone={handleCloseModalPhone}
+        idUser={idUser}
+        refreshPhoneData={fetchUser}
+      />
+
+      {/* Modal para modificar datos del usuario */}
+      <ModalUpdateUser
+        open={openModalUser}
+        handleCloseModalUser={handleCloseModalUser}
+        idUser={idUser}
+        refreshUserData={fetchUser}
+        userData={userData}
+      />
+
+      {/* Modal para modificar datos del telefono  */}
+      <ModalUpdatePhone
+        open={openModalPhoneUpdate}
+        handleCloseModalPhoneUpdate={handleCloseModalPhoneUpdate}
+        refreshUserData={fetchUser}
+        selectedPhone={selectedPhone} // 📌 Pasa el teléfono seleccionado
+      />
+      {/* Modal para modificar datos de la direccion*/}
+      <ModalUpdateDireccion
+        open={openModalDireccionUpdate}
+        handleCloseModalDireccionUpdate={handleCloseModalDireccionUpdate}
+        refreshUserData={fetchUser}
+        selectedDireccion={selectedDireccion}
+      />
 
       {/* Snackbar para mostrar errores */}
       <Snackbar
@@ -506,7 +540,7 @@ const Perfil = () => {
           {error}
         </Alert>
       </Snackbar>
-    </main>
+    </MainWrapper>
   )
 }
 

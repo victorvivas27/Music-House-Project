@@ -41,6 +41,8 @@ export const flexRowContainer = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  flexWrap: "wrap"
+  
  
 };
 
@@ -88,8 +90,9 @@ export const fontSizeResponsi = {
   fontSize: {
     xs: '20px',
     sm: '23px',
-    md: '24px',
-    lg: '25px'
+    md: '25px',
+    lg: '30px',
+    xl:'35px'
   },
   marginRight: 1
 }
