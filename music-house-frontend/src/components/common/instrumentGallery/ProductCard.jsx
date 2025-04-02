@@ -13,10 +13,10 @@ import ShareIcon from '@mui/icons-material/Share'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import PropTypes from 'prop-types'
 import { red } from '@mui/material/colors'
-import { CustomTooltip } from './customTooltip/CustomTooltip'
-import FavoriteIcon from './favorito/FavoriteIcon'
 import { useState } from 'react'
 import { useAuth } from '@/hook/useAuth'
+import { CustomTooltip } from '../customTooltip/CustomTooltip'
+import FavoriteIcon from '../favorito/FavoriteIcon'
 
 const ProductCard = ({ name, imageUrl, id }) => {
   const { isUser } = useAuth()

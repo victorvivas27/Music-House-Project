@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Box, Divider, Tooltip, Button, Typography } from '@mui/material'
-import { ScreenModal } from '../common/ScreenModal'
-import { InstrumentGallery } from '../common/InstrumentGallery'
 import { useAppStates } from '../utils/global.context'
 import { Si } from '../Images/Si'
 import { No } from '../Images/No'
@@ -16,6 +14,8 @@ import { InstrumentDetailWrapper, ParagraphResponsive, TitleResponsive } from '.
 import { useAuth } from '@/hook/useAuth'
 import { getInstrumentById } from '@/api/instruments'
 import CalendarAdmin from '../common/availability/CalendarAdmin'
+import { ScreenModal } from '../common/instrumentGallery/ScreenModal'
+import { InstrumentGallery } from '../common/instrumentGallery/InstrumentGallery'
 export const Instrument = () => {
   const { id } = useParams()
   const { state } = useAppStates()

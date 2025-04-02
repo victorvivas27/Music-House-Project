@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Typography, Box } from '@mui/material'
-import ProductCard from '../common/ProductCard'
+
 import { Loader } from '../common/loader/Loader'
 import ArrowBack from '../utils/ArrowBack'
 import { useAppStates } from '../utils/global.context'
@@ -8,6 +8,7 @@ import { actions } from '../utils/actions'
 import { useAuth } from '@/hook/useAuth'
 import { getAllFavorites } from '@/api/favorites'
 import { MainWrapper, ProductsWrapper } from '../styles/ResponsiveComponents'
+import ProductCard from '../common/instrumentGallery/ProductCard'
 export const Favorites = () => {
   const [loading, setLoading] = useState(true)
   const { state, dispatch } = useAppStates()

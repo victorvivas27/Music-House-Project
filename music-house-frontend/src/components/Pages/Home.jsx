@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { Typography } from '@mui/material'
 import { useAppStates } from '../utils/global.context'
 import { actions } from '../utils/actions'
-import ProductCard from '../common/ProductCard'
 import { Loader } from '../common/loader/Loader'
 import { toast } from 'react-toastify'
 import AutoScrollCarousel from '../common/autoScrollCarousel/AutoScrollCarousel'
 import { getInstruments } from '@/api/instruments'
 import { getTheme } from '@/api/theme'
 import { MainWrapper, ProductsWrapper } from '../styles/ResponsiveComponents'
+import ProductCard from '../common/instrumentGallery/ProductCard'
 
 export const Home = () => {
   const { state, dispatch } = useAppStates()

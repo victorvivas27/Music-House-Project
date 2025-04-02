@@ -2,7 +2,8 @@ import Card from '@mui/material/Card'
 import CardMedia from '@mui/material/CardMedia'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
-import { ParagraphResponsive, TitleResponsive } from '../styles/ResponsiveComponents'
+import { ParagraphResponsive, TitleResponsive } from '@/components/styles/ResponsiveComponents'
+
 
 
 
