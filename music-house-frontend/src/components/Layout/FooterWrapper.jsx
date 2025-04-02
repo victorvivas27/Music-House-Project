@@ -5,12 +5,12 @@ export const FooterWrapper = styled(Grid, {
   shouldForwardProp: (prop) => prop !== 'backgroundImageUrl'
 })(({ backgroundImageUrl }) => ({
   display: 'flex',
-  height: 100,
+  height:"500px",
   backgroundImage: `url(${backgroundImageUrl})`,
   justifyContent: 'flex-start',
   alignItems: 'flex-end',
   backgroundSize: 'cover',
   backgroundPosition: 'center bottom',
   backgroundRepeat: 'no-repeat',
-  width: '100vw'
+  
 }));
