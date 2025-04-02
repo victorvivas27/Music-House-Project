@@ -6,9 +6,7 @@ export const inputStyles = {
     color: 'var(--color-exito)',
     height: "10px",
     fontSize:21,
-   
-
-  },
+   },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderColor: 'var(--color-secundario)',

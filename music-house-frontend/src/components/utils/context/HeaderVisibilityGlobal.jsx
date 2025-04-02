@@ -1,8 +1,7 @@
+import PropTypes from 'prop-types'
 import  { createContext, useContext, useState, useMemo } from 'react'
 
 const HeaderVisibilityContext = createContext()
-
-// Agregar un displayName para mejorar la depuración
 HeaderVisibilityContext.displayName = "HeaderVisibilityContext"
 
 export const useHeaderVisibility = () => {
@@ -13,10 +12,8 @@ export const HeaderVisibilityProvider = ({ children }) => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
 
   const toggleHeaderVisibility = (isVisible) => {
-    setIsHeaderVisible(prev => isVisible ?? !prev) // Permite alternar si no se pasa un valor
+    setIsHeaderVisible(prev => isVisible ?? !prev) 
   }
-
-  // Memoizar el valor del contexto para evitar renders innecesarios
   const contextValue = useMemo(() => ({
     isHeaderVisible,
     toggleHeaderVisibility
@@ -27,4 +24,7 @@ export const HeaderVisibilityProvider = ({ children }) => {
       {children}
     </HeaderVisibilityContext.Provider>
   )
+}
+HeaderVisibilityProvider.propTypes={
+  children:PropTypes.node
 }

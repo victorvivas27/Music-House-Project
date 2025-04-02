@@ -16,9 +16,6 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { useNavigate } from 'react-router-dom'
-import { getTheme, deleteTheme } from '../../../api/theme'
-import MainWrapper from '../../common/MainWrapper'
-import { Loader } from '../../common/loader/Loader'
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
@@ -29,11 +26,17 @@ import {
   getEmptyRows,
   useVisibleRows
 } from '../Admin/common/tableHelper'
-import ArrowBack from '../../utils/ArrowBack'
-import { headCellsTheme } from '../../utils/types/HeadCells'
-import useAlert from '../../../hook/useAlert'
-import { paginationStyles } from '../../styles/styleglobal'
-import { getErrorMessage } from '../../../api/getErrorMessage'
+import useAlert from '@/hook/useAlert'
+import { deleteTheme, getTheme } from '@/api/theme'
+import { getErrorMessage } from '@/api/getErrorMessage'
+import { Loader } from '@/components/common/loader/Loader'
+import { MainWrapper } from '@/components/styles/ResponsiveComponents'
+import ArrowBack from '@/components/utils/ArrowBack'
+import { headCellsTheme } from '@/components/utils/types/HeadCells'
+import { paginationStyles } from '@/components/styles/styleglobal'
+
+
+
 
 export const Theme = () => {
   const [loading, setLoading] = useState(true)

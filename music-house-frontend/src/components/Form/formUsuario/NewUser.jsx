@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { UsersApi } from '../../../api/users'
 import { UserForm } from './UserForm'
-
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
-import useAlert from '../../../hook/useAlert'
-import { useAuth } from '../../../hook/useAuth'
-import { getErrorMessage } from '../../../api/getErrorMessage'
+import { useAuth } from '@/hook/useAuth'
+import useAlert from '@/hook/useAlert'
+import { UsersApi } from '@/api/users'
+import { getErrorMessage } from '@/api/getErrorMessage'
+
 
 const NewUser = ({ onSwitch }) => {
   const initialFormData = {

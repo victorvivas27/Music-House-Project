@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Box } from '@mui/material'
-import TematicCard from '../TematicCard'
 import PropTypes from 'prop-types'
+import TematicCard from '../TematicCard'
 const AutoScrollCarousel = ({ themes }) => {
   const carouselRef = useRef(null)
   const [isPaused, setIsPaused] = useState(false)
@@ -82,5 +82,5 @@ useEffect(() => {
 
 export default AutoScrollCarousel
 AutoScrollCarousel.propTypes = {
-  themes: PropTypes.object
+  themes: PropTypes.array.isRequired
 }

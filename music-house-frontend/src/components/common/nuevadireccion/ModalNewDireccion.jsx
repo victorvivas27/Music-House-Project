@@ -1,3 +1,7 @@
+import { addAddress } from '@/api/addresses'
+import { getErrorMessage } from '@/api/getErrorMessage'
+import { ContainerBottom, CustomButton } from '@/components/styles/ResponsiveComponents'
+import useAlert from '@/hook/useAlert'
 import {
   Box,
   CircularProgress,
@@ -7,13 +11,8 @@ import {
   useMediaQuery
 } from '@mui/material'
 import PropTypes from 'prop-types'
-import { addAddress } from '../../../api/addresses'
 import { useEffect, useState } from 'react'
-
-import useAlert from '../../../hook/useAlert'
-import { getErrorMessage } from '../../../api/getErrorMessage'
 import LoadingText from '../loadingText/LoadingText'
-import { ContainerBottom, CustomButton } from '../../styles/ResponsiveComponents'
 
 const ModalNewDireccion = ({ open, handleClose, idUser, refreshUserData }) => {
   const [formData, setFormData] = useState({

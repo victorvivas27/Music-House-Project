@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import CreateWrapper from '../../common/crearProd/createWrapper'
 import { Box, Typography } from '@mui/material'
-import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
-import { EditThemeForm } from '../../Form/EditThemeForm'
-import { TitleResponsive } from '../../styles/ResponsiveComponents'
+import { useHeaderVisibility } from '@/components/utils/context/HeaderVisibilityGlobal'
+import { CreateWrapper, TitleResponsive } from '@/components/styles/ResponsiveComponents'
+import { EditThemeForm } from '@/components/Form/EditThemeForm'
+
+
+
 
 
 export const EditarTheme = () => {

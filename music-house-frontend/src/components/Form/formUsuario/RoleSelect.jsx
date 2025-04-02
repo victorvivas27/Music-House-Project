@@ -1,7 +1,7 @@
 import { Select, MenuItem, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { roleList } from '../../utils/roles/constants'
+import { roleList } from '@/components/utils/roles/constants'
 export const RoleSelect = ({ onChange, selectedRole = '' }) => {
   const [roleValue, setRoleValue] = useState(selectedRole)
 

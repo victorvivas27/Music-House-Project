@@ -2,7 +2,8 @@
 import { NotFound } from '../Images/NotFound'
 import { Logo } from '../Images/Logo'
 import { Box, Typography } from '@mui/material'
-import { PageWrapper } from '../common/PageWrapper'
+import { PageWrapper } from '../styles/ResponsiveComponents'
+
 
 export const ServerError = () => {
   return (

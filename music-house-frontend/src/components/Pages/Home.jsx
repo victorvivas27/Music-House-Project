@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Typography } from '@mui/material'
 import { useAppStates } from '../utils/global.context'
-import { getInstruments } from '../../api/instruments'
 import { actions } from '../utils/actions'
-
-import ProductsWrapper from '../common/ProductsWrapper'
 import ProductCard from '../common/ProductCard'
 import { Loader } from '../common/loader/Loader'
 import { toast } from 'react-toastify'
-import { getTheme } from '../../api/theme'
 import AutoScrollCarousel from '../common/autoScrollCarousel/AutoScrollCarousel'
-import MainWrapper from '../common/MainWrapper'
+import { getInstruments } from '@/api/instruments'
+import { getTheme } from '@/api/theme'
+import { MainWrapper, ProductsWrapper } from '../styles/ResponsiveComponents'
 
 export const Home = () => {
   const { state, dispatch } = useAppStates()

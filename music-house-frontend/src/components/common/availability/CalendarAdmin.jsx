@@ -3,18 +3,18 @@ import {
   LocalizationProvider,
   PickersDay
 } from '@mui/x-date-pickers'
-
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useEffect, useState } from 'react'
-import {
-  addAvailableDates,
-  getAllAvailableDatesByInstrument
-} from '../../../api/availability'
 import dayjs from 'dayjs'
 import PropTypes from 'prop-types'
 import { Alert, Box, Snackbar, Typography } from '@mui/material'
-import { getErrorMessage } from '../../../api/getErrorMessage'
-import { TitleResponsive } from '../../styles/ResponsiveComponents'
+import {
+  addAvailableDates,
+  getAllAvailableDatesByInstrument
+} from '@/api/availability'
+import { getErrorMessage } from '@/api/getErrorMessage'
+import { TitleResponsive } from '@/components/styles/ResponsiveComponents'
+
 const CalendarAdmin = ({ instrument }) => {
   const [availableDates, setAvailableDates] = useState([])
   const [error, setError] = useState('')
@@ -123,9 +123,7 @@ const CalendarAdmin = ({ instrument }) => {
           gap: '2rem'
         }}
       >
-        <TitleResponsive>
-          Leyenda del Calendario
-        </TitleResponsive>
+        <TitleResponsive>Leyenda del Calendario</TitleResponsive>
 
         <Box
           sx={{

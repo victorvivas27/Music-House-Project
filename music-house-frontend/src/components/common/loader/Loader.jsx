@@ -2,7 +2,6 @@ import { keyframes, styled } from '@mui/material/styles'
 import { Container, CircularProgress, Typography, Box } from '@mui/material'
 import PropTypes from 'prop-types'
 
-// Animación sutil en el texto
 const fadeIn = keyframes`
   0% { opacity: 0; transform: translateY(10px); }
   100% { opacity: 1; transform: translateY(0); }

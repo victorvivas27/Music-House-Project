@@ -1,8 +1,9 @@
+import { NewCategoryForm } from '@/components/Form/NewCategoryForm'
+import { CreateWrapper, TitleResponsive } from '@/components/styles/ResponsiveComponents'
+import { useHeaderVisibility } from '@/components/utils/context/HeaderVisibilityGlobal'
 import { Box, Typography } from '@mui/material'
-import CreateWrapper from '../../common/crearProd/createWrapper'
-import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
-import { NewCategoryForm } from '../../Form/NewCategoryForm'
-import { TitleResponsive } from '../../styles/ResponsiveComponents'
+
+
 
 
 export const AgregarCategoria = () => {

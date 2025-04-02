@@ -1,8 +1,9 @@
+import NewInstrumentForm from '@/components/Form/NewInstrumentForm';
+import { CreateWrapper, TitleResponsive } from '@/components/styles/ResponsiveComponents';
+import { useHeaderVisibility } from '@/components/utils/context/HeaderVisibilityGlobal';
 import { Box, Typography } from '@mui/material'
-import CreateWrapper from '../../common/crearProd/createWrapper'
-import { useHeaderVisibility } from '../../utils/context/HeaderVisibilityGlobal'
-import NewInstrumentForm from '../../Form/NewInstrumentForm'
-import { TitleResponsive } from '../../styles/ResponsiveComponents'
+
+
 
 
 export const AgregarInstrumento = () => {

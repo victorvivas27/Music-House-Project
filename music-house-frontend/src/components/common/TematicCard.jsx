@@ -5,6 +5,7 @@ import { Box } from '@mui/material'
 import { ParagraphResponsive, TitleResponsive } from '../styles/ResponsiveComponents'
 
 
+
 const TematicCard = ({ title, imageUrl, paragraph }) => {
   return (
     <Card

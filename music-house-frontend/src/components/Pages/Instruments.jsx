@@ -16,9 +16,6 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { useNavigate } from 'react-router-dom'
-import { getInstruments, deleteInstrument } from '../../api/instruments'
-import MainWrapper from '../common/MainWrapper'
-
 import { Loader } from '../common/loader/Loader'
 import {
   EnhancedTableHead,
@@ -30,11 +27,14 @@ import {
   getEmptyRows,
   useVisibleRows
 } from './Admin/common/tableHelper'
-import ArrowBack from '../utils/ArrowBack'
-import useAlert from '../../hook/useAlert'
 import { headCellsInstrument } from '../utils/types/HeadCells'
 import { paginationStyles } from '../styles/styleglobal'
-import { getErrorMessage } from '../../api/getErrorMessage'
+import useAlert from '@/hook/useAlert'
+import { deleteInstrument, getInstruments } from '@/api/instruments'
+import { getErrorMessage } from '@/api/getErrorMessage'
+import ArrowBack from '../utils/ArrowBack'
+import { MainWrapper } from '../styles/ResponsiveComponents'
+
 
 export const Instruments = () => {
   const [instruments, setInstruments] = useState({ result: [] })

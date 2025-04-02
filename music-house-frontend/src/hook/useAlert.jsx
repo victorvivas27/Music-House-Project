@@ -1,36 +1,7 @@
 import Swal from 'sweetalert2'
 
 const useAlert = () => {
-  // ✅ Alerta genérica
-  const showAlert = ({
-    title,
-    text,
-    icon = 'info',
-    showCancelButton = false,
-    confirmText = 'Aceptar',
-    cancelText = 'Cancelar',
-    onConfirm = null
-  }) => {
-    Swal.fire({
-      title,
-      text,
-      icon,
-      showCancelButton,
-      confirmButtonText: confirmText,
-      cancelButtonText: cancelText,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      customClass: {
-        popup: 'custom-swal'
-      }
-    }).then((result) => {
-      if (result.isConfirmed && onConfirm) {
-        onConfirm()
-      }
-    })
-  }
+ 
 
   // ✅ Alerta de confirmación antes de realizar una acción
   const showConfirm = async (
@@ -97,7 +68,7 @@ const useAlert = () => {
 const showSuccess = (
   title = '¡Éxito!',
   text,
-  onClose // ✅ callback opcional
+  onClose 
 ) => {
   Swal.fire({
     title,
@@ -131,7 +102,7 @@ const showSuccess = (
       text,
       icon: 'error',
       confirmButtonColor: '#d33',
-      confirmButtonText: 'Entendido ✔️', // Cambiás el texto
+      confirmButtonText: 'Entendido ✔️', 
       background: 'var(--color-secundario)',
       color: 'var(--color-primario)',
       showClass: {
@@ -142,13 +113,12 @@ const showSuccess = (
       },
       customClass: {
         popup: 'custom-swal',
-        confirmButton: 'custom-swal-btn' // Aplicás tu clase
+        confirmButton: 'custom-swal-btn'
       }
     })
   }
 
   return {
-    showAlert,
     showConfirm,
     showLoading,
     showSuccess,

@@ -11,12 +11,11 @@ import {
   CircularProgress
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
-
-import { deleteReservation, getReservationById } from '../../api/reservations'
-import useAlert from '../../hook/useAlert'
-import { useAuth } from '../../hook/useAuth'
-import { getErrorMessage } from '../../api/getErrorMessage'
 import TooltipMy from '../common/toolTip/ToolTipMy'
+import { useAuth } from '@/hook/useAuth'
+import useAlert from '@/hook/useAlert'
+import { deleteReservation, getReservationById } from '@/api/reservations'
+import { getErrorMessage } from '@/api/getErrorMessage'
 
 
 const MisReservas = () => {

@@ -9,16 +9,14 @@ import {
   CardHeader,
   IconButton
 } from '@mui/material'
-
 import ShareIcon from '@mui/icons-material/Share'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-
 import PropTypes from 'prop-types'
 import { red } from '@mui/material/colors'
 import { CustomTooltip } from './customTooltip/CustomTooltip'
 import FavoriteIcon from './favorito/FavoriteIcon'
-import { useAuth } from '../../hook/useAuth'
 import { useState } from 'react'
+import { useAuth } from '@/hook/useAuth'
 
 const ProductCard = ({ name, imageUrl, id }) => {
   const { isUser } = useAuth()

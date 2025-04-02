@@ -8,19 +8,20 @@ import {
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import { useFormik } from 'formik'
-import { UsersApi } from '../../../api/users'
 import loginValidationSchema from './LoginValidation'
 import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
-import { fontSizeResponsi, inputStyles } from '../../styles/styleglobal'
-import useAlert from '../../../hook/useAlert'
-import { useAuth } from '../../../hook/useAuth'
-import { getErrorMessage } from '../../../api/getErrorMessage'
-import LoadingText from '../../common/loadingText/LoadingText'
 import ContactSupportRoundedIcon from '@mui/icons-material/ContactSupportRounded';
-import { ContainerBottom, ContainerForm, CustomButton, ParagraphResponsive, TitleResponsive } from '../../styles/ResponsiveComponents'
+import { useAuth } from '@/hook/useAuth'
+import useAlert from '@/hook/useAlert'
+import { UsersApi } from '@/api/users'
+import { getErrorMessage } from '@/api/getErrorMessage'
+import { ContainerBottom, ContainerForm, CustomButton, ParagraphResponsive, TitleResponsive } from '@/components/styles/ResponsiveComponents'
+import { fontSizeResponsi, inputStyles } from '@/components/styles/styleglobal'
+import LoadingText from '@/components/common/loadingText/LoadingText'
+
 
 const Login = ({ onSwitch }) => {
   const navigate = useNavigate()

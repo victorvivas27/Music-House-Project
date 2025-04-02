@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { imageUrlsAllInstrumentId, removeImage } from '../../../api/images'
 import { Box, IconButton } from '@mui/material'
 import { Delete } from '@mui/icons-material'
 import PropTypes from 'prop-types'
-import useAlert from '../../../hook/useAlert'
+import useAlert from '@/hook/useAlert'
+import { imageUrlsAllInstrumentId, removeImage } from '@/api/images'
+
 
 const ImageUrlsEdit = ({ idInstrument }) => {
   const [imageUrls, setImageUrls] = useState([])

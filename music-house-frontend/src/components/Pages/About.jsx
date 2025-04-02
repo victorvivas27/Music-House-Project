@@ -7,8 +7,9 @@ import {
   useTheme,
   useMediaQuery
 } from '@mui/material'
-import MainWrapper from '../common/MainWrapper'
+
 import { AboutUs } from '../Images/AboutUs'
+import { MainWrapper } from '../styles/ResponsiveComponents'
 
 const CustomTypography = styled(Typography)(({ theme, bgColor }) => ({
   padding: '1.3rem',

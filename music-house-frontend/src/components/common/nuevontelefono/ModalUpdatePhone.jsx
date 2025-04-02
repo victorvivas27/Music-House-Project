@@ -1,3 +1,7 @@
+import { getErrorMessage } from '@/api/getErrorMessage'
+import { updatePhone } from '@/api/phones'
+import { ContainerBottom, CustomButton } from '@/components/styles/ResponsiveComponents'
+import useAlert from '@/hook/useAlert'
 import {
   Box,
   CircularProgress,
@@ -8,11 +12,6 @@ import {
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
-import { updatePhone } from '../../../api/phones'
-
-import useAlert from '../../../hook/useAlert'
-import { getErrorMessage } from '../../../api/getErrorMessage'
-import { ContainerBottom, CustomButton } from '../../styles/ResponsiveComponents'
 
 
 const ModalUpdatePhone = ({

@@ -1,3 +1,7 @@
+import { getErrorMessage } from '@/api/getErrorMessage'
+import { UsersApi } from '@/api/users'
+import { ContainerBottom, CustomButton } from '@/components/styles/ResponsiveComponents'
+import useAlert from '@/hook/useAlert'
 import {
   Avatar,
   Box,
@@ -10,12 +14,7 @@ import {
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
-import { UsersApi } from '../../../api/users'
-
-import useAlert from '../../../hook/useAlert'
-import { getErrorMessage } from '../../../api/getErrorMessage'
 import LoadingText from '../loadingText/LoadingText'
-import { ContainerBottom, CustomButton } from '../../styles/ResponsiveComponents'
 
 
 const ModalUpdateUser = ({
@@ -242,7 +241,7 @@ const ModalUpdateUser = ({
             <Typography
               onClick={handleCloseModalUser}
               sx={{
-                cursor: 'pointer', // 👈 esto hace que aparezca la manito
+                cursor: 'pointer', 
                 fontWeight: '600',
                 color: 'var(--color-azul)',
                 marginTop: { xs: '40px', md: '20px' },

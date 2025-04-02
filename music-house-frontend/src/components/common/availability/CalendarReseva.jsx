@@ -12,21 +12,19 @@ import {
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import PropTypes from 'prop-types'
 import { useCallback, useEffect, useState } from 'react'
-import { getAllAvailableDatesByInstrument } from '../../../api/availability'
 import dayjs from 'dayjs'
-import {
-  createReservation,
-  getReservationById
-} from '../../../api/reservations'
 import { useNavigate } from 'react-router-dom'
-
-import { flexColumnContainer} from '../../styles/styleglobal'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
-import useAlert from '../../../hook/useAlert'
-import { useAuth } from '../../../hook/useAuth'
-import { getErrorMessage } from '../../../api/getErrorMessage'
+import { useAuth } from '@/hook/useAuth'
+import useAlert from '@/hook/useAlert'
+import { getAllAvailableDatesByInstrument } from '@/api/availability'
+import { getErrorMessage } from '@/api/getErrorMessage'
+import { createReservation, getReservationById } from '@/api/reservations'
+import { flexColumnContainer } from '@/components/styles/styleglobal'
+import { ContainerBottom, CustomButton, ParagraphResponsive, TitleResponsive } from '@/components/styles/ResponsiveComponents'
 import LoadingText from '../loadingText/LoadingText'
-import { ContainerBottom, CustomButton, ParagraphResponsive, TitleResponsive } from '../../styles/ResponsiveComponents'
+
+
 
 const formatDate = (date) => dayjs(date).format('YYYY-MM-DD')
 

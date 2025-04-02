@@ -1,13 +1,10 @@
-import {useEffect, useState } from 'react'
-//import { getIsAdmin, getIsUser } from '../roles/constants'
+import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from './AuthContext'
 import { ROLE_ADMIN, ROLE_USER } from '../roles/constants'
 import { isTokenExpired } from '../jwt/isTokenExpired'
-
-
 
 export const AuthProvider = ({ children }) => {
   const [authGlobal, setAuthGlobal] = useState(false)
@@ -20,33 +17,25 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate()
 
   const setAuthData = (userData) => {
-    const { token } = userData // Solo extraemos el token
+    const { token } = userData
 
     if (token && !isTokenExpired(token)) {
       localStorage.setItem('token', token)
-    
+
       try {
-        const decoded = jwtDecode(token) // Decodificamos el token
-
-
-        const roles = decoded.roles || [] // Extraemos roles del token
+        const decoded = jwtDecode(token)
+        const roles = decoded.roles || []
         const userId = decoded.id || null
         const name = decoded.name || null
         const lastName = decoded.lastName || null
-
-     
-       
-        
-
         setAuthGlobal(true)
         setIsUserAdmin(roles.includes(ROLE_ADMIN))
         setIsUser(roles.includes(ROLE_USER))
         setIdUser(userId)
         setUserName(name)
         setUserLastName(lastName)
-        setUserRoles(roles) 
+        setUserRoles(roles)
       } catch (error) {
-       
         localStorage.removeItem('token')
         setAuthGlobal(false)
         setIsUserAdmin(false)
@@ -59,19 +48,18 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-    // ✅ Función de Logout
-    const logOut = () => {
-      localStorage.removeItem('token')
-      setAuthGlobal(false)
-      setIsUserAdmin(false)
-      setIsUser(false)
-      setIdUser(null)
-      setUserName(null)
-      setUserLastName(null)
-      setUserRoles([])
-  
-      navigate('/', { replace: true }) 
-    }
+  const logOut = () => {
+    localStorage.removeItem('token')
+    setAuthGlobal(false)
+    setIsUserAdmin(false)
+    setIsUser(false)
+    setIdUser(null)
+    setUserName(null)
+    setUserLastName(null)
+    setUserRoles([])
+
+    navigate('/', { replace: true })
+  }
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -79,7 +67,6 @@ export const AuthProvider = ({ children }) => {
     if (token && !isTokenExpired(token)) {
       try {
         const decoded = jwtDecode(token)
-
         const roles = decoded.roles || []
         const userId = decoded.id || null
         const name = decoded.name || null
@@ -93,7 +80,6 @@ export const AuthProvider = ({ children }) => {
         setUserLastName(lastName)
         setUserRoles(roles)
       } catch (error) {
-       
         localStorage.removeItem('token')
         setAuthGlobal(false)
         setIsUserAdmin(false)
@@ -127,7 +113,6 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   )
 }
-
 
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired

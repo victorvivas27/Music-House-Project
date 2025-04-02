@@ -1,10 +1,10 @@
 import { createContext, useContext, useReducer, useMemo } from 'react'
 import { actions } from './actions'
-import instrumentCase from '../../assets/instrumentCase.svg'
-import support from '../../assets/support.svg'
-import tuner from '../../assets/tuner.svg'
-import microphone from '../../assets/microphone.svg'
-import phoneHolder from '../../assets/phoneHolder.svg'
+import instrumentCase from '@/assets/instrumentCase.svg'
+import support from '@/assets/support.svg'
+import tuner from '@/assets/tuner.svg'
+import microphone from '@/assets/microphone.svg'
+import phoneHolder from '@/assets/phoneHolder.svg'
 import PropTypes from 'prop-types'
 
 const initialState = {

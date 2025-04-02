@@ -5,10 +5,10 @@ import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import Close from '@mui/icons-material/Close'
 import { IconButton } from '@mui/material'
-import { searchInstrumentsByName } from '../../../api/instruments'
 import { InputFinder } from './InputFinder'
 import { Link, useLocation } from 'react-router-dom'
 import Draggable from 'react-draggable'
+import { searchInstrumentsByName } from '@/api/instruments'
 
 export const Finder = () => {
   const [searchPattern, setSearchPattern] = useState('')

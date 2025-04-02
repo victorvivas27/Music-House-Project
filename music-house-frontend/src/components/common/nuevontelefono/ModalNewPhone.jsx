@@ -1,3 +1,8 @@
+import { getErrorMessage } from '@/api/getErrorMessage'
+import { addPhone } from '@/api/phones'
+import { ContainerBottom, CustomButton } from '@/components/styles/ResponsiveComponents'
+import { countryCodes } from '@/components/utils/codepaises/CountryCodes'
+import useAlert from '@/hook/useAlert'
 import {
   Box,
   CircularProgress,
@@ -11,17 +16,10 @@ import {
   useMediaQuery
 } from '@mui/material'
 import PropTypes from 'prop-types'
-
 import { useEffect, useState } from 'react'
-
-import { addPhone } from '../../../api/phones'
-import { countryCodes } from '../../utils/codepaises/CountryCodes'
-
-import { getErrorMessage } from '../../../api/getErrorMessage'
-import useAlert from '../../../hook/useAlert'
-
 import LoadingText from '../loadingText/LoadingText'
-import { ContainerBottom, CustomButton } from '../../styles/ResponsiveComponents'
+
+
 
 const ModalNewPhone = ({
   open,
@@ -67,7 +65,7 @@ const ModalNewPhone = ({
   }
 
   const handlePhoneChange = (event) => {
-    let value = event.target.value.replace(/\D/g, '') // 🔹 Solo permite números
+    let value = event.target.value.replace(/\D/g, '') 
 
     if (!formData.countryCode) {
       setError('Debe seleccionar un código de país antes de escribir.')

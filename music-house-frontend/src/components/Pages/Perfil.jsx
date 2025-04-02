@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react'
-import { UsersApi } from '../../api/users'
-
 import {
   Avatar,
   Card,
@@ -24,16 +22,17 @@ import ModalNewDireccion from '../common/nuevadireccion/ModalNewDireccion'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { removeAddress } from '../../api/addresses'
-import Swal from 'sweetalert2'
 import ModalNewPhone from '../common/nuevontelefono/ModalNewPhone'
 import { removePhone } from '../../api/phones'
 import ModalUpdateUser from '../common/modificardatosuser/ModalUpdateUser'
 import ModalUpdatePhone from '../common/nuevontelefono/ModalUpdatePhone'
 import ModalUpdateDireccion from '../common/nuevadireccion/ModalUpdateDireccion'
-import { useAuth } from '../../hook/useAuth'
-import { getErrorMessage } from '../../api/getErrorMessage'
-import useAlert from '../../hook/useAlert'
+import { useAuth } from '@/hook/useAuth'
+import useAlert from '@/hook/useAlert'
+import { UsersApi } from '@/api/users'
+import { getErrorMessage } from '@/api/getErrorMessage'
+import { removeAddress } from '@/api/addresses'
+
 
 const Perfil = () => {
   const { idUser } = useAuth()
@@ -402,13 +401,7 @@ const Perfil = () => {
                                             'La dirección ha sido eliminada correctamente.'
                                           )
                                         }
-                                      } else {
-                                        Swal.fire(
-                                          'Acción no permitida',
-                                          'Debe haber al menos una dirección registrada.',
-                                          'error'
-                                        )
-                                      }
+                                      } 
                                     }}
                                     color="error"
                                     disabled={userData.addresses.length === 1}

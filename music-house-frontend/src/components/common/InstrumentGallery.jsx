@@ -5,10 +5,7 @@ import PropTypes from 'prop-types'
 
 export const InstrumentGallery = ({ itemData }) => {
   return (
-    <Box sx={{
-      border:"1px solid red ",
-     
-      }}>
+    <Box>
       <ImageList>
         {itemData?.map((item, index) => (
           <ImageListItem

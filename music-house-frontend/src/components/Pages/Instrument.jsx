@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getInstrumentById } from '../../api/instruments'
-import { InstrumentDetailWrapper } from '../common/InstrumentDetailWrapper'
 import { Box, Divider, Tooltip, Button, Typography } from '@mui/material'
 import { ScreenModal } from '../common/ScreenModal'
 import { InstrumentGallery } from '../common/InstrumentGallery'
@@ -14,9 +12,10 @@ import FavoriteIcon from '../common/favorito/FavoriteIcon'
 import CalendarReserva from '../common/availability/CalendarReseva'
 import { flexRowContainer, flexColumnContainer } from '../styles/styleglobal'
 import ArrowBack from '../utils/ArrowBack'
-import { useAuth } from '../../hook/useAuth'
+import { InstrumentDetailWrapper, ParagraphResponsive, TitleResponsive } from '../styles/ResponsiveComponents'
+import { useAuth } from '@/hook/useAuth'
+import { getInstrumentById } from '@/api/instruments'
 import CalendarAdmin from '../common/availability/CalendarAdmin'
-import { ParagraphResponsive, TitleResponsive } from '../styles/ResponsiveComponents'
 export const Instrument = () => {
   const { id } = useParams()
   const { state } = useAppStates()

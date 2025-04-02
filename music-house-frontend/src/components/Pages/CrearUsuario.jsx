@@ -1,11 +1,10 @@
 import { Box, Typography } from '@mui/material'
-import { MainCrearUsuario } from '../common/crearUsuario/MainCrearUsuario'
-import BoxLogoSuperior from '../common/crearUsuario/BoxLogoSuperior'
 import { Logo } from '../Images/Logo'
 import NewUser from '../Form/formUsuario/NewUser'
-import BoxFormUnder from '../common/crearUsuario/BoxFormUnder'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../../hook/useAuth'
+import { useAuth } from '@/hook/useAuth'
+import { BoxFormUnder, BoxLogoSuperior, MainCrearUsuario } from '../styles/ResponsiveComponents'
+
 
 export const CrearUsuario = () => {
   const { isUserAdmin } = useAuth()

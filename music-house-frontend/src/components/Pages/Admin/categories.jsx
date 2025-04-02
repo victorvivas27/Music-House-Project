@@ -16,11 +16,10 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { useNavigate } from 'react-router-dom'
-import { getCategories, deleteCategory } from '../../../api/categories'
-import MainWrapper from '../../common/MainWrapper'
-import { paginationStyles } from '../../styles/styleglobal'
 
-import { Loader } from '../../common/loader/Loader'
+
+
+
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
@@ -35,6 +34,10 @@ import ArrowBack from '../../utils/ArrowBack'
 import { headCellsCategory } from '../../utils/types/HeadCells'
 import useAlert from '../../../hook/useAlert'
 import { getErrorMessage } from '../../../api/getErrorMessage'
+import { deleteCategory, getCategories } from '@/api/categories'
+import { Loader } from '@/components/common/loader/Loader'
+import { MainWrapper } from '@/components/styles/ResponsiveComponents'
+import { paginationStyles } from '@/components/styles/styleglobal'
 
 export const Categories = () => {
   const [loading, setLoading] = useState(true)

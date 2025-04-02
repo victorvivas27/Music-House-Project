@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Typography, Box } from '@mui/material'
-import ProductsWrapper from '../common/ProductsWrapper'
 import ProductCard from '../common/ProductCard'
 import { Loader } from '../common/loader/Loader'
-import { MainWrapper } from '../common/MainWrapper'
-import { getAllFavorites } from '../../api/favorites'
 import ArrowBack from '../utils/ArrowBack'
 import { useAppStates } from '../utils/global.context'
 import { actions } from '../utils/actions'
-import { useAuth } from '../../hook/useAuth'
+import { useAuth } from '@/hook/useAuth'
+import { getAllFavorites } from '@/api/favorites'
+import { MainWrapper, ProductsWrapper } from '../styles/ResponsiveComponents'
 export const Favorites = () => {
   const [loading, setLoading] = useState(true)
   const { state, dispatch } = useAppStates()

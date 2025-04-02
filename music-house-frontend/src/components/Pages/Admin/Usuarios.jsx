@@ -15,28 +15,29 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
-import MainWrapper from '../../common/MainWrapper'
-import { UsersApi } from '../../../api/users'
 import { useNavigate } from 'react-router-dom'
+import { UsersApi } from '@/api/users'
+import useAlert from '@/hook/useAlert'
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
-  isSelected,
-  handleSort,
+  getEmptyRows,
   handleSelectAll,
   handleSelected,
-  getEmptyRows,
+  handleSort,
+  isSelected,
   useVisibleRows
 } from './common/tableHelper'
-import { Loader } from '../../common/loader/Loader'
-import ArrowBack from '../../utils/ArrowBack'
-import { headCellsUser } from '../../utils/types/HeadCells'
-import useAlert from '../../../hook/useAlert'
-import { paginationStyles } from '../../styles/styleglobal'
-import { getErrorMessage } from '../../../api/getErrorMessage'
+import { getErrorMessage } from '@/api/getErrorMessage'
+import { Loader } from '@/components/common/loader/Loader'
+import ArrowBack from '@/components/utils/ArrowBack'
+import { headCellsUser } from '@/components/utils/types/HeadCells'
+import { paginationStyles } from '@/components/styles/styleglobal'
+import { MainWrapper } from '@/components/styles/ResponsiveComponents'
+
 export const Usuarios = () => {
-  const [usuarios, setUsuarios] = useState({result:[]})
-   const [rows, setRows] = useState([])
+  const [usuarios, setUsuarios] = useState({ result: [] })
+  const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('idUser')
@@ -48,22 +49,20 @@ export const Usuarios = () => {
 
   const getUsuarios = async () => {
     setLoading(true)
-    try{
-   const fetchedUsers= await UsersApi.getAllUsers()
-   setUsuarios(fetchedUsers)
-   setRows(fetchedUsers.result||[])
-    }catch{
-      setUsuarios({result:[] })
-
-    }finally{
-      setTimeout(()=>setLoading(false))
+    try {
+      const fetchedUsers = await UsersApi.getAllUsers()
+      setUsuarios(fetchedUsers)
+      setRows(fetchedUsers.result || [])
+    } catch {
+      setUsuarios({ result: [] })
+    } finally {
+      setTimeout(() => setLoading(false))
     }
-    
   }
 
   useEffect(() => {
     setRows(usuarios.result)
-   setLoading(false)
+    setLoading(false)
   }, [usuarios])
 
   useEffect(() => {
@@ -82,10 +81,7 @@ export const Usuarios = () => {
     handleSort(event, property, orderBy, order, setOrderBy, setOrder)
   }
 
-
-
   const handleEdit = (idUser) => navigate(`/editarUsuario/${idUser}`)
-  
 
   const handleDelete = async (idUser = null) => {
     const selectedIds = idUser ? [idUser] : selected
@@ -113,8 +109,7 @@ export const Usuarios = () => {
   }
 
   const emptyRows = getEmptyRows(page, rowsPerPage, usuarios)
-  const visibleRows = useVisibleRows( rows, order, orderBy, page, rowsPerPage
-  )
+  const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
 
   if (loading) return <Loader title="Cargando usuarios..." />
 
@@ -177,15 +172,12 @@ export const Usuarios = () => {
                           isRowEven ? 'table-row-even' : 'table-row-odd'
                         }
                         sx={{ cursor: 'pointer' }}
-                        
                       >
                         <TableCell padding="checkbox">
                           <Checkbox
                             color="primary"
                             checked={isItemSelected}
-                            onChange={(event) =>
-                              handleClick(event, row.idUser)
-                            }
+                            onChange={(event) => handleClick(event, row.idUser)}
                             inputProps={{
                               'aria-labelledby': labelId
                             }}
@@ -201,9 +193,8 @@ export const Usuarios = () => {
                           {row.idUser}
                         </TableCell>
 
-
                         <TableCell align="left">
-                        {row.roles.join(', ')}
+                          {row.roles.join(', ')}
                         </TableCell>
                         <TableCell align="left">{row.name}</TableCell>
                         <TableCell align="left">{row.lastName}</TableCell>
@@ -270,11 +261,11 @@ export const Usuarios = () => {
               page={Math.min(
                 page,
                 Math.max(0, Math.ceil(rows.length / rowsPerPage) - 1)
-              )} 
+              )}
               onPageChange={(event, newPage) => setPage(newPage)}
               onRowsPerPageChange={(event) => {
                 setRowsPerPage(parseInt(event.target.value, 10))
-                setPage(0) 
+                setPage(0)
               }}
               labelRowsPerPage="Filas por página"
               sx={{

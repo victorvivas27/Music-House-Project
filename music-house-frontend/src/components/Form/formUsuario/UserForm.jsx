@@ -20,19 +20,15 @@ import { styled } from '@mui/material/styles'
 import { RoleSelect } from './RoleSelect'
 import PropTypes from 'prop-types'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
-import usePasswordValidation from '../../../hook/usePasswordValidation'
-import {
-  flexColumnContainer,
-  flexRowContainer,
-  fontSizeResponsi,
-  inputStyles
-} from '../../styles/styleglobal'
-import { countryCodes } from '../../utils/codepaises/CountryCodes'
-import useAlert from '../../../hook/useAlert'
-import { useAuth } from '../../../hook/useAuth'
-import LoadingText from '../../common/loadingText/LoadingText'
 import ContactSupportRoundedIcon from '@mui/icons-material/ContactSupportRounded'
-import { ContainerBottom, ContainerForm, CustomButton, ParagraphResponsive, TitleResponsive } from '../../styles/ResponsiveComponents'
+import usePasswordValidation from '@/hook/usePasswordValidation'
+import { useAuth } from '@/hook/useAuth'
+import useAlert from '@/hook/useAlert'
+import { ContainerBottom, ContainerForm, CustomButton, ParagraphResponsive, TitleResponsive } from '@/components/styles/ResponsiveComponents'
+import { flexColumnContainer, flexRowContainer, fontSizeResponsi, inputStyles } from '@/components/styles/styleglobal'
+import { countryCodes } from '@/components/utils/codepaises/CountryCodes'
+import LoadingText from '@/components/common/loadingText/LoadingText'
+
 
 
 const buttonStyleRoles = {

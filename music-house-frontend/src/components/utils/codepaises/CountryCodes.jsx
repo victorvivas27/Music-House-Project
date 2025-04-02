@@ -1,4 +1,4 @@
-// 📌 Lista de códigos de país para Latinoamérica (Mercosur)
+
  export const countryCodes = [
     { code: '+54', country: 'Argentina' },
     { code: '+55', country: 'Brasil' },
