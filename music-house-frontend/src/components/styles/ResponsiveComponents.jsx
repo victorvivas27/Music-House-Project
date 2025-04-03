@@ -159,7 +159,7 @@ export const ParagraphResponsive = styled(Typography, {
     
   },
   [theme.breakpoints.up('xl')]: {
-    fontSize: '1.2rem',
+    fontSize: '0.9rem',
    
    
   },

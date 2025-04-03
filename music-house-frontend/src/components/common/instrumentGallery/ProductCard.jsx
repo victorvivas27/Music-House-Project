@@ -31,14 +31,14 @@ const ProductCard = ({ name, imageUrl, id }) => {
           sm: '180px',
           md: '190px',
           lg: '200px',
-          xl: '210px'
+          xl: '250px'
         },
         height: {
           xs: '330px',
           sm: '340px',
           md: '350px',
           lg: '360px',
-          xl: '320px'
+          xl: '350px'
         },
         margin: 1,
         boxShadow: 3,
