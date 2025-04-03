@@ -144,10 +144,8 @@ export const Instrument = () => {
             <TitleResponsive
               sx={{
                 textAlign: 'center',
-                fontWeight: 'bold',
                 textTransform: 'uppercase',
                 letterSpacing: '3px',
-                textShadow: '2px 2px 5px rgba(0,0,0,0.2)',
                 padding: 1
               }}
             >

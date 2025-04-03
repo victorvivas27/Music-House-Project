@@ -17,6 +17,7 @@ import { useState } from 'react'
 import { useAuth } from '@/hook/useAuth'
 import { CustomTooltip } from '../customTooltip/CustomTooltip'
 import FavoriteIcon from '../favorito/FavoriteIcon'
+import { ParagraphResponsive } from '@/components/styles/ResponsiveComponents'
 
 const ProductCard = ({ name, imageUrl, id }) => {
   const { isUser } = useAuth()
@@ -83,7 +84,7 @@ const ProductCard = ({ name, imageUrl, id }) => {
         }
         arrow
       >
-        <Link to={`/instrument/${id}`} className="product-link">
+        <Link to={`/instrument/${id}`} >
           {!imgError ? (
             <CardMedia
               component="img"
@@ -120,21 +121,9 @@ const ProductCard = ({ name, imageUrl, id }) => {
         </Link>
       </CustomTooltip>
       {/* ✅ Título debajo de la imagen */}
-      <Typography
-        variant="subtitle1"
-        textAlign="center"
-        fontWeight="bold"
-        sx={{
-          color: 'text.primary',
-          fontSize: {
-            xs: '0.85rem',
-            sm: '0.9rem',
-            md: '1rem'
-          }
-        }}
-      >
+      <ParagraphResponsive>
         {name}
-      </Typography>
+      </ParagraphResponsive>
 
       <CardActions
         sx={{

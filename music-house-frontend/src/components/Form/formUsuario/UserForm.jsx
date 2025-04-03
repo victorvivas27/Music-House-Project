@@ -24,12 +24,21 @@ import ContactSupportRoundedIcon from '@mui/icons-material/ContactSupportRounded
 import usePasswordValidation from '@/hook/usePasswordValidation'
 import { useAuth } from '@/hook/useAuth'
 import useAlert from '@/hook/useAlert'
-import { ContainerBottom, ContainerForm, CustomButton, ParagraphResponsive, TitleResponsive } from '@/components/styles/ResponsiveComponents'
-import { flexColumnContainer, flexRowContainer, fontSizeResponsi, inputStyles } from '@/components/styles/styleglobal'
+import {
+  ContainerBottom,
+  ContainerForm,
+  CustomButton,
+  ParagraphResponsive,
+  TitleResponsive
+} from '@/components/styles/ResponsiveComponents'
+import {
+  flexColumnContainer,
+  flexRowContainer,
+  fontSizeResponsi,
+  inputStyles
+} from '@/components/styles/styleglobal'
 import { countryCodes } from '@/components/utils/codepaises/CountryCodes'
 import LoadingText from '@/components/common/loadingText/LoadingText'
-
-
 
 const buttonStyleRoles = {
   backgroundColor: 'var(--color-error)',
@@ -466,7 +475,7 @@ export const UserForm = ({
                         textAlign: 'center',
                         color: 'var(--texto-primario)',
                         fontWeight: 'bold',
-                        textShadow: '0 1px 2px var(--color-primario)',
+                        textShadow: '0 1px 2px var(--color-primario)'
                       }}
                     >
                       Máximo 5MB - Formatos permitidos: JPG, PNG
@@ -663,11 +672,7 @@ export const UserForm = ({
                     <FormControl
                       margin="normal"
                       sx={{
-                        '& .MuiInputBase-input': {
-                          color: phone.countryCode
-                            ? 'var(--color-azul)'
-                            : 'var(--texto-inverso-black)'
-                        }
+                        color: phone.countryCode
                       }}
                     >
                       <Select

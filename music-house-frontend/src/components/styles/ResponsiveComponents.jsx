@@ -17,11 +17,11 @@ export const CustomButton = styled(Button, {
   borderRadius: '8px',
   transition: '0.3s',
  '&:hover': {
-    backgroundColor: 'var(--color-secundario)',
-    color: 'var(--color-primario)'
+    backgroundColor: 'var(--color-primario)',
+    color: 'var(--color-azul)'
   },
   '&:active': {
-    backgroundColor: 'var(--color-primario-active)'
+    backgroundColor: 'var(--color-exito)'
   },
   '&:disabled': {
    
@@ -88,10 +88,10 @@ export const ContainerForm = styled(Grid, {
 export const TitleResponsive = styled(Typography, {
   shouldForwardProp: (prop) => prop !== 'sx'
 })(({ theme, sx = {} }) => ({
-  color: 'var(--texto-inverso-white)',
-  fontWeight: 300,
-  fontSize: '1rem',
+  color: 'var(--texto-inverso-darck)',
   textShadow: '0 1px 2px var(--color-primario)',
+  fontWeight: 350,
+  fontSize: '1rem',
 
   [theme.breakpoints.up('sm')]: {
     fontWeight: 350,

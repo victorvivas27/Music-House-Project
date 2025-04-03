@@ -1,15 +1,16 @@
 version: '3.8'
 
 services:
-  java_music_house:
+  backend:
     container_name: container_music_house_v1_1.0.0
+    build:
+      context: ./music-house-backend
     image: music_house:1.0.0
-    build: .
     ports:
       - "8080:8080"
     environment:
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
+      DB_HOST: mysql
+      DB_PORT: 3306
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -25,31 +26,45 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       REGION: ${REGION}
     depends_on:
-      - mysql_container_music_house_v1_1.0.0
+      - mysql
     networks:
-      - my_net_music_house
+      - music_net
     volumes:
       - ~/.m2:/root/.m2
     restart: always
 
-  mysql_container_music_house_v1_1.0.0:
-    container_name: mysql_container_music_house_v1_1.0.0
+  mysql:
+    container_name: mysql_container_music_house
     image: mysql:latest
     ports:
       - "13307:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
+      # Solo si necesitás restaurar datos una vez
+      - /c/Users/vivas/Desktop/Db_music_house/backup.sql:/docker-entrypoint-initdb.d/backup.sql
     networks:
-      - my_net_music_house
+      - music_net
     restart: always
 
-networks:
-  my_net_music_house:
-    driver: bridge
+  frontend:
+    container_name: music-house-frontend
+    build:
+      context: ./music-house-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - music_net
+    restart: always
 
 volumes:
   mysql_data:
+
+networks:
+  music_net:
+    driver: bridge

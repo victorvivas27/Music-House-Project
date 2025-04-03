@@ -1,9 +1,9 @@
 export const inputStyles = {
   width: "99%",
-  color: 'var(--texto-inverso-black)',
+  color: 'var(--texto-inverso-white)',
   textShadow: '0 1px 2px var(--color-primario)',
   '& .MuiInputBase-input': {
-    color: 'var( --texto-inverso-black)',
+    color: 'var( --texto-inverso-white)',
     height: "10px",
     fontSize:21,
    },
@@ -26,13 +26,13 @@ export const inputStyles = {
   },
 
   '& .MuiInputLabel-root': {
-    color: 'var(--texto-inverso-black)',
+    color: 'var(--texto-inverso-white)',
     textShadow: '0 1px 2px var(--color-primario)',
 
   },
 
   '& .MuiInputLabel-root.Mui-focused': {
-    color: 'var(--texto-inverso-black)',
+    color: 'var(--texto-inverso-white)',
     textShadow: '0 1px 2px var(--color-primario)',
   },
 };
@@ -60,7 +60,8 @@ export const paginationStyles = {
   },
   '& .MuiTablePagination-selectLabel': {
     fontWeight: 'bold',
-    color: 'var(--color-azul)'
+    color: 'var(--texto-inverso-white)',
+  textShadow: '0 1px 2px var(--color-primario)',
   },
   '& .MuiTablePagination-input': {
     fontSize: '16px',
@@ -72,15 +73,15 @@ export const paginationStyles = {
     color: 'var(--color-exito)'
   },
   '& .MuiTablePagination-actions': {
-    color: 'var(--color-secundario)',
+    color: 'var(--texto-inverso-black)',
     '& button': {
       borderRadius: '50%',
       margin: 1,
       backgroundColor: 'var(--color-primario)',
       transition: '0.3s',
       '&:hover': {
-        backgroundColor: 'var(--color-secundario)',
-        color: 'var(--color-primario)'
+        backgroundColor: 'var(--color-primario)',
+        color: 'var(--color-secundario)'
       }
     }
   }
