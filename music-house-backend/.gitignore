@@ -19,6 +19,12 @@ target/
 *.iml
 *.ipr
 .env
+Local_Music_v1_House.postman_collection.json
+Local_Music_v2_House.postman_collection.json
+Local_Music_v3_House.postman_collection.json
+Local_Music_v4_House.postman_collection.json
+docker-compose.yml
+
 
 ### NetBeans ###
 /nbproject/private/
