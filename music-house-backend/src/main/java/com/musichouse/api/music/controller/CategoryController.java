@@ -3,7 +3,6 @@ package com.musichouse.api.music.controller;
 import com.musichouse.api.music.dto.dto_entrance.CategoryDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.CategoryDtoExit;
 import com.musichouse.api.music.dto.dto_modify.CategoryDtoModify;
-import com.musichouse.api.music.entity.Category;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.service.CategoryService;
 import com.musichouse.api.music.util.ApiResponse;
@@ -17,20 +16,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/category")
+@RequestMapping("/api/categories")
 public class CategoryController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryController.class);
     private final CategoryService categoryService;
 
     // 🔹 CREAR CATEGORÍA
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<ApiResponse<CategoryDtoExit>> createCategory(
             @RequestBody @Valid CategoryDtoEntrance categoryDtoEntrance) {
 
@@ -49,11 +47,11 @@ public class CategoryController {
 
 
     // 🔹 OBTENER TODAS LAS CATEGORÍAS
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<CategoryDtoExit>>> getAllCategories() {
-        List<CategoryDtoExit> categories = categoryService.getAllCategories();
+    @GetMapping()
+    public ResponseEntity<ApiResponse<Page<CategoryDtoExit>>> getAllCategories(Pageable pageable) {
+        Page<CategoryDtoExit> categories = categoryService.getAllCategories(pageable);
 
-        return ResponseEntity.ok(ApiResponse.<List<CategoryDtoExit>>builder()
+        return ResponseEntity.ok(ApiResponse.<Page<CategoryDtoExit>>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de categorías obtenida con éxito.")
@@ -64,7 +62,7 @@ public class CategoryController {
 
 
     // 🔹 BUSCAR CATEGORÍA POR ID
-    @GetMapping("/search/{idCategory}")
+    @GetMapping("{idCategory}")
     public ResponseEntity<ApiResponse<CategoryDtoExit>> searchCategoryById(@PathVariable UUID idCategory) throws ResourceNotFoundException {
         CategoryDtoExit foundCategory = categoryService.getCategoryById(idCategory);
 
@@ -79,7 +77,8 @@ public class CategoryController {
 
 
     // 🔹 ACTUALIZAR CATEGORÍA
-    @PutMapping("/update")
+    @PutMapping("{idCategory}"
+    )
     public ResponseEntity<ApiResponse<?>> updateCategory(
             @RequestBody @Valid CategoryDtoModify categoryDtoModify) throws ResourceNotFoundException {
 
@@ -99,7 +98,7 @@ public class CategoryController {
 
 
     // 🔹 ELIMINAR CATEGORÍA
-    @DeleteMapping("/delete/{idCategory}")
+    @DeleteMapping("{idCategory}")
     public ResponseEntity<ApiResponse<String>> deleteCategory(@PathVariable UUID idCategory) throws ResourceNotFoundException {
 
         categoryService.deleteCategory(idCategory);
@@ -116,14 +115,14 @@ public class CategoryController {
 
     // 🔹 BUSCAR CATEGORÍAS POR NOMBRE
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<Page<Category>>> searchCategoryByName(
+    public ResponseEntity<ApiResponse<Page<CategoryDtoExit>>> searchCategoryByName(
             @RequestParam String name,
             Pageable pageable) {
 
 
-        Page<Category> categories = categoryService.searchCategory(name, pageable);
+        Page<CategoryDtoExit> categories = categoryService.searchCategory(name, pageable);
 
-        return ResponseEntity.ok(ApiResponse.<Page<Category>>builder()
+        return ResponseEntity.ok(ApiResponse.<Page<CategoryDtoExit>>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Búsqueda de categorías exitosa.")

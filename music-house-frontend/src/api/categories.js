@@ -2,9 +2,9 @@ import axios from 'axios';
 import { handleApiError } from './handleApiError';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const getCategories = async () => {
+export const getCategories = async (page = 0, size = 5, sort = 'categoryName,asc') => {
   try {
-    const response = await axios.get(`${BASE_URL}/category/all`);
+    const response = await axios.get( `${BASE_URL}/categories?page=${page}&size=${size}&sort=${sort}`);
     return response.data;
   } catch (error) {
     handleApiError(error);

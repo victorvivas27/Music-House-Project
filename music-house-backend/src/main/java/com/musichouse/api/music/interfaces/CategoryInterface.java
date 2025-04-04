@@ -4,14 +4,16 @@ import com.musichouse.api.music.dto.dto_entrance.CategoryDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.CategoryDtoExit;
 import com.musichouse.api.music.dto.dto_modify.CategoryDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface CategoryInterface {
+
     CategoryDtoExit createCategory(CategoryDtoEntrance categoryDtoEntrance);
 
-    List<CategoryDtoExit> getAllCategories();
+    Page<CategoryDtoExit> getAllCategories(Pageable pageable);
 
     CategoryDtoExit getCategoryById(UUID idCategory) throws ResourceNotFoundException;
 

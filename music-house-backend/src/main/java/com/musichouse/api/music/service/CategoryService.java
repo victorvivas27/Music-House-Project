@@ -50,11 +50,11 @@ public class CategoryService implements CategoryInterface {
 
 
     @Override
-    public List<CategoryDtoExit> getAllCategories() {
+    public Page<CategoryDtoExit> getAllCategories(Pageable pageable) {
 
-        List<CategoryDtoExit> categoryDtoExits = categoryRepository.findAll().stream()
-                .map(category -> mapper.map(category, CategoryDtoExit.class)).toList();
-        return categoryDtoExits;
+        Page<Category> categoriesPage = categoryRepository.findAll(pageable);
+
+        return categoriesPage.map(category -> mapper.map(category, CategoryDtoExit.class));
     }
 
 
@@ -114,14 +114,16 @@ public class CategoryService implements CategoryInterface {
     }
 
 
-    public Page<Category> searchCategory(String categoryName, Pageable pageable) {
+    public Page<CategoryDtoExit> searchCategory(String categoryName, Pageable pageable) {
         if (categoryName == null ||
                 categoryName.trim().isEmpty() ||
                 categoryName.matches(".*[^a-zA-Z0-9ÁÉÍÓÚáéíóúñÑ\\s].*")) {
             throw new IllegalArgumentException
                     ("El parámetro de búsqueda es inválido. Ingrese solo letras, números o espacios.");
         }
+        Page<Category> categories = categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName.trim(), pageable);
+        
+        return categories.map(category -> mapper.map(category, CategoryDtoExit.class));
 
-        return categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName.trim(), pageable);
     }
 }
