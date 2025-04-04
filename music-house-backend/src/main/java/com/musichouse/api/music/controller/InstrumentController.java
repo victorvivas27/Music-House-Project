@@ -2,29 +2,25 @@ package com.musichouse.api.music.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.musichouse.api.music.dto.dto_entrance.InstrumentDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.InstrumentDtoExit;
 import com.musichouse.api.music.dto.dto_modify.InstrumentDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.service.InstrumentService;
 import com.musichouse.api.music.util.ApiResponse;
-import jakarta.validation.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 @CrossOrigin
 @RestController
@@ -43,20 +39,20 @@ public class InstrumentController {
             @RequestPart(value = "files", required = false) List<MultipartFile> files) throws JsonProcessingException, ResourceNotFoundException {
 
 
-            // 📌 Convertir JSON a Objeto
-            InstrumentDtoEntrance instrumentDtoEntrance = objectMapper.readValue(instrumentJson, InstrumentDtoEntrance.class);
+        // 📌 Convertir JSON a Objeto
+        InstrumentDtoEntrance instrumentDtoEntrance = objectMapper.readValue(instrumentJson, InstrumentDtoEntrance.class);
 
-            // 📌 Llamar al servicio
-            InstrumentDtoExit instrumentDtoExit = instrumentService.createInstrument(files, instrumentDtoEntrance);
+        // 📌 Llamar al servicio
+        InstrumentDtoExit instrumentDtoExit = instrumentService.createInstrument(files, instrumentDtoEntrance);
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponse.<InstrumentDtoExit>builder()
-                            .status(HttpStatus.CREATED)
-                            .statusCode(HttpStatus.CREATED.value())
-                            .message("Instrumento creado exitosamente.")
-                            .error(null)
-                            .result(instrumentDtoExit)
-                            .build());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<InstrumentDtoExit>builder()
+                        .status(HttpStatus.CREATED)
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Instrumento creado exitosamente.")
+                        .error(null)
+                        .result(instrumentDtoExit)
+                        .build());
 
 
     }

@@ -43,7 +43,7 @@ public class AvailableDate {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_instrument")
-    @ToString.Exclude
+
     private Instrument instrument;
 
     /**

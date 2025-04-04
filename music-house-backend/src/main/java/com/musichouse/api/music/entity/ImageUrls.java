@@ -41,13 +41,13 @@ public class ImageUrls {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_instrument")
-    @ToString.Exclude
+
     private Instrument instrument;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_theme")
-    @ToString.Exclude
+
     private Theme theme;
 
     /**

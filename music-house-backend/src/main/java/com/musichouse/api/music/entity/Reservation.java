@@ -1,6 +1,5 @@
 package com.musichouse.api.music.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -36,7 +35,7 @@ public class Reservation {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_user")
-    @JsonIgnore
+
     private User user;
 
     /**
@@ -45,7 +44,7 @@ public class Reservation {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_instrument")
-    @JsonIgnore
+
     private Instrument instrument;
 
     /**

@@ -11,7 +11,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,28 +34,19 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<CategoryDtoExit>> createCategory(
             @RequestBody @Valid CategoryDtoEntrance categoryDtoEntrance) {
 
-        try {
-            CategoryDtoExit categoryDtoExit = categoryService.createCategory(categoryDtoEntrance);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponse.<CategoryDtoExit>builder()
-                            .status(HttpStatus.CREATED)
-                            .statusCode(HttpStatus.CREATED.value())
-                            .message("Categoría creada exitosamente.")
-                            .error(null)
-                            .result(categoryDtoExit)
-                            .build());
-        } catch (DataIntegrityViolationException e) {
 
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(ApiResponse.<CategoryDtoExit>builder()
-                            .status(HttpStatus.CONFLICT)
-                            .statusCode(HttpStatus.CONFLICT.value())
-                            .message("La categoría ya existe en la base de datos.")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
-        }
+        CategoryDtoExit categoryDtoExit = categoryService.createCategory(categoryDtoEntrance);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<CategoryDtoExit>builder()
+                        .status(HttpStatus.CREATED)
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Categoría creada exitosamente.")
+                        .error(null)
+                        .result(categoryDtoExit)
+                        .build());
+
     }
+
 
     // 🔹 OBTENER TODAS LAS CATEGORÍAS
     @GetMapping("/all")
@@ -70,6 +62,7 @@ public class CategoryController {
                 .build());
     }
 
+
     // 🔹 BUSCAR CATEGORÍA POR ID
     @GetMapping("/search/{idCategory}")
     public ResponseEntity<ApiResponse<CategoryDtoExit>> searchCategoryById(@PathVariable UUID idCategory) throws ResourceNotFoundException {
@@ -84,43 +77,26 @@ public class CategoryController {
                 .build());
     }
 
+
     // 🔹 ACTUALIZAR CATEGORÍA
     @PutMapping("/update")
     public ResponseEntity<ApiResponse<?>> updateCategory(
             @RequestBody @Valid CategoryDtoModify categoryDtoModify) throws ResourceNotFoundException {
 
-        try {
-            CategoryDtoExit updatedCategory = categoryService.updateCategory(categoryDtoModify);
 
-            return ResponseEntity.ok(ApiResponse.<CategoryDtoExit>builder()
-                    .status(HttpStatus.OK)
-                    .statusCode(HttpStatus.OK.value())
-                    .message("Categoría actualizada con éxito.")
-                    .error(null)
-                    .result(updatedCategory)
-                    .build());
-        }catch (ResourceNotFoundException e) {
+        CategoryDtoExit updatedCategory = categoryService.updateCategory(categoryDtoModify);
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.<UUID>builder()
-                            .status(HttpStatus.NOT_FOUND)
-                            .statusCode(HttpStatus.NOT_FOUND.value())
-                            .message("No se encontró la categoria con el ID proporcionado.")
-                            .error(e.getMessage())
-                            .result(categoryDtoModify.getIdCategory())
-                            .build());
-        } catch (DataIntegrityViolationException e) {
+        return ResponseEntity.ok(ApiResponse.<CategoryDtoExit>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Categoría actualizada con éxito.")
+                .error(null)
+                .result(updatedCategory)
+                .build());
 
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(ApiResponse.<String>builder()
-                            .status(HttpStatus.CONFLICT)
-                            .statusCode(HttpStatus.CONFLICT.value())
-                            .message("La categoría ya existe en la base de datos.")
-                            .error(e.getRootCause() != null ? e.getRootCause().getMessage() : e.getMessage())
-                            .result(categoryDtoModify.getCategoryName())
-                            .build());
-        }
+
     }
+
 
     // 🔹 ELIMINAR CATEGORÍA
     @DeleteMapping("/delete/{idCategory}")
@@ -137,17 +113,24 @@ public class CategoryController {
                 .build());
     }
 
-    // 🔹 BUSCAR CATEGORÍAS POR NOMBRE
-    @GetMapping("/find/nameCategory/{categoryName}")
-    public ResponseEntity<ApiResponse<List<Category>>> searchCategoryByName(@PathVariable String categoryName) {
-        List<Category> categories = categoryService.searchCategory(categoryName);
 
-        return ResponseEntity.ok(ApiResponse.<List<Category>>builder()
+    // 🔹 BUSCAR CATEGORÍAS POR NOMBRE
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<Category>>> searchCategoryByName(
+            @RequestParam String name,
+            Pageable pageable) {
+
+
+        Page<Category> categories = categoryService.searchCategory(name, pageable);
+
+        return ResponseEntity.ok(ApiResponse.<Page<Category>>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Búsqueda de categorías exitosa.")
                 .error(null)
                 .result(categories)
                 .build());
+
+
     }
 }

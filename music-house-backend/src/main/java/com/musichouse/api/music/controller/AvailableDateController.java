@@ -3,7 +3,6 @@ package com.musichouse.api.music.controller;
 import com.musichouse.api.music.dto.dto_entrance.AvailableDateDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.AvailableDateDtoExit;
 import com.musichouse.api.music.dto.dto_modify.AvailableDateDtoModify;
-import com.musichouse.api.music.exception.PastDateException;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.service.AvailableDateService;
 import com.musichouse.api.music.util.ApiResponse;

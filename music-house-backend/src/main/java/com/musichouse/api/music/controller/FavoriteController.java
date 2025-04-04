@@ -3,7 +3,6 @@ package com.musichouse.api.music.controller;
 import com.musichouse.api.music.dto.dto_entrance.FavoriteDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.FavoriteDtoExit;
 import com.musichouse.api.music.dto.dto_exit.IsFavoriteExit;
-import com.musichouse.api.music.exception.FavoriteAlreadyExistsException;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.service.FavoriteService;
 import com.musichouse.api.music.util.ApiResponse;

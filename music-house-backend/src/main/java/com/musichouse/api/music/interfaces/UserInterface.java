@@ -1,7 +1,6 @@
 package com.musichouse.api.music.interfaces;
 
 import com.musichouse.api.music.dto.dto_entrance.LoginDtoEntrance;
-import com.musichouse.api.music.dto.dto_entrance.UserAdminDtoEntrance;
 import com.musichouse.api.music.dto.dto_entrance.UserDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.TokenDtoExit;
 import com.musichouse.api.music.dto.dto_exit.UserDtoExit;
@@ -23,7 +22,7 @@ public interface UserInterface {
 
     UserDtoExit getUserById(UUID idUser) throws ResourceNotFoundException;
 
-    UserDtoExit updateUser(UserDtoModify userDtoModify,MultipartFile file) throws ResourceNotFoundException;
+    UserDtoExit updateUser(UserDtoModify userDtoModify, MultipartFile file) throws ResourceNotFoundException;
 
     void deleteUser(UUID idUser) throws ResourceNotFoundException;
 

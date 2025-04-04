@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * Esto se hace para evitar problemas de recursión infinita en las
  * operaciones de igualdad y hashCode.
  */
-@EqualsAndHashCode(exclude = {"addresses", "phones", "roles"})
+
 public class User implements UserDetails {
 
     /**
@@ -102,7 +102,6 @@ public class User implements UserDetails {
             fetch = FetchType.EAGER
     )
     private Set<Phone> phones;
-
 
 
     @ElementCollection(fetch = FetchType.EAGER)

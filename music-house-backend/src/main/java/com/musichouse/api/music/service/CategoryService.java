@@ -6,6 +6,7 @@ import com.musichouse.api.music.dto.dto_modify.CategoryDtoModify;
 import com.musichouse.api.music.entity.Category;
 import com.musichouse.api.music.entity.Instrument;
 import com.musichouse.api.music.exception.CategoryAssociatedException;
+import com.musichouse.api.music.exception.DuplicateNameException;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.interfaces.CategoryInterface;
 import com.musichouse.api.music.repository.CategoryRepository;
@@ -14,6 +15,8 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,18 +33,20 @@ public class CategoryService implements CategoryInterface {
     @Override
     public CategoryDtoExit createCategory(CategoryDtoEntrance categoryDtoEntrance) {
 
-        categoryDtoEntrance.setCategoryName(categoryDtoEntrance.getCategoryName());
+        categoryRepository.findByCategoryNameIgnoreCase(categoryDtoEntrance.getCategoryName()).
+                ifPresent(category -> {
+                    throw new DuplicateNameException
+                            ("Ya existe una categoria con ese nombre:" + categoryDtoEntrance.getCategoryName());
+                });
+
 
         Category category = mapper.map(categoryDtoEntrance, Category.class);
 
 
         Category categorySaved = categoryRepository.save(category);
 
-        CategoryDtoExit categoryDtoExit = mapper.map(categorySaved, CategoryDtoExit.class);
-
-        return categoryDtoExit;
+        return mapper.map(categorySaved, CategoryDtoExit.class);
     }
-
 
 
     @Override
@@ -53,46 +58,39 @@ public class CategoryService implements CategoryInterface {
     }
 
 
-
     @Override
     public CategoryDtoExit getCategoryById(UUID idCategory) throws ResourceNotFoundException {
+        Category category = categoryRepository.findById(idCategory)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría con ID " + idCategory + " no encontrada"));
 
-        Category category = categoryRepository.findById(idCategory).orElse(null);
-
-        CategoryDtoExit categoryDtoExit = null;
-
-        if (category != null) {
-            categoryDtoExit = mapper.map(category, CategoryDtoExit.class);
-
-        } else {
-            throw new ResourceNotFoundException("Category with id " + idCategory + " not found");
-
-        }
-        return categoryDtoExit;
+        return mapper.map(category, CategoryDtoExit.class);
     }
-
 
 
     @Override
     public CategoryDtoExit updateCategory(CategoryDtoModify categoryDtoModify)
             throws ResourceNotFoundException {
 
-        categoryDtoModify.setCategoryName(categoryDtoModify.getCategoryName());
+        UUID id = categoryDtoModify.getIdCategory();
 
-        Category categoryToUpdate = categoryRepository.findById(categoryDtoModify.getIdCategory())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException
-                                ("Category with id " + categoryDtoModify.getIdCategory() + " not found"));
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría con ID " + id + " no encontrada"));
 
-        categoryToUpdate.setCategoryName(categoryDtoModify.getCategoryName());
+        categoryRepository.findByCategoryNameIgnoreCase(categoryDtoModify.getCategoryName())
+                .ifPresent(c -> {
+                    if (!c.getIdCategory().equals(id)) {
+                        throw new DuplicateNameException("Ya existe una categoría con ese nombre: " + categoryDtoModify.getCategoryName());
+                    }
+                });
 
-        categoryToUpdate.setDescription(categoryDtoModify.getDescription());
+        // ✅ Actualizás directamente los campos de la entidad gestionada
+        category.setCategoryName(categoryDtoModify.getCategoryName());
+        category.setDescription(categoryDtoModify.getDescription());
 
-        categoryRepository.save(categoryToUpdate);
+        Category updatedCategory = categoryRepository.save(category);
 
-        return mapper.map(categoryToUpdate, CategoryDtoExit.class);
+        return mapper.map(updatedCategory, CategoryDtoExit.class); // ← ya tiene los valores normalizados
     }
-
 
 
     @Override
@@ -101,25 +99,29 @@ public class CategoryService implements CategoryInterface {
 
         Category categoryToDelete = categoryRepository.findById(idCategory)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Category with id " + idCategory + " not found"));
+                        new ResourceNotFoundException("Categoría con ID " + idCategory + " no encontrada"));
 
         List<Instrument> instruments = instrumentRepository.findByCategory(categoryToDelete);
 
         if (!instruments.isEmpty()) {
-            throw new CategoryAssociatedException("Cannot delete category with id " + idCategory +
-                    " as it is associated with instruments");
+            throw new CategoryAssociatedException(
+                    "No se puede eliminar la categoría con ID " + idCategory +
+                            " ya que está asociada a instrumentos"
+            );
         }
 
         categoryRepository.deleteById(idCategory);
     }
 
 
-
-    public List<Category> searchCategory(String categoryName) throws IllegalArgumentException {
-        if (categoryName != null) {
-            return categoryRepository.findBycategoryNameContaining(categoryName);
-        } else {
-            throw new IllegalArgumentException("Parámetro de búsqueda inválido");
+    public Page<Category> searchCategory(String categoryName, Pageable pageable) {
+        if (categoryName == null ||
+                categoryName.trim().isEmpty() ||
+                categoryName.matches(".*[^a-zA-Z0-9ÁÉÍÓÚáéíóúñÑ\\s].*")) {
+            throw new IllegalArgumentException
+                    ("El parámetro de búsqueda es inválido. Ingrese solo letras, números o espacios.");
         }
+
+        return categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName.trim(), pageable);
     }
 }

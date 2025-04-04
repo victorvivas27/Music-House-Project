@@ -26,7 +26,7 @@ import java.util.UUID;
  * Esto se hace para evitar problemas de recursión
  * infinita en las operaciones de igualdad y hashCode.
  */
-@EqualsAndHashCode(exclude = {"user"})
+
 
 public class Address {
     /**
@@ -98,13 +98,13 @@ public class Address {
             this.street = this.street.replaceAll("\\s+", " ").trim().toUpperCase();
         }
 
-        if (this.city != null){
+        if (this.city != null) {
             this.city = this.city.replaceAll("\\s+", " ").trim().toUpperCase();
         }
-        if (this.state != null){
+        if (this.state != null) {
             this.state = this.state.replaceAll("\\s+", " ").trim().toUpperCase();
         }
-        if (this.country != null){
+        if (this.country != null) {
             this.country = this.country.replaceAll("\\s+", " ").trim().toUpperCase();
         }
 

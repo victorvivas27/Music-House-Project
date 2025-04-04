@@ -8,9 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 @Getter
@@ -53,7 +51,6 @@ public class InstrumentDtoEntrance {
     @NotNull(message = "Las características del instrumento deben estar presentes")
     @Valid
     private CharacteristicDtoEntrance characteristic;
-
 
 
 }

@@ -10,7 +10,6 @@ import com.musichouse.api.music.interfaces.InstrumentInterface;
 import com.musichouse.api.music.repository.*;
 import com.musichouse.api.music.s3utils.S3UrlParser;
 import lombok.AllArgsConstructor;
-
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -75,7 +69,7 @@ public class InstrumentService implements InstrumentInterface {
         instrument.setCharacteristics(characteristics);
 
         // 📌 Subir imágenes a S3 y guardar URLs en la entidad
-        List<String> imageUrls = awss3Service.uploadFilesToS3Instrument(files,generatedId);
+        List<String> imageUrls = awss3Service.uploadFilesToS3Instrument(files, generatedId);
 
         List<ImageUrls> imageUrlEntities = imageUrls.stream().map(url -> {
             ImageUrls imageUrlEntity = new ImageUrls();
@@ -145,8 +139,6 @@ public class InstrumentService implements InstrumentInterface {
     }
 
 
-
-
     @Override
     @Transactional
     public void deleteInstrument(UUID idInstrument) throws ResourceNotFoundException {
@@ -169,7 +161,6 @@ public class InstrumentService implements InstrumentInterface {
                 .collect(Collectors.toList());
 
 
-
         // 📌 Eliminar el instrumento de la base de datos primero
         instrumentRepository.delete(instrument);
 
@@ -187,7 +178,6 @@ public class InstrumentService implements InstrumentInterface {
             }
         }
     }
-
 
 
     public List<InstrumentDtoExit> searchInstruments(String name) {

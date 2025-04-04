@@ -2,8 +2,6 @@ package com.musichouse.api.music.interfaces;
 
 
 import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoEntrance;
-import com.musichouse.api.music.dto.dto_entrance.InstrumentDtoEntrance;
-import com.musichouse.api.music.dto.dto_exit.FavoriteDtoExit;
 import com.musichouse.api.music.dto.dto_exit.ImagesUrlsDtoExit;
 import com.musichouse.api.music.dto.dto_modify.ImageUrlsDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;

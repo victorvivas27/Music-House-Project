@@ -1,14 +1,16 @@
 package com.musichouse.api.music.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musichouse.api.music.dto.dto_exit.UserDtoExit;
 import com.musichouse.api.music.dto.dto_modify.UserDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.service.UserService;
 import com.musichouse.api.music.util.ApiResponse;
-import jakarta.validation.*;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import lombok.AllArgsConstructor;
 import org.modelmapper.MappingException;
 import org.slf4j.Logger;
@@ -178,18 +180,18 @@ public class UserController {
     @DeleteMapping("/delete/{idUser}")
     public ResponseEntity<ApiResponse<?>> deleteUser(@PathVariable UUID idUser) throws ResourceNotFoundException {
 
-            if (idUser == null) {
-                throw new IllegalArgumentException("El ID del usuario no puede ser nulo.");
-            }
+        if (idUser == null) {
+            throw new IllegalArgumentException("El ID del usuario no puede ser nulo.");
+        }
 
-            userService.deleteUser(idUser);
-            return ResponseEntity.ok(ApiResponse.<Void>builder()
-                    .status(HttpStatus.OK)
-                    .statusCode(HttpStatus.OK.value())
-                    .message("Usuario con ID " + idUser + " eliminado exitosamente.")
-                    .error(null)
-                    .result(null)
-                    .build());
+        userService.deleteUser(idUser);
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Usuario con ID " + idUser + " eliminado exitosamente.")
+                .error(null)
+                .result(null)
+                .build());
 
 
     }

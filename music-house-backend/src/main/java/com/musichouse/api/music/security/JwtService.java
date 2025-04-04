@@ -1,7 +1,6 @@
 package com.musichouse.api.music.security;
 
 import com.musichouse.api.music.entity.User;
-import com.musichouse.api.music.util.RoleConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
@@ -13,7 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -106,8 +108,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
-        @SuppressWarnings("unchecked")
-        final List<String> roles = getClaim(token, claims -> claims.get("roles", List.class));
+        @SuppressWarnings("unchecked") final List<String> roles = getClaim(token, claims -> claims.get("roles", List.class));
         return username.equals(userDetails.getUsername())
                 && !isTokenExpired(token)
                 && roles != null

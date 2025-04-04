@@ -68,7 +68,7 @@ public class Instrument {
      */
     @ManyToOne
     @JoinColumn(name = "id_category")
-    @JsonIgnore
+
     private Category category;
 
     /**
@@ -76,7 +76,7 @@ public class Instrument {
      */
     @ManyToOne
     @JoinColumn(name = "id_theme")
-    @JsonIgnore
+
     private Theme theme;
 
     /**
@@ -111,6 +111,13 @@ public class Instrument {
     )
     @JsonIgnore
     private List<AvailableDate> availableDates;
+    /**
+     * Anotación que marca el campo como una fecha de creación automática.
+     * Hibernate asigna automáticamente la fecha y hora actual al insertar la entidad en la base de datos.
+     */
+    @CreationTimestamp
+    @Temporal(TemporalType.DATE)
+    private Date registDate;
 
     // 📌 Normalizar a mayúsculas y eliminar espacios extra antes de guardar o actualizar
     @PrePersist
@@ -121,12 +128,4 @@ public class Instrument {
         }
 
     }
-
-    /**
-     * Anotación que marca el campo como una fecha de creación automática.
-     * Hibernate asigna automáticamente la fecha y hora actual al insertar la entidad en la base de datos.
-     */
-    @CreationTimestamp
-    @Temporal(TemporalType.DATE)
-    private Date registDate;
 }
