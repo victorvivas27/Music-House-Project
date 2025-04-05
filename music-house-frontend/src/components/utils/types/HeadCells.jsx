@@ -105,6 +105,14 @@ export const headCellsUser = [
 ]
 
 export const headCellsCategory = [
+
+  {
+    id: 'index',
+    numeric: true,
+    disablePadding: false,
+    label: 'N°',
+    hidden: false
+  },
   {
     id: 'idCategory',
     numeric: true,

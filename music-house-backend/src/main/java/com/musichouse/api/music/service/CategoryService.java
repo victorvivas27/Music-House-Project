@@ -79,17 +79,18 @@ public class CategoryService implements CategoryInterface {
         categoryRepository.findByCategoryNameIgnoreCase(categoryDtoModify.getCategoryName())
                 .ifPresent(c -> {
                     if (!c.getIdCategory().equals(id)) {
-                        throw new DuplicateNameException("Ya existe una categoría con ese nombre: " + categoryDtoModify.getCategoryName());
+                        throw new DuplicateNameException
+                                ("Ya existe una categoría con ese nombre: " + categoryDtoModify.getCategoryName());
                     }
                 });
 
-        // ✅ Actualizás directamente los campos de la entidad gestionada
+
         category.setCategoryName(categoryDtoModify.getCategoryName());
         category.setDescription(categoryDtoModify.getDescription());
 
         Category updatedCategory = categoryRepository.save(category);
 
-        return mapper.map(updatedCategory, CategoryDtoExit.class); // ← ya tiene los valores normalizados
+        return mapper.map(updatedCategory, CategoryDtoExit.class);
     }
 
 
@@ -122,7 +123,7 @@ public class CategoryService implements CategoryInterface {
                     ("El parámetro de búsqueda es inválido. Ingrese solo letras, números o espacios.");
         }
         Page<Category> categories = categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName.trim(), pageable);
-        
+
         return categories.map(category -> mapper.map(category, CategoryDtoExit.class));
 
     }

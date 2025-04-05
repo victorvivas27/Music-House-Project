@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   Table,
@@ -17,16 +17,13 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { useNavigate } from 'react-router-dom'
 
-
-
-
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
   isSelected,
   handleSort,
   handleSelectAll,
-  handleSelected,
+  handleSelected
 } from './common/tableHelper'
 import ArrowBack from '../../utils/ArrowBack'
 import { headCellsCategory } from '../../utils/types/HeadCells'
@@ -39,46 +36,45 @@ import { paginationStyles } from '@/components/styles/styleglobal'
 
 export const Categories = () => {
   const [loading, setLoading] = useState(true)
-  const [categories, setCategories] = useState({ content: [], totalElements: 0 })
+  const [categories, setCategories] = useState({
+    content: [],
+    totalElements: 0
+  })
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('number')
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
-  const [isFirstLoad, setIsFirstLoad] = useState(true)
-const navigate = useNavigate()
+  const [firstLoad, setFirstLoad] = useState(true)
+  const navigate = useNavigate()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
 
-  const getAllCategories = useCallback( async (page = 0, size = 5) => {
-    if (isFirstLoad) {
-      setLoading(true)
-    }
+  const fetchData = async (
+    pageToUse = page,
+    sizeToUse = rowsPerPage,
+    isFirst = false
+  ) => {
+    if (isFirst) setLoading(true)
 
     try {
-      const data = await getCategories(page, size)
+      const data = await getCategories(pageToUse, sizeToUse)
       setCategories(data.result)
       setRows(Array.isArray(data.result.content) ? data.result.content : [])
-     
     } catch {
       setCategories({ content: [], totalElements: 0 })
       setRows([])
     } finally {
       setTimeout(() => {
+        if (isFirst) setFirstLoad(false)
         setLoading(false)
-        setIsFirstLoad(false) 
       }, 500)
     }
-
-  },[isFirstLoad])
-
-  console.log('🧠 Categories component MOUNTED')
+  }
 
   useEffect(() => {
-    console.log('📡 Disparando fetch de categorías con page:', page)
-    getAllCategories(page, rowsPerPage)
-  }, [getAllCategories, page, rowsPerPage])
-
+    fetchData(page, rowsPerPage, firstLoad)
+  }, [page, rowsPerPage])
 
   const handleAdd = () => navigate('/agregarCategoria')
 
@@ -103,19 +99,22 @@ const navigate = useNavigate()
       return
     }
 
-    const isConfirmed = await showConfirm({
-      title: `¿Eliminar ${selectedIds.length} categoría(s)?`,
-      text: 'Esta acción no se puede deshacer.'
-    })
+    const isConfirmed = await showConfirm(
+      `¿Eliminar ${selectedIds.length} categoría(s)?`,
+      'Esta acción no se puede deshacer.'
+    )
     if (!isConfirmed) return
 
     showLoading('Eliminando...', 'Por favor espera.')
 
     try {
       await Promise.all(selectedIds.map((id) => deleteCategory(id)))
-      showSuccess('¡Eliminado(s)!', `${selectedIds.length} categoría(s) eliminada(s) correctamente.`)
+      showSuccess(
+        '¡Eliminado(s)!',
+        `${selectedIds.length} categoría(s) eliminada(s) correctamente.`
+      )
       setSelected([])
-      getAllCategories(page, rowsPerPage)
+      await fetchData(page, rowsPerPage)
     } catch (error) {
       showError(`❌ ${getErrorMessage(error)}`)
     }
@@ -135,9 +134,6 @@ const navigate = useNavigate()
         }}
       >
         <ArrowBack />
-        <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
-          Mostrando {rows.length} de {categories.totalElements || 0} categorías
-        </Typography>
 
         <EnhancedTableToolbar
           title="Categorías"
@@ -148,8 +144,11 @@ const navigate = useNavigate()
         />
 
         <TableContainer>
-   
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size="medium"
+          >
             <EnhancedTableHead
               headCells={headCellsCategory}
               numSelected={selected.length}
@@ -185,7 +184,16 @@ const navigate = useNavigate()
                         inputProps={{ 'aria-labelledby': labelId }}
                       />
                     </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" align="center">
+
+                    <TableCell align="center">
+                      {page * rowsPerPage + index + 1}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      align="center"
+                    >
                       {row.idCategory}
                     </TableCell>
                     <TableCell align="left">{row.categoryName}</TableCell>
@@ -199,12 +207,22 @@ const navigate = useNavigate()
                         }}
                       >
                         <Tooltip title="Editar">
-                          <IconButton onClick={() => handleEdit(row.idCategory)}>
+                          <IconButton
+                            onClick={(event) => {
+                              handleEdit(row.idCategory)
+                              event.stopPropagation()
+                            }}
+                          >
                             <EditIcon />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Eliminar">
-                          <IconButton onClick={() => handleConfirmDelete(row.idCategory)}>
+                          <IconButton
+                            onClick={(event) => {
+                              handleConfirmDelete(row.idCategory)
+                              event.stopPropagation()
+                            }}
+                          >
                             <DeleteIcon />
                           </IconButton>
                         </Tooltip>
@@ -221,6 +239,13 @@ const navigate = useNavigate()
                 </TableRow>
               )}
             </TableBody>
+            {Array.from({ length: Math.max(0, rowsPerPage - rows.length) }).map(
+              (_, i) => (
+                <TableRow key={`empty-${i}`} style={{ height: 80 }}>
+                  <TableCell colSpan={7} />
+                </TableRow>
+              )
+            )}
           </Table>
         </TableContainer>
 

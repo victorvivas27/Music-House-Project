@@ -48,7 +48,7 @@ export const UserLayoutWithoutHeaderFooter = () => {
 }
 
 export const AdminLayout = () => {
-  console.log('📦 AdminLayout montado')
+ 
   return (
     <ThemeProvider theme={theme}>
       <Box
