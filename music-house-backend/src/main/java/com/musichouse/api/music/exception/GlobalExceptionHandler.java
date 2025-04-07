@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneralException(Exception e) {
         String errorMessage = e.getMessage() != null ? e.getMessage() : "Error interno desconocido";
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor: " + errorMessage);
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
     }
 
     // 🔹 Excepción cuando un email ya existe (puede ser 400 o 409 según prefieras)

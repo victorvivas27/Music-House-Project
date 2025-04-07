@@ -22,6 +22,9 @@ export const EditCategoryForm = ({ id }) => {
 
     try {
       const category = await getCategoryById(id)
+      console.log(category);
+      
+      
 
       if (category?.result) {
         setTimeout(() => {

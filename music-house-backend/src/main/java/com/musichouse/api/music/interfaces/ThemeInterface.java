@@ -4,6 +4,8 @@ import com.musichouse.api.music.dto.dto_entrance.ThemeDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.ThemeDtoExit;
 import com.musichouse.api.music.dto.dto_modify.ThemeDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -14,7 +16,7 @@ public interface ThemeInterface {
     ThemeDtoExit createTheme(List<MultipartFile> files, ThemeDtoEntrance themeDtoEntrance
     ) throws ResourceNotFoundException;
 
-    List<ThemeDtoExit> getAllThemes();
+    Page<ThemeDtoExit> getAllThemes(Pageable pageable);
 
     ThemeDtoExit getThemeById(UUID idTheme) throws ResourceNotFoundException;
 

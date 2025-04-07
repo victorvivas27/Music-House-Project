@@ -21,7 +21,8 @@ const initialState = {
   ],
   searchOptions: {
     found: undefined
-  }
+  },
+  categories: { content: [], totalElements: 0 },
 }
 
 const ContextGlobal = createContext()
@@ -59,6 +60,12 @@ const appReducer = (state, action) => {
 
       return { ...state, favorites: updatedFavorites }
     }
+
+    case actions.SET_CATEGORIES:
+  return {
+    ...state,
+    categories: action.payload 
+  }
 
     default:
       return state

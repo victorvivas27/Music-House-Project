@@ -111,14 +111,10 @@ export const headCellsCategory = [
     numeric: true,
     disablePadding: false,
     label: 'N°',
-    hidden: false
+    hidden: false,
+    disableSort: true
   },
-  {
-    id: 'idCategory',
-    numeric: true,
-    disablePadding: false,
-    label: 'ID'
-  },
+  
   {
     id: 'categoryName',
     numeric: false,
@@ -129,13 +125,15 @@ export const headCellsCategory = [
     id: 'description',
     numeric: false,
     disablePadding: false,
-    label: 'Descripción'
+    label: 'Descripción',
+    disableSort: true
   },
   {
     id: 'actions',
     numeric: false,
     disablePadding: false,
-    label: 'Acciones'
+    label: 'Acciones',
+    disableSort: true 
   }
 ]
 

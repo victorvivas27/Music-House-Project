@@ -33,48 +33,52 @@ import { deleteCategory, getCategories } from '@/api/categories'
 import { Loader } from '@/components/common/loader/Loader'
 import { MainWrapper } from '@/components/styles/ResponsiveComponents'
 import { paginationStyles } from '@/components/styles/styleglobal'
+import { useAppStates } from '@/components/utils/global.context'
+import { actions } from '@/components/utils/actions'
+import SearchInput from '@/components/common/search/SearchInput'
 
 export const Categories = () => {
-  const [loading, setLoading] = useState(true)
-  const [categories, setCategories] = useState({
-    content: [],
-    totalElements: 0
-  })
-  const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc')
-  const [orderBy, setOrderBy] = useState('number')
+  const [orderBy, setOrderBy] = useState('categoryName')
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
   const [firstLoad, setFirstLoad] = useState(true)
   const navigate = useNavigate()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
+  const { state, dispatch } = useAppStates()
 
   const fetchData = async (
     pageToUse = page,
     sizeToUse = rowsPerPage,
     isFirst = false
   ) => {
-    if (isFirst) setLoading(true)
+    if (isFirst) dispatch({ type: actions.SET_LOADING, payload: true })
+    const sort = `${orderBy},${order}`
 
     try {
-      const data = await getCategories(pageToUse, sizeToUse)
-      setCategories(data.result)
-      setRows(Array.isArray(data.result.content) ? data.result.content : [])
+      const data = await getCategories(pageToUse, sizeToUse, sort)
+      dispatch({ type: actions.SET_CATEGORIES, payload: data.result })
     } catch {
-      setCategories({ content: [], totalElements: 0 })
-      setRows([])
+      dispatch({
+        type: actions.SET_CATEGORIES,
+        payload: { content: [], totalElements: 0 }
+      })
     } finally {
       setTimeout(() => {
         if (isFirst) setFirstLoad(false)
-        setLoading(false)
+        dispatch({ type: actions.SET_LOADING, payload: false })
       }, 500)
     }
   }
-
+  const rows = Array.isArray(state.categories.content)
+    ? state.categories.content
+    : []
   useEffect(() => {
     fetchData(page, rowsPerPage, firstLoad)
-  }, [page, rowsPerPage])
+  }, [page, rowsPerPage, order, orderBy])
+
+ 
 
   const handleAdd = () => navigate('/agregarCategoria')
 
@@ -87,6 +91,9 @@ export const Categories = () => {
   }
 
   const handleRequestSort = (event, property) => {
+    const column = headCellsCategory.find((col) => col.id === property)
+    if (column?.disableSort) return
+
     handleSort(event, property, orderBy, order, setOrderBy, setOrder)
   }
 
@@ -120,7 +127,9 @@ export const Categories = () => {
     }
   }
 
-  if (loading) return <Loader title="Cargando categorías..." />
+ 
+
+  if (state.loading) return <Loader title="Cargando categorías..." />
 
   return (
     <MainWrapper>
@@ -142,7 +151,7 @@ export const Categories = () => {
           numSelected={selected.length}
           handleConfirmDelete={() => handleConfirmDelete()}
         />
-
+        <SearchInput />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -188,14 +197,7 @@ export const Categories = () => {
                     <TableCell align="center">
                       {page * rowsPerPage + index + 1}
                     </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      align="center"
-                    >
-                      {row.idCategory}
-                    </TableCell>
+
                     <TableCell align="left">{row.categoryName}</TableCell>
                     <TableCell align="left">{row.description}</TableCell>
                     <TableCell align="left">
@@ -252,7 +254,7 @@ export const Categories = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={categories.totalElements || 0}
+          count={state.categories.totalElements || 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={(event, newPage) => setPage(newPage)}

@@ -68,8 +68,11 @@ public class Category {
     @PreUpdate
     private void normalizeData() {
         if (this.categoryName != null) {
-            this.categoryName = this.categoryName.replaceAll("\\s+", " ").trim().toUpperCase();
-            System.out.println(">>> Normalized category name: " + this.categoryName);
+            this.categoryName = this.categoryName
+                    .replaceAll("\\s+", " ")
+                    .trim()
+                    .toUpperCase();
+
         }
     }
 }

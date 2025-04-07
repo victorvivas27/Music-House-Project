@@ -62,7 +62,7 @@ public class CategoryController {
 
 
     // 🔹 BUSCAR CATEGORÍA POR ID
-    @GetMapping("{idCategory}")
+    @GetMapping("/{idCategory}")
     public ResponseEntity<ApiResponse<CategoryDtoExit>> searchCategoryById(@PathVariable UUID idCategory) throws ResourceNotFoundException {
         CategoryDtoExit foundCategory = categoryService.getCategoryById(idCategory);
 
@@ -77,7 +77,7 @@ public class CategoryController {
 
 
     // 🔹 ACTUALIZAR CATEGORÍA
-    @PutMapping("{idCategory}"
+    @PutMapping(
     )
     public ResponseEntity<ApiResponse<?>> updateCategory(
             @RequestBody @Valid CategoryDtoModify categoryDtoModify) throws ResourceNotFoundException {

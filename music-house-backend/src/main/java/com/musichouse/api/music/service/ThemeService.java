@@ -17,6 +17,10 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,20 +38,25 @@ public class ThemeService implements ThemeInterface {
     private final AWSS3Service awss3Service;
 
     @Override
-    public ThemeDtoExit createTheme(List<MultipartFile> files, ThemeDtoEntrance themeDtoEntrance) throws ResourceNotFoundException {
-        // Verificar si ya existe
-        themeRepository.findByThemeNameIgnoreCase(themeDtoEntrance.getThemeName())
-                .ifPresent(t -> {
-                    throw new DuplicateNameException("Ya existe una temática con ese nombre: " + themeDtoEntrance.getThemeName());
-                });
+    @CacheEvict(value = "themes", allEntries = true)
+    public ThemeDtoExit createTheme(List<MultipartFile> files, ThemeDtoEntrance themeDtoEntrance)
+            throws ResourceNotFoundException {
+
+        if (themeRepository.findByThemeNameIgnoreCase(themeDtoEntrance.getThemeName()).isPresent()) {
+            throw new DuplicateNameException(
+                    "Ya existe una temática con ese nombre: " + themeDtoEntrance.getThemeName());
+        }
 
 
         Theme theme = mapper.map(themeDtoEntrance, Theme.class);
-        UUID generatedId = UUID.randomUUID(); // 🔑 Generás el ID
+
+        UUID generatedId = UUID.randomUUID();
+
         theme.setIdTheme(generatedId);
 
-        // 📌 Subir imágenes a S3 y guardar URLs en la entidad
+
         List<String> imageUrls = awss3Service.uploadFilesToS3Theme(files, generatedId);
+
         List<ImageUrls> imageUrlEntities = imageUrls.stream().map(url -> {
             ImageUrls imageUrlEntity = new ImageUrls();
             imageUrlEntity.setImageUrl(url);
@@ -65,70 +74,75 @@ public class ThemeService implements ThemeInterface {
     }
 
     @Override
-    public List<ThemeDtoExit> getAllThemes() {
-        return themeRepository.findAll()
-                .stream()
-                .map(theme -> mapper.map(theme, ThemeDtoExit.class))
-                .toList();
+    @Cacheable(value = "themes")
+    public Page<ThemeDtoExit> getAllThemes(Pageable pageable) {
 
+        Page<Theme> themesPage = themeRepository.findAll(pageable);
+
+        return themesPage.map(theme -> mapper.map(theme, ThemeDtoExit.class));
 
     }
 
     @Override
+    @Cacheable(value = "themes", key = "#idTheme")
     public ThemeDtoExit getThemeById(UUID idTheme) throws ResourceNotFoundException {
 
-        Theme theme = themeRepository.findById(idTheme).orElse(null);
+        Theme theme = themeRepository.findById(idTheme)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Themeatica con ID " + idTheme + " no encontrada"));
 
-        ThemeDtoExit themeDtoExit = null;
-
-        if (theme != null) {
-            themeDtoExit = mapper.map(theme, ThemeDtoExit.class);
-
-        } else {
-            throw new ResourceNotFoundException("Theme with id " + idTheme + " not found");
-        }
-        return themeDtoExit;
+        return mapper.map(theme, ThemeDtoExit.class);
     }
 
     @Override
+    @CacheEvict(value = "themes", allEntries = true)
     public ThemeDtoExit updateTheme(ThemeDtoModify themeDtoModify) throws ResourceNotFoundException {
-
-        themeDtoModify.setThemeName(themeDtoModify.getThemeName());
 
         Theme themeToUpdate = themeRepository.findById(themeDtoModify.getIdTheme())
                 .orElseThrow(() ->
                         new ResourceNotFoundException
-                                ("Theme with id " + themeDtoModify.getIdTheme() + " not found"));
+                                ("Themeatica con ID " + themeDtoModify.getIdTheme() + " no encontrada"));
+
+        themeRepository.findByThemeNameIgnoreCase(themeDtoModify.getThemeName())
+                .ifPresent(theme -> {
+                    if (!theme.getIdTheme().equals(themeDtoModify.getIdTheme())) {
+                        throw new DuplicateNameException
+                                ("Ya existe una thematica con ese nombre: " + themeDtoModify.getThemeName());
+                    }
+                });
 
         themeToUpdate.setThemeName(themeDtoModify.getThemeName());
 
         themeToUpdate.setDescription(themeDtoModify.getDescription());
 
-        themeRepository.save(themeToUpdate);
+        Theme theme = themeRepository.save(themeToUpdate);
 
         return mapper.map(themeToUpdate, ThemeDtoExit.class);
     }
 
     @Override
+    @CacheEvict(value = "themes", allEntries = true)
     public void deleteTheme(UUID idTheme) throws ResourceNotFoundException {
 
-        Theme theme = themeRepository.findById(idTheme)
-                .orElseThrow(() -> new ResourceNotFoundException
-                        ("No se encontro el idTheme: " + idTheme));
-        List<Instrument> instruments = instrumentRepository.findByTheme(theme);
+        Theme themeDelete = themeRepository.findById(idTheme)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException
+                                ("No se encontro el idTheme: " + idTheme));
+
+        List<Instrument> instruments = instrumentRepository.findByTheme(themeDelete);
 
         if (!instruments.isEmpty()) {
             throw new CategoryAssociatedException("No se puede eliminar el tema con id:" + idTheme +
                     " ya que está asociado con instrumentos");
         }
-        // 📌 Guardar las URLs de las imágenes antes de eliminar la tematica
-        List<String> imageUrls = theme.getImageUrls().stream()
+
+        List<String> imageUrls = themeDelete.getImageUrls().stream()
                 .map(ImageUrls::getImageUrl)
                 .collect(Collectors.toList());
 
         themeRepository.deleteById(idTheme);
 
-        // 📌 Ahora que la thematica  se eliminó, proceder con la eliminación de imágenes en S3
+
         for (String imageUrl : imageUrls) {
             if (imageUrl != null && !imageUrl.isEmpty()) {
 
@@ -141,13 +155,25 @@ public class ThemeService implements ThemeInterface {
     }
 
 
-    public List<Theme> searchTheme(String themeName) throws IllegalArgumentException {
+    @Cacheable(
+            value = "themes",
+            key = "#themeName + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()"
+    )
+    public Page<ThemeDtoExit> searchTheme(String themeName, Pageable pageable) throws IllegalArgumentException {
 
-        if (themeName != null) {
-            return themeRepository.findBythemeNameContaining(themeName);
-        } else {
-            throw new IllegalArgumentException("Parámetro de búsqueda inválido");
+        if (themeName == null ||
+                themeName.trim().isEmpty() ||
+                themeName.matches(".*[^a-zA-Z0-9ÁÉÍÓÚáéíóúñÑ\\s].*")) {
+
+
+            throw new IllegalArgumentException
+                    ("El parámetro de búsqueda es inválido. Ingrese solo letras, números o espacios.");
         }
+
+        Page<Theme> themes = themeRepository.findByThemeNameContainingIgnoreCase(themeName.trim(), pageable);
+
+        return themes.map(theme -> mapper.map(theme, ThemeDtoExit.class));
+
     }
 
 }

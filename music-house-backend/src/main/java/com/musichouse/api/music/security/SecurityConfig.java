@@ -41,7 +41,7 @@ public class SecurityConfig {
                         // Rutas de teléfono (todas las operaciones)
                         .requestMatchers("/api/phone/**").permitAll()
                         // Rutas de temas (todas las operaciones)
-                        .requestMatchers("/api/theme/**").permitAll()
+                        .requestMatchers("/api/themes/**").permitAll()
                         // Rutas de categorías (todas las operaciones)
                         .requestMatchers("/api/categories/**").permitAll()
                         // Rutas de instrumentos (todas las operaciones)
