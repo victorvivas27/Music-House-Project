@@ -23,6 +23,7 @@ const initialState = {
     found: undefined
   },
   categories: { content: [], totalElements: 0 },
+  themes: { content: [], totalElements: 0 },
 }
 
 const ContextGlobal = createContext()
@@ -65,7 +66,14 @@ const appReducer = (state, action) => {
   return {
     ...state,
     categories: action.payload 
+    
   }
+
+  case actions.SET_THEMES:
+    return {
+      ...state,
+      themes: action.payload 
+    }
 
     default:
       return state

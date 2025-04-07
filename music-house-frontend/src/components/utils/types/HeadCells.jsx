@@ -139,16 +139,18 @@ export const headCellsCategory = [
 
 export const headCellsTheme = [
   {
+    id: 'index',
+    numeric: true,
+    disablePadding: false,
+    label: 'N°',
+    hidden: false,
+    disableSort: true
+  },
+  {
     id: 'imageUrl',
     numeric: true,
     disablePadding: false,
     label: 'Imagen'
-  },
-  {
-    id: 'idTheme',
-    numeric: true,
-    disablePadding: false,
-    label: 'ID'
   },
   {
     id: 'themeName',

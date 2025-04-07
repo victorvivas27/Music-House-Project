@@ -74,6 +74,7 @@ export const Categories = () => {
   const rows = Array.isArray(state.categories.content)
     ? state.categories.content
     : []
+
   useEffect(() => {
     fetchData(page, rowsPerPage, firstLoad)
   }, [page, rowsPerPage, order, orderBy])
@@ -182,7 +183,8 @@ export const Categories = () => {
                     tabIndex={-1}
                     key={row.idCategory}
                     selected={isItemSelected}
-                    className={isRowEven ? 'table-row-even' : 'table-row-odd'}
+                    className={
+                      isRowEven ? 'table-row-even' : 'table-row-odd'}
                     sx={{ cursor: 'pointer' }}
                     onClick={(event) => handleClick(event, row.idCategory)}
                   >
@@ -248,6 +250,7 @@ export const Categories = () => {
                 </TableRow>
               )
             )}
+            
           </Table>
         </TableContainer>
 

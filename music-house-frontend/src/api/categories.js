@@ -2,7 +2,8 @@ import axios from 'axios';
 import { handleApiError } from './handleApiError';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const getCategories = async (page = 0, size = 5, sort = 'categoryName,asc') => {
+export const getCategories = async (
+  page = 0, size = 5, sort = 'categoryName,asc') => {
   try {
     const response = await axios
     .get( `${BASE_URL}/categories?page=${page}&size=${size}&sort=${sort}`);
@@ -26,7 +27,8 @@ export const getCategoryById = async (idCategory) => {
 
 export const createCategory = async ({ categoryName, description }) => {
   try {
-    const response = await axios.post(`${BASE_URL}/categories`, {
+    const response = await axios
+    .post(`${BASE_URL}/categories`, {
       categoryName,
       description
     });
@@ -39,7 +41,8 @@ export const createCategory = async ({ categoryName, description }) => {
 
 export const updateCategory = async ({ idCategory, categoryName, description }) => {
   try {
-    const response = await axios.put(`${BASE_URL}/categories`, {
+    const response = await axios
+    .put(`${BASE_URL}/categories`, {
       idCategory,
       categoryName,
       description
@@ -53,16 +56,19 @@ export const updateCategory = async ({ idCategory, categoryName, description }) 
 
 export const deleteCategory = async (idCategory) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/categories/${idCategory}`);
+    const response = await axios
+    .delete(`${BASE_URL}/categories/${idCategory}`);
     return response.data;
   } catch (error) {
     handleApiError(error);
   }
 };
 
-export const searchCategoryName = async (name="", page = 0, size = 5, sort = "categoryName,asc") => {
+export const searchCategoryName = 
+async (name="", page = 0, size = 5, sort = "categoryName,asc") => {
   try {
-    const response = await axios.get(`${BASE_URL}/categories/search?name=${name}&page=${page}&size=${size}&sort=${sort}`);
+    const response = await axios
+    .get(`${BASE_URL}/categories/search?name=${name}&page=${page}&size=${size}&sort=${sort}`);
     return response.data;
   } catch (error) {
     handleApiError(error);

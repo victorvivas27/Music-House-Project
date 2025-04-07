@@ -22,9 +22,7 @@ import {
   isSelected,
   handleSort,
   handleSelectAll,
-  handleSelected,
-  getEmptyRows,
-  useVisibleRows
+  handleSelected
 } from '../Admin/common/tableHelper'
 import useAlert from '@/hook/useAlert'
 import { deleteTheme, getTheme } from '@/api/theme'
@@ -34,44 +32,49 @@ import { MainWrapper } from '@/components/styles/ResponsiveComponents'
 import ArrowBack from '@/components/utils/ArrowBack'
 import { headCellsTheme } from '@/components/utils/types/HeadCells'
 import { paginationStyles } from '@/components/styles/styleglobal'
-
-
-
+import { useAppStates } from '@/components/utils/global.context'
+import { actions } from '@/components/utils/actions'
+import SearchNameTheme from '@/components/common/search/SearchNameTheme'
 
 export const Theme = () => {
-  const [loading, setLoading] = useState(true)
-  const [theme, setTheme] = useState({ result: [] })
-  const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc')
-  const [orderBy, setOrderBy] = useState('number')
+  const [orderBy, setOrderBy] = useState('themeName')
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [firstLoad, setFirstLoad] = useState(true)
   const navigate = useNavigate()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
+  const { state, dispatch } = useAppStates()
 
-  const getAllTheme = async () => {
-    setLoading(true)
+  const getAllTheme = async (
+    pageToUse = page,
+    sizeToUse = rowsPerPage,
+    isFirst = false
+  ) => {
+    if (isFirst) dispatch({ type: actions.SET_LOADING, payload: true })
+    const sort = `${orderBy},${order}`
 
     try {
-      const fetchedTheme = await getTheme()
-      setTheme(fetchedTheme)
-      setRows(fetchedTheme.result || [])
+      const data = await getTheme(pageToUse, sizeToUse, sort)
+      dispatch({ type: actions.SET_THEMES, payload: data.result })
     } catch {
-      setTheme({ result: [] })
+      dispatch({
+        type: actions.SET_THEMES,
+        payload: { content: [], totalElements: 0 }
+      })
     } finally {
-      setTimeout(() => setLoading(false), 500)
+      setTimeout(() => {
+        if (isFirst) setFirstLoad(false)
+        dispatch({ type: actions.SET_LOADING, payload: false })
+      }, 500)
     }
   }
+  const rows = Array.isArray(state.themes.content) ? state.themes.content : []
 
   useEffect(() => {
-    setRows(theme.result)
-    setLoading(false)
-  }, [theme])
-
-  useEffect(() => {
-    getAllTheme()
-  }, [])
+    getAllTheme(page, rowsPerPage, firstLoad)
+  }, [page, rowsPerPage, order, orderBy])
 
   const handleAdd = () => navigate('/agregarTheme')
 
@@ -84,6 +87,9 @@ export const Theme = () => {
   }
 
   const handleRequestSort = (event, property) => {
+    const column = headCellsTheme.find((col) => col.id === property)
+    if (column?.disableSort) return
+
     handleSort(event, property, orderBy, order, setOrderBy, setOrder)
   }
 
@@ -111,210 +117,188 @@ export const Theme = () => {
         `${selectedIds.length} tematicas(s) eliminada(s) correctamente.`
       )
       setSelected([])
-      getAllTheme()
+      getAllTheme(page, rowsPerPage)
     } catch (error) {
       showError(`❌ ${getErrorMessage(error)}`)
     }
   }
 
-  const emptyRows = getEmptyRows(page, rowsPerPage, rows)
-  const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
-
-  if (loading) return <Loader title="Cargando categorías..." />
+  if (state.loading) return <Loader title="Cargando categorías..." />
 
   return (
-    <>
-      {!loading && (
-        <MainWrapper>
-          <Paper
-            sx={{
-              width: '90%',
-              display: { xs: 'none', lg: 'initial' },
-              margin: 10,
-              borderRadius: 4,
-              boxShadow: 'var(--box-shadow)'
-            }}
+    <MainWrapper>
+      <Paper
+        sx={{
+          width: '90%',
+          display: { xs: 'none', lg: 'initial' },
+          margin: 10,
+          borderRadius: 4,
+          boxShadow: 'var(--box-shadow)'
+        }}
+      >
+        <ArrowBack />
+
+        <EnhancedTableToolbar
+          title="Tematica"
+          titleAdd="Agregar tematica"
+          handleAdd={handleAdd}
+          numSelected={selected.length}
+          handleConfirmDelete={() => handleConfirmDelete()}
+        />
+        <SearchNameTheme />
+        <TableContainer>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size="medium"
           >
-            <ArrowBack />
-            {/* Contador */}
-            <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
-              Total de Tematica: {rows.length}
-            </Typography>
-
-            <EnhancedTableToolbar
-              title="Tematica"
-              titleAdd="Agregar tematica"
-              handleAdd={handleAdd}
+            <EnhancedTableHead
+              headCells={headCellsTheme}
               numSelected={selected.length}
-              handleConfirmDelete={() => handleConfirmDelete()}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={rows.length}
+              disableSelectAll
             />
-            <TableContainer>
-              <Table
-                sx={{ minWidth: 750 }}
-                aria-labelledby="tableTitle"
-                size="medium"
-              >
-                <EnhancedTableHead
-                  headCells={headCellsTheme}
-                  numSelected={selected.length}
-                  order={order}
-                  orderBy={orderBy}
-                  onSelectAllClick={handleSelectAllClick}
-                  onRequestSort={handleRequestSort}
-                  rowCount={rows.length}
-                  disableSelectAll
-                />
-                <TableBody>
-                  {visibleRows.map((row, index) => {
-                    const isItemSelected = isSelected(row.idTheme, selected)
-                    const labelId = `enhanced-table-checkbox-${index}`
-                    const isRowEven = index % 2 === 0
+            <TableBody>
+              {rows.map((row, index) => {
+                const isItemSelected = isSelected(row.idTheme, selected)
+                const labelId = `enhanced-table-checkbox-${index}`
+                const isRowEven = index % 2 === 0
 
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.idTheme}
-                        selected={isItemSelected}
-                        className={
-                          isRowEven ? 'table-row-even' : 'table-row-odd'
+                return (
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.idTheme}
+                    selected={isItemSelected}
+                    className={isRowEven ? 'table-row-even' : 'table-row-odd'}
+                    sx={{ cursor: 'pointer' }}
+                    onClick={(event) => handleClick(event, row.idTheme)}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        color="primary"
+                        checked={isItemSelected}
+                        inputProps={{
+                          'aria-labelledby': labelId
+                        }}
+                      />
+                    </TableCell>
+
+                    <TableCell align="center">
+                      {page * rowsPerPage + index + 1}
+                    </TableCell>
+
+                    <TableCell align="left">
+                      <img
+                        src={
+                          row.imageUrls?.[0]?.imageUrl ||
+                          '/src/assets/instrumento_general_03.jpg'
                         }
-                        sx={{ cursor: 'pointer' }}
-                        onClick={(event) => handleClick(event, row.idTheme)}
+                        alt="Imagen tematica"
+                        style={{
+                          width: '75px',
+                          height: '75px',
+                          objectFit: 'cover',
+                          borderRadius: '50%',
+                          border: '1px solid #ccc',
+                          boxShadow: 'var(--box-shadow)'
+                        }}
+                      />
+                    </TableCell>
+
+                    <TableCell align="left">{row.themeName}</TableCell>
+                    <TableCell align="left">{row.description}</TableCell>
+                    <TableCell align="left">
+                      <Box
+                        style={{
+                          opacity: selected.length > 0 ? 0 : 1,
+                          pointerEvents: selected.length > 0 ? 'none' : 'auto',
+                          transition: 'opacity 0.5s ease-in-out'
+                        }}
                       >
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            color="primary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              'aria-labelledby': labelId
-                            }}
-                          />
-                        </TableCell>
-
-                        <TableCell align="left">
-                          <img
-                            src={
-                              row.imageUrls?.[0]?.imageUrl ||
-                              '/src/assets/instrumento_general_03.jpg'
-                            }
-                            alt="Imagen tematica"
-                            style={{
-                              width: '90px',
-                              height: '75px',
-                              objectFit: 'cover',
-                              borderRadius: '80%',
-                              border: '1px solid #ccc',
-                              boxShadow: 'var(--box-shadow)'
-                            }}
-                          />
-                        </TableCell>
-
-                        <TableCell
-                          component="th"
-                          id={labelId}
-                          scope="row"
-                          align="center"
-                        >
-                          {row.idTheme}
-                        </TableCell>
-                        <TableCell align="left">{row.themeName}</TableCell>
-                        <TableCell align="left">{row.description}</TableCell>
-                        <TableCell align="left">
-                          <Box
-                            style={{
-                              opacity: selected.length > 0 ? 0 : 1,
-                              pointerEvents:
-                                selected.length > 0 ? 'none' : 'auto',
-                              transition: 'opacity 0.5s ease-in-out'
+                        <Tooltip title="Editar">
+                          <IconButton
+                            onClick={(event) => {
+                              handleEdit(row.idTheme)
+                              event.stopPropagation()
                             }}
                           >
-                            <Tooltip title="Editar">
-                              <IconButton
-                                onClick={() => handleEdit(row.idTheme)}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
 
-                            <Tooltip title="Eliminar">
-                              <IconButton
-                                onClick={() => handleConfirmDelete(row.idTheme)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: 53 * emptyRows
-                      }}
-                    >
-                      <TableCell colSpan={4} />
-                    </TableRow>
-                  )}
-                  {page === 0 && rows.length === 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={7} align="center" />
-                      <Typography>No se encontraron tematicas</Typography>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              rowsPerPageOptions={[
-                5,
-                10,
-                25,
-                { label: 'Todos', value: rows.length }
-              ]}
-              component="div"
-              count={rows.length}
-              rowsPerPage={rowsPerPage}
-              page={Math.min(
-                page,
-                Math.max(0, Math.ceil(rows.length / rowsPerPage) - 1)
+                        <Tooltip title="Eliminar">
+                          <IconButton
+                            onClick={(event) => {
+                              handleConfirmDelete(row.idTheme)
+                              event.stopPropagation()
+                            }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+
+              {rows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} align="center" />
+                  <Typography>No se encontraron tematicas</Typography>
+                </TableRow>
               )}
-              onPageChange={(event, newPage) => setPage(newPage)}
-              onRowsPerPageChange={(event) => {
-                setRowsPerPage(parseInt(event.target.value, 10))
-                setPage(0)
-              }}
-              labelRowsPerPage="Filas por página"
-              sx={{
-                ...paginationStyles
-              }}
-            />
-          </Paper>
-          <Box
-            sx={{
-              display: { xs: 'flex', lg: 'none' },
-              height: '100vh'
-            }}
-          >
-            <Typography
-              gutterBottom
-              variant="h6"
-              component="h6"
-              textAlign="center"
-              sx={{
-                paddingTop: 30,
-                fontWeight: 'bold'
-              }}
-            >
-              Funcionalidad no disponible en esta resolución
-            </Typography>
-          </Box>
-        </MainWrapper>
-      )}
-    </>
+            </TableBody>
+
+            {Array.from({ length: Math.max(0, rowsPerPage - rows.length) }).map(
+              (_, i) => (
+                <TableRow key={`empty-${i}`} style={{ height: 80 }}>
+                  <TableCell colSpan={7} />
+                </TableRow>
+              )
+            )}
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={state.themes.totalElements || 0}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={(event, newPage) => setPage(newPage)}
+          onRowsPerPageChange={(event) => {
+            setRowsPerPage(parseInt(event.target.value, 10))
+            setPage(0)
+          }}
+          labelRowsPerPage="Filas por página"
+          sx={{
+            ...paginationStyles
+          }}
+        />
+      </Paper>
+      <Box
+        sx={{
+          display: { xs: 'flex', lg: 'none' },
+          height: '100vh'
+        }}
+      >
+        <Typography
+          gutterBottom
+          variant="h6"
+          component="h6"
+          textAlign="center"
+          sx={{ paddingTop: 30, fontWeight: 'bold' }}
+        >
+          Funcionalidad no disponible en esta resolución
+        </Typography>
+      </Box>
+    </MainWrapper>
   )
 }

@@ -16,7 +16,6 @@ export const Home = () => {
   const [selectedInstruments, setSelectedInstruments] = useState([])
   const [loading, setLoading] = useState(true)
   const [instruments, setInstruments] = useState([])
-  const [themes, setThemes] = useState([])
 
   useEffect(() => {
     const fetchInstruments = async () => {
@@ -63,8 +62,8 @@ export const Home = () => {
     const fetchTheme = async () => {
       setLoading(true)
       try {
-        const { result } = await getTheme()
-        setThemes(result)
+        const data = await getTheme()
+        dispatch({ type: actions.SET_THEMES, payload: data.result })
       } catch (error) {
         toast.error(error)
       } finally {
@@ -73,13 +72,13 @@ export const Home = () => {
     }
 
     fetchTheme()
-  }, [])
+  }, [dispatch])
   if (loading) return <Loader title="Un momento por favor..." />
 
   return (
     <>
       <MainWrapper>
-        <AutoScrollCarousel themes={themes} />
+        <AutoScrollCarousel themes={state.themes?.content || []} />
       </MainWrapper>
 
       <ProductsWrapper>
