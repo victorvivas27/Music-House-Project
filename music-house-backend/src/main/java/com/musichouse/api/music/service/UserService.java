@@ -23,7 +23,11 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,8 +39,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 
 @Service
@@ -47,7 +53,6 @@ public class UserService implements UserInterface {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    //private final RolRepository rolRepository;
     private final AddressRepository addressRepository;
     private final PhoneRepository phoneRepository;
     private final ModelMapper modelMapper;
@@ -64,7 +69,8 @@ public class UserService implements UserInterface {
             throws DataIntegrityViolationException, MessagingException {
 
         if (userRepository.existsByEmail(userDtoEntrance.getEmail())) {
-            throw new DataIntegrityViolationException("El correo electrónico: " + userDtoEntrance.getEmail());
+            throw new DataIntegrityViolationException(
+                    "El correo electrónico: " + userDtoEntrance.getEmail() + " ya esta en uso");
         }
 
         User user = modelMapper.map(userDtoEntrance, User.class);
@@ -112,49 +118,58 @@ public class UserService implements UserInterface {
 
 
     @Override
-    public TokenDtoExit loginUserAndCheckEmail(LoginDtoEntrance loginDtoEntrance) throws ResourceNotFoundException, AuthenticationException {
+    public TokenDtoExit loginUserAndCheckEmail(LoginDtoEntrance loginDtoEntrance)
+            throws ResourceNotFoundException, AuthenticationException {
         Optional<User> userOptional = userRepository.findByEmail(loginDtoEntrance.getEmail());
+
         if (userOptional.isEmpty()) {
-            throw new ResourceNotFoundException("Usuario no encontrado con el correo electrónico: " + loginDtoEntrance.getEmail());
+            throw new ResourceNotFoundException(
+                    "Usuario no encontrado con el correo electrónico: " + loginDtoEntrance.getEmail());
+
         }
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDtoEntrance.getEmail(), loginDtoEntrance.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(loginDtoEntrance.getEmail(),
+                        loginDtoEntrance.getPassword()));
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
         String token = jwtService.generateToken(userDetails);
+
         User user = userOptional.get();
 
         return TokenDtoExit.builder()
                 .idUser(user.getIdUser())
-                //.name(user.getName())
-                //.lastName(user.getLastName())
-                //.roles(user.getRoles().stream().map(Roles::name).toList())
                 .token(token)
                 .build();
     }
 
-    public List<UserDtoExit> getAllUser() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(user -> modelMapper.map(user, UserDtoExit.class))
-                .collect(Collectors.toList());
+    @Cacheable(value = "users")
+    public Page<UserDtoExit> getAllUser(Pageable pageable) {
+
+        Page<User> usersPage = userRepository.findAll(pageable);
+
+        return usersPage.map(user -> modelMapper.map(user, UserDtoExit.class));
     }
 
+
     @Override
+    @Cacheable(value = "users", key = "#idUser")
     public UserDtoExit getUserById(UUID idUser) throws ResourceNotFoundException {
-        User user = userRepository.findById(idUser).orElse(null);
-        UserDtoExit userDtoExit = null;
-        if (user != null) {
-            userDtoExit = modelMapper.map(user, UserDtoExit.class);
-        } else {
-            throw new ResourceNotFoundException("Usuario id: " + idUser);
-        }
 
-        return userDtoExit;
+        User user = userRepository.findById(idUser)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Usuario con ID: " + idUser + " no encontrado"));
+
+        return modelMapper.map(user, UserDtoExit.class);
     }
 
+
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public UserDtoExit updateUser(UserDtoModify userDtoModify, MultipartFile file) throws ResourceNotFoundException {
         // 🟢 1️⃣ Buscar el usuario a actualizar
         User userToUpdate = userRepository.findById(userDtoModify.getIdUser())
@@ -201,6 +216,7 @@ public class UserService implements UserInterface {
 
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public void deleteUser(UUID idUser) throws ResourceNotFoundException {
 
         User user = userRepository.findById(idUser)
@@ -230,7 +246,31 @@ public class UserService implements UserInterface {
     }
 
 
-    public void sendMessageUser(String email, String name, String lastName) throws MessagingException {
+    @Cacheable(
+            value = "users",
+            key = "#name + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()"
+    )
+    public Page<UserDtoExit> searchUserName(String name, Pageable pageable)
+            throws IllegalArgumentException {
+
+        if (name == null ||
+                name.trim().isEmpty() ||
+                name.matches(".*[^a-zA-Z0-9ÁÉÍÓÚáéíóúñÑ\\s].*")) {
+
+
+            throw new IllegalArgumentException
+                    ("El parámetro de búsqueda es inválido. Ingrese solo letras, números o espacios.");
+        }
+
+        Page<User> users = userRepository.findByNameContainingIgnoreCase(name.trim(), pageable);
+
+        return users.map(user -> modelMapper.map(user, UserDtoExit.class));
+
+    }
+
+
+    public void sendMessageUser(String email, String name, String lastName)
+            throws MessagingException {
         mailManager.sendMessage(email, name, lastName);
 
     }

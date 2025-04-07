@@ -24,6 +24,7 @@ public class ImageUrls {
      */
     @Id
     @GeneratedValue(generator = "UUID")
+
     private UUID idImage;
 
     /**
@@ -49,6 +50,7 @@ public class ImageUrls {
     @JoinColumn(name = "id_theme")
 
     private Theme theme;
+
 
     /**
      * Anotación que marca el campo como una fecha de creación automática.

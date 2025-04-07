@@ -20,7 +20,7 @@ public class CacheConfig {
         cacheManager.setCaches(Arrays.asList(
                 buildCache("categories", 100, 10),
                 buildCache("themes", 100, 10),
-                buildCache("users", 1000, 30)
+                buildCache("users", 100, 10)
         ));
         return cacheManager;
     }

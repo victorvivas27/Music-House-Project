@@ -14,11 +14,14 @@ public class FileValidatorUtils {
             "image/webp"
     );
 
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB en bytes
+
     /**
      * Valida una lista de archivos MultipartFile según varios criterios:
      * - No deben ser nulos ni vacíos.
      * - Cada archivo no debe estar vacío.
-     * - Deben ser de tipo imagen permitido (JPEG, PNG, JPG).
+     * - Deben ser de tipo imagen permitido (JPEG, PNG, JPG, WEBP).
+     * - No deben superar el tamaño máximo.
      *
      * @param files Lista de archivos subidos.
      * @return Lista de mensajes de error encontrados. Vacía si todo está OK.
@@ -42,6 +45,36 @@ public class FileValidatorUtils {
             if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
                 errors.add("La imagen #" + (i + 1) + " tiene un tipo no permitido: " + contentType);
             }
+
+            if (file.getSize() > MAX_FILE_SIZE) {
+                errors.add("La imagen #" + (i + 1) + " supera el tamaño máximo de 5MB.");
+            }
+        }
+
+        return errors;
+    }
+
+    /**
+     * Valida un solo archivo MultipartFile.
+     *
+     * @param file Archivo individual a validar.
+     * @return Lista de errores. Vacía si está todo OK.
+     */
+    public static List<String> validateImage(MultipartFile file) {
+        List<String> errors = new ArrayList<>();
+
+        if (file == null || file.isEmpty()) {
+            errors.add("El archivo está vacío o no fue enviado.");
+            return errors;
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
+            errors.add("El tipo de archivo no está permitido: " + contentType);
+        }
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            errors.add("El archivo supera el tamaño máximo permitido de 5MB.");
         }
 
         return errors;

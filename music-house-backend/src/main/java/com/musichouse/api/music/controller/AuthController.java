@@ -1,107 +1,64 @@
 package com.musichouse.api.music.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.musichouse.api.music.dto.dto_entrance.LoginDtoEntrance;
-import com.musichouse.api.music.dto.dto_entrance.UserDtoEntrance;
-import com.musichouse.api.music.dto.dto_exit.TokenDtoExit;
-import com.musichouse.api.music.exception.ResourceNotFoundException;
-import com.musichouse.api.music.repository.UserRepository;
-import com.musichouse.api.music.service.UserService;
-import com.musichouse.api.music.util.ApiResponse;
-import jakarta.mail.MessagingException;
-import jakarta.validation.*;
-import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.Set;
-
-@CrossOrigin
+/*@CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("/api/auths")
 public class AuthController {
     private final static Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
     private final UserService userService;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
-    @PostMapping(value = "/create/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public HttpEntity<ApiResponse<TokenDtoExit>> createUser(
             @RequestParam("user") String userJson,
-            @RequestPart(value = "file", required = false) MultipartFile file
-    ) throws MessagingException {
-
-        UserDtoEntrance userDtoEntrance = null; // 👈 Inicialización para evitar errores en el catch
-
-        try {
-            // 📌 1️⃣ Convertir el JSON String a un objeto UserDtoEntrance
-            userDtoEntrance = objectMapper.readValue(userJson, UserDtoEntrance.class);
-
-            // 📌 2️⃣ Validar los datos manualmente
-            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-            Validator validator = factory.getValidator();
-            Set<ConstraintViolation<UserDtoEntrance>> violations = validator.validate(userDtoEntrance);
-
-            if (!violations.isEmpty()) {
-                List<String> errorMessages = violations.stream()
-                        .map(v -> v.getPropertyPath() + ": " + v.getMessage())
-                        .toList();
-
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ApiResponse.<TokenDtoExit>builder()
-                                .status(HttpStatus.BAD_REQUEST)
-                                .statusCode(HttpStatus.BAD_REQUEST.value())
-                                .message("Errores de validación encontrados.")
-                                .error(String.join(", ", errorMessages))
-                                .result(null)
-                                .build());
-            }
-
-            // 📌 3️⃣ Llamar al servicio para crear el usuario
-            TokenDtoExit tokenDtoExit = userService.createUser(userDtoEntrance, file);
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponse.<TokenDtoExit>builder()
-                            .status(HttpStatus.CREATED)
-                            .statusCode(HttpStatus.CREATED.value())
-                            .message("Usuario creado con éxito.")
-                            .error(null)
-                            .result(tokenDtoExit)
-                            .build());
-
-        } catch (DataIntegrityViolationException e) {
+            @RequestPart(value = "file", required = false) List<MultipartFile> files
+    ) throws JsonProcessingException, MessagingException {
 
 
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(ApiResponse.<TokenDtoExit>builder()
-                            .status(HttpStatus.CONFLICT)
-                            .statusCode(HttpStatus.CONFLICT.value())
-                            .message("El correo electrónico ingresado ya está en uso.")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
+        // 📌 1️⃣ Convertir el JSON String a un objeto UserDtoEntrance
+        UserDtoEntrance userDtoEntrance = objectMapper.readValue(userJson, UserDtoEntrance.class);
 
-        } catch (Exception e) {
+        // 2. Validar archivos subidos
+        List<String> fileErrors = FileValidatorUtils.validateImages(files);
 
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<TokenDtoExit>builder()
-                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                            .message("Ocurrió un error interno en el servidor.")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
+        // 3. Validar DTO manualmente (porque viene como JSON string)
+        Set<ConstraintViolation<UserDtoEntrance>> violations = validator.validate(userDtoEntrance);
+        List<String> dtoErrors = violations.stream()
+                .map(v ->
+                        v.getPropertyPath() + ": " + v.getMessage())
+                .toList();
+
+        // 4. Unificar errores
+        List<String> allErrors = new ArrayList<>();
+        allErrors.addAll(fileErrors);
+        allErrors.addAll(dtoErrors);
+
+        if (!allErrors.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.<TokenDtoExit>builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .message("Errores de validación")
+                    .error(allErrors)
+                    .result(null)
+                    .build());
         }
+
+        // 5. Crear usuario
+        TokenDtoExit tokenDtoExit = userService.createUser(userDtoEntrance, files);
+
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<TokenDtoExit>builder()
+                        .status(HttpStatus.CREATED)
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Usuario creado con éxito.")
+                        .error(null)
+                        .result(tokenDtoExit)
+                        .build());
+
     }
 
     @PostMapping("/login")
@@ -151,4 +108,4 @@ public class AuthController {
                             .build());
         }
     }
-}
+}*/

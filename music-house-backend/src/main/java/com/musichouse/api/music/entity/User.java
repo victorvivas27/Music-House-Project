@@ -3,11 +3,16 @@ package com.musichouse.api.music.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -112,12 +117,22 @@ public class User implements UserDetails {
 
     /**
      * Anotación que marca el campo como una fecha de creación automática.
-     * Hibernate asigna automáticamente la fecha y hora actual al insertar
-     * la entidad en la base de datos.
+     * Hibernate asigna automáticamente la fecha y hora actual al insertar la entidad en la base de datos.
      */
     @CreationTimestamp
-    @Temporal(TemporalType.DATE)
-    private Date registDate;
+    @Column(name = "regist_date", nullable = false, updatable = false)
+    private LocalDateTime registDate;
+
+
+    /**
+     * Anotación que marca el campo como una fecha de modificación automática.
+     * Hibernate asigna automáticamente la fecha y hora actual cada vez que
+     * la entidad es actualizada en la base de datos.
+     */
+    @UpdateTimestamp
+    @Column(name = "modified_date", nullable = false)
+    private LocalDateTime modifiedDate;
+
 
     /**
      * Identificador único de Telegram del usuario.

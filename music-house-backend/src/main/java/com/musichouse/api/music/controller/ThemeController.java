@@ -105,9 +105,11 @@ public class ThemeController {
 
     // 🔹 BUSCAR TEMÁTICA POR ID
     @GetMapping("{idTheme}")
-    public ResponseEntity<ApiResponse<ThemeDtoExit>> searchThemeById(@PathVariable UUID idTheme) throws ResourceNotFoundException {
+    public ResponseEntity<ApiResponse<ThemeDtoExit>> searchThemeById(@PathVariable UUID idTheme)
+            throws ResourceNotFoundException {
 
         ThemeDtoExit foundTheme = themeService.getThemeById(idTheme);
+
         return ResponseEntity.ok(ApiResponse.<ThemeDtoExit>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
@@ -120,7 +122,8 @@ public class ThemeController {
 
     // 🔹 ACTUALIZAR TEMÁTICA
     @PutMapping()
-    public ResponseEntity<ApiResponse<?>> updateTheme(@RequestBody @Valid ThemeDtoModify themeDtoModify) throws ResourceNotFoundException {
+    public ResponseEntity<ApiResponse<?>> updateTheme(@RequestBody @Valid ThemeDtoModify themeDtoModify)
+            throws ResourceNotFoundException {
 
         ThemeDtoExit updatedTheme = themeService.updateTheme(themeDtoModify);
         return ResponseEntity.ok(ApiResponse.<ThemeDtoExit>builder()
@@ -135,9 +138,11 @@ public class ThemeController {
 
     // 🔹 ELIMINAR TEMÁTICA
     @DeleteMapping("{idTheme}")
-    public ResponseEntity<ApiResponse<Void>> deleteTheme(@PathVariable UUID idTheme) throws ResourceNotFoundException {
+    public ResponseEntity<ApiResponse<Void>> deleteTheme(@PathVariable UUID idTheme)
+            throws ResourceNotFoundException {
 
         themeService.deleteTheme(idTheme);
+
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
@@ -156,14 +161,14 @@ public class ThemeController {
             Pageable pageable) {
 
 
-        Page<ThemeDtoExit> themeDtoExitshme = themeService.searchTheme(name, pageable);
+        Page<ThemeDtoExit> themeDtoExits = themeService.searchTheme(name, pageable);
 
         return ResponseEntity.ok(ApiResponse.<Page<ThemeDtoExit>>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Búsqueda de tematicas exitosa.")
                 .error(null)
-                .result(themeDtoExitshme)
+                .result(themeDtoExits)
                 .build());
 
 

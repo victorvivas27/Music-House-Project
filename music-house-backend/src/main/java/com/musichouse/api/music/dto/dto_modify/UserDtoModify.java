@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,9 +22,6 @@ public class UserDtoModify {
     @NotNull(message = "El idUser es obligatorio")
     private UUID idUser;
 
-    @Size(max = 2048, message = "La imagen de perfil debe tener máximo 2048 caracteres")
-    @URL(message = "La imagen de perfil debe ser una URL válida")
-    private String picture;
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(min = 2, max = 50, message = "El nombre debe tener entre 2 y 50 caracteres")
@@ -43,4 +39,6 @@ public class UserDtoModify {
     private String password;
 
     private List<Roles> roles;
+
+    private List<String> imageUrls;
 }

@@ -21,12 +21,10 @@ import useAlert from '@/hook/useAlert'
 import {
   EnhancedTableHead,
   EnhancedTableToolbar,
-  getEmptyRows,
   handleSelectAll,
   handleSelected,
   handleSort,
-  isSelected,
-  useVisibleRows
+  isSelected
 } from './common/tableHelper'
 import { getErrorMessage } from '@/api/getErrorMessage'
 import { Loader } from '@/components/common/loader/Loader'
@@ -34,50 +32,62 @@ import ArrowBack from '@/components/utils/ArrowBack'
 import { headCellsUser } from '@/components/utils/types/HeadCells'
 import { paginationStyles } from '@/components/styles/styleglobal'
 import { MainWrapper } from '@/components/styles/ResponsiveComponents'
+import { useAppStates } from '@/components/utils/global.context'
+import { actions } from '@/components/utils/actions'
 
 export const Usuarios = () => {
-  const [usuarios, setUsuarios] = useState({ result: [] })
-  const [rows, setRows] = useState([])
-  const [loading, setLoading] = useState(true)
   const [order, setOrder] = useState('asc')
-  const [orderBy, setOrderBy] = useState('idUser')
+  const [orderBy, setOrderBy] = useState('name')
   const [selected, setSelected] = useState([])
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [firstLoad, setFirstLoad] = useState(true)
   const navigate = useNavigate()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
+  const { state, dispatch } = useAppStates()
 
-  const getUsuarios = async () => {
-    setLoading(true)
+  const getAllUsuarios = async (
+    pageToUse = page,
+    sizeToUse = rowsPerPage,
+    isFirst = false
+  ) => {
+    if (isFirst) dispatch({ type: actions.SET_LOADING, payload: true })
+    const sort = `${orderBy},${order}`
+
     try {
-      const fetchedUsers = await UsersApi.getAllUsers()
-      setUsuarios(fetchedUsers)
-      setRows(fetchedUsers.result || [])
+      const data = await UsersApi.getUsers(pageToUse, sizeToUse, sort)
+      dispatch({ type: actions.SET_USERS, payload: data.result })
     } catch {
-      setUsuarios({ result: [] })
+      dispatch({
+        type: actions.SET_USERS,
+        payload: { content: [], totalElements: 0 }
+      })
     } finally {
-      setTimeout(() => setLoading(false))
+      setTimeout(() => {
+        if (isFirst) setFirstLoad(false)
+        dispatch({ type: actions.SET_LOADING, payload: false })
+      }, 500)
     }
   }
+  const rows = Array.isArray(state.users?.content) ? state.users.content : []
 
   useEffect(() => {
-    setRows(usuarios.result)
-    setLoading(false)
-  }, [usuarios])
-
-  useEffect(() => {
-    getUsuarios()
-  }, [])
+    getAllUsuarios(page, rowsPerPage, firstLoad)
+  }, [page, rowsPerPage, order, orderBy])
 
   const handleAdd = () => navigate('/agregarUsuario')
 
   const handleSelectAllClick = (event) => {
-    handleSelectAll(event, usuarios, 'idUser', setSelected)
+    handleSelectAll(event, rows, 'idUser', setSelected)
   }
   const handleClick = (event, id) => {
     handleSelected(event, id, selected, setSelected)
   }
   const handleRequestSort = (event, property) => {
+    const column = headCellsUser.find((col) => col.id === property)
+
+    if (column?.disableSort) return
+
     handleSort(event, property, orderBy, order, setOrderBy, setOrder)
   }
 
@@ -102,197 +112,196 @@ export const Usuarios = () => {
         `${selectedIds.length} usuario(s) eliminado(s) correctamente.`
       )
       setSelected([])
-      getUsuarios()
+      getAllUsuarios(page, rowsPerPage)
     } catch (error) {
       showError(`❌ ${getErrorMessage(error)}`)
     }
   }
 
-  const emptyRows = getEmptyRows(page, rowsPerPage, usuarios)
-  const visibleRows = useVisibleRows(rows, order, orderBy, page, rowsPerPage)
-
-  if (loading) return <Loader title="Cargando usuarios..." />
+  if (state.loading) return <Loader title="Cargando usuarios..." />
 
   return (
-    <>
-      {!loading && (
-        <MainWrapper>
-          <Paper
-            sx={{
-              display: { xs: 'none', lg: 'initial' },
-              margin: 10,
-              width: '95%',
-              borderRadius: 4,
-              boxShadow: 'var(--box-shadow)'
-            }}
-          >
-            <ArrowBack />
-            {/* Contador */}
-            <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
-              Total de Usuarios: {rows.length}
-            </Typography>
-            {/*Fin Contador */}
+    <MainWrapper>
+      <Paper
+        sx={{
+          display: { xs: 'none', lg: 'initial' },
+          margin: 10,
+          width: '90%',
+          borderRadius: 4,
+          boxShadow: 'var(--box-shadow)'
+        }}
+      >
+        <ArrowBack />
 
-            <EnhancedTableToolbar
-              title="Usuarios"
-              titleAdd="Agregar usuario"
-              handleAdd={handleAdd}
+        <EnhancedTableToolbar
+          title="Usuarios"
+          titleAdd="Agregar usuario"
+          handleAdd={handleAdd}
+          numSelected={selected.length}
+          handleConfirmDelete={() => handleDelete()}
+        />
+
+        <TableContainer>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size="medium"
+          >
+            <EnhancedTableHead
+              headCells={headCellsUser}
               numSelected={selected.length}
-              handleConfirmDelete={() => handleDelete()}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={rows.length}
+              disableSelectAll
             />
 
-            <TableContainer>
-              <Table aria-labelledby="tableTitle" size="medium">
-                <EnhancedTableHead
-                  headCells={headCellsUser}
-                  numSelected={selected.length}
-                  order={order}
-                  orderBy={orderBy}
-                  onSelectAllClick={handleSelectAllClick}
-                  onRequestSort={handleRequestSort}
-                  rowCount={rows.length}
-                  disableSelectAll
-                />
+            <TableBody>
+              {rows.map((row, index) => {
+                const isItemSelected = isSelected(row.idUser, selected)
+                const labelId = `enhanced-table-checkbox-${index}`
+                const isRowEven = index % 2 === 0
 
-                <TableBody>
-                  {visibleRows.map((row, index) => {
-                    const isItemSelected = isSelected(row.idUser, selected)
-                    const labelId = `enhanced-table-checkbox-${index}`
-                    const isRowEven = index % 2 === 0
+                return (
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.idUser}
+                    selected={isItemSelected}
+                    className={isRowEven ? 'table-row-even' : 'table-row-odd'}
+                    sx={{ cursor: 'pointer' }}
+                    onClick={(event) => handleClick(event, row.idUser)}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        color="primary"
+                        checked={isItemSelected}
+                        inputProps={{
+                          'aria-labelledby': labelId
+                        }}
+                      />
+                    </TableCell>
 
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.idUser}
-                        selected={isItemSelected}
-                        className={
-                          isRowEven ? 'table-row-even' : 'table-row-odd'
+                    <TableCell align="center">
+                      {page * rowsPerPage + index + 1}
+                    </TableCell>
+
+                    <TableCell align="left">
+                      <img
+                        src={
+                          row?.picture ||
+                           '/src/assets/avatar_general_02.png'
                         }
-                        sx={{ cursor: 'pointer' }}
+                        alt="Instrumento"
+                        style={{
+                          width: '80px',
+                          height: '80px',
+                          objectFit: 'cover',
+                          borderRadius: '50%',
+                          border: '1px solid #ccc',
+                          boxShadow: 'var(--box-shadow)'
+                        }}
+                      />
+                    </TableCell>
+
+                    <TableCell align="left">
+                      {Array.isArray(row.roles)
+                        ? row.roles.join(', ')
+                        : 'Sin roles'}
+                    </TableCell>
+                    <TableCell align="left">{row.name}</TableCell>
+                    <TableCell align="left">{row.lastName}</TableCell>
+                    <TableCell align="left">{row.email}</TableCell>
+                    <TableCell align="left">
+                      <Box
+                        style={{
+                          opacity: selected.length > 0 ? 0 : 1,
+                          pointerEvents: selected.length > 0 ? 'none' : 'auto',
+                          transition: 'opacity 0.5s ease-in-out'
+                        }}
                       >
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            color="primary"
-                            checked={isItemSelected}
-                            onChange={(event) => handleClick(event, row.idUser)}
-                            inputProps={{
-                              'aria-labelledby': labelId
-                            }}
-                          />
-                        </TableCell>
-
-                        <TableCell align="left">
-                          <img
-                            src={
-                              row?.picture ||
-                              '/src/assets/avatar_general_02.png'
-                            }
-                            alt="Instrumento"
-                            style={{
-                              width: '80px',
-                              height: '80px',
-                              objectFit: 'cover',
-                              borderRadius: '40px',
-                              border: '1px solid #ccc',
-                              boxShadow: 'var(--box-shadow)'
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell
-                          component="th"
-                          id={labelId}
-                          scope="row"
-                          padding="none"
-                          align="center"
-                        >
-                          {row.idUser}
-                        </TableCell>
-
-                        <TableCell align="left">
-                          {row.roles.join(', ')}
-                        </TableCell>
-                        <TableCell align="left">{row.name}</TableCell>
-                        <TableCell align="left">{row.lastName}</TableCell>
-                        <TableCell align="left">{row.email}</TableCell>
-                        <TableCell align="left">
-                          <Box
-                            style={{
-                              opacity: selected.length > 0 ? 0 : 1,
-                              pointerEvents:
-                                selected.length > 0 ? 'none' : 'auto',
-                              transition: 'opacity 0.5s ease-in-out'
+                        <Tooltip title="Editar">
+                          <IconButton
+                            onClick={(event) => {
+                              event.stopPropagation()
+                              handleEdit(row.idUser)
                             }}
                           >
-                            <Tooltip title="Editar">
-                              <IconButton
-                                onClick={(event) => {
-                                  event.stopPropagation()
-                                  handleEdit(row.idUser)
-                                }}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Tooltip>
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
 
-                            <Tooltip title="Eliminar">
-                              <IconButton
-                                onClick={(event) => {
-                                  event.stopPropagation()
-                                  handleDelete(row.idUser)
-                                }}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={3} />
-                    </TableRow>
-                  )}
-                  {page === 0 && usuarios.length === 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={7} align="center" />
-                      <Typography>No se encontraron usuarios</Typography>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              rowsPerPageOptions={[
-                5,
-                10,
-                25,
-                { label: 'Todos', value: rows.length }
-              ]}
-              component="div"
-              count={rows.length}
-              rowsPerPage={rowsPerPage}
-              page={Math.min(
-                page,
-                Math.max(0, Math.ceil(rows.length / rowsPerPage) - 1)
+                        <Tooltip title="Eliminar">
+                          <IconButton
+                            onClick={(event) => {
+                              event.stopPropagation()
+                              handleDelete(row.idUser)
+                            }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+
+              {rows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} align="center" />
+                  <Typography>No se encontraron usuarios</Typography>
+                </TableRow>
               )}
-              onPageChange={(event, newPage) => setPage(newPage)}
-              onRowsPerPageChange={(event) => {
-                setRowsPerPage(parseInt(event.target.value, 10))
-                setPage(0)
-              }}
-              labelRowsPerPage="Filas por página"
-              sx={{
-                ...paginationStyles
-              }}
-            />
-          </Paper>
-        </MainWrapper>
-      )}
-    </>
+            </TableBody>
+
+            {Array.from({ length: Math.max(0, rowsPerPage - rows.length) }).map(
+              (_, i) => (
+                <TableRow key={`empty-${i}`} style={{ height: 80 }}>
+                  <TableCell colSpan={7} />
+                </TableRow>
+              )
+            )}
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={state.users.totalElements || 0}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={(event, newPage) => setPage(newPage)}
+          onRowsPerPageChange={(event) => {
+            setRowsPerPage(parseInt(event.target.value, 10))
+            setPage(0)
+          }}
+          labelRowsPerPage="Filas por página"
+          sx={{
+            ...paginationStyles
+          }}
+        />
+      </Paper>
+
+      <Box
+        sx={{
+          display: { xs: 'flex', lg: 'none' },
+          height: '100vh'
+        }}
+      >
+        <Typography
+          gutterBottom
+          variant="h6"
+          component="h6"
+          textAlign="center"
+          sx={{ paddingTop: 30, fontWeight: 'bold' }}
+        >
+          Funcionalidad no disponible en esta resolución
+        </Typography>
+      </Box>
+    </MainWrapper>
   )
 }

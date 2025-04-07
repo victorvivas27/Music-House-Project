@@ -95,13 +95,13 @@ export const headCellsInstrument = [
 ]
 
 export const headCellsUser = [
-  {id: 'imageUrl', numeric: true,disablePadding: false,label: 'Imagen'},
-  { id: 'idUser', numeric: true, disablePadding: false, label: 'ID' },
-  { id: 'rol', numeric: false, disablePadding: false, label: 'Rol' },
+  {id: 'index',numeric: true,disablePadding: false,label: 'N°',hidden: false,disableSort: true},
+  {id: 'imageUrl', numeric: true,disablePadding: false,label: 'Imagen', disableSort: true},
+  { id: 'rol', numeric: false, disablePadding: false, label: 'Rol', disableSort: true },
   { id: 'name', numeric: false, disablePadding: false, label: 'Nombre' },
   { id: 'lastName', numeric: false, disablePadding: false, label: 'Apellido' },
   { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'actions', numeric: false, disablePadding: false, label: 'Acciones' }
+  { id: 'actions', numeric: false, disablePadding: false, label: 'Acciones', disableSort: true }
 ]
 
 export const headCellsCategory = [

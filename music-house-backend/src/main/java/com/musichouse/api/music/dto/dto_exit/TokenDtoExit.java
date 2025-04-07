@@ -9,6 +9,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class TokenDtoExit {
 
     private UUID idUser;

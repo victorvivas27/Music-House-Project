@@ -24,6 +24,7 @@ const initialState = {
   },
   categories: { content: [], totalElements: 0 },
   themes: { content: [], totalElements: 0 },
+  users: { content: [], totalElements: 0 },
 }
 
 const ContextGlobal = createContext()
@@ -74,6 +75,12 @@ const appReducer = (state, action) => {
       ...state,
       themes: action.payload 
     }
+
+    case actions.SET_USERS:
+      return {
+        ...state,
+        users: action.payload 
+      }
 
     default:
       return state

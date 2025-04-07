@@ -120,6 +120,7 @@ public class ThemeService implements ThemeInterface {
         return mapper.map(themeToUpdate, ThemeDtoExit.class);
     }
 
+
     @Override
     @CacheEvict(value = "themes", allEntries = true)
     public void deleteTheme(UUID idTheme) throws ResourceNotFoundException {

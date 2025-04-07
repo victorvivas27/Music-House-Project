@@ -4,7 +4,6 @@ import com.musichouse.api.music.entity.Roles;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,9 +17,7 @@ public class UserDtoEntrance {
 
     private UUID idUser;
 
-    //@NotNull(message = "Debes volocar un imagen de perfil")
-    @Size(min = 1, max = 2048, message = "La imagen de perfil debe tener entre 1 y 2048 caracteres")
-    @URL(message = "La imagen de perfil debe ser una URL válida")
+
     private String picture;
 
     @NotNull(message = "El nombre es obligatorio")
@@ -45,8 +42,8 @@ public class UserDtoEntrance {
     @Pattern(regexp = ".*[@#$%^&+=!*].*", message = "La contraseña debe contener al menos un carácter especial (@, #, $, etc.)")
     private String password;
 
-    @NotNull(message = "El campo addresses debe estar presente y no puede estar vacío")
     @Valid
+    @NotNull(message = "El campo addresses debe estar presente y no puede estar vacío")
     private List<AddressDtoEntrance> addresses;
 
     @Valid

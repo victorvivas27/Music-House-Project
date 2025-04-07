@@ -7,18 +7,17 @@ import com.musichouse.api.music.dto.dto_exit.UserDtoExit;
 import com.musichouse.api.music.dto.dto_modify.UserDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import jakarta.mail.MessagingException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface UserInterface {
 
     TokenDtoExit createUser(UserDtoEntrance userDtoEntrance, MultipartFile file) throws MessagingException;
 
-    //TokenDtoExit createUserAdmin(MultipartFile file,UserAdminDtoEntrance userAdminDtoEntrance) throws MessagingException;
-
-    List<UserDtoExit> getAllUser();
+    Page<UserDtoExit> getAllUser(Pageable pageable);
 
     UserDtoExit getUserById(UUID idUser) throws ResourceNotFoundException;
 

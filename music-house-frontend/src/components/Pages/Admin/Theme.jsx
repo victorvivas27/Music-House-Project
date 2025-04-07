@@ -176,7 +176,8 @@ export const Theme = () => {
                     tabIndex={-1}
                     key={row.idTheme}
                     selected={isItemSelected}
-                    className={isRowEven ? 'table-row-even' : 'table-row-odd'}
+                    className={
+                      isRowEven ? 'table-row-even' : 'table-row-odd'}
                     sx={{ cursor: 'pointer' }}
                     onClick={(event) => handleClick(event, row.idTheme)}
                   >
@@ -202,8 +203,8 @@ export const Theme = () => {
                         }
                         alt="Imagen tematica"
                         style={{
-                          width: '75px',
-                          height: '75px',
+                          width: '80px',
+                          height: '80px',
                           objectFit: 'cover',
                           borderRadius: '50%',
                           border: '1px solid #ccc',

@@ -3,7 +3,6 @@ package com.musichouse.api.music.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,9 +32,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authRequest -> authRequest
                         // Rutas públicas
-                        .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
-                        // Rutas de usuario (todas las operaciones)
-                        .requestMatchers("/api/user/**").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
+
                         // Rutas de dirección (todas las operaciones)
                         .requestMatchers("/api/address/**").permitAll()
                         // Rutas de teléfono (todas las operaciones)
