@@ -7,7 +7,6 @@ import useAlert from '@/hook/useAlert'
 import { UsersApi } from '@/api/users'
 import { getErrorMessage } from '@/api/getErrorMessage'
 
-
 const NewUser = ({ onSwitch }) => {
   const initialFormData = {
     name: '',

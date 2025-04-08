@@ -1,13 +1,12 @@
 package com.musichouse.api.music.dto.dto_modify;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.validation.Valid;
+import com.musichouse.api.music.interfaces.HasThemeName;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Setter
@@ -16,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ThemeDtoModify {
+public class ThemeDtoModify implements HasThemeName {
 
     @NotNull(message = "El idTheme  es obligatorio")
     private UUID idTheme;
@@ -28,7 +27,9 @@ public class ThemeDtoModify {
     @Size(max = 1024, message = "La descripción de la tematica debe tener como máximo {max} caracteres")
     private String description;
 
-    @Valid
-    @NotBlank(message = "La imagen es obligatoria")
-    private List<String> imageUrls;
+
+    @Override
+    public String getThemeName() {
+        return themeName;
+    }
 }

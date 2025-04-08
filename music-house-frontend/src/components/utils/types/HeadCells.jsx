@@ -95,17 +95,6 @@ export const headCellsInstrument = [
 ]
 
 export const headCellsUser = [
-  {id: 'index',numeric: true,disablePadding: false,label: 'N°',hidden: false,disableSort: true},
-  {id: 'imageUrl', numeric: true,disablePadding: false,label: 'Imagen', disableSort: true},
-  { id: 'rol', numeric: false, disablePadding: false, label: 'Rol', disableSort: true },
-  { id: 'name', numeric: false, disablePadding: false, label: 'Nombre' },
-  { id: 'lastName', numeric: false, disablePadding: false, label: 'Apellido' },
-  { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'actions', numeric: false, disablePadding: false, label: 'Acciones', disableSort: true }
-]
-
-export const headCellsCategory = [
-
   {
     id: 'index',
     numeric: true,
@@ -114,7 +103,54 @@ export const headCellsCategory = [
     hidden: false,
     disableSort: true
   },
-  
+  {
+    id: 'imageUrl',
+    numeric: true,
+    disablePadding: false,
+    label: 'Imagen',
+    disableSort: true
+  },
+  {
+    id: 'rol',
+    numeric: false,
+    disablePadding: false,
+    label: 'Rol',
+    disableSort: true
+  },
+  { id: 'name', numeric: false, disablePadding: false, label: 'Nombre' },
+  { id: 'lastName', numeric: false, disablePadding: false, label: 'Apellido' },
+  { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
+  {
+    id: 'registDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Registro'
+  },
+  {
+    id: 'modifiedDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Modificado'
+  },
+  {
+    id: 'actions',
+    numeric: false,
+    disablePadding: false,
+    label: 'Acciones',
+    disableSort: true
+  }
+]
+
+export const headCellsCategory = [
+  {
+    id: 'index',
+    numeric: true,
+    disablePadding: false,
+    label: 'N°',
+    hidden: false,
+    disableSort: true
+  },
+
   {
     id: 'categoryName',
     numeric: false,
@@ -133,7 +169,7 @@ export const headCellsCategory = [
     numeric: false,
     disablePadding: false,
     label: 'Acciones',
-    disableSort: true 
+    disableSort: true
   }
 ]
 

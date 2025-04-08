@@ -9,6 +9,8 @@ import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.interfaces.InstrumentInterface;
 import com.musichouse.api.music.repository.*;
 import com.musichouse.api.music.s3utils.S3UrlParser;
+import com.musichouse.api.music.service.awss3Service.AWSS3Service;
+import com.musichouse.api.music.service.awss3Service.S3FileDeleter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -33,6 +35,7 @@ public class InstrumentService implements InstrumentInterface {
     private final FavoriteRepository favoriteRepository;
     private final AWSS3Service awss3Service;
     private final ReservationRepository reservationRepository;
+    private final S3FileDeleter s3FileDeleter;
 
     @Override
     public InstrumentDtoExit createInstrument(List<MultipartFile> files, InstrumentDtoEntrance instrumentDtoEntrance)
@@ -170,7 +173,7 @@ public class InstrumentService implements InstrumentInterface {
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 try {
                     String key = S3UrlParser.extractKeyFromS3Url(imageUrl);
-                    awss3Service.deleteFileFromS3(key);
+                    s3FileDeleter.deleteFileFromS3(key);
 
                 } catch (Exception e) {
 

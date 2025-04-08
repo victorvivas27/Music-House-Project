@@ -11,7 +11,8 @@ public class FileValidatorUtils {
             "image/jpeg",
             "image/png",
             "image/jpg",
-            "image/webp"
+            "image/webp",
+            "image/avif"
     );
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB en bytes

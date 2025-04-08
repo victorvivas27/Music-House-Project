@@ -139,4 +139,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleFileNotFoundException(FileNotFoundException e) {
         return buildResponse(HttpStatus.NOT_FOUND, e.getMessage());
     }
+
+    // 🔹 Imagen Duplicada
+    @ExceptionHandler(DuplicateImageException.class)
+    public ResponseEntity<ApiResponse<Void>> handleFileNotFoundException(DuplicateImageException e) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
 }

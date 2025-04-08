@@ -1,4 +1,4 @@
-package com.musichouse.api.music.dto.dto_modify;
+package com.musichouse.api.music.dto.dto_entrance;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;
@@ -12,9 +12,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ImageUrlsDtoModify {
+public class ThemeDtoAddImage {
 
-    @NotNull(message = "El idImage es obligatorio")
-    private UUID idImage;
+    @NotNull(message = "El idTheme es obligatorio")
+    private UUID idTheme;
 
 }

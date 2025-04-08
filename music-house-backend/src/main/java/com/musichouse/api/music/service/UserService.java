@@ -16,6 +16,8 @@ import com.musichouse.api.music.repository.PhoneRepository;
 import com.musichouse.api.music.repository.UserRepository;
 import com.musichouse.api.music.s3utils.S3UrlParser;
 import com.musichouse.api.music.security.JwtService;
+import com.musichouse.api.music.service.awss3Service.AWSS3Service;
+import com.musichouse.api.music.service.awss3Service.S3FileDeleter;
 import com.musichouse.api.music.telegramchat.TelegramService;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
@@ -59,12 +61,14 @@ public class UserService implements UserInterface {
     private final TelegramService telegramService;
     private final FavoriteRepository favoriteRepository;
     private final AWSS3Service awss3Service;
+    private final S3FileDeleter s3FileDeleter;
     @Autowired
     private final MailManager mailManager;
 
 
     @Override
     @Transactional
+    @CacheEvict(value = "users", allEntries = true)
     public TokenDtoExit createUser(UserDtoEntrance userDtoEntrance, MultipartFile file)
             throws DataIntegrityViolationException, MessagingException {
 
@@ -75,7 +79,7 @@ public class UserService implements UserInterface {
 
         User user = modelMapper.map(userDtoEntrance, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        UUID generatedId = UUID.randomUUID(); // 🔑 Generás el ID
+        UUID generatedId = UUID.randomUUID();
         user.setIdUser(generatedId);
 
         Set<Roles> roles = userDtoEntrance.getRoles() != null && !userDtoEntrance.getRoles().isEmpty()
@@ -87,11 +91,11 @@ public class UserService implements UserInterface {
         user.getAddresses().forEach(address -> address.setUser(user));
         user.getPhones().forEach(phone -> phone.setUser(user));
 
-        // 🔄 Subís imagen usando el ID generado
+
         String fileUrl = awss3Service.uploadFileToS3User(file, generatedId);
         user.setPicture(fileUrl);
 
-        // 🗂️ Guardás el usuario
+
         User userSaved = userRepository.save(user);
 
         String token = jwtService.generateToken(userSaved);
@@ -99,7 +103,8 @@ public class UserService implements UserInterface {
         try {
             sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName());
         } catch (MessagingException e) {
-            String errorMessage = String.format("No se pudo enviar el correo de bienvenida a %s", userSaved.getEmail());
+            String errorMessage = String.format(
+                    "No se pudo enviar el correo de bienvenida a %s", userSaved.getEmail());
             throw new MessagingException(errorMessage, e);
         }
 
@@ -200,7 +205,7 @@ public class UserService implements UserInterface {
             // 📌 Eliminar imagen anterior solo si existe
             if (currentImageUrl != null && !currentImageUrl.isEmpty()) {
                 String key = S3UrlParser.extractKeyFromS3Url(currentImageUrl);
-                awss3Service.deleteFileFromS3(key);
+                s3FileDeleter.deleteFileFromS3(key);
             }
 
             // 📌 5️⃣ Subir la nueva imagen con la carpeta del usuario
@@ -239,7 +244,7 @@ public class UserService implements UserInterface {
         if (imageUrl != null && !imageUrl.isEmpty()) {
 
             String key = S3UrlParser.extractKeyFromS3Url(imageUrl);
-            awss3Service.deleteFileFromS3(key);
+            s3FileDeleter.deleteFileFromS3(key);
 
         }
 

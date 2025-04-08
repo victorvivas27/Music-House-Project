@@ -6,7 +6,7 @@ import com.musichouse.api.music.dto.dto_entrance.ThemeDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.ThemeDtoExit;
 import com.musichouse.api.music.dto.dto_modify.ThemeDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
-import com.musichouse.api.music.service.ThemeService;
+import com.musichouse.api.music.service.themeService.ThemeService;
 import com.musichouse.api.music.util.ApiResponse;
 import com.musichouse.api.music.util.FileValidatorUtils;
 import jakarta.validation.ConstraintViolation;

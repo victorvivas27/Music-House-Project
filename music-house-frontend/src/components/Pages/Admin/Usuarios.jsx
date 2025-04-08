@@ -193,8 +193,7 @@ export const Usuarios = () => {
                     <TableCell align="left">
                       <img
                         src={
-                          row?.picture ||
-                           '/src/assets/avatar_general_02.png'
+                          row?.picture || '/src/assets/avatar_general_02.png'
                         }
                         alt="Instrumento"
                         style={{
@@ -216,6 +215,8 @@ export const Usuarios = () => {
                     <TableCell align="left">{row.name}</TableCell>
                     <TableCell align="left">{row.lastName}</TableCell>
                     <TableCell align="left">{row.email}</TableCell>
+                    <TableCell align="left">{row.registDate}</TableCell>
+                    <TableCell align="left">{row.modifiedDate}</TableCell>
                     <TableCell align="left">
                       <Box
                         style={{

@@ -2,15 +2,21 @@ package com.musichouse.api.music.service;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoEntrance;
+import com.musichouse.api.music.dto.dto_entrance.ThemeDtoAddImage;
 import com.musichouse.api.music.dto.dto_exit.ImagesUrlsDtoExit;
 import com.musichouse.api.music.dto.dto_modify.ImageUrlsDtoModify;
 import com.musichouse.api.music.entity.ImageUrls;
 import com.musichouse.api.music.entity.Instrument;
+import com.musichouse.api.music.entity.Theme;
+import com.musichouse.api.music.exception.DuplicateImageException;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.interfaces.ImageUrlsInterface;
 import com.musichouse.api.music.repository.ImageUrlsRepository;
 import com.musichouse.api.music.repository.InstrumentRepository;
 import com.musichouse.api.music.s3utils.S3UrlParser;
+import com.musichouse.api.music.service.awss3Service.AWSS3Service;
+import com.musichouse.api.music.service.awss3Service.S3FileDeleter;
+import com.musichouse.api.music.service.themeService.ThemeValidator;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +38,8 @@ public class ImageUrlsService implements ImageUrlsInterface {
     private final ModelMapper mapper;
     private final InstrumentRepository instrumentRepository;
     private final AWSS3Service awss3Service;
+    private final S3FileDeleter s3FileDeleter;
+    private final ThemeValidator themeValidator;
 
     @Override
     public List<ImagesUrlsDtoExit> addImageUrls(List<MultipartFile> files, ImageUrlsDtoEntrance imageUrlsDtoEntrance)
@@ -55,7 +64,7 @@ public class ImageUrlsService implements ImageUrlsInterface {
             return imageUrlEntity;
         }).toList();
 
-// Guardar todas en base de datos
+
         List<ImageUrls> savedImages = imageUrlsRepository.saveAll(imageUrlEntities);
 
         return savedImages.stream().map(image -> {
@@ -88,12 +97,59 @@ public class ImageUrlsService implements ImageUrlsInterface {
 
 
     @Override
-    public ImagesUrlsDtoExit updateImageUrls(ImageUrlsDtoModify imageUrlsDtoModify) throws ResourceNotFoundException {
-        ImageUrls imageUrlsToUpdate = imageUrlsRepository.findById(imageUrlsDtoModify.getIdImage())
-                .orElseThrow(() -> new ResourceNotFoundException("Imagen no encontrada con ID " + imageUrlsDtoModify.getIdImage()));
-        imageUrlsToUpdate.setImageUrl(imageUrlsDtoModify.getImageUrl());
-        imageUrlsRepository.save(imageUrlsToUpdate);
-        return mapper.map(imageUrlsToUpdate, ImagesUrlsDtoExit.class);
+    public ImagesUrlsDtoExit updateImageUrls(ImageUrlsDtoModify dto, MultipartFile newImage)
+            throws ResourceNotFoundException {
+
+        // 1. Buscar la imagen a actualizar
+        ImageUrls image = imageUrlsRepository.findById(dto.getIdImage())
+                .orElseThrow(() -> new ResourceNotFoundException("Imagen no encontrada con ID " + dto.getIdImage()));
+
+        // 2. Eliminar la imagen anterior del bucket
+        String oldUrl = image.getImageUrl();
+        String oldKey = S3UrlParser.extractKeyFromS3Url(oldUrl);
+        s3FileDeleter.deleteFileFromS3(oldKey);
+
+        // 3. Subir la nueva imagen al bucket (usando el ID del Theme, no de la imagen)
+        UUID themeId = image.getTheme().getIdTheme(); // este es el folder correcto
+        String newUrl = awss3Service.uploadSingleFile(newImage, "theme/" + themeId); // <- este método ya existe
+
+        // 4. Actualizar y guardar la nueva URL
+        image.setImageUrl(newUrl);
+        ImageUrls updated = imageUrlsRepository.save(image);
+
+        // 5. Devolver DTO de salida
+        return mapper.map(updated, ImagesUrlsDtoExit.class);
+    }
+
+
+    public List<ImagesUrlsDtoExit> addImagesToTheme(ThemeDtoAddImage themeDtoAddImage, List<MultipartFile> images)
+            throws ResourceNotFoundException {
+
+        Theme theme = themeValidator.validateThemeId(themeDtoAddImage.getIdTheme());
+
+        List<ImageUrls> imageEntities = new ArrayList<>();
+
+        for (MultipartFile file : images) {
+            boolean alreadyExists = theme.getImageUrls().stream()
+                    .anyMatch(img -> img.getImageUrl().contains(file.getOriginalFilename()));
+
+            if (alreadyExists) {
+                throw new DuplicateImageException("La imagen '" + file.getOriginalFilename() + "' ya fue añadida anteriormente.");
+            }
+
+            String imageUrl = awss3Service.uploadSingleFile(file, "theme/" + themeDtoAddImage.getIdTheme());
+
+            ImageUrls imageEntity = new ImageUrls();
+            imageEntity.setImageUrl(imageUrl);
+            imageEntity.setTheme(theme);
+            imageEntities.add(imageEntity);
+        }
+
+        List<ImageUrls> saved = imageUrlsRepository.saveAll(imageEntities);
+
+        return saved.stream()
+                .map(entity -> mapper.map(entity, ImagesUrlsDtoExit.class))
+                .toList();
     }
 
 
@@ -124,7 +180,7 @@ public class ImageUrlsService implements ImageUrlsInterface {
             try {
                 String key = S3UrlParser.extractKeyFromS3Url(imageUrl);
                 LOGGER.info("Key extraída: {}", key);
-                awss3Service.deleteFileFromS3(key);
+                s3FileDeleter.deleteFileFromS3(key);
                 LOGGER.info("Imagen eliminada de S3");
             } catch (AmazonS3Exception e) {
                 LOGGER.error("Error AWS S3: {}", e.getErrorMessage(), e);

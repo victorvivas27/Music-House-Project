@@ -3,20 +3,25 @@ package com.musichouse.api.music.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoEntrance;
+import com.musichouse.api.music.dto.dto_entrance.ThemeDtoAddImage;
 import com.musichouse.api.music.dto.dto_exit.ImagesUrlsDtoExit;
 import com.musichouse.api.music.dto.dto_modify.ImageUrlsDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.service.ImageUrlsService;
 import com.musichouse.api.music.util.ApiResponse;
+import com.musichouse.api.music.util.FileValidatorUtils;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +34,7 @@ public class ImageUrlsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageUrlsController.class);
     private final ImageUrlsService imageUrlsService;
     private final ObjectMapper objectMapper;
+    private Validator validator;
 
     // 🔹 AGREGAR IMAGENES
     @PostMapping("/add_image")
@@ -82,17 +88,51 @@ public class ImageUrlsController {
 
     // 🔹 ACTUALIZAR IMAGENES
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse<ImagesUrlsDtoExit>> updateImageUrls(@RequestBody @Valid ImageUrlsDtoModify imageUrlsDtoModify) throws ResourceNotFoundException {
-        ImagesUrlsDtoExit imagesUrlsDtoExit = imageUrlsService.updateImageUrls(imageUrlsDtoModify);
+    public ResponseEntity<ApiResponse<ImagesUrlsDtoExit>> updateImageUrls(
+            @Valid @ModelAttribute ImageUrlsDtoModify dto,
+            @RequestParam("image") MultipartFile newImage,
+            BindingResult bindingResult
+    ) throws ResourceNotFoundException {
+        List<String> errors = new ArrayList<>();
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.<ImagesUrlsDtoExit>builder()
-                        .status(HttpStatus.OK)
-                        .statusCode(HttpStatus.OK.value())
-                        .message("Imagen actualizada con éxito.")
-                        .error(null)
-                        .result(imagesUrlsDtoExit)
-                        .build());
+        // 🔸 Validar errores del DTO
+        if (bindingResult.hasErrors()) {
+            errors.addAll(bindingResult.getFieldErrors().stream()
+                    .map(field -> field.getField() + ": " + field.getDefaultMessage())
+                    .toList());
+
+            return ResponseEntity.badRequest().body(ApiResponse.<ImagesUrlsDtoExit>builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .message("Errores de validación")
+                    .error(errors)
+                    .result(null)
+                    .build());
+        }
+
+        // 🔸 Validar archivo
+        errors.addAll(FileValidatorUtils.validateImage(newImage));
+
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.<ImagesUrlsDtoExit>builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .message("Errores de validación")
+                    .error(errors)
+                    .result(null)
+                    .build());
+        }
+
+        // 🔸 Continuar
+        ImagesUrlsDtoExit updated = imageUrlsService.updateImageUrls(dto, newImage);
+
+        return ResponseEntity.ok(ApiResponse.<ImagesUrlsDtoExit>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Imagen actualizada con éxito.")
+                .error(null)
+                .result(updated)
+                .build());
     }
 
     // 🔹 ELIMINAR IMAGEN
@@ -127,6 +167,55 @@ public class ImageUrlsController {
                 .message(message)
                 .error(null)
                 .result(imagesUrlsDtoExits)
+                .build());
+    }
+
+    @PostMapping("/add_images_theme")
+    public ResponseEntity<ApiResponse<List<ImagesUrlsDtoExit>>> addImagesToTheme(
+            @Valid @ModelAttribute ThemeDtoAddImage themeDtoAddImage,
+            BindingResult bindingResult,
+            @RequestParam("images") List<MultipartFile> images
+    ) throws ResourceNotFoundException {
+        List<String> errors = new ArrayList<>();
+
+        // 1. Validar DTO
+        if (bindingResult.hasErrors()) {
+            errors.addAll(bindingResult.getFieldErrors().stream()
+                    .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                    .toList());
+
+            return ResponseEntity.badRequest().body(ApiResponse.<List<ImagesUrlsDtoExit>>builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .message("Errores de validación")
+                    .error(errors)
+                    .result(null)
+                    .build());
+        }
+
+        // 2. Validar cada archivo de imagen
+        for (MultipartFile file : images) {
+            errors.addAll(FileValidatorUtils.validateImage(file));
+        }
+
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.<List<ImagesUrlsDtoExit>>builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .message("Errores de validación")
+                    .error(errors)
+                    .result(null)
+                    .build());
+        }
+
+        // 3. Guardar imágenes
+        List<ImagesUrlsDtoExit> results = imageUrlsService.addImagesToTheme(themeDtoAddImage, images);
+
+        return ResponseEntity.ok(ApiResponse.<List<ImagesUrlsDtoExit>>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Imágenes añadidas con éxito.")
+                .result(results)
                 .build());
     }
 }
