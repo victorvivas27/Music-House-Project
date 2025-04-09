@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Setter
@@ -26,6 +25,6 @@ public class ThemeDtoExit {
 
     private String description;
 
-    private List<ImagesUrlsDtoExit> imageUrls;
+    private String imageUrlTheme;
 
 }

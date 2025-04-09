@@ -10,7 +10,6 @@ import com.musichouse.api.music.service.themeService.ThemeService;
 import com.musichouse.api.music.util.ApiResponse;
 import com.musichouse.api.music.util.FileValidatorUtils;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -43,20 +42,19 @@ public class ThemeController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<ThemeDtoExit>> createTheme(
             @RequestPart("theme") String themeJson,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files)
-            throws JsonProcessingException, ResourceNotFoundException {
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ) throws JsonProcessingException, ResourceNotFoundException {
 
         // 1. Parsear JSON a DTO
         ThemeDtoEntrance themeDtoEntrance = objectMapper.readValue(themeJson, ThemeDtoEntrance.class);
 
-        // 2. Validar archivos subidos
-        List<String> fileErrors = FileValidatorUtils.validateImages(files);
+        // 2. Validar archivo (solo uno ahora)
+        List<String> fileErrors = FileValidatorUtils.validateImage(image);
 
-        // 3. Validar DTO manualmente (porque viene como JSON string)
+        // 3. Validar DTO manualmente
         Set<ConstraintViolation<ThemeDtoEntrance>> violations = validator.validate(themeDtoEntrance);
         List<String> dtoErrors = violations.stream()
-                .map(v ->
-                        v.getPropertyPath() + ": " + v.getMessage())
+                .map(v -> v.getPropertyPath() + ": " + v.getMessage())
                 .toList();
 
         // 4. Unificar errores
@@ -75,16 +73,15 @@ public class ThemeController {
         }
 
         // 5. Crear temática
-        ThemeDtoExit createdTheme = themeService.createTheme(files, themeDtoEntrance);
+        ThemeDtoExit created = themeService.createTheme(themeDtoEntrance, image);
 
-        // 6. Devolver respuesta exitosa
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.<ThemeDtoExit>builder()
                         .status(HttpStatus.CREATED)
                         .statusCode(HttpStatus.CREATED.value())
-                        .message("Temática creada exitosamente.")
+                        .message("Temática creada con éxito.")
                         .error(null)
-                        .result(createdTheme)
+                        .result(created)
                         .build());
     }
 
@@ -121,20 +118,51 @@ public class ThemeController {
     }
 
     // 🔹 ACTUALIZAR TEMÁTICA
-    @PutMapping()
-    public ResponseEntity<ApiResponse<?>> updateTheme(@RequestBody @Valid ThemeDtoModify themeDtoModify)
-            throws ResourceNotFoundException {
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<ThemeDtoExit>> updateTheme(
+            @RequestPart("theme") String themeJson,
+            @RequestPart(value = "image", required = false) MultipartFile file
+    ) throws JsonProcessingException, ResourceNotFoundException {
 
-        ThemeDtoExit updatedTheme = themeService.updateTheme(themeDtoModify);
+        // 1. Parsear el JSON a DTO
+        ThemeDtoModify themeDtoModify = objectMapper.readValue(themeJson, ThemeDtoModify.class);
+
+        // 2. Validar imagen si se envió
+        List<String> imageErrors = FileValidatorUtils.validateImage(file);
+
+        // 3. Validar DTO manualmente
+        Set<ConstraintViolation<ThemeDtoModify>> violations = validator.validate(themeDtoModify);
+        List<String> dtoErrors = violations.stream()
+                .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+                .toList();
+
+        // 4. Unificar errores
+        List<String> allErrors = new ArrayList<>();
+        allErrors.addAll(imageErrors);
+        allErrors.addAll(dtoErrors);
+
+        if (!allErrors.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.<ThemeDtoExit>builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .message("Errores de validación")
+                    .error(allErrors)
+                    .result(null)
+                    .build());
+        }
+
+        // 5. Actualizar temática
+        ThemeDtoExit updated = themeService.updateTheme(themeDtoModify, file);
+
         return ResponseEntity.ok(ApiResponse.<ThemeDtoExit>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Temática actualizada con éxito.")
                 .error(null)
-                .result(updatedTheme)
+                .result(updated)
                 .build());
-
     }
+
 
     // 🔹 ELIMINAR TEMÁTICA
     @DeleteMapping("{idTheme}")

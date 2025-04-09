@@ -2,13 +2,9 @@ package com.musichouse.api.music.service;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoEntrance;
-import com.musichouse.api.music.dto.dto_entrance.ThemeDtoAddImage;
 import com.musichouse.api.music.dto.dto_exit.ImagesUrlsDtoExit;
-import com.musichouse.api.music.dto.dto_modify.ImageUrlsDtoModify;
 import com.musichouse.api.music.entity.ImageUrls;
 import com.musichouse.api.music.entity.Instrument;
-import com.musichouse.api.music.entity.Theme;
-import com.musichouse.api.music.exception.DuplicateImageException;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.interfaces.ImageUrlsInterface;
 import com.musichouse.api.music.repository.ImageUrlsRepository;
@@ -25,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -96,7 +91,7 @@ public class ImageUrlsService implements ImageUrlsInterface {
     }
 
 
-    @Override
+   /* @Override
     public ImagesUrlsDtoExit updateImageUrls(ImageUrlsDtoModify dto, MultipartFile newImage)
             throws ResourceNotFoundException {
 
@@ -119,10 +114,10 @@ public class ImageUrlsService implements ImageUrlsInterface {
 
         // 5. Devolver DTO de salida
         return mapper.map(updated, ImagesUrlsDtoExit.class);
-    }
+    }*/
 
 
-    public List<ImagesUrlsDtoExit> addImagesToTheme(ThemeDtoAddImage themeDtoAddImage, List<MultipartFile> images)
+    /*public List<ImagesUrlsDtoExit> addImagesToTheme(ThemeDtoAddImage themeDtoAddImage, List<MultipartFile> images)
             throws ResourceNotFoundException {
 
         Theme theme = themeValidator.validateThemeId(themeDtoAddImage.getIdTheme());
@@ -150,7 +145,7 @@ public class ImageUrlsService implements ImageUrlsInterface {
         return saved.stream()
                 .map(entity -> mapper.map(entity, ImagesUrlsDtoExit.class))
                 .toList();
-    }
+    }*/
 
 
     @Transactional

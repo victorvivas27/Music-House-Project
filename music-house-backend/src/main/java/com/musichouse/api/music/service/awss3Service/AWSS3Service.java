@@ -39,8 +39,8 @@ public class AWSS3Service implements AWSS3Interface {
         return s3UploadHelper.uploadMultipleFiles(files, "instruments/" + idInstrument);
     }
 
-    public List<String> uploadFilesToS3Theme(List<MultipartFile> files, UUID idTheme) {
-        return s3UploadHelper.uploadMultipleFiles(files, "theme/" + idTheme);
+    public String uploadToS3Theme(MultipartFile file, UUID idTheme) {
+        return s3UploadHelper.uploadSingleFile(file, "theme/" + idTheme);
     }
 
     public String uploadSingleFile(MultipartFile file, String folder) {

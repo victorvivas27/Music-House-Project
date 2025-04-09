@@ -23,7 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -41,12 +40,15 @@ public class ThemeService implements ThemeInterface {
 
     @Override
     @CacheEvict(value = "themes", allEntries = true)
-    public ThemeDtoExit createTheme(List<MultipartFile> files, ThemeDtoEntrance themeDtoEntrance)
+    public ThemeDtoExit createTheme(ThemeDtoEntrance themeDtoEntrance, MultipartFile file)
             throws ResourceNotFoundException {
 
         themeValidator.validateUniqueName(themeDtoEntrance);
 
-        Theme theme = themeBuilder.buildThemeWithImages(themeDtoEntrance, files);
+        themeValidator.validateDuplicateImageByFilename(file.getOriginalFilename());
+
+        Theme theme = themeBuilder.buildThemeWithImage(themeDtoEntrance, file);
+
 
         Theme saved = themeRepository.save(theme);
 
@@ -66,7 +68,8 @@ public class ThemeService implements ThemeInterface {
 
     @Override
     @Cacheable(value = "themes", key = "#idTheme")
-    public ThemeDtoExit getThemeById(UUID idTheme) throws ResourceNotFoundException {
+    public ThemeDtoExit getThemeById(UUID idTheme)
+            throws ResourceNotFoundException {
 
         Theme theme = themeValidator.validateThemeId(idTheme);
 
@@ -75,7 +78,8 @@ public class ThemeService implements ThemeInterface {
 
     @Override
     @CacheEvict(value = "themes", allEntries = true)
-    public ThemeDtoExit updateTheme(ThemeDtoModify themeDtoModify) throws ResourceNotFoundException {
+    public ThemeDtoExit updateTheme(ThemeDtoModify themeDtoModify, MultipartFile file)
+            throws ResourceNotFoundException {
 
         Theme themeToUpdate = themeValidator.validateThemeId(themeDtoModify.getIdTheme());
 
@@ -85,7 +89,9 @@ public class ThemeService implements ThemeInterface {
 
         themeToUpdate.setDescription(themeDtoModify.getDescription());
 
-        Theme theme = themeRepository.save(themeToUpdate);
+        Theme theme = themeBuilder.updateThemeImageIfPresent(themeToUpdate, file);
+
+        theme = themeRepository.save(themeToUpdate);
 
         return mapper.map(themeToUpdate, ThemeDtoExit.class);
     }
@@ -93,13 +99,14 @@ public class ThemeService implements ThemeInterface {
 
     @Override
     @CacheEvict(value = "themes", allEntries = true)
-    public void deleteTheme(UUID idTheme) throws ResourceNotFoundException {
+    public void deleteTheme(UUID idTheme)
+            throws ResourceNotFoundException {
 
         Theme themeDelete = themeValidator.validateThemeId(idTheme);
 
         themeValidator.validateInstrumentAssociation(themeDelete.getIdTheme());
 
-        imageCleaner.deleteImagesFromS3(themeDelete.getImageUrls());
+        imageCleaner.deleteImageFromS3(themeDelete.getImageUrlTheme());
 
         themeRepository.deleteById(idTheme);
 
@@ -111,7 +118,8 @@ public class ThemeService implements ThemeInterface {
             value = "themes",
             key = "#themeName + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()"
     )
-    public Page<ThemeDtoExit> searchTheme(String themeName, Pageable pageable) throws IllegalArgumentException {
+    public Page<ThemeDtoExit> searchTheme(String themeName, Pageable pageable)
+            throws IllegalArgumentException {
 
         StringValidator.validateBasicText(themeName, themeName);
 

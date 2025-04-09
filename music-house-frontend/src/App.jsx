@@ -1,41 +1,33 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { HeaderVisibilityProvider } from "./components/utils/context/HeaderVisibilityGlobal"
+import { AuthProvider } from "./components/utils/context/AuthProvider"
+import { ContextProvider } from "./components/utils/global.context"
+import AuthPage from "./Pages/AuthPage"
+import { AdminLayout, AdminLayoutWithoutHeaderFooter, UserLayout, UserLayoutWithoutHeaderFooter } from "./components/Layout/Layout"
+import EditUser from "./components/Form/usuario/EditUser"
+import { Home } from "./Pages/Home"
+import Perfil from "./Pages/Perfil"
+import { About } from "./Pages/About"
+import { Instrument } from "./Pages/Instrument"
+import { ProtectedRoute } from "./components/common/routes/ProtectedRoute"
+import { Favorites } from "./Pages/Favorites"
+import MisReservas from "./Pages/MisReservas"
+import { ROLE_ADMIN } from "./components/utils/roles/constants"
+import Instruments from "./Pages/Instruments"
+import { Usuarios } from "./Pages/Admin/Usuarios"
+import { Categories } from "./Pages/Admin/Categories"
+import { Theme } from "./Pages/Admin/Theme"
+import { AgregarTheme } from "./Pages/Admin/AgregarThem"
+import { EditarTheme } from "./Pages/Admin/EditarTheme"
+import { AgregarInstrumento } from "./Pages/Admin/AgregarInstrumento"
+import { EditarInstrumento } from "./Pages/Admin/EditarInstrumento"
+import { AgregarCategoria } from "./Pages/Admin/AgregarCategoria"
+import { EditarCategoria } from "./Pages/Admin/EditarCategoria"
+import CrearUsuario from "./Pages/CrearUsuario"
+import { ServerError } from "./Pages/ServerError"
+import { NotFoundPage } from "./Pages/NotFound"
 
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Home } from './components/Pages/Home'
-import { Instrument } from './components/Pages/Instrument'
-import { Instruments } from './components/Pages/Instruments'
-import { About } from './components/Pages/About'
 
-import { ContextProvider } from './components/utils/global.context'
-import { AgregarInstrumento } from './components/Pages/Admin/AgregarInstrumento'
-import { EditarInstrumento } from './components/Pages/Admin/EditarInstrumento'
-import { Usuarios } from './components/Pages/Admin/Usuarios'
-import CrearUsuario from './components/Pages/CrearUsuario'
-import EditUser from './components/Form/formUsuario/EditUser'
-import { Categories } from './components/Pages/Admin/Categories'
-import { AgregarCategoria } from './components/Pages/Admin/AgregarCategoria'
-import { EditarCategoria } from './components/Pages/Admin/EditarCategoria'
-import { Favorites } from './components/Pages/Favorites'
-
-import { HeaderVisibilityProvider } from './components/utils/context/HeaderVisibilityGlobal'
-
-import AuthPage from './components/Pages/AuthPage'
-import { NotFoundPage } from './components/Pages/NotFound'
-import { ServerError } from './components/Pages/ServerError'
-import { ProtectedRoute } from './components/common/routes/ProtectedRoute'
-
-import {
-  AdminLayout,
-  UserLayout,
-  UserLayoutWithoutHeaderFooter,
-  AdminLayoutWithoutHeaderFooter
-} from './components/Layout/Layout'
-import { Theme } from './components/Pages/Admin/Theme'
-import { AgregarTheme } from './components/Pages/Admin/AgregarThem'
-import { EditarTheme } from './components/Pages/Admin/EditarTheme'
-import Perfil from './components/Pages/Perfil'
-import { AuthProvider } from './components/utils/context/AuthProvider'
-import { ROLE_ADMIN } from './components/utils/roles/constants'
-import MisReservas from './components/Pages/MisReservas'
 
 
 export const App = () => {

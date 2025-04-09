@@ -43,7 +43,7 @@ public class SecurityConfig {
                         // Rutas de categorías (todas las operaciones)
                         .requestMatchers("/api/categories/**").permitAll()
                         // Rutas de instrumentos (todas las operaciones)
-                        .requestMatchers("/api/instrument/**").permitAll()
+                        .requestMatchers("/api/instruments/**").permitAll()
                         // Rutas de caracteristica (todas las operaciones)
                         .requestMatchers("/api/characteristic/**").permitAll()
                         // Rutas de URLs de imagen (todas las operaciones)

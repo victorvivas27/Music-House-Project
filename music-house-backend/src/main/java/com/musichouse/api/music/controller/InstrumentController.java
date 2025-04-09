@@ -25,7 +25,7 @@ import java.util.UUID;
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/instrument")
+@RequestMapping("/api/instruments")
 public class InstrumentController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InstrumentController.class);

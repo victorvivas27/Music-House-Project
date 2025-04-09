@@ -3,25 +3,19 @@ package com.musichouse.api.music.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoEntrance;
-import com.musichouse.api.music.dto.dto_entrance.ThemeDtoAddImage;
 import com.musichouse.api.music.dto.dto_exit.ImagesUrlsDtoExit;
-import com.musichouse.api.music.dto.dto_modify.ImageUrlsDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.service.ImageUrlsService;
 import com.musichouse.api.music.util.ApiResponse;
-import com.musichouse.api.music.util.FileValidatorUtils;
-import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,7 +81,7 @@ public class ImageUrlsController {
     }
 
     // 🔹 ACTUALIZAR IMAGENES
-    @PutMapping("/update")
+   /* @PutMapping("/update")
     public ResponseEntity<ApiResponse<ImagesUrlsDtoExit>> updateImageUrls(
             @Valid @ModelAttribute ImageUrlsDtoModify dto,
             @RequestParam("image") MultipartFile newImage,
@@ -133,7 +127,7 @@ public class ImageUrlsController {
                 .error(null)
                 .result(updated)
                 .build());
-    }
+    }*/
 
     // 🔹 ELIMINAR IMAGEN
     @DeleteMapping("/delete/{idInstrument}/image-id/{idImage}")
@@ -170,7 +164,7 @@ public class ImageUrlsController {
                 .build());
     }
 
-    @PostMapping("/add_images_theme")
+  /*  @PostMapping("/add_images_theme")
     public ResponseEntity<ApiResponse<List<ImagesUrlsDtoExit>>> addImagesToTheme(
             @Valid @ModelAttribute ThemeDtoAddImage themeDtoAddImage,
             BindingResult bindingResult,
@@ -217,5 +211,5 @@ public class ImageUrlsController {
                 .message("Imágenes añadidas con éxito.")
                 .result(results)
                 .build());
-    }
+    }*/
 }

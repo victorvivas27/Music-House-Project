@@ -46,12 +46,6 @@ public class ImageUrls {
     private Instrument instrument;
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_theme")
-
-    private Theme theme;
-
-
     /**
      * Anotación que marca el campo como una fecha de creación automática.
      * Hibernate asigna automáticamente la fecha y hora actual al insertar

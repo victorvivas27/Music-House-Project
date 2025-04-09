@@ -186,7 +186,8 @@ export const headCellsTheme = [
     id: 'imageUrl',
     numeric: true,
     disablePadding: false,
-    label: 'Imagen'
+    label: 'Imagen',
+    disableSort: true
   },
   {
     id: 'themeName',
@@ -204,6 +205,7 @@ export const headCellsTheme = [
     id: 'actions',
     numeric: false,
     disablePadding: false,
-    label: 'Acciones'
+    label: 'Acciones',
+    disableSort: true
   }
 ]

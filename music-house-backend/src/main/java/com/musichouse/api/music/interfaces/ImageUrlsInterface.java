@@ -2,9 +2,7 @@ package com.musichouse.api.music.interfaces;
 
 
 import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoEntrance;
-import com.musichouse.api.music.dto.dto_entrance.ThemeDtoAddImage;
 import com.musichouse.api.music.dto.dto_exit.ImagesUrlsDtoExit;
-import com.musichouse.api.music.dto.dto_modify.ImageUrlsDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,16 +24,15 @@ public interface ImageUrlsInterface {
      * @return DTO con la información actualizada de la imagen.
      * @throws ResourceNotFoundException si no se encuentra la imagen por el ID.
      */
-    ImagesUrlsDtoExit updateImageUrls(ImageUrlsDtoModify imageUrlsDtoModify, MultipartFile newImage)
-            throws ResourceNotFoundException;
+    // ImagesUrlsDtoExit updateImageUrls(ImageUrlsDtoModify imageUrlsDtoModify, MultipartFile newImage)
+    // throws ResourceNotFoundException;
 
     void deleteImageUrls(UUID idImage, UUID idInstrument) throws ResourceNotFoundException;
 
     List<ImagesUrlsDtoExit> getImageUrlsByInstrumentId(UUID instrumentId) throws ResourceNotFoundException;
 
-    List<ImagesUrlsDtoExit> addImagesToTheme(ThemeDtoAddImage themeDtoAddImage, List<MultipartFile> images)
-            throws ResourceNotFoundException;
+    //List<ImagesUrlsDtoExit> addImagesToTheme(ThemeDtoAddImage themeDtoAddImage, List<MultipartFile> images)
+    // throws ResourceNotFoundException;
 
-    ;
 
 }

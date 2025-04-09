@@ -5,9 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -37,16 +35,11 @@ public class Theme {
     @Column(length = 1024)
     private String description;
 
+
     /**
-     * Lista de URLs de imágenes asociadas con una tematica.
+     * URL de la imagen principal asociada a esta temática.
      */
-    @OneToMany(
-            mappedBy = "theme",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
-    )
-    private List<ImageUrls> imageUrls = new ArrayList<>();
+    private String imageUrlTheme;
 
     /**
      * Anotación que marca el campo como una fecha de creación automática.
