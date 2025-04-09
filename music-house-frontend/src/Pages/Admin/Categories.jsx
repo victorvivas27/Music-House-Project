@@ -24,7 +24,7 @@ import { EnhancedTableHead, EnhancedTableToolbar, handleSelectAll, handleSelecte
 import { headCellsCategory } from '@/components/utils/types/HeadCells'
 import { getErrorMessage } from '@/api/getErrorMessage'
 import { Loader } from '@/components/common/loader/Loader'
-import { MainWrapper } from '@/components/styles/ResponsiveComponents'
+import { MainWrapper, TitleResponsive } from '@/components/styles/ResponsiveComponents'
 import ArrowBack from '@/components/utils/ArrowBack'
 import SearchInput from '@/components/common/search/SearchInput'
 import { paginationStyles } from '@/components/styles/styleglobal'
@@ -232,7 +232,7 @@ export const Categories = () => {
               {rows.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
-                    <Typography>No se encontraron categorías</Typography>
+                    <TitleResponsive>No se encontraron categorías</TitleResponsive>
                   </TableCell>
                 </TableRow>
               )}

@@ -1,44 +1,46 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Button, IconButton, Typography } from '@mui/material'
 import { PhotoCamera, Delete } from '@mui/icons-material'
 import PropTypes from 'prop-types'
 
-const ImageUpload = ({ onImagesChange }) => {
-  const [preview, setPreview] = useState([])
-  const [selectedFiles, setSelectedFiles] = useState([])
+const ImageUpload = ({ onImagesChange, initialImages = [], single = false }) => {
+  const [previewUrl, setPreviewUrl] = useState(null) 
+  const [newPreview, setNewPreview] = useState(null) 
+
+
+  useEffect(() => {
+    if (single && initialImages.length > 0 && typeof initialImages[0] === 'string') {
+      setPreviewUrl(initialImages[0])
+    }
+  }, [initialImages, single])
 
   const handleFileChange = (event) => {
-    const newFiles = Array.from(event.target.files).filter(
-      (file) => file.size <= 5 * 1024 * 1024
-    )
+    const fileSelected = event.target.files?.[0]
 
-    if (newFiles.length !== event.target.files.length) {
-      alert('Algunas imágenes fueron rechazadas porque superan los 5MB.')
+    if (fileSelected && fileSelected.size <= 5 * 1024 * 1024) {
+      const preview = URL.createObjectURL(fileSelected)
+      setNewPreview(preview)
+      
+      onImagesChange([fileSelected])
+    } else {
+      alert('La imagen supera los 5MB permitidos.')
     }
-
-    const newPreviews = newFiles.map((file) => URL.createObjectURL(file))
-
-    setPreview((prev) => [...prev, ...newPreviews])
-    setSelectedFiles((prev) => [...prev, ...newFiles])
-
-    onImagesChange([...selectedFiles, ...newFiles])
   }
 
-  const handleRemoveImage = (index) => {
-    setPreview((prev) => prev.filter((_, i) => i !== index))
-    setSelectedFiles((prev) => prev.filter((_, i) => i !== index))
-
-    onImagesChange(selectedFiles.filter((_, i) => i !== index))
+  const handleRemove = () => {
+    setNewPreview(null)
+    
+    onImagesChange([])
   }
 
   return (
     <Box sx={{ textAlign: 'center', width: '100%' }}>
+      {/* Selector */}
       <input
         type="file"
         accept="image/*"
         id="image-upload"
         style={{ display: 'none' }}
-        multiple
         onChange={handleFileChange}
       />
       <label htmlFor="image-upload">
@@ -46,40 +48,25 @@ const ImageUpload = ({ onImagesChange }) => {
           component="span"
           variant="contained"
           startIcon={<PhotoCamera />}
-          sx={{
-            backgroundColor: '#1976d2',
-            color: '#fff',
-            '&:hover': { backgroundColor: '#1565c0' },
-            padding: '10px 20px',
-            fontSize: '1rem',
-            borderRadius: '10px'
-          }}
         >
-          Subir Imágenes
+          Subir Imagen
         </Button>
       </label>
-      <Typography variant="body2" sx={{ marginTop: 1, textAlign: 'center' }}>
-        Máximo 5MB por imagen - Formatos permitidos: JPG, PNG
+
+      <Typography variant="body2" sx={{ marginTop: 1 }}>
+        Máximo 5MB por imagen - JPG, PNG, etc.
       </Typography>
 
-      {/* 📌 Galería de imágenes */}
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
-          gap: 1,
-          marginTop: 2,
-          justifyContent: 'center'
-        }}
-      >
-        {preview.map((src, index) => (
-          <Box
-            key={index}
-            sx={{ position: 'relative', width: '100px', height: '100px' }}
-          >
+      {/* Imagen actual */}
+      {previewUrl && (
+        <Box sx={{ mt: 3 }}>
+          <Typography variant="subtitle2" gutterBottom>
+            Imagen actual
+          </Typography>
+          <Box sx={{ position: 'relative', width: '150px', height: '150px', mx: 'auto' }}>
             <img
-              src={src}
-              alt={`preview-${index}`}
+              src={previewUrl}
+              alt="imagen-actual"
               style={{
                 width: '100%',
                 height: '100%',
@@ -88,28 +75,51 @@ const ImageUpload = ({ onImagesChange }) => {
                 border: '2px solid var(--color-primario)'
               }}
             />
+          </Box>
+        </Box>
+      )}
+
+      {/* Nueva imagen */}
+      {newPreview && (
+        <Box sx={{ mt: 3 }}>
+          <Typography variant="subtitle2" gutterBottom>
+            Nueva imagen a cargar
+          </Typography>
+          <Box sx={{ position: 'relative', width: '150px', height: '150px', mx: 'auto' }}>
+            <img
+              src={newPreview}
+              alt="nueva-imagen"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '8px',
+                border: '2px dashed var(--color-primario)'
+              }}
+            />
             <IconButton
-              onClick={() => handleRemoveImage(index)}
+              onClick={handleRemove}
               sx={{
                 position: 'absolute',
                 top: 0,
                 right: 0,
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                borderRadius: '50%',
-                '&:hover': { backgroundColor: 'var(--color-error)' }
+                backgroundColor: 'rgba(255,255,255,0.8)',
+                borderRadius: '50%'
               }}
             >
               <Delete color="error" />
             </IconButton>
           </Box>
-        ))}
-      </Box>
+        </Box>
+      )}
     </Box>
   )
 }
 
-export default ImageUpload
-
 ImageUpload.propTypes = {
-  onImagesChange: PropTypes.func
+  onImagesChange: PropTypes.func.isRequired,
+  initialImages: PropTypes.array,
+  single: PropTypes.bool
 }
+
+export default ImageUpload

@@ -1,4 +1,3 @@
-
 import { Box, CircularProgress, TextField, FormControl } from '@mui/material'
 import PropTypes from 'prop-types'
 import ArrowBack from '../../utils/ArrowBack'
@@ -13,7 +12,6 @@ import {
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { ThemeValidationSchema } from '@/validations/theme'
 
-
 export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
   const title = initialFormData.idTheme
     ? 'Editar Temática'
@@ -27,7 +25,7 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
         onSubmit(values)
       }}
     >
-      {({  errors, touched, setFieldValue }) => (
+      {({ errors, touched, setFieldValue }) => (
         <fieldset
           disabled={loading}
           style={{ border: 'none', padding: 0, margin: 0 }}
@@ -35,15 +33,14 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
           <Box
             component={Form}
             sx={{
-              width: '700px',
-              margin: '0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              width: '600px',
               p: 4,
               border: '1px solid #ccc',
               borderRadius: 4,
               boxShadow: 3,
               backgroundColor: '#fff',
-              display: 'flex',
-              flexDirection: 'column',
               gap: 3
             }}
           >
@@ -89,9 +86,16 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
               }}
             >
               <ImageUpload
+                single
+                initialImages={
+                  typeof initialFormData.imageUrlTheme === 'string'
+                    ? [initialFormData.imageUrlTheme]
+                    : []
+                }
                 onImagesChange={(files) => {
                   const file = files?.[0] || null
-                  setFieldValue('imageUrlTheme', file)
+                  // Si eliminás la actual y no subís una nueva, se manda vacío
+                  setFieldValue('imageUrlTheme', file ?? '')
                 }}
               />
               {touched.imageUrlTheme && errors.imageUrlTheme && (

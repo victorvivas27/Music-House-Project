@@ -73,7 +73,10 @@ export const Theme = () => {
       }, 500)
     }
   }
-  const rows = Array.isArray(state.themes.content) ? state.themes.content : []
+  
+  const rows = Array.isArray(state.themes.content)
+   ? state.themes.content 
+   : []
 
   useEffect(() => {
     getAllTheme(page, rowsPerPage, firstLoad)

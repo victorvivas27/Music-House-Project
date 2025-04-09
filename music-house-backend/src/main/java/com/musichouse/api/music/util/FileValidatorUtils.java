@@ -64,9 +64,9 @@ public class FileValidatorUtils {
     public static List<String> validateImage(MultipartFile file) {
         List<String> errors = new ArrayList<>();
 
+        // ✅ No validar nada si no se envió una imagen
         if (file == null || file.isEmpty()) {
-            errors.add("El archivo está vacío o no fue enviado.");
-            return errors;
+            return errors; // archivo opcional, se permite no enviarlo
         }
 
         String contentType = file.getContentType();

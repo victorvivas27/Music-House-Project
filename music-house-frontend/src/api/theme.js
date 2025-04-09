@@ -41,13 +41,13 @@ export const createTheme = async (formData) => {
 };
 
 
-export const updateTheme = async ({ idTheme, themeName, description }) => {
+export const updateTheme = async ( formData ) => {
   try {
     const response = await axios
-    .put(`${BASE_URL}/themes`, {
-      idTheme,
-      themeName,
-      description
+    .put(`${BASE_URL}/themes`,formData, {
+      headers:{
+        'Content-Type': 'multipart/form-data',
+      },
     });
     return response.data;
   } catch (error) {

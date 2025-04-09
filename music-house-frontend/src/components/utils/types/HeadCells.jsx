@@ -199,7 +199,8 @@ export const headCellsTheme = [
     id: 'description',
     numeric: false,
     disablePadding: false,
-    label: 'Descripción'
+    label: 'Descripción',
+    disableSort: true
   },
   {
     id: 'actions',

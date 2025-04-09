@@ -65,10 +65,9 @@ const EditUser = ({ onSwitch }) => {
       const formDataToSend = new FormData()
       const { picture, ...userWithoutPicture } = formData
 
-      if (
-        !picture ||
-        picture === '' ||
-        (typeof picture === 'object' && !(picture instanceof File))
+      if (!picture ||
+         picture === '' ||
+         (typeof picture === 'object' && !(picture instanceof File))
       ) {
         userWithoutPicture.picture = user?.data?.picture || ''
       }
