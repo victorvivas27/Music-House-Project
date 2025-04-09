@@ -2,11 +2,44 @@ import { useEffect, useRef, useState } from 'react'
 import { Box } from '@mui/material'
 import PropTypes from 'prop-types'
 import TematicCard from '../instrumentGallery/TematicCard'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import { flexRowContainer } from '@/components/styles/styleglobal'
+
 const AutoScrollCarousel = ({ themes }) => {
+  const styleCarousel = {
+    ...flexRowContainer,
+    position: 'absolute',
+    backgroundColor: 'var(--color-primario)',
+    color: 'white',
+    borderRadius: '50%',
+    cursor: 'pointer',
+    p: 1,
+    userSelect: 'none',
+    zIndex: 10
+  }
   const carouselRef = useRef(null)
+  const cardRef = useRef(null)
+
   const [isPaused, setIsPaused] = useState(false)
-const extendedThemes = [...themes, ...themes]
-useEffect(() => {
+  const [showArrows, setShowArrows] = useState(false)
+
+  const extendedThemes = [...themes, ...themes]
+
+  const scrollLeft = () => {
+    if (carouselRef.current && cardRef.current) {
+      const cardWidth = cardRef.current.offsetWidth
+      carouselRef.current.scrollLeft -= cardWidth
+    }
+  }
+
+  const scrollRight = () => {
+    if (carouselRef.current && cardRef.current) {
+      const cardWidth = cardRef.current.offsetWidth
+      carouselRef.current.scrollLeft += cardWidth
+    }
+  }
+
+  useEffect(() => {
     const container = carouselRef.current
     if (!container) return
 
@@ -19,68 +52,109 @@ useEffect(() => {
         }
       }
     }
-    const interval = setInterval(scroll, 15)
-    const pauseScroll = () => setIsPaused(true)
-    const resumeScroll = () => setIsPaused(false)
-    container.addEventListener('mouseenter', pauseScroll)
-    container.addEventListener('mouseleave', resumeScroll)
-    container.addEventListener('touchstart', pauseScroll)
-    container.addEventListener('touchend', resumeScroll)
 
-    return () => {
-      clearInterval(interval)
-      container.removeEventListener('mouseenter', pauseScroll)
-      container.removeEventListener('mouseleave', resumeScroll)
-      container.removeEventListener('touchstart', pauseScroll)
-      container.removeEventListener('touchend', resumeScroll)
-    }
+    const interval = setInterval(scroll, 10)
+    return () => clearInterval(interval)
   }, [isPaused])
 
   return (
     <Box
-      ref={carouselRef}
       sx={{
         width: '100vw',
-        overflowX: 'scroll',
-        overflowY: 'hidden',
-        display: 'flex',
-        flexWrap: 'nowrap',
-        scrollBehavior: 'auto',
-        scrollbarWidth: 'none',
-        '&::-webkit-scrollbar': {
-          display: 'none'
-        }
+        position: 'relative'
+      }}
+      onMouseEnter={() => {
+        setIsPaused(true)
+        setShowArrows(true)
+      }}
+      onMouseLeave={() => {
+        setIsPaused(false)
+        setShowArrows(false)
       }}
     >
-      {extendedThemes.map((tematic, index) => (
-        <Box
-          key={`tematic-card-${index}`}
-          sx={{
-            flex: '0 0 auto',
-            width: {
-              xs: '78%',
-              sm: '70%',
-              md: '45%',
-              lg: '40%'
-            }
-          }}
-        >
-          <TematicCard
-            title={tematic.themeName}
-            paragraph={tematic.description}
-            imageUrl={
-              tematic.imageUrls?.length > 0
-                ? tematic.imageUrls[0].imageUrl
-                : '/default-theme.jpg'
-            }
-          />
-        </Box>
-      ))}
+      {/* Carrusel */}
+      <Box
+        ref={carouselRef}
+        sx={{
+          overflowX: 'scroll',
+          overflowY: 'hidden',
+          display: 'flex',
+          flexWrap: 'nowrap',
+          scrollBehavior: 'auto',
+          scrollbarWidth: 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          }
+        }}
+      >
+        {extendedThemes.map((tematic, index) => (
+          <Box
+            key={`tematic-card-${index}`}
+            ref={index === 0 ? cardRef : null}
+            sx={{
+              flex: '0 0 auto',
+              width: {
+                xs: '78%',
+                sm: '70%',
+                md: '45%',
+                lg: '40%'
+              }
+            }}
+          >
+            <TematicCard
+              title={tematic.themeName}
+              paragraph={tematic.description}
+              imageUrlTheme={tematic?.imageUrlTheme}
+            />
+          </Box>
+        ))}
+      </Box>
+
+      {/* Flechas */}
+      {showArrows && (
+        <>
+          {/* Izquierda */}
+          <Box
+            onClick={scrollLeft}
+            onMouseDown={(e) => e.preventDefault()}
+            role="button"
+            tabIndex={0}
+            sx={{
+              top: '50%',
+              left: 10,
+              transform: 'translateY(-50%)',
+              ...styleCarousel
+            }}
+          >
+            <ArrowForwardIosIcon
+              fontSize="small"
+              sx={{ transform: 'rotate(180deg)' }}
+            />
+          </Box>
+
+          {/* Derecha */}
+          <Box
+            onClick={scrollRight}
+            onMouseDown={(e) => e.preventDefault()}
+            role="button"
+            tabIndex={0}
+            sx={{
+              top: '50%',
+              right: 10,
+              transform: 'translateY(-50%)',
+              ...styleCarousel
+            }}
+          >
+            <ArrowForwardIosIcon fontSize="small" />
+          </Box>
+        </>
+      )}
     </Box>
   )
 }
 
-export default AutoScrollCarousel
 AutoScrollCarousel.propTypes = {
   themes: PropTypes.array.isRequired
 }
+
+export default AutoScrollCarousel

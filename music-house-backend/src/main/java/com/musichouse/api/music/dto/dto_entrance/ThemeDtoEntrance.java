@@ -1,6 +1,6 @@
 package com.musichouse.api.music.dto.dto_entrance;
 
-import com.musichouse.api.music.interfaces.HasThemeName;
+import com.musichouse.api.music.interfaces.HasName;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ThemeDtoEntrance implements HasThemeName {
+public class ThemeDtoEntrance implements HasName {
 
     @NotBlank(message = "El nombre de la tematica es obligatorio")
     @Size(max = 100, message = "El nombre de la tematica debe tener como máximo {max} caracteres")
@@ -24,7 +24,7 @@ public class ThemeDtoEntrance implements HasThemeName {
     private String imageUrlTheme;
 
     @Override
-    public String getThemeName() {
+    public String getName() {
         return themeName;
     }
 }

@@ -1,7 +1,7 @@
 package com.musichouse.api.music.dto.dto_modify;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.musichouse.api.music.interfaces.HasThemeName;
+import com.musichouse.api.music.interfaces.HasName;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ThemeDtoModify implements HasThemeName {
+public class ThemeDtoModify implements HasName {
 
     @NotNull(message = "El idTheme  es obligatorio")
     private UUID idTheme;
@@ -31,7 +31,7 @@ public class ThemeDtoModify implements HasThemeName {
     private String imageUrlTheme;
 
     @Override
-    public String getThemeName() {
+    public String getName() {
         return themeName;
     }
 }

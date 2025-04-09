@@ -15,24 +15,24 @@ export const Home = () => {
   const { state, dispatch } = useAppStates()
   const { searchOptions } = state
   const [selectedInstruments, setSelectedInstruments] = useState([])
-  const [loading, setLoading] = useState(true)
   const [instruments, setInstruments] = useState([])
 
   useEffect(() => {
     const fetchInstruments = async () => {
-      setLoading(true)
+      dispatch({ type: actions.SET_LOADING, payload:true })
       try {
         const { result } = await getInstruments()
         setInstruments(result)
       } catch (error) {
         toast.error(error)
       } finally {
-        setTimeout(() => setLoading(false), 500)
+        setTimeout(() => 
+          dispatch({ type: actions.SET_LOADING, payload:false }), 500)
       }
     }
 
     fetchInstruments()
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     if (instruments.length > 0) {
@@ -61,20 +61,21 @@ export const Home = () => {
 
   useEffect(() => {
     const fetchTheme = async () => {
-      setLoading(true)
+      dispatch({ type: actions.SET_LOADING, payload:true })
       try {
         const data = await getTheme()
         dispatch({ type: actions.SET_THEMES, payload: data.result })
       } catch (error) {
         toast.error(error)
       } finally {
-        setTimeout(() => setLoading(false), 500)
+        setTimeout(() =>  
+          dispatch({ type: actions.SET_LOADING, payload:false }), 500)
       }
     }
 
     fetchTheme()
   }, [dispatch])
-  if (loading) return <Loader title="Un momento por favor..." />
+  if (state.loading) return <Loader title="Un momento por favor..." />
 
   return (
     <>

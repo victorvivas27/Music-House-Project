@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -37,12 +37,11 @@ public class Category {
 
     /**
      * Anotación que marca el campo como una fecha de creación automática.
-     * Hibernate asigna automáticamente la fecha y hora actual al insertar
-     * la entidad en la base de datos.
+     * Hibernate asigna automáticamente la fecha y hora actual al insertar la entidad en la base de datos.
      */
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date registDate;
+    @Column(name = "regist_date", nullable = false, updatable = false)
+    private LocalDateTime registDate;
 
 
     /**
@@ -51,8 +50,8 @@ public class Category {
      * la entidad es actualizada en la base de datos.
      */
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date modifiedDate;
+    @Column(name = "modified_date", nullable = false)
+    private LocalDateTime modifiedDate;
 
 
     /**

@@ -21,4 +21,6 @@ public interface CategoryInterface {
 
     void deleteCategory(UUID idCategory) throws ResourceNotFoundException;
 
+    Page<CategoryDtoExit> searchCategory(String categoryName, Pageable pageable);
+
 }

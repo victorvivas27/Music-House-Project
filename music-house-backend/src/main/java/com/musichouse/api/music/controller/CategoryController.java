@@ -4,7 +4,7 @@ import com.musichouse.api.music.dto.dto_entrance.CategoryDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.CategoryDtoExit;
 import com.musichouse.api.music.dto.dto_modify.CategoryDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
-import com.musichouse.api.music.service.CategoryService;
+import com.musichouse.api.music.service.category.CategoryService;
 import com.musichouse.api.music.util.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

@@ -5,7 +5,7 @@ import com.musichouse.api.music.entity.Theme;
 import com.musichouse.api.music.exception.CategoryAssociatedException;
 import com.musichouse.api.music.exception.DuplicateNameException;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
-import com.musichouse.api.music.interfaces.HasThemeName;
+import com.musichouse.api.music.interfaces.HasName;
 import com.musichouse.api.music.repository.InstrumentRepository;
 import com.musichouse.api.music.repository.ThemeRepository;
 import lombok.AllArgsConstructor;
@@ -25,13 +25,14 @@ public class ThemeValidator {
     /**
      * Valida que no exista una temática con el mismo nombre (ignorando mayúsculas/minúsculas).
      *
-     * @param dto Objeto que implementa la interfaz {@link HasThemeName}, del cual se obtiene el nombre a validar.
+     * @param dto Objeto que implementa la interfaz {@link HasName}, del cual se obtiene el nombre a validar.
      * @throws DuplicateNameException si ya existe una temática con el mismo nombre.
      */
-    public void validateUniqueName(HasThemeName dto) {
-        themeRepository.findByThemeNameIgnoreCase(dto.getThemeName())
+    public void validateUniqueName(HasName dto) {
+        themeRepository.findByThemeNameIgnoreCase(dto.getName())
                 .ifPresent(existing -> {
-                    throw new DuplicateNameException("Ya existe una temática con ese nombre: " + dto.getThemeName());
+                    throw new DuplicateNameException(
+                            "Ya existe una temática con ese nombre: " + dto.getName());
                 });
     }
 
@@ -43,11 +44,12 @@ public class ThemeValidator {
      * @param currentId ID de la temática que se está modificando.
      * @throws DuplicateNameException si el nombre ya está en uso por otra temática.
      */
-    public void validateUniqueName(HasThemeName dto, UUID currentId) {
-        themeRepository.findByThemeNameIgnoreCase(dto.getThemeName())
+    public void validateUniqueName(HasName dto, UUID currentId) {
+        themeRepository.findByThemeNameIgnoreCase(dto.getName())
                 .ifPresent(existing -> {
                     if (!existing.getIdTheme().equals(currentId)) {
-                        throw new DuplicateNameException("Ya existe una temática con ese nombre: " + dto.getThemeName());
+                        throw new DuplicateNameException(
+                                "Ya existe una temática con ese nombre: " + dto.getName());
                     }
                 });
     }
@@ -59,7 +61,8 @@ public class ThemeValidator {
      * @return La entidad {@link Theme} correspondiente al ID.
      * @throws ResourceNotFoundException si no se encuentra ninguna temática con ese ID.
      */
-    public Theme validateThemeId(UUID idTheme) throws ResourceNotFoundException {
+    public Theme validateThemeId(UUID idTheme)
+            throws ResourceNotFoundException {
         return themeRepository.findById(idTheme)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Temática con ID " + idTheme + " no encontrada"));
@@ -73,13 +76,15 @@ public class ThemeValidator {
      * @throws ResourceNotFoundException   si la temática no existe.
      * @throws CategoryAssociatedException si existen instrumentos asociados a la temática.
      */
-    public void validateInstrumentAssociation(UUID idTheme) throws ResourceNotFoundException {
+    public void validateInstrumentAssociation(UUID idTheme)
+            throws ResourceNotFoundException {
         Theme theme = validateThemeId(idTheme);
 
         List<Instrument> instruments = instrumentRepository.findByTheme(theme);
 
         if (!instruments.isEmpty()) {
-            throw new CategoryAssociatedException("No se puede eliminar la temática porque está asociada a uno o más instrumentos.");
+            throw new CategoryAssociatedException(
+                    "No se puede eliminar la temática porque está asociada a uno o más instrumentos.");
         }
     }
 
@@ -115,7 +120,8 @@ public class ThemeValidator {
                 .anyMatch(name -> name.equals(filename));
 
         if (exists) {
-            throw new DuplicateNameException("La imagen '" + filename + "' ya fue usada en otra temática.");
+            throw new DuplicateNameException(
+                    "La imagen '" + filename + "' ya fue usada en otra temática.");
         }
     }
 }

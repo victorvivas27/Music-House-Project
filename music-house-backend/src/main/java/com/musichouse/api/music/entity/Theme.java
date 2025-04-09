@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -46,8 +46,8 @@ public class Theme {
      * Hibernate asigna automáticamente la fecha y hora actual al insertar la entidad en la base de datos.
      */
     @CreationTimestamp
-    @Temporal(TemporalType.DATE)
-    private Date registDate;
+    @Column(name = "regist_date", nullable = false, updatable = false)
+    private LocalDateTime registDate;
 
     /**
      * Anotación que marca el campo como una fecha de modificación automática.
@@ -55,8 +55,8 @@ public class Theme {
      * la entidad es actualizada en la base de datos.
      */
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date modifiedDate;
+    @Column(name = "modified_date", nullable = false)
+    private LocalDateTime modifiedDate;
 
 
     /**
@@ -71,10 +71,12 @@ public class Theme {
     @PrePersist
     @PreUpdate
     private void normalizeData() {
-        if (this.themeName != null) this.themeName = this.themeName
-                .replaceAll("\\s+", " ")
-                .trim()
-                .toUpperCase();
+        if (this.themeName != null) {
+            this.themeName = this.themeName
+                    .replaceAll("\\s+", " ")
+                    .trim()
+                    .toUpperCase();
 
+        }
     }
 }
