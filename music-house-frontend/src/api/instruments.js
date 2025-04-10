@@ -23,14 +23,7 @@ export const getInstrumentById = async (id) => {
 };
 
 
-export const getThemes = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/theme/all`);
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-  }
-};
+
 
 
 export const createInstrument = async (formData) => {

@@ -64,16 +64,19 @@ const appReducer = (state, action) => {
     }
 
     case actions.SET_CATEGORIES:
-  return {
-    ...state,
-    categories: action.payload 
-    
-  }
+      return {
+        ...state,
+        categories: action.payload?.content
+          ? action.payload // si tiene paginación (tabla)
+          : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } // si es array plano (select)
+      }
 
   case actions.SET_THEMES:
     return {
       ...state,
-      themes: action.payload 
+      themes: action.payload?.content
+        ? action.payload 
+        : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } // si es array plano (select)
     }
 
     case actions.SET_USERS:

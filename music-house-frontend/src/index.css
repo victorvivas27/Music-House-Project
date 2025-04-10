@@ -4,6 +4,8 @@
   --calendario-fondo-no-disponible: #EE4116;
   --calendario-color-no-disponible: #B0B0B0;
 
+  --background-color: #ca2e2e;
+
   --color-primario: #FBC02D;
   --color-secundario: #5C5C5C;
   --color-secundario-80: #5C5C5CCC; /* 80% */
@@ -128,14 +130,14 @@
 
 
 
-/* @media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
   :root {
-    --background-color: var(--background-dark);
+   
     --texto-primario: var(--texto-primario-dark);
     --texto-secundario: var(--texto-secundario-dark);
     --color-primario: var(--color-primario-dark);
   }
-} */
+} 
 
 /* ✅ Reseteo y normalización de estilos */
 *,
@@ -171,7 +173,7 @@ html {
 }
 
 body {
-
+background-color: #10111053 ; 
   min-height: 100vh;
   overflow-x: hidden;
 

@@ -73,7 +73,6 @@ export const Theme = () => {
       }, 500)
     }
   }
-  
   const rows = Array.isArray(state.themes.content)
    ? state.themes.content 
    : []

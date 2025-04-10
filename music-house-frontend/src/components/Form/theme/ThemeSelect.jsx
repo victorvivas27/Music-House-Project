@@ -1,85 +1,114 @@
-import { Select, MenuItem, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { Select, MenuItem, Typography, CircularProgress } from '@mui/material'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import PropTypes from 'prop-types'
-import { getThemes } from '@/api/instruments'
-import { Loader } from '@/components/common/loader/Loader'
+import { useAppStates } from '@/components/utils/global.context'
+import { actions } from '@/components/utils/actions'
+import { getTheme } from '@/api/theme'
+import { getErrorMessage } from '@/api/getErrorMessage'
+import useAlert from '@/hook/useAlert'
 
-const ThemeSelect = ({ label, onChange, selectedThemeId = undefined }) => {
-  const [themes, setThemes] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [selectedTheme, setSelectedTheme] = useState('')
+const PAGE_SIZE = 2// o el número que prefieras
+
+const ThemeSelect = ({ label, onChange, selectedThemeId }) => {
+  const { state, dispatch } = useAppStates()
+  const themes = useMemo(() => state.themes?.content || [], [state.themes])
+  const [page, setPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+  const { showError } = useAlert()
+  const{ loading }=state
+
+  const fetchThemes = useCallback(async () => {
+    if (loading || !hasMore) return
+dispatch({ type: actions.SET_LOADING, payload: true })
+    try {
+      const response = await getTheme(page, PAGE_SIZE)
+      const newThemes = response.result?.content || []
+
+      const updated = [
+        ...themes,
+        ...newThemes.filter(
+          (newTheme) => !themes.some((t) => t.idTheme === newTheme.idTheme)
+        )
+      ]
+
+      dispatch({ type: actions.SET_THEMES, payload: updated })
+      setHasMore(!response.result.last)
+      setPage(prev => prev + 1)
+    } catch (error) {
+      showError(`❌ ${getErrorMessage(error)}`)
+    } finally {
+       dispatch({ type: actions.SET_LOADING, payload:false})
+    }
+  }, [dispatch, hasMore, loading, page, showError, themes])
 
   useEffect(() => {
-    const fetchThemes = async () => {
-      try {
-        const response = await getThemes()
-        setThemes(response.result || [])
-      } catch (error) {
-        setThemes([])
-      } finally {
-        setLoading(false)
+    if (themes.length === 0) {
+      fetchThemes()
+    }
+  }, [fetchThemes, themes.length])
+
+  const handleChange = (event) => {
+    onChange?.({
+      target: {
+        name: 'idTheme',
+        value: event.target.value
       }
-    }
-
-    fetchThemes()
-  }, [])
-
-  useEffect(() => {
-    if (!selectedThemeId || themes.length === 0) return
-
-    const foundTheme = themes.find((theme) => theme.idTheme === selectedThemeId)
-    if (foundTheme) {
-      setSelectedTheme(foundTheme)
-    }
-  }, [selectedThemeId, themes])
-
-  useEffect(() => {
-    if (loading || !selectedTheme) return
-    if (typeof onChange === 'function') {
-      onChange({
-        target: {
-          name: 'idTheme',
-          value: selectedTheme.idTheme
-        }
-      })
-    }
-  }, [selectedTheme, loading, onChange])
-
-  const handleThemeChange = (event) => {
-    setSelectedTheme(event.target.value)
+    })
   }
 
-  if (loading) {
-    return <Loader fullSize={false} />
+  const handleScroll = (event) => {
+    const bottom =
+      event.target.scrollTop + event.target.clientHeight >= event.target.scrollHeight - 10
+
+    if (bottom && hasMore && !loading) {
+      fetchThemes()
+    }
   }
 
   return (
     <Select
       displayEmpty
-      value={selectedTheme}
-      onChange={handleThemeChange}
+      fullWidth
+      value={selectedThemeId || ''}
+      onChange={handleChange}
       label={label}
       color="secondary"
+      MenuProps={{
+        PaperProps: {
+          sx: { 
+            height: 120, 
+            overflowY: 'auto' 
+          },
+          onScroll: handleScroll
+        }
+      }}
     >
-      {/* Placeholder */}
       <MenuItem value="" disabled>
         <Typography variant="h6">🎭 Selecciona una temática</Typography>
       </MenuItem>
 
-      {/* Opciones */}
-      {themes.map((theme, index) => (
-        <MenuItem key={`theme-select-${index}`} value={theme}>
+      {themes.map((theme) => (
+        <MenuItem key={theme.idTheme} value={theme.idTheme}>
           {theme.themeName}
         </MenuItem>
       ))}
+
+      {loading && (
+        <MenuItem disabled>
+          <CircularProgress size={20} />
+          <Typography variant="body2" sx={{ ml: 1 }}>
+            Cargando más...
+          </Typography>
+        </MenuItem>
+      )}
     </Select>
   )
 }
-
-export default ThemeSelect
 
 ThemeSelect.propTypes = {
   label: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   selectedThemeId: PropTypes.string
 }
+
+export default ThemeSelect

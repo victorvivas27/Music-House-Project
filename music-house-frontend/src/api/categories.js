@@ -65,7 +65,7 @@ export const deleteCategory = async (idCategory) => {
 };
 
 export const searchCategoryName = 
-async (name="", page = 0, size = 5, sort = "categoryName,asc") => {
+async (name="", page = 0, size = 2, sort = "categoryName,asc") => {
   try {
     const response = await axios
     .get(`${BASE_URL}/categories/search?name=${name}&page=${page}&size=${size}&sort=${sort}`);
