@@ -1,13 +1,13 @@
 package com.musichouse.api.music.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -68,7 +68,6 @@ public class Instrument {
      */
     @ManyToOne
     @JoinColumn(name = "id_category")
-
     private Category category;
 
     /**
@@ -76,7 +75,6 @@ public class Instrument {
      */
     @ManyToOne
     @JoinColumn(name = "id_theme")
-
     private Theme theme;
 
     /**
@@ -88,15 +86,14 @@ public class Instrument {
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
-    @JsonIgnore
     private List<ImageUrls> imageUrls = new ArrayList<>();
 
     /**
      * Características del instrumento.
      */
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "characteristics_id", referencedColumnName = "id_characteristics")
-    @JsonIgnore
+    @JoinColumn(name = "characteristics_id",
+            referencedColumnName = "id_characteristics")
     private Characteristics characteristics;
 
     /**
@@ -109,22 +106,37 @@ public class Instrument {
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
-    @JsonIgnore
     private List<AvailableDate> availableDates;
+
     /**
      * Anotación que marca el campo como una fecha de creación automática.
      * Hibernate asigna automáticamente la fecha y hora actual al insertar la entidad en la base de datos.
      */
     @CreationTimestamp
-    @Temporal(TemporalType.DATE)
-    private Date registDate;
+    @Column(name = "regist_date", nullable = false, updatable = false)
+    private LocalDateTime registDate;
 
-    // 📌 Normalizar a mayúsculas y eliminar espacios extra antes de guardar o actualizar
+    /**
+     * Anotación que marca el campo como una fecha de modificación automática.
+     * Hibernate asigna automáticamente la fecha y hora actual cada vez que
+     * la entidad es actualizada en la base de datos.
+     */
+    @UpdateTimestamp
+    @Column(name = "modified_date", nullable = false)
+    private LocalDateTime modifiedDate;
+
+    /**
+     * Normalizar a mayúsculas y eliminar espacios extra antes de guardar o actualizar
+     */
+
     @PrePersist
     @PreUpdate
     private void normalizeData() {
         if (this.name != null) {
-            this.name = this.name.replaceAll("\\s+", " ").trim().toUpperCase();
+            this.name = this.name
+                    .replaceAll("\\s+", " ")
+                    .trim()
+                    .toUpperCase();
         }
 
     }

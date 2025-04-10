@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   Box,
-  FormControl,
   Grid,
   Tooltip,
   Checkbox,
@@ -10,16 +9,21 @@ import {
 } from '@mui/material'
 import { useAppStates } from '@/components/utils/global.context'
 import ValidatedTextField from '@/Pages/Admin/common/ValidatedTextField'
-import { inputStyles } from '@/components/styles/styleglobal'
-import CategorySelect from '../category/CategorySelect'
-import ThemeSelect from '../theme/ThemeSelect'
+
 import ImageUrlsEdit from '@/components/common/imageUrls/ImageUrlsEdit'
 import ImageUpload from '@/components/common/imageUrls/ImageUpload '
-import { ContainerBottom, CustomButton, ParagraphResponsive, TitleResponsive } from '@/components/styles/ResponsiveComponents'
+import {
+  ContainerBottom,
+  CustomButton,
+  ParagraphResponsive,
+  TitleResponsive
+} from '@/components/styles/ResponsiveComponents'
 import ArrowBack from '@/components/utils/ArrowBack'
 import LoadingText from '@/components/common/loadingText/LoadingText'
 import PropTypes from 'prop-types'
-
+import SelectInfinete from '@/components/common/selectInfinite/SelectInfinite'
+import { getCategories } from '@/api/categories'
+import { getTheme } from '@/api/theme'
 
 const InstrumentForm = ({
   initialFormData,
@@ -156,8 +160,6 @@ const InstrumentForm = ({
               padding: 2
             }}
           >
-           
-
             <ValidatedTextField
               label="Nombre"
               name="name"
@@ -205,25 +207,19 @@ const InstrumentForm = ({
           {/*---------------------Fin formulario lado izquierdo----------------*/}
 
           {/*---------------------Formulario lado derecho----------------*/}
-          <Grid
-            item
-            xs={12}
-            md={6}
-          >
-            <FormControl
-              margin="normal"
-              sx={{
-                ...inputStyles,
-                '& .MuiInputBase-input': {
-                  color: 'var(--color-azul)'
-                }
-              }}
-            >
-              <CategorySelect
+          <Grid item xs={12} md={6}>
+          
+              <SelectInfinete
+                label="🎸🎷Selecciona una Categoría 🥁🪘"
+                name="idCategory"
+                selectedValue={formData?.idCategory}
                 onChange={handleChange}
-                selectedCategoryId={formData?.idCategory}
-                label=""
+                fetchDataFn={getCategories}
+                getId={(cat) => cat.idCategory}
+                getLabel={(cat) => cat.categoryName}
+                pageSize={2}
               />
+
               {/* 📌 Leyenda debajo del select */}
               <FormHelperText
                 sx={{
@@ -234,22 +230,21 @@ const InstrumentForm = ({
               >
                 ⚠️ Recuerda seleccionar una categoría antes de continuar.
               </FormHelperText>
-            </FormControl>
+            
 
-            <FormControl
-              margin="normal"
-              sx={{
-                ...inputStyles,
-                '& .MuiInputBase-input': {
-                  color: 'var(--color-azul)'
-                }
-              }}
-            >
-              <ThemeSelect
+           
+              <SelectInfinete
+                label="🎭 Selecciona una temática"
+                name="idTheme"
+                selectedValue={formData?.idTheme}
                 onChange={handleChange}
-                selectedThemeId={formData?.idTheme}
-                label=""
+                fetchDataFn={getTheme} 
+                getId={(item) => item.idTheme}
+                getLabel={(item) => item.themeName}
+                pageSize={2}
               />
+
+
               {/* 📌 Leyenda debajo del select */}
               <FormHelperText
                 sx={{
@@ -260,7 +255,7 @@ const InstrumentForm = ({
               >
                 ⚠️ No olvides elegir una temática para tu instrumento.
               </FormHelperText>
-            </FormControl>
+            
 
             <ValidatedTextField
               label="Precio"
@@ -281,7 +276,7 @@ const InstrumentForm = ({
               border: '1px dashed #aaa',
               borderRadius: 2,
               padding: 2,
-             
+
               width: '100%',
               height: '300px'
             }}
@@ -305,9 +300,7 @@ const InstrumentForm = ({
           {/*-----------------------Fin input imagen--------------*/}
 
           <Box sx={{ width: '100%', paddingBottom: '1rem' }}>
-            <TitleResponsive gutterBottom>
-              Características
-            </TitleResponsive>
+            <TitleResponsive gutterBottom>Características</TitleResponsive>
 
             <Box
               sx={{
