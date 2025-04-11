@@ -1,9 +1,9 @@
 package com.musichouse.api.music.service;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoEntrance;
+import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoAddInstrument;
 import com.musichouse.api.music.dto.dto_exit.ImagesUrlsDtoExit;
-import com.musichouse.api.music.entity.ImageUrls;
+import com.musichouse.api.music.entity.ImageUrlsInstrument;
 import com.musichouse.api.music.entity.Instrument;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.interfaces.ImageUrlsInterface;
@@ -37,7 +37,7 @@ public class ImageUrlsService implements ImageUrlsInterface {
     private final ThemeValidator themeValidator;
 
     @Override
-    public List<ImagesUrlsDtoExit> addImageUrls(List<MultipartFile> files, ImageUrlsDtoEntrance imageUrlsDtoEntrance)
+    public List<ImagesUrlsDtoExit> addImageUrls(List<MultipartFile> files, ImageUrlsDtoAddInstrument imageUrlsDtoEntrance)
             throws ResourceNotFoundException {
 
         UUID instrumentId = imageUrlsDtoEntrance.getIdInstrument();
@@ -52,22 +52,22 @@ public class ImageUrlsService implements ImageUrlsInterface {
 
         List<String> imageUrls = awss3Service.uploadFilesToS3Instrument(files, instrumentId);
 
-        List<ImageUrls> imageUrlEntities = imageUrls.stream().map(url -> {
-            ImageUrls imageUrlEntity = new ImageUrls();
+        List<ImageUrlsInstrument> imageUrlEntities = imageUrls.stream().map(url -> {
+            ImageUrlsInstrument imageUrlEntity = new ImageUrlsInstrument();
             imageUrlEntity.setImageUrl(url);
             imageUrlEntity.setInstrument(instrument);
             return imageUrlEntity;
         }).toList();
 
 
-        List<ImageUrls> savedImages = imageUrlsRepository.saveAll(imageUrlEntities);
+        List<ImageUrlsInstrument> savedImages = imageUrlsRepository.saveAll(imageUrlEntities);
 
         return savedImages.stream().map(image -> {
             return ImagesUrlsDtoExit.builder()
                     .idImage(image.getIdImage())
                     .idInstrument(instrumentId)
                     .imageUrl(image.getImageUrl())
-                    .registDate(image.getRegistDate())
+
                     .build();
         }).toList();
     }
@@ -83,7 +83,7 @@ public class ImageUrlsService implements ImageUrlsInterface {
 
     @Override
     public ImagesUrlsDtoExit getImageUrlsById(UUID idImage) throws ResourceNotFoundException {
-        ImageUrls imageUrls = imageUrlsRepository.findById(idImage).orElse(null);
+        ImageUrlsInstrument imageUrls = imageUrlsRepository.findById(idImage).orElse(null);
         if (imageUrls == null) {
             throw new ResourceNotFoundException("Imagen no encontrada con ID " + idImage);
         }
@@ -151,7 +151,7 @@ public class ImageUrlsService implements ImageUrlsInterface {
     @Transactional
     @Override
     public void deleteImageUrls(UUID idInstrument, UUID idImage) throws ResourceNotFoundException {
-        ImageUrls image = imageUrlsRepository.findById(idImage)
+        ImageUrlsInstrument image = imageUrlsRepository.findById(idImage)
                 .filter(img -> img.getInstrument().getIdInstrument().equals(idInstrument))
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Imagen no encontrada o no pertenece al instrumento con ID " + idInstrument
@@ -188,13 +188,13 @@ public class ImageUrlsService implements ImageUrlsInterface {
 
     @Override
     public List<ImagesUrlsDtoExit> getImageUrlsByInstrumentId(UUID instrumentId) {
-        List<ImageUrls> imageUrls = imageUrlsRepository.findByInstrumentId(instrumentId);
+        List<ImageUrlsInstrument> imageUrls = imageUrlsRepository.findByInstrumentId(instrumentId);
 
         return imageUrls.stream()
                 .map(image -> ImagesUrlsDtoExit.builder()
                         .idImage(image.getIdImage())
                         .idInstrument(image.getInstrument().getIdInstrument())
-                        .registDate(image.getRegistDate())
+
                         .imageUrl(image.getImageUrl())
                         .build()
                 ).toList();

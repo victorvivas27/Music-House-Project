@@ -20,7 +20,8 @@ public class CacheConfig {
         cacheManager.setCaches(Arrays.asList(
                 buildCache("categories", 100, 10),
                 buildCache("themes", 100, 10),
-                buildCache("users", 100, 10)
+                buildCache("users", 100, 10),
+                buildCache("instruments", 100, 10)
         ));
         return cacheManager;
     }

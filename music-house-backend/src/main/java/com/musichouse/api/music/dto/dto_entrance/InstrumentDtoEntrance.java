@@ -1,5 +1,6 @@
 package com.musichouse.api.music.dto.dto_entrance;
 
+import com.musichouse.api.music.interfaces.HasName;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,9 +17,8 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InstrumentDtoEntrance {
+public class InstrumentDtoEntrance implements HasName {
 
-    private UUID idInstrumnet;
 
     @NotBlank(message = "El nombre del instrumento es obligatorio")
     @Size(max = 100, message = "El nombre del instrumento debe tener como máximo {max} caracteres")
@@ -38,19 +38,20 @@ public class InstrumentDtoEntrance {
     @NotBlank(message = "Las medidas del instrumento son obligatorias")
     private String measures;
 
-    @NotNull(message = "El ID de la categoría no debe estar en blanco")
+    @NotNull(message = "El ID de la categoría es obligatorio")
     private UUID idCategory;
 
-    @NotNull(message = "El ID de la temática no debe estar en blanco")
+    @NotNull(message = "El ID de la temática es obligatorio")
     private UUID idTheme;
 
-    //@NotNull(message = "Debe cargar al menos una imagen al crear el instrumento")
-    @Valid
     private List<String> imageUrls;
 
-    @NotNull(message = "Las características del instrumento deben estar presentes")
     @Valid
+    @NotNull(message = "Las características del instrumento deben estar presentes")
     private CharacteristicDtoEntrance characteristic;
 
-
+    @Override
+    public String getName() {
+        return name;
+    }
 }

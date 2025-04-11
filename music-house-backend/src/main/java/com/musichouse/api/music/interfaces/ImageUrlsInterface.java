@@ -1,7 +1,7 @@
 package com.musichouse.api.music.interfaces;
 
 
-import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoEntrance;
+import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoAddInstrument;
 import com.musichouse.api.music.dto.dto_exit.ImagesUrlsDtoExit;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface ImageUrlsInterface {
 
-    List<ImagesUrlsDtoExit> addImageUrls(List<MultipartFile> files, ImageUrlsDtoEntrance imageUrlsDtoEntrance) throws ResourceNotFoundException;
+    List<ImagesUrlsDtoExit> addImageUrls(List<MultipartFile> files, ImageUrlsDtoAddInstrument imageUrlsDtoEntrance) throws ResourceNotFoundException;
 
     List<ImagesUrlsDtoExit> getAllImageUrls();
 

@@ -2,7 +2,7 @@ package com.musichouse.api.music.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoEntrance;
+import com.musichouse.api.music.dto.dto_entrance.ImageUrlsDtoAddInstrument;
 import com.musichouse.api.music.dto.dto_exit.ImagesUrlsDtoExit;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.service.ImageUrlsService;
@@ -38,7 +38,7 @@ public class ImageUrlsController {
     ) throws ResourceNotFoundException, JsonProcessingException {
 
         // Parseás vos con ObjectMapper
-        ImageUrlsDtoEntrance imageUrlsDtoEntrance = objectMapper.readValue(jsonData, ImageUrlsDtoEntrance.class);
+        ImageUrlsDtoAddInstrument imageUrlsDtoEntrance = objectMapper.readValue(jsonData, ImageUrlsDtoAddInstrument.class);
 
         List<ImagesUrlsDtoExit> result = imageUrlsService.addImageUrls(files, imageUrlsDtoEntrance);
 

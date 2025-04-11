@@ -3,7 +3,7 @@ package com.musichouse.api.music.dto.dto_exit;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Setter
@@ -16,10 +16,10 @@ public class ThemeDtoExit {
     private UUID idTheme;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Santiago")
-    private Date registDate;
+    private LocalDateTime registDate;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Santiago")
-    private Date modifiedDate;
+    private LocalDateTime modifiedDate;
 
     private String themeName;
 

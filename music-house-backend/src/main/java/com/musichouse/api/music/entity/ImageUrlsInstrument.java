@@ -1,10 +1,9 @@
 package com.musichouse.api.music.entity;
 
+import com.musichouse.api.music.abstracts.ImageUrl;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.Date;
 import java.util.UUID;
 
 
@@ -15,10 +14,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@Table(name = "IMAGE_URLS")
+@Table(name = "IMAGE_URLS_INSTRUMENTS")
 @AllArgsConstructor
 @NoArgsConstructor
-public class ImageUrls {
+public class ImageUrlsInstrument extends ImageUrl {
+
     /**
      * Identificador único de la imagen.
      */
@@ -26,12 +26,6 @@ public class ImageUrls {
     @GeneratedValue(generator = "UUID")
 
     private UUID idImage;
-
-    /**
-     * URL de la imagen.
-     */
-    @Column(length = 1024)
-    private String imageUrl;
 
     /**
      * Instrumento al que pertenece la imagen.
@@ -45,14 +39,5 @@ public class ImageUrls {
 
     private Instrument instrument;
 
-
-    /**
-     * Anotación que marca el campo como una fecha de creación automática.
-     * Hibernate asigna automáticamente la fecha y hora actual al insertar
-     * la entidad en la base de datos.
-     */
-    @CreationTimestamp
-    @Temporal(TemporalType.DATE)
-    private Date registDate;
 
 }

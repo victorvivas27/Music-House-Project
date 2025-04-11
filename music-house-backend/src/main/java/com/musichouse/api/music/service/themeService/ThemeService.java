@@ -49,7 +49,6 @@ public class ThemeService implements ThemeInterface {
 
         Theme theme = themeBuilder.buildThemeWithImage(themeDtoEntrance, file);
 
-
         Theme saved = themeRepository.save(theme);
 
         return mapper.map(saved, ThemeDtoExit.class);
@@ -85,9 +84,7 @@ public class ThemeService implements ThemeInterface {
 
         themeValidator.validateUniqueName(themeDtoModify, themeDtoModify.getIdTheme());
 
-        themeToUpdate.setThemeName(themeDtoModify.getThemeName());
-
-        themeToUpdate.setDescription(themeDtoModify.getDescription());
+        themeToUpdate = mapper.map(themeDtoModify, Theme.class);
 
         Theme theme = themeBuilder.updateThemeImageIfPresent(themeToUpdate, file);
 

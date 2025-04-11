@@ -17,7 +17,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @Table(name = "INSTRUMENTS")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -86,7 +86,7 @@ public class Instrument {
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
-    private List<ImageUrls> imageUrls = new ArrayList<>();
+    private List<ImageUrlsInstrument> imageUrls = new ArrayList<>();
 
     /**
      * Características del instrumento.
