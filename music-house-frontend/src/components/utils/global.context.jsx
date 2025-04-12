@@ -8,7 +8,6 @@ import phoneHolder from '@/assets/phoneHolder.svg'
 import PropTypes from 'prop-types'
 
 const initialState = {
-  instruments: [],
   favorites: [],
   loading: false,
  
@@ -25,6 +24,7 @@ const initialState = {
   categories: { content: [], totalElements: 0 },
   themes: { content: [], totalElements: 0 },
   users: { content: [], totalElements: 0 },
+  instruments: { content: [], totalElements: 0 },
 }
 
 const ContextGlobal = createContext()
@@ -34,10 +34,7 @@ const appReducer = (state, action) => {
     case actions.SET_LOADING:
       return { ...state, loading: action.payload }
 
-    case actions.UPDATE_INSTRUMENTS:
-      return { ...state, instruments: action.payload }
-
-    case actions.FIND_INSTRUMENT:
+  case actions.FIND_INSTRUMENT:
       return {
         ...state,
         searchOptions: {
@@ -67,8 +64,8 @@ const appReducer = (state, action) => {
       return {
         ...state,
         categories: action.payload?.content
-          ? action.payload // si tiene paginación (tabla)
-          : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } // si es array plano (select)
+          ? action.payload 
+          : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } 
       }
 
   case actions.SET_THEMES:
@@ -76,8 +73,16 @@ const appReducer = (state, action) => {
       ...state,
       themes: action.payload?.content
         ? action.payload 
-        : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } // si es array plano (select)
+        : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } 
     }
+
+    case actions.SET_INSTRUMENTS:
+      return {
+        ...state,
+        instruments: action.payload?.content
+          ? action.payload 
+          : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } 
+      }
 
     case actions.SET_USERS:
       return {

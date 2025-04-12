@@ -30,7 +30,7 @@ import { getErrorMessage } from '@/api/getErrorMessage'
 import { Loader } from '@/components/common/loader/Loader'
 import ArrowBack from '@/components/utils/ArrowBack'
 import { headCellsUser } from '@/components/utils/types/HeadCells'
-import { paginationStyles } from '@/components/styles/styleglobal'
+import { flexRowContainer, paginationStyles } from '@/components/styles/styleglobal'
 import { MainWrapper } from '@/components/styles/ResponsiveComponents'
 import { useAppStates } from '@/components/utils/global.context'
 import { actions } from '@/components/utils/actions'
@@ -190,21 +190,29 @@ export const Usuarios = () => {
                       {page * rowsPerPage + index + 1}
                     </TableCell>
 
-                    <TableCell align="left">
-                      <img
-                        src={
-                          row?.picture || '/src/assets/avatar_general_02.png'
-                        }
-                        alt="Instrumento"
-                        style={{
-                          width: '80px',
-                          height: '80px',
-                          objectFit: 'cover',
-                          borderRadius: '50%',
-                          border: '1px solid #ccc',
-                          boxShadow: 'var(--box-shadow)'
+                    <TableCell align="left"sx={{ ...flexRowContainer}}>
+                      <Box
+                        sx={{
+                          width: 80,
+                          height: 80,
+                          
                         }}
-                      />
+                      >
+                        <img
+                          src={
+                            row?.picture || '/src/assets/avatar_general_02.png'
+                          }
+                          alt="Instrumento"
+                          style={{
+                            width: '80px',
+                            height: '80px',
+                            objectFit: 'cover',
+                            borderRadius: '50%',
+                            border: '1px solid #ccc',
+                            boxShadow: 'var(--box-shadow)'
+                          }}
+                        />
+                      </Box>
                     </TableCell>
 
                     <TableCell align="left">

@@ -2,7 +2,6 @@ import { Box, CircularProgress, TextField, FormControl } from '@mui/material'
 import PropTypes from 'prop-types'
 import ArrowBack from '../../utils/ArrowBack'
 import { inputStyles } from '../../styles/styleglobal'
-import ImageUpload from '../../common/imageUrls/ImageUpload '
 import LoadingText from '../../common/loadingText/LoadingText'
 import {
   ContainerBottom,
@@ -11,6 +10,7 @@ import {
 } from '../../styles/ResponsiveComponents'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { ThemeValidationSchema } from '@/validations/theme'
+import ImageUploadSingle from './ImageUploadSingle'
 
 export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
   const title = initialFormData.idTheme
@@ -85,18 +85,15 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
                 backgroundColor: '#fafafa'
               }}
             >
-              <ImageUpload
-                single
-                initialImages={
+              <ImageUploadSingle
+                initialImage={
                   typeof initialFormData.imageUrlTheme === 'string'
-                    ? [initialFormData.imageUrlTheme]
-                    : []
+                    ? initialFormData.imageUrlTheme
+                    : ''
                 }
-                onImagesChange={(files) => {
-                  const file = files?.[0] || null
-                  // Si eliminás la actual y no subís una nueva, se manda vacío
+                onImageChange={(file) =>
                   setFieldValue('imageUrlTheme', file ?? '')
-                }}
+                }
               />
               {touched.imageUrlTheme && errors.imageUrlTheme && (
                 <ParagraphResponsive color="var(--color-error)" mt={1}>

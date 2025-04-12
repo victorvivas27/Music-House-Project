@@ -69,17 +69,21 @@ export const headCellsReservas = [
 
 export const headCellsInstrument = [
   {
+    id: 'index',
+    numeric: true,
+    disablePadding: false,
+    label: 'N°',
+    hidden: false,
+    disableSort: true
+  },
+  {
     id: 'imageUrl',
     numeric: true,
     disablePadding: false,
-    label: 'Imagen'
+    label: 'Imagen',
+    disableSort: true
   },
-  {
-    id: 'idInstrument',
-    numeric: true,
-    disablePadding: false,
-    label: 'ID'
-  },
+ 
   {
     id: 'name',
     numeric: false,
@@ -87,10 +91,37 @@ export const headCellsInstrument = [
     label: 'Nombre'
   },
   {
+    id: 'themeName',
+    numeric: false,
+    disablePadding: false,
+    label: 'Tematica',
+    disableSort: true
+  },
+  {
+    id: 'categoryName',
+    numeric: false,
+    disablePadding: false,
+    label: 'Categoria',
+    disableSort: true
+  },
+  {
+    id: 'registDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Registro'
+  },
+  {
+    id: 'modifiedDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Modificado'
+  },
+  {
     id: 'actions',
     numeric: false,
     disablePadding: false,
-    label: 'Acciones'
+    label: 'Acciones',
+    disableSort: true
   }
 ]
 
@@ -165,6 +196,18 @@ export const headCellsCategory = [
     disableSort: true
   },
   {
+    id: 'registDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Registro'
+  },
+  {
+    id: 'modifiedDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Modificado'
+  },
+  {
     id: 'actions',
     numeric: false,
     disablePadding: false,
@@ -201,6 +244,18 @@ export const headCellsTheme = [
     disablePadding: false,
     label: 'Descripción',
     disableSort: true
+  },
+  {
+    id: 'registDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Registro'
+  },
+  {
+    id: 'modifiedDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Modificado'
   },
   {
     id: 'actions',

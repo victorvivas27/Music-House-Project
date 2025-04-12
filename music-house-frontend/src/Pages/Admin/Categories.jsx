@@ -20,16 +20,24 @@ import useAlert from '@/hook/useAlert'
 import { useAppStates } from '@/components/utils/global.context'
 import { actions } from '@/components/utils/actions'
 import { deleteCategory, getCategories } from '@/api/categories'
-import { EnhancedTableHead, EnhancedTableToolbar, handleSelectAll, handleSelected, handleSort, isSelected } from './common/tableHelper'
+import {
+  EnhancedTableHead,
+  EnhancedTableToolbar,
+  handleSelectAll,
+  handleSelected,
+  handleSort,
+  isSelected
+} from './common/tableHelper'
 import { headCellsCategory } from '@/components/utils/types/HeadCells'
 import { getErrorMessage } from '@/api/getErrorMessage'
 import { Loader } from '@/components/common/loader/Loader'
-import { MainWrapper, TitleResponsive } from '@/components/styles/ResponsiveComponents'
+import {
+  MainWrapper,
+  TitleResponsive
+} from '@/components/styles/ResponsiveComponents'
 import ArrowBack from '@/components/utils/ArrowBack'
 import SearchInput from '@/components/common/search/SearchInput'
 import { paginationStyles } from '@/components/styles/styleglobal'
-
-
 
 export const Categories = () => {
   const [order, setOrder] = useState('asc')
@@ -72,8 +80,6 @@ export const Categories = () => {
   useEffect(() => {
     fetchData(page, rowsPerPage, firstLoad)
   }, [page, rowsPerPage, order, orderBy])
-
- 
 
   const handleAdd = () => navigate('/agregarCategoria')
 
@@ -121,8 +127,6 @@ export const Categories = () => {
       showError(`❌ ${getErrorMessage(error)}`)
     }
   }
-
- 
 
   if (state.loading) return <Loader title="Cargando categorías..." />
 
@@ -177,8 +181,7 @@ export const Categories = () => {
                     tabIndex={-1}
                     key={row.idCategory}
                     selected={isItemSelected}
-                    className={
-                      isRowEven ? 'table-row-even' : 'table-row-odd'}
+                    className={isRowEven ? 'table-row-even' : 'table-row-odd'}
                     sx={{ cursor: 'pointer' }}
                     onClick={(event) => handleClick(event, row.idCategory)}
                   >
@@ -195,7 +198,15 @@ export const Categories = () => {
                     </TableCell>
 
                     <TableCell align="left">{row.categoryName}</TableCell>
-                    <TableCell align="left">{row.description}</TableCell>
+                    <TableCell align="left"
+                     sx={{
+                      whiteSpace: 'normal',
+                      wordBreak: 'break-word',
+                      maxWidth: 500 
+                    }}
+                    >{row.description}</TableCell>
+                    <TableCell align="left">{row.registDate}</TableCell>
+                    <TableCell align="left">{row.modifiedDate}</TableCell>
                     <TableCell align="left">
                       <Box
                         style={{
@@ -232,7 +243,9 @@ export const Categories = () => {
               {rows.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
-                    <TitleResponsive>No se encontraron categorías</TitleResponsive>
+                    <TitleResponsive>
+                      No se encontraron categorías
+                    </TitleResponsive>
                   </TableCell>
                 </TableRow>
               )}
@@ -244,7 +257,6 @@ export const Categories = () => {
                 </TableRow>
               )
             )}
-            
           </Table>
         </TableContainer>
 

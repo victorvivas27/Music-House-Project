@@ -34,7 +34,7 @@ import {
 } from '@/components/styles/ResponsiveComponents'
 import ArrowBack from '@/components/utils/ArrowBack'
 import { headCellsTheme } from '@/components/utils/types/HeadCells'
-import { paginationStyles } from '@/components/styles/styleglobal'
+import { flexRowContainer, paginationStyles } from '@/components/styles/styleglobal'
 import { useAppStates } from '@/components/utils/global.context'
 import { actions } from '@/components/utils/actions'
 import SearchNameTheme from '@/components/common/search/SearchNameTheme'
@@ -73,9 +73,7 @@ export const Theme = () => {
       }, 500)
     }
   }
-  const rows = Array.isArray(state.themes.content)
-   ? state.themes.content 
-   : []
+  const rows = Array.isArray(state.themes.content) ? state.themes.content : []
 
   useEffect(() => {
     getAllTheme(page, rowsPerPage, firstLoad)
@@ -199,26 +197,43 @@ export const Theme = () => {
                       {page * rowsPerPage + index + 1}
                     </TableCell>
 
-                    <TableCell align="left">
-                      <img
-                        src={
-                          row?.imageUrlTheme ||
-                          '/src/assets/instrumento_general_03.jpg'
-                        }
-                        alt="Imagen tematica"
-                        style={{
-                          width: '80px',
-                          height: '80px',
-                          objectFit: 'cover',
-                          borderRadius: '50%',
-                          border: '1px solid #ccc',
-                          boxShadow: 'var(--box-shadow)'
+                    <TableCell align="left"sx={{ ...flexRowContainer}}>
+                      <Box
+                        sx={{
+                          width: 80,
+                        
+                         
                         }}
-                      />
+                      >
+                        <img
+                          src={
+                            row?.imageUrlTheme ||
+                            '/src/assets/instrumento_general_03.jpg'
+                          }
+                          alt="Imagen tematica"
+                          style={{
+                            width: '80px',
+                            height: '80px',
+                            objectFit: 'cover',
+                            borderRadius: '50%',
+                            border: '1px solid #ccc',
+                            boxShadow: 'var(--box-shadow)',
+                            display: 'block'
+                          }}
+                        />
+                      </Box>
                     </TableCell>
 
                     <TableCell align="left">{row.themeName}</TableCell>
-                    <TableCell align="left">{row.description}</TableCell>
+                    <TableCell align="left"
+                      sx={{
+                        whiteSpace: 'normal',
+                        wordBreak: 'break-word',
+                        maxWidth: 500 
+                      }}
+                    >{row.description}</TableCell>
+                    <TableCell align="left">{row.registDate}</TableCell>
+                    <TableCell align="left">{row.modifiedDate}</TableCell>
                     <TableCell align="left">
                       <Box
                         style={{

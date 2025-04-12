@@ -13,16 +13,18 @@ import { Loader } from '@/components/common/loader/Loader'
 import { ThemeForm } from '@/components/Form/theme/ThemeForm'
 export const EditarTheme = () => {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [initialFormData, setInitialFormData] = useState(null)
   const { state, dispatch } = useAppStates()
-  const navigate = useNavigate()
   const { showSuccess, showError } = useAlert()
+ 
 
   useEffect(() => {
-    const getTheme = async () => {
+const getTheme = async () => {
       dispatch({ type: actions.SET_LOADING, payload:true })
       try {
         const themeData = await getThemeById(id)
+        
         setInitialFormData({
           idTheme: themeData.result.idTheme || '',
           themeName: themeData.result.themeName || '',
@@ -49,7 +51,7 @@ export const EditarTheme = () => {
         imageUrlTheme === '' ||
         (typeof imageUrlTheme === 'string' && !(imageUrlTheme instanceof File))
       ) {
-        themeWithoutImageUrl.imageUrlTheme = state.theme?.imageUrlTheme || ''
+      themeWithoutImageUrl.imageUrlTheme = initialFormData.imageUrlTheme || ''
       }
 
       formDataToSend.append('theme', JSON.stringify(themeWithoutImageUrl))
@@ -67,7 +69,9 @@ export const EditarTheme = () => {
     }
   }
 
-  if (state.loading) return <Loader title="Un momento por favor..." />
+  if (!initialFormData || state.loading) {
+    return <Loader title="Un momento por favor..." />
+  }
 
   return (
     <CreateWrapper>
