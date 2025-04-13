@@ -1,81 +1,66 @@
-import { useEffect, useState } from 'react'
-import { Typography } from '@mui/material'
-import { toast } from 'react-toastify'
+import { useCallback, useEffect, useRef, useState} from 'react'
 import { useAppStates } from '@/components/utils/global.context'
 import { getInstruments } from '@/api/instruments'
 import { actions } from '@/components/utils/actions'
 import { getTheme } from '@/api/theme'
 import { Loader } from '@/components/common/loader/Loader'
-import { MainWrapper, ProductsWrapper } from '@/components/styles/ResponsiveComponents'
+import { MainWrapper, ProductsWrapper, TitleResponsive } from '@/components/styles/ResponsiveComponents'
 import AutoScrollCarousel from '@/components/common/autoScrollCarousel/AutoScrollCarousel'
 import ProductCard from '@/components/common/instrumentGallery/ProductCard'
+import { getErrorMessage } from '@/api/getErrorMessage'
+import useAlert from '@/hook/useAlert'
 
 
 export const Home = () => {
   const { state, dispatch } = useAppStates()
-  const { searchOptions } = state
-  const [selectedInstruments, setSelectedInstruments] = useState([])
-  const [instruments, setInstruments] = useState([])
+  const { showError } = useAlert()
+  const [page, setPage] = useState(0)
+  const [pageSize] = useState(5)
 
-  useEffect(() => {
-    const fetchInstruments = async () => {
-      dispatch({ type: actions.SET_LOADING, payload:true })
-      try {
-        const { result } = await getInstruments()
-        setInstruments(result)
-      } catch (error) {
-        toast.error(error)
-      } finally {
-        setTimeout(() => 
-          dispatch({ type: actions.SET_LOADING, payload:false }), 500)
+  const observer = useRef()
+const lastElementRef = useCallback(
+  (node) => {
+    if (state.loading) return
+    if (observer.current) observer.current.disconnect()
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && state.instruments?.content?.length < state.instruments?.totalElements) {
+        setPage((prevPage) => prevPage + 1)
       }
-    }
+    })
+    if (node) observer.current.observe(node)
+  },
+  [state.loading, state.instruments]
+)
+useEffect(() => {
+  const fetchData = async () => {
+    dispatch({ type: actions.SET_LOADING, payload: true })
 
-    fetchInstruments()
-  }, [dispatch])
+    try {
+      const instrumentsRes = await getInstruments(page, pageSize)
+      const newInstruments = instrumentsRes.result
 
-  useEffect(() => {
-    if (instruments.length > 0) {
-      dispatch({ type: actions.UPDATE_INSTRUMENTS, payload: instruments })
-      setSelectedInstruments(instruments)
-    }
-  }, [dispatch, instruments])
+      dispatch({
+        type: page === 0 ? actions.SET_INSTRUMENTS : actions.APPEND_INSTRUMENTS,
+        payload: newInstruments
+      })
 
-  useEffect(() => {
-    if (instruments.length > 0) {
-      const found = searchOptions.found
-        ? instruments.filter((instrument) =>
-            searchOptions.found.some(
-              (instrumentFound) =>
-                instrument.idInstrument === instrumentFound.idInstrument
-            )
-          )
-        : instruments
-      setSelectedInstruments(found)
-
-      if (searchOptions.found && window) {
-        window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
+      if (page === 0) {
+        const themesRes = await getTheme()
+        dispatch({ type: actions.SET_THEMES, payload: themesRes.result })
       }
+    } catch (error) {
+      showError(`❌ ${getErrorMessage(error)}`)
+    } finally {
+      dispatch({ type: actions.SET_LOADING, payload: false })
     }
-  }, [instruments, searchOptions])
+  }
 
-  useEffect(() => {
-    const fetchTheme = async () => {
-      dispatch({ type: actions.SET_LOADING, payload:true })
-      try {
-        const data = await getTheme()
-        dispatch({ type: actions.SET_THEMES, payload: data.result })
-      } catch (error) {
-        toast.error(error)
-      } finally {
-        setTimeout(() =>  
-          dispatch({ type: actions.SET_LOADING, payload:false }), 500)
-      }
-    }
+  fetchData()
+}, [dispatch, page, pageSize, showError])
 
-    fetchTheme()
-  }, [dispatch])
   if (state.loading) return <Loader title="Un momento por favor..." />
+
+  const instruments = state.instruments?.content || []
 
   return (
     <>
@@ -84,31 +69,25 @@ export const Home = () => {
       </MainWrapper>
 
       <ProductsWrapper>
-        {selectedInstruments.length > 0 ? (
-          selectedInstruments.map((instrument, index) => (
-            <ProductCard
-              key={`product-card-${index}`}
-              name={instrument.name}
-              imageUrl={
-                instrument.imageUrls?.length > 0
-                  ? instrument.imageUrls[0].imageUrl
-                  : '/src/assets/instrumento_general_03.jpg'
-              }
-              id={instrument.idInstrument}
-            />
-          ))
-        ) : (
-          <Typography
-            gutterBottom
-            variant="h6"
-            component="h6"
-            textAlign="center"
-            sx={{ paddingBottom: 1, fontWeight: 'bold' }}
-          >
-            No se han encontrado instrumentos
-          </Typography>
-        )}
-      </ProductsWrapper>
+  {instruments.length > 0 ? (
+    instruments.map((instrument, index) => (
+      <ProductCard
+        key={`product-card-${index}`}
+        name={instrument.name}
+        imageUrl={
+          instrument.imageUrls?.length > 0
+            ? instrument.imageUrls[0].imageUrl
+            : '/src/assets/instrumento_general_03.jpg'
+        }
+        id={instrument.idInstrument}
+      />
+    ))
+  ) : (
+    <TitleResponsive>No se han encontrado instrumentos</TitleResponsive>
+  )}
+  {/* Observador para scroll infinito */}
+  <div ref={lastElementRef} style={{ height: '1px' }} />
+</ProductsWrapper>
     </>
   )
 }

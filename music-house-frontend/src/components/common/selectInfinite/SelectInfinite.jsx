@@ -79,7 +79,7 @@ const SelectInfinete = ({
         name={name}
         MenuProps={{
           PaperProps: {
-            sx: { height: 130, overflowY: 'auto' },
+            sx: { height: 120, overflowY: 'auto' },
             onScroll: handleScroll
           }
         }}

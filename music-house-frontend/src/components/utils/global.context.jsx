@@ -75,7 +75,6 @@ const appReducer = (state, action) => {
         ? action.payload 
         : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } 
     }
-
     case actions.SET_INSTRUMENTS:
       return {
         ...state,
@@ -83,7 +82,17 @@ const appReducer = (state, action) => {
           ? action.payload 
           : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } 
       }
-
+      case actions.APPEND_INSTRUMENTS:
+        return {
+          ...state,
+          instruments: {
+            ...action.payload,
+            content: [
+              ...(state.instruments?.content || []),
+              ...action.payload.content
+            ]
+          }
+        }
     case actions.SET_USERS:
       return {
         ...state,
