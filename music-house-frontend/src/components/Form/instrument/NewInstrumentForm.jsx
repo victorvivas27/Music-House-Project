@@ -3,14 +3,15 @@ import { createInstrument } from '@/api/instruments'
 import ArrowBack from '@/components/utils/ArrowBack'
 import { formDataToCharacteristics } from '@/components/utils/editInstrument'
 import useAlert from '@/hook/useAlert'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import InstrumentForm from './InstrumentForm'
-
+import { useAppStates } from '@/components/utils/global.context'
+import { actions } from '@/components/utils/actions'
 
 const NewInstrumentForm = () => {
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
+  const { dispatch, state } = useAppStates()
   const { showSuccess, showError } = useAlert()
 
   const initialFormData = {
@@ -34,17 +35,16 @@ const NewInstrumentForm = () => {
 
   const onSubmit = useCallback(
     async (formData) => {
-      setLoading(true)
+      dispatch({ type: actions.SET_LOADING, payload: true })
 
       if (!formData) {
         showError('⚠️ Formulario inválido.')
-        setLoading(false)
+        dispatch({ type: actions.SET_LOADING, payload: false })
         return
       }
 
       const formDataToSend = new FormData()
 
-      // 📌 Convertir JSON correctamente
       const instrumentJson = JSON.stringify({
         name: formData.name || '',
         description: formData.description || '',
@@ -75,14 +75,15 @@ const NewInstrumentForm = () => {
         setTimeout(() => {
           navigate('/instruments')
         }, 1000)
-        
       } catch (error) {
         showError(`❌ ${getErrorMessage(error)}`)
       } finally {
-        setLoading(false)
+        setTimeout(() => {
+          dispatch({ type: actions.SET_LOADING, payload: false })
+        }, 1000)
       }
     },
-    [navigate, showError, showSuccess]
+    [dispatch, navigate, showError, showSuccess]
   )
 
   return (
@@ -91,8 +92,7 @@ const NewInstrumentForm = () => {
       <InstrumentForm
         initialFormData={initialFormData}
         onSubmit={onSubmit}
-        loading={loading}
-       
+        loading={state.loading}
       />
     </>
   )

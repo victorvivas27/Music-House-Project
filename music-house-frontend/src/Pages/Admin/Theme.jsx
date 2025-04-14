@@ -126,7 +126,7 @@ export const Theme = () => {
     }
   }
 
-  if (state.loading) return <Loader title="Cargando categorías..." />
+  if (state.loading) return <Loader title="Cargando tematicas..." />
 
   return (
     <MainWrapper>

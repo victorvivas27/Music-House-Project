@@ -31,17 +31,11 @@ export const NewCategoryForm = () => {
           description: formData.description
         })
 
-        if (response?.message) {
-          setTimeout(() => {
-            showSuccess(`✅ ${response.message}`)
-            navigate('/categories')
-          }, 1100)
+        showSuccess(`✅ ${response.message}`)
 
-          dispatch({
-            type: actions.CATEGORY_CREATED,
-            payload: { created: true }
-          })
-        }
+        setTimeout(() => {
+          navigate('/categories')
+        }, 1500)
       } catch (error) {
         showError(`❌ ${getErrorMessage(error)}`)
       } finally {

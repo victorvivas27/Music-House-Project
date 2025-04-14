@@ -1,9 +1,12 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { Box, Typography } from '@mui/material'
 import { useHeaderVisibility } from '@/components/utils/context/HeaderVisibilityGlobal'
-import { CreateWrapper, TitleResponsive } from '@/components/styles/ResponsiveComponents'
+import {
+  CreateWrapper,
+  TitleResponsive
+} from '@/components/styles/ResponsiveComponents'
 import { CategoryForm } from '@/components/Form/category/CategoryForm'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getCategoryById, updateCategory } from '@/api/categories'
 import { useAppStates } from '@/components/utils/global.context'
 import useAlert from '@/hook/useAlert'
@@ -17,8 +20,7 @@ export const EditarCategoria = () => {
   const { state, dispatch } = useAppStates()
   const { showSuccess, showError } = useAlert()
   const [initialFormData, setInitialFormData] = useState(null)
-  
- 
+  const isSubmittingRef = useRef(false)
 
   useEffect(() => {
     const fetchCategory = async () => {
@@ -44,23 +46,30 @@ export const EditarCategoria = () => {
 
   const onSubmit = async (formData) => {
     if (!formData) return
-
+    isSubmittingRef.current = true
     dispatch({ type: actions.SET_LOADING, payload: true })
     try {
       const response = await updateCategory(formData)
 
-      if (response?.message) {
-        showSuccess(`✅ ${response.message}`)
+      showSuccess(`✅ ${response.message}`)
+      setTimeout(() => {
         navigate('/categories')
-      }
+      }, 1100)
+
+      setTimeout(() => {
+        dispatch({ type: actions.SET_LOADING, payload: false })
+        isSubmittingRef.current = false
+      }, 1000)
     } catch (error) {
       showError(`❌ ${getErrorMessage(error)}`)
-    } finally {
       dispatch({ type: actions.SET_LOADING, payload: false })
+      isSubmittingRef.current = false
     }
   }
 
-  if (state.loading) return <Loader title="Un momento por favor..." />
+  if (!initialFormData && !isSubmittingRef.current) {
+    return <Loader title="Un momento por favor..." />
+  }
 
   return (
     <main>

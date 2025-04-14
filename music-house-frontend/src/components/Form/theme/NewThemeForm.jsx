@@ -41,7 +41,6 @@ export const NewThemeForm = () => {
         new Blob([themeJson], { type: 'application/json' })
       )
 
-      
       if (formData.imageUrlTheme && formData.imageUrlTheme instanceof File) {
         formDataToSend.append('image', formData.imageUrlTheme)
       }
@@ -52,11 +51,13 @@ export const NewThemeForm = () => {
 
         setTimeout(() => {
           navigate('/theme')
-        }, 1100)
+        }, 1000)
       } catch (error) {
         showError(`❌ ${getErrorMessage(error)}`)
       } finally {
-        dispatch({ type: actions.SET_LOADING, payload: false })
+        setTimeout(() => {
+          dispatch({ type: actions.SET_LOADING, payload: false })
+        }, 1000)
       }
     },
     [dispatch, navigate, showError, showSuccess]

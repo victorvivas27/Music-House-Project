@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   CreateWrapper,
@@ -17,7 +17,7 @@ export const EditarTheme = () => {
   const [initialFormData, setInitialFormData] = useState(null)
   const { state, dispatch } = useAppStates()
   const { showSuccess, showError } = useAlert()
- 
+  const isSubmittingRef = useRef(false)
 
   useEffect(() => {
 const getTheme = async () => {
@@ -41,6 +41,7 @@ const getTheme = async () => {
   }, [id, showError, dispatch])
 
   const onSubmit = async (values) => {
+    isSubmittingRef.current = true
     dispatch({ type: actions.SET_LOADING, payload: true })
 
     try {
@@ -61,15 +62,24 @@ const getTheme = async () => {
       }
       const response = await updateTheme(formDataToSend)
       showSuccess(`✅ ${response.message}`)
-      navigate('/theme')
+
+      setTimeout(() => {
+        navigate('/theme')
+      }, 1100)
+
+      setTimeout(() => {
+        dispatch({ type: actions.SET_LOADING, payload: false })
+        isSubmittingRef.current = false
+      }, 1000)
+
     } catch (error) {
       showError(`❌ ${getErrorMessage(error)}`)
-    } finally {
       dispatch({ type: actions.SET_LOADING, payload: false })
-    }
+      isSubmittingRef.current = false
+    } 
   }
 
-  if (!initialFormData || state.loading) {
+  if (!initialFormData && !isSubmittingRef.current) {
     return <Loader title="Un momento por favor..." />
   }
 

@@ -9,7 +9,7 @@ import { getErrorMessage } from '@/api/getErrorMessage'
 import { addImage } from '@/api/images'
 import { getInstrumentById, updateInstrument } from '@/api/instruments'
 import { characteristicsToFormData, formDataToCharacteristics } from '@/components/utils/editInstrument'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useAlert from '@/hook/useAlert'
 import { useAppStates } from '@/components/utils/global.context'
 import { actions } from '@/components/utils/actions'
@@ -21,6 +21,8 @@ export const EditarInstrumento = () => {
   const [initialFormData, setInitialFormData] = useState(null)
   const { state, dispatch } = useAppStates()
   const { showSuccess, showError } = useAlert()
+   const isSubmittingRef = useRef(false)
+
 useEffect(() => {
    const getInstrument = async () => {
  dispatch({ type: actions.SET_LOADING, payload:true })
@@ -51,6 +53,7 @@ useEffect(() => {
   }, [dispatch, id, showError, state.instruments])
 
   const onSubmit = async (formData) => {
+    isSubmittingRef.current = true
       dispatch({ type: actions.SET_LOADING, payload: true })
     if (!formData) return
 
@@ -81,22 +84,26 @@ useEffect(() => {
 
           await addImage(formDataImages)
         }
+        showSuccess(`✅ ${response.message}`)
 
         setTimeout(() => {
-          showSuccess(`✅ ${response.message}`)
           navigate('/instruments')
         }, 1100)
-      } else {
-        showError(response?.message)
-      }
+
+   setTimeout(() => {
+        dispatch({ type: actions.SET_LOADING, payload: false })
+        isSubmittingRef.current = false
+      }, 1000)
+
+      } 
     } catch (error) {
       showError(`❌ ${getErrorMessage(error)}`)
-    } finally {
-      setTimeout(() => dispatch({ type: actions.SET_LOADING, payload: false }), 1100)
+       dispatch({ type: actions.SET_LOADING, payload: false })
+            isSubmittingRef.current = false
     }
   }
 
-  if (!initialFormData || state.loading) {
+  if (!initialFormData && !isSubmittingRef.current) {
     return <Loader title="Un momento por favor..." />
   }
 

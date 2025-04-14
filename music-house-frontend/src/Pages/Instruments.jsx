@@ -33,7 +33,10 @@ import {
   TitleResponsive
 } from '@/components/styles/ResponsiveComponents'
 import { headCellsInstrument } from '@/components/utils/types/HeadCells'
-import { flexRowContainer, paginationStyles } from '@/components/styles/styleglobal'
+import {
+  flexRowContainer,
+  paginationStyles
+} from '@/components/styles/styleglobal'
 import { useAppStates } from '@/components/utils/global.context'
 import { actions } from '@/components/utils/actions'
 import ArrowBack from '@/components/utils/ArrowBack'
@@ -65,8 +68,10 @@ export const Instruments = () => {
         payload: { content: [], totalElements: 0 }
       })
     } finally {
-      if (isFirst) setFirstLoad(false)
-      dispatch({ type: actions.SET_LOADING, payload: false })
+      setTimeout(() => {
+        if (isFirst) setFirstLoad(false)
+        dispatch({ type: actions.SET_LOADING, payload: false })
+      }, 500)
     }
   }
   const rows = Array.isArray(state?.instruments?.content)
@@ -195,11 +200,11 @@ export const Instruments = () => {
                       {page * rowsPerPage + index + 1}
                     </TableCell>
 
-                    <TableCell align="left" sx={{...flexRowContainer}}>
+                    <TableCell align="left" sx={{ ...flexRowContainer }}>
                       <Box
                         sx={{
                           width: 80,
-                          height: 80,
+                          height: 80
                         }}
                       >
                         <img

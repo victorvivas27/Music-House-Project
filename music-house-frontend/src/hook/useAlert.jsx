@@ -69,7 +69,7 @@ const useAlert = () => {
       icon: 'success',
       confirmButtonColor: '#3085d6',
       showConfirmButton: false,
-      timer: 2050,
+      timer: 1000,
       timerProgressBar: true,
       background: 'var(--color-secundario)',
       color: 'var(--color-primario)',

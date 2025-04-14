@@ -12,10 +12,15 @@ import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { ThemeValidationSchema } from '@/validations/theme'
 import ImageUploadSingle from './ImageUploadSingle'
 
+
 export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
+ 
   const title = initialFormData.idTheme
     ? 'Editar Temática'
     : 'Registrar Temática'
+
+
+ 
 
   return (
     <Formik
