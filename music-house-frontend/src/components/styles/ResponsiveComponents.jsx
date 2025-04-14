@@ -16,7 +16,7 @@ export const CustomButton = styled(Button, {
   textTransform: 'none',
   borderRadius: '8px',
   transition: '0.3s',
- '&:hover': {
+  '&:hover': {
     backgroundColor: 'var(--color-primario)',
     color: 'var(--color-azul)'
   },
@@ -24,7 +24,6 @@ export const CustomButton = styled(Button, {
     backgroundColor: 'var(--color-exito)'
   },
   '&:disabled': {
-   
     cursor: 'not-allowed'
   },
 
@@ -107,8 +106,7 @@ export const TitleResponsive = styled(Typography, {
   },
   [theme.breakpoints.up('xl')]: {
     fontWeight: 500,
-    fontSize: '2rem',
-    
+    fontSize: '2rem'
   },
 
   ...sx
@@ -140,28 +138,31 @@ export const ContainerLogo = styled(Box, {
 export const ParagraphResponsive = styled(Typography, {
   shouldForwardProp: (prop) => prop !== 'sx'
 })(({ theme, sx = {} }) => ({
-
   fontWeight: 300,
   fontSize: '0.7rem',
   fontStyle: 'italic',
   textShadow: '0 1px 2px var(--color-primario)',
+  wordWrap: 'break-word',
+  overflowWrap: 'break-word',
+
+  // 💡 Línea clamp (máximo 3 líneas + "...")
+  display: '-webkit-box',
+  WebkitLineClamp: 3,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 
   [theme.breakpoints.up('sm')]: {
-    fontSize: '0.7rem',
-   
+    fontSize: '0.7rem'
   },
   [theme.breakpoints.up('md')]: {
-    fontSize: '0.8rem',
-   
+    fontSize: '0.8rem'
   },
   [theme.breakpoints.up('lg')]: {
-    fontSize: '0.9rem',
-    
+    fontSize: '0.9rem'
   },
   [theme.breakpoints.up('xl')]: {
-    fontSize: '0.9rem',
-   
-   
+    fontSize: '0.9rem'
   },
 
   ...sx
@@ -188,16 +189,12 @@ export const CreateWrapper = styled(Container, {
   }
 }))
 
-
-
 export const BoxFormUnder = styled(Grid)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   margin: 'auto',
-
-  
 
   [theme.breakpoints.down('sm')]: {
     width: '99%',
@@ -220,33 +217,30 @@ export const BoxFormUnder = styled(Grid)(({ theme }) => ({
 export const BoxLogoSuperior = styled(Grid)(() => ({
   display: 'flex',
   flexDirection: 'column',
- alignItems: 'flex-end',
- marginTop:20,
- 
+  alignItems: 'flex-end',
+  marginTop: 20
 }))
 
 export const MainCrearUsuario = styled(Grid)(() => ({
   display: 'flex',
   flexDirection: 'column',
- backgroundImage: `url(${background})`,
+  backgroundImage: `url(${background})`,
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'left bottom',
   height: '100%',
   minHeight: '100vh',
   transition: 'background-image 1s ease-in-out',
-  backgroundAttachment: 'fixed',
- 
+  backgroundAttachment: 'fixed'
 }))
 
 export const MainWrapper = styled(Box)(() => ({
   display: 'flex',
-  justifyContent: 'flex-start', 
-  alignItems: 'center', 
+  justifyContent: 'flex-start',
+  alignItems: 'center',
   width: '100vw',
-  marginTop: 305, 
-  marginBottom: 50,
-  
+  marginTop: 305,
+  marginBottom: 50
 }))
 
 export const InstrumentDetailWrapper = styled(Box)(() => ({
@@ -255,9 +249,9 @@ export const InstrumentDetailWrapper = styled(Box)(() => ({
   flexDirection: 'column',
   alignItems: 'center',
   width: '98vw',
-  margin:"auto",
+  margin: 'auto',
   marginTop: 310,
-  marginBottom: 50,
+  marginBottom: 50
 }))
 
 export const PageWrapper = styled(Grid)(({ theme }) => ({
@@ -282,7 +276,5 @@ export const ProductsWrapper = styled(Box)(() => ({
   gap: 2,
   width: '100%',
   maxWidth: '99%',
-  margin: '0 auto',
- 
+  margin: '0 auto'
 }))
-
