@@ -65,12 +65,17 @@ export const deleteInstrument = async (idInstrument) => {
 };
 
 
-export const searchInstrumentsByName = async (name) => {
+export const searchInstrumentsByName = async (name, page = 0, size = 10) => {
   if (!name) return [];
 
   try {
-    const response = await axios
-    .get(`${BASE_URL}/instruments/search/${name}`);
+    const response = await axios.get(`${BASE_URL}/instruments/search`, {
+      params: {
+        name,
+        page,
+        size
+      }
+    });
     return response.data;
   } catch (error) {
     handleApiError(error);

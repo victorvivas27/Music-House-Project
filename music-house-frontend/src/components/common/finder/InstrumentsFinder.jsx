@@ -42,9 +42,10 @@ export const Finder = () => {
       }
 
       try {
-        const response = await searchInstrumentsByName(searchPattern)
-        setInstruments(response.result)
-        setFound(response.result.length > 0)
+        const response = await searchInstrumentsByName(searchPattern, 0, 5)
+        const content = response?.result?.content || []
+        setInstruments(content)
+        setFound(content.length > 0)
         setShowSugests(true)
       } catch (error) {
         setInstruments([])
@@ -181,12 +182,24 @@ export const Finder = () => {
                       fontWeight: 500
                     }}
                   >
-                    <ListItemText
-                      primary={instrument.name}
-                      primaryTypographyProps={{
-                        fontSize: '0.95rem'
-                      }}
-                    />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <img
+                        src={
+                          instrument.imageUrls?.[0]?.imageUrl ||
+                          '/src/assets/instrumento_general_03.jpg'
+                        }
+                        alt={instrument.name}
+                        width={40}
+                        height={40}
+                        style={{ objectFit: 'cover', borderRadius: '4px' }}
+                      />
+                      <ListItemText
+                        primary={instrument.name}
+                        primaryTypographyProps={{
+                          fontSize: '0.95rem'
+                        }}
+                      />
+                    </Box>
                   </Link>
                 </ListItem>
               ))}
