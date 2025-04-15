@@ -36,8 +36,8 @@ import {
   TitleResponsive
 } from '@/components/styles/ResponsiveComponents'
 import ArrowBack from '@/components/utils/ArrowBack'
-import SearchInput from '@/components/common/search/SearchInput'
 import { paginationStyles } from '@/components/styles/styleglobal'
+import SearchNameCategory from '@/components/common/search/SearchINameCategory'
 
 export const Categories = () => {
   const [order, setOrder] = useState('asc')
@@ -150,7 +150,7 @@ export const Categories = () => {
           numSelected={selected.length}
           handleConfirmDelete={() => handleConfirmDelete()}
         />
-        <SearchInput />
+        <SearchNameCategory/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}

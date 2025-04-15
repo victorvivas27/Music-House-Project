@@ -79,7 +79,7 @@ export const UsersApi = {
   },
 };
 
-export const searchName = 
+export const searchUserName = 
 async (name="", page = 0, size = 5, sort = "name,asc") => {
   try {
     const response = await axios

@@ -40,6 +40,7 @@ import {
 import { useAppStates } from '@/components/utils/global.context'
 import { actions } from '@/components/utils/actions'
 import ArrowBack from '@/components/utils/ArrowBack'
+import SearchNameInstrumnet from '@/components/common/search/SearchNameInstrument'
 
 export const Instruments = () => {
   const [order, setOrder] = useState('asc')
@@ -150,7 +151,7 @@ export const Instruments = () => {
           handleConfirmDelete={() => handleConfirmDelete()}
         />
         {/*Fin Tercer parte de la tabla */}
-
+        <SearchNameInstrumnet />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}

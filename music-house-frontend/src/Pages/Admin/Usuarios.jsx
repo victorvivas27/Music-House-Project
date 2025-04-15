@@ -30,10 +30,14 @@ import { getErrorMessage } from '@/api/getErrorMessage'
 import { Loader } from '@/components/common/loader/Loader'
 import ArrowBack from '@/components/utils/ArrowBack'
 import { headCellsUser } from '@/components/utils/types/HeadCells'
-import { flexRowContainer, paginationStyles } from '@/components/styles/styleglobal'
-import { MainWrapper } from '@/components/styles/ResponsiveComponents'
+import {
+  flexRowContainer,
+  paginationStyles
+} from '@/components/styles/styleglobal'
+import { MainWrapper, TitleResponsive } from '@/components/styles/ResponsiveComponents'
 import { useAppStates } from '@/components/utils/global.context'
 import { actions } from '@/components/utils/actions'
+import SearchNameUser from '@/components/common/search/SearchNameUser'
 
 export const Usuarios = () => {
   const [order, setOrder] = useState('asc')
@@ -69,9 +73,7 @@ export const Usuarios = () => {
       }, 500)
     }
   }
-  const rows = Array.isArray(state.users?.content) 
-  ? state.users.content 
-  : []
+  const rows = Array.isArray(state.users?.content) ? state.users.content : []
 
   useEffect(() => {
     getAllUsuarios(page, rowsPerPage, firstLoad)
@@ -142,7 +144,7 @@ export const Usuarios = () => {
           numSelected={selected.length}
           handleConfirmDelete={() => handleDelete()}
         />
-
+<SearchNameUser/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -192,12 +194,11 @@ export const Usuarios = () => {
                       {page * rowsPerPage + index + 1}
                     </TableCell>
 
-                    <TableCell align="left"sx={{ ...flexRowContainer}}>
+                    <TableCell align="left" sx={{ ...flexRowContainer }}>
                       <Box
                         sx={{
                           width: 80,
-                          height: 80,
-                          
+                          height: 80
                         }}
                       >
                         <img
@@ -264,8 +265,9 @@ export const Usuarios = () => {
 
               {rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} align="center" />
-                  <Typography>No se encontraron usuarios</Typography>
+                  <TableCell colSpan={headCellsUser.length + 1} align="center">
+                    <TitleResponsive>No se encontraron usuarios</TitleResponsive>
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
