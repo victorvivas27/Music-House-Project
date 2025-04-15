@@ -110,7 +110,7 @@ export const UserForm = ({
             boxShadow: 'var(--box-shadow)',
             padding: '24px',
             width: '100%',
-            maxWidth: '1300px',
+            maxWidth: '1100px',
             marginInline: 'auto'
           }}
         >

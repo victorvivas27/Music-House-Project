@@ -1,4 +1,4 @@
-import { inputStyles, inputWidth } from '@/components/styles/styleglobal'
+import { inputStyles } from '@/components/styles/styleglobal'
 import { FormControl, Grid, TextField } from '@mui/material'
 import { Field } from 'formik'
 
@@ -13,8 +13,7 @@ export const AddressFields = ({
       container
       spacing={2}
       key={index}
-      sx={{ ...inputWidth, border: '1px dashed black', borderRadius: 2 }}
-    >
+      >
       <Grid item xs={12} md={6}>
         {/* Calle */}
 

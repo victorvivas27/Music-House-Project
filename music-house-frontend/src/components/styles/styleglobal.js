@@ -101,13 +101,3 @@ export const fontSizeResponsi = {
   },
   marginRight: 1
 }
-
-export const inputWidth = {
-  width: {
-    xs: 'auto',
-    sm: '75%',
-    md: '75%',
-    lg: '80%',
-    xl: '80%'
-  }
-}

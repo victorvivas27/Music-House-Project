@@ -1,5 +1,5 @@
 import { ParagraphResponsive } from '@/components/styles/ResponsiveComponents'
-import { inputStyles, inputWidth } from '@/components/styles/styleglobal'
+import { inputStyles} from '@/components/styles/styleglobal'
 import { FormControl, Grid, TextField } from '@mui/material'
 import { ErrorMessage, Field } from 'formik'
 import PropTypes from 'prop-types'
@@ -9,7 +9,7 @@ export const TelegramField = ({ values, touched, errors }) => {
   return (
     <Grid container spacing={2}>
       <Grid item sm={10} md={5}>
-        <FormControl sx={{ ...inputStyles, mt: 2, ...inputWidth }}>
+        <FormControl sx={{ ...inputStyles}}>
           <Field
             as={TextField}
             name="telegramChatId"

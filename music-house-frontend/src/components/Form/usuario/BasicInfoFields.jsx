@@ -1,11 +1,11 @@
-import {  inputStyles, inputWidth} from "@/components/styles/styleglobal"
+import {  inputStyles} from "@/components/styles/styleglobal"
 import {  FormControl, Grid, TextField } from "@mui/material"
 import { ErrorMessage, Field } from "formik"
 import PropTypes from "prop-types"
 
 export const BasicInfoFields = ({ values, touched, errors }) => {
     return (
-      <Grid container spacing={2} sx={{ ...inputWidth, mt: 2 }}>
+      <Grid container spacing={2} >
       <Grid item xs={12} md={6}>
         <FormControl sx={{...inputStyles}}>
           <Field
