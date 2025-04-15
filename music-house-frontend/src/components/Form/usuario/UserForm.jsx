@@ -3,9 +3,9 @@ import {
   Typography,
   FormControlLabel,
   CircularProgress,
-  Box,
   Checkbox,
-  styled
+  styled,
+  Grid
 } from '@mui/material'
 import Link from '@mui/material/Link'
 import PropTypes from 'prop-types'
@@ -18,7 +18,7 @@ import {
   ParagraphResponsive,
   TitleResponsive
 } from '@/components/styles/ResponsiveComponents'
-import { flexColumnContainer } from '@/components/styles/styleglobal'
+
 import LoadingText from '@/components/common/loadingText/LoadingText'
 import { ErrorMessage, Formik } from 'formik'
 import { userValidationSchema } from '@/validations/userValidationSchema'
@@ -93,156 +93,175 @@ export const UserForm = ({
     <Formik
       initialValues={formikInitialValues}
       validationSchema={userValidationSchema}
-      validateOnChange={true}
-      validateOnBlur={true}
-      validateOnMount={false}
+      validateOnChange
+      validateOnBlur
       onSubmit={onSubmit}
       context={{ isUserAdmin }}
-      
     >
       {({ values, errors, touched, setFieldValue, handleSubmit }) => (
         <form
           onSubmit={handleSubmit}
-          style={{ 
-            border: '1px solid blue',
-          marginBottom:20,
-          width:"90vw"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.13)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            borderRadius: '12px',
+            marginBottom: '20px',
+            boxShadow: 'var(--box-shadow)',
+            padding: '24px',
+            width: '100%',
+            maxWidth: '1300px',
+            marginInline: 'auto'
           }}
         >
           <fieldset
             disabled={loading}
-            style={{
-               border: 'none', 
-               padding: 0, 
-               margin: 0 ,
-              display:"flex",
-              flexDirection:"column",
-              justifyContent:"center" ,
-              alignItems:"center" 
-            }}
+            style={{ border: 'none', padding: 0, margin: 0 }}
           >
-            <TitleResponsive> {title}</TitleResponsive>
-            <AvatarUploader
-              preview={preview}
-              setPreview={setPreview}
-              setFieldValue={setFieldValue}
-              showError={showError}
-            />
+            <TitleResponsive sx={{ mb: 4 }}>{title}</TitleResponsive>
 
-            <BasicInfoFields
-              values={values}
-              touched={touched}
-              errors={errors}
-            />
-
-            <AddressFields
-              addresses={values.addresses}
-              touched={touched.addresses}
-              errors={errors.addresses}
-              setFieldValue={setFieldValue}
-            />
-
-            <PhoneFields
-              phones={values.phones}
-              touched={touched.phones}
-              errors={errors.phones}
-              setFieldValue={setFieldValue}
-            />
-            {initialFormData?.idUser && (
-              <UserRolesSection
-                roles={values.roles}
-                isUserAdmin={isUserAdmin}
-                setFieldValue={setFieldValue}
-                showError={showError}
-              />
-            )}
-
-            {showPasswordFields && (
-              <PasswordFields
-                values={values}
-                touched={touched}
-                errors={errors}
-                setFieldValue={setFieldValue}
-              />
-            )}
-            <TelegramField values={values} touched={touched} errors={errors} />
-            {!initialFormData.idUser && !isUserAdmin && (
-              <Box sx={flexColumnContainer}>
-                <FormControlLabel
-                  control={
-                    <CustomCheckbox
-                      checked={values.accept}
-                      onChange={(e) =>
-                        setFieldValue('accept', e.target.checked)
-                      }
-                    />
-                  }
-                  label={
-                    <ParagraphResponsive sx={{ fontWeight: 'bold' }}>
-                      Acepto los términos y condiciones del servicio
-                    </ParagraphResponsive>
-                  }
-                  sx={{
-                    color: 'var(--texto-primario)',
-                    marginTop: '30px',
-                    marginRight: '0'
-                  }}
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <AvatarUploader
+                  preview={preview}
+                  setPreview={setPreview}
+                  setFieldValue={setFieldValue}
+                  showError={showError}
                 />
+              </Grid>
 
-                <ErrorMessage name="accept">
-                  {(msg) => (
-                    <Typography
-                      sx={{
-                        marginTop: '5px',
-                        color: 'var(--color-error)',
-                        minHeight: '40px',
-                        textAlign: 'center'
-                      }}
-                    >
-                      {msg}
-                    </Typography>
-                  )}
-                </ErrorMessage>
-              </Box>
-            )}
+              <Grid item xs={12}>
+                <TitleResponsive>Información Personal</TitleResponsive>
+                <BasicInfoFields
+                  values={values}
+                  touched={touched}
+                  errors={errors}
+                />
+              </Grid>
 
-            <ContainerBottom>
-              <CustomButton type="submit" disabled={loading}>
-                {combinedLoading ? (
-                  <>
-                    <LoadingText text={buttonTextLoading} />
-                    <CircularProgress
-                      size={30}
-                      sx={{ color: 'var(--color-azul)' }}
-                    />
-                  </>
-                ) : (
-                  buttonText
-                )}
-              </CustomButton>
+              <Grid item xs={12}>
+                <TitleResponsive>Dirección</TitleResponsive>
+                <AddressFields
+                  addresses={values.addresses}
+                  touched={touched.addresses}
+                  errors={errors.addresses}
+                  setFieldValue={setFieldValue}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TitleResponsive>Teléfono</TitleResponsive>
+                <PhoneFields
+                  phones={values.phones}
+                  touched={touched.phones}
+                  errors={errors.phones}
+                  setFieldValue={setFieldValue}
+                />
+              </Grid>
+
+              {initialFormData?.idUser && (
+                <Grid item xs={12}>
+                  <TitleResponsive>Roles del Usuario</TitleResponsive>
+                  <UserRolesSection
+                    roles={values.roles}
+                    isUserAdmin={isUserAdmin}
+                    setFieldValue={setFieldValue}
+                    showError={showError}
+                  />
+                </Grid>
+              )}
+
+              {showPasswordFields && (
+                <Grid item xs={12}>
+                  <TitleResponsive>Contraseña</TitleResponsive>
+                  <PasswordFields
+                    values={values}
+                    touched={touched}
+                    errors={errors}
+                    setFieldValue={setFieldValue}
+                  />
+                </Grid>
+              )}
+
+              <Grid item xs={12}>
+                <TitleResponsive>Telegram</TitleResponsive>
+                <TelegramField
+                  values={values}
+                  touched={touched}
+                  errors={errors}
+                />
+              </Grid>
 
               {!initialFormData.idUser && !isUserAdmin && (
-                <Link
-                  href=""
-                  underline="always"
-                  onClick={onSwitch}
-                  sx={{
-                    color: 'var(--texto-primario)',
-                    marginTop: { xs: '40px', md: '20px' }
-                  }}
-                >
-                  <ParagraphResponsive
-                    sx={{
-                      fontWeight: '600',
-                      color: 'var(--color-azul)'
-                    }}
-                  >
-                    Ya tengo una cuenta
-                    <ContactSupportRoundedIcon />
-                  </ParagraphResponsive>
-                </Link>
+                <Grid item xs={12}>
+                  <FormControlLabel
+                    control={
+                      <CustomCheckbox
+                        checked={values.accept}
+                        onChange={(e) =>
+                          setFieldValue('accept', e.target.checked)
+                        }
+                      />
+                    }
+                    label={
+                      <ParagraphResponsive sx={{ fontWeight: 'bold' }}>
+                        Acepto los términos y condiciones del servicio
+                      </ParagraphResponsive>
+                    }
+                  />
+                  <ErrorMessage name="accept">
+                    {(msg) => (
+                      <Typography
+                        sx={{
+                          marginTop: '5px',
+                          color: 'var(--color-error)',
+                          minHeight: '40px',
+                          textAlign: 'center'
+                        }}
+                      >
+                        {msg}
+                      </Typography>
+                    )}
+                  </ErrorMessage>
+                </Grid>
               )}
-            </ContainerBottom>
+
+              <Grid item xs={12}>
+                <ContainerBottom>
+                  <CustomButton type="submit" disabled={loading}>
+                    {combinedLoading ? (
+                      <>
+                        <LoadingText text={buttonTextLoading} />
+                        <CircularProgress
+                          size={30}
+                          sx={{ color: 'var(--color-azul)' }}
+                        />
+                      </>
+                    ) : (
+                      buttonText
+                    )}
+                  </CustomButton>
+
+                  {!initialFormData.idUser && !isUserAdmin && (
+                    <Link
+                      href=""
+                      underline="always"
+                      onClick={onSwitch}
+                      sx={{
+                        color: 'var(--texto-primario)',
+                        marginTop: { xs: '40px', md: '20px' }
+                      }}
+                    >
+                      <ParagraphResponsive
+                        sx={{ fontWeight: '600', color: 'var(--color-azul)' }}
+                      >
+                        Ya tengo una cuenta <ContactSupportRoundedIcon />
+                      </ParagraphResponsive>
+                    </Link>
+                  )}
+                </ContainerBottom>
+              </Grid>
+            </Grid>
           </fieldset>
         </form>
       )}

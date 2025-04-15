@@ -1,27 +1,25 @@
-import { flexRowContainer, fontSizeResponsi, inputStyles, inputWidth } from "@/components/styles/styleglobal"
-import { Visibility, VisibilityOff } from "@mui/icons-material"
-import { Box, FormControl, IconButton, InputAdornment, TextField } from "@mui/material"
-import { ErrorMessage, Field } from "formik"
-import PropTypes from "prop-types"
-import { useState } from "react"
+import { fontSizeResponsi, inputStyles } from '@/components/styles/styleglobal'
+import { Visibility, VisibilityOff } from '@mui/icons-material'
+import {
+  FormControl,
+  Grid,
+  IconButton,
+  InputAdornment,
+  TextField
+} from '@mui/material'
+import { ErrorMessage, Field } from 'formik'
+import PropTypes from 'prop-types'
+import { useState } from 'react'
 
-export const PasswordFields = ({
-    values,
-    touched,
-    errors,
-    setFieldValue
-  }) => {
-    const [showPassword, setShowPassword] = useState(false)
-    const [showPasswordRepeat, setShowPasswordRepeat] = useState(false)
-  
-    return (
-      <Box sx={{
-              border:"solid 1px red",
-             ...inputWidth,
-             ...flexRowContainer
-              }}>
-        {/* Campo de contraseña */}
-        <FormControl sx={{ ...inputStyles, mt: 2  }}>
+export const PasswordFields = ({ values, touched, errors, setFieldValue }) => {
+  const [showPassword, setShowPassword] = useState(false)
+  const [showPasswordRepeat, setShowPasswordRepeat] = useState(false)
+
+  return (
+    <Grid container spacing={2}>
+      {/* Campo de contraseña */}
+      <Grid item xs={12} md={6}>
+        <FormControl sx={{ ...inputStyles, mt: 2 }}>
           <Field
             as={TextField}
             name="password"
@@ -40,11 +38,17 @@ export const PasswordFields = ({
                   >
                     {showPassword ? (
                       <VisibilityOff
-                        sx={{ color: 'var(--color-exito)', ...fontSizeResponsi }}
+                        sx={{
+                          color: 'var(--color-exito)',
+                          ...fontSizeResponsi
+                        }}
                       />
                     ) : (
                       <Visibility
-                        sx={{ color: 'var(--color-secundario)', ...fontSizeResponsi }}
+                        sx={{
+                          color: 'var(--color-secundario)',
+                          ...fontSizeResponsi
+                        }}
                       />
                     )}
                   </IconButton>
@@ -53,8 +57,9 @@ export const PasswordFields = ({
             }}
           />
         </FormControl>
-  
-        {/* Campo de repetir contraseña */}
+      </Grid>
+
+      <Grid item xs={12} md={6}>
         <FormControl sx={{ ...inputStyles, mt: 2 }}>
           <Field
             as={TextField}
@@ -74,11 +79,17 @@ export const PasswordFields = ({
                   >
                     {showPasswordRepeat ? (
                       <VisibilityOff
-                        sx={{ color: 'var(--color-exito)', ...fontSizeResponsi }}
+                        sx={{
+                          color: 'var(--color-exito)',
+                          ...fontSizeResponsi
+                        }}
                       />
                     ) : (
                       <Visibility
-                        sx={{ color: 'var(--color-secundario)', ...fontSizeResponsi }}
+                        sx={{
+                          color: 'var(--color-secundario)',
+                          ...fontSizeResponsi
+                        }}
                       />
                     )}
                   </IconButton>
@@ -87,12 +98,13 @@ export const PasswordFields = ({
             }}
           />
         </FormControl>
-      </Box>
-    )
-  }
-  PasswordFields.propTypes = {
-    values: PropTypes.object.isRequired,
-    touched: PropTypes.object.isRequired,
-    errors: PropTypes.object.isRequired,
-    setFieldValue: PropTypes.func.isRequired
-  }
+      </Grid>
+    </Grid>
+  )
+}
+PasswordFields.propTypes = {
+  values: PropTypes.object.isRequired,
+  touched: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+  setFieldValue: PropTypes.func.isRequired
+}

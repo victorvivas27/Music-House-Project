@@ -1,16 +1,13 @@
-import { flexRowContainer, inputStyles, inputWidth } from "@/components/styles/styleglobal"
-import { Box, FormControl, TextField } from "@mui/material"
+import {  inputStyles, inputWidth} from "@/components/styles/styleglobal"
+import {  FormControl, Grid, TextField } from "@mui/material"
 import { ErrorMessage, Field } from "formik"
 import PropTypes from "prop-types"
 
 export const BasicInfoFields = ({ values, touched, errors }) => {
     return (
-      <Box sx={{
-              border:"solid 1px red",
-             ...inputWidth,
-             ...flexRowContainer
-              }}>
-        <FormControl sx={{...inputStyles, mt: 2 }}>
+      <Grid container spacing={2} sx={{ ...inputWidth, mt: 2 }}>
+      <Grid item xs={12} md={6}>
+        <FormControl sx={{...inputStyles}}>
           <Field
             as={TextField}
             label="🏷️Nombre"
@@ -20,8 +17,9 @@ export const BasicInfoFields = ({ values, touched, errors }) => {
             helperText={<ErrorMessage name="name" />}
           />
         </FormControl>
-  
-        <FormControl sx={{...inputStyles, mt: 2 }}>
+        </Grid>
+        <Grid item xs={12} md={6}>
+        <FormControl sx={{...inputStyles}}>
           <Field
             as={TextField}
             label="👤Apellido"
@@ -31,8 +29,10 @@ export const BasicInfoFields = ({ values, touched, errors }) => {
             helperText={<ErrorMessage name="lastName" />}
           />
         </FormControl>
-  
-        <FormControl sx={{...inputStyles, mt: 2 }}>
+        </Grid>
+
+        <Grid item xs={12}>
+        <FormControl sx={{...inputStyles }}>
           <Field
             as={TextField}
             label="📧 Email"
@@ -43,7 +43,8 @@ export const BasicInfoFields = ({ values, touched, errors }) => {
             helperText={<ErrorMessage name="email" />}
           />
         </FormControl>
-      </Box>
+        </Grid>
+        </Grid>
     )
   }
   

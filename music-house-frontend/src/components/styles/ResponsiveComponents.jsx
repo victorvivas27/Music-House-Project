@@ -6,9 +6,9 @@ import background from '@/assets/CrearUsuarioBackGround.png'
 export const CustomButton = styled(Button, {
   shouldForwardProp: (prop) => prop !== 'sx'
 })(({ theme, sx = {} }) => ({
+  width: '100%',
   display: 'flex',
   justifyContent: 'space-evenly',
-  width: '40%',
   height: '40px',
   color: 'var(--color-secundario)',
   backgroundColor: 'var(--color-primario)',
@@ -44,8 +44,10 @@ export const CustomButton = styled(Button, {
 }))
 
 export const ContainerBottom = styled(Grid, {
-  shouldForwardProp: (prop) => prop !== 'sx'
+  shouldForwardProp: (prop) => prop !== 'sx',
+   
 })(({ theme, sx = {} }) => ({
+   width: '100%',
   ...flexColumnContainer,
   [theme.breakpoints.up('sm')]: {
     width: '100%'

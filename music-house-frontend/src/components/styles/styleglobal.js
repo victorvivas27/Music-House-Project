@@ -4,8 +4,8 @@ export const inputStyles = {
   height: 70,
   '& .MuiInputBase-input': {
     color: 'var(--color-azul)',
-   fontSize: '16px',
-  
+    fontSize: '16px',
+
   },
 
   '& .MuiOutlinedInput-root': {
@@ -14,30 +14,30 @@ export const inputStyles = {
       borderWidth: '2px',
       borderRadius: '8px',
       fontSize: '16px',
-      
+
     },
     '&:hover fieldset': {
       borderColor: 'var(--color-primario)',
       fontSize: '16px',
-    
+
     },
     '&.Mui-focused fieldset': {
       borderColor: 'var(--color-exito)',
       fontSize: '16px',
-     
+
     }
   },
 
   '& .MuiInputLabel-root': {
     color: 'var(--color-azul)',
     fontSize: '18px',
-   
+
   },
 
   '& .MuiInputLabel-root.Mui-focused': {
     color: 'var(--color-azul)',
     fontSize: '18px',
-    
+
   }
 }
 
@@ -108,6 +108,6 @@ export const inputWidth = {
     sm: '75%',
     md: '75%',
     lg: '80%',
-    xl: '60%'
+    xl: '80%'
   }
 }

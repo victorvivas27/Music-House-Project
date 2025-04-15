@@ -1,18 +1,15 @@
-import { ParagraphResponsive } from "@/components/styles/ResponsiveComponents"
-import { flexRowContainer, inputStyles, inputWidth } from "@/components/styles/styleglobal"
-import { Box, FormControl, TextField } from "@mui/material"
-import { ErrorMessage, Field } from "formik"
-import PropTypes from "prop-types"
-import { Link } from "react-router-dom"
+import { ParagraphResponsive } from '@/components/styles/ResponsiveComponents'
+import { inputStyles, inputWidth } from '@/components/styles/styleglobal'
+import { FormControl, Grid, TextField } from '@mui/material'
+import { ErrorMessage, Field } from 'formik'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
 export const TelegramField = ({ values, touched, errors }) => {
-    return (
-      <Box sx={{
-        border:"solid 1px red",
-       ...inputWidth,
-       ...flexRowContainer
-        }}>
-        <FormControl sx={{...inputStyles , mt: 2  }}>
+  return (
+    <Grid container spacing={2}>
+      <Grid item sm={10} md={5}>
+        <FormControl sx={{ ...inputStyles, mt: 2, ...inputWidth }}>
           <Field
             as={TextField}
             name="telegramChatId"
@@ -27,7 +24,8 @@ export const TelegramField = ({ values, touched, errors }) => {
             }}
           />
         </FormControl>
-  
+      </Grid>
+      <Grid item xs={12}>
         <ParagraphResponsive>
           ¿No sabes tu código?{' '}
           <Link
@@ -39,12 +37,13 @@ export const TelegramField = ({ values, touched, errors }) => {
             Haz clic aquí para obtenerlo en Telegram
           </Link>
         </ParagraphResponsive>
-      </Box>
-    )
-  }
-  
-  TelegramField.propTypes = {
-    values: PropTypes.object.isRequired,
-    touched: PropTypes.object.isRequired,
-    errors: PropTypes.object.isRequired
-  }
+      </Grid>
+    </Grid>
+  )
+}
+
+TelegramField.propTypes = {
+  values: PropTypes.object.isRequired,
+  touched: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+}
