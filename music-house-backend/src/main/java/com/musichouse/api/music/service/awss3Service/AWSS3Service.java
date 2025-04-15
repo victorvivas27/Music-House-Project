@@ -22,6 +22,19 @@ public class AWSS3Service implements AWSS3Interface {
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
 
+    @Value("${aws.s3.region}")
+    private String region;
+
+
+    public String copyDefaultUserImage(UUID idUser) {
+        String sourceKey = "usuarios/default/default.png";
+        String destinationKey = "usuarios/" + idUser + "/default.png";
+
+        amazonS3.copyObject(bucketName, sourceKey, bucketName, destinationKey);
+
+        return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + destinationKey;
+    }
+
     public AWSS3Service(AmazonS3 amazonS3, S3UploadHelper s3UploadHelper) {
         this.amazonS3 = amazonS3;
         this.s3UploadHelper = s3UploadHelper;

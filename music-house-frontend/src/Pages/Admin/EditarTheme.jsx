@@ -20,11 +20,11 @@ export const EditarTheme = () => {
   const isSubmittingRef = useRef(false)
 
   useEffect(() => {
-const getTheme = async () => {
-      dispatch({ type: actions.SET_LOADING, payload:true })
+    const getTheme = async () => {
+      dispatch({ type: actions.SET_LOADING, payload: true })
       try {
         const themeData = await getThemeById(id)
-        
+
         setInitialFormData({
           idTheme: themeData.result.idTheme || '',
           themeName: themeData.result.themeName || '',
@@ -52,7 +52,7 @@ const getTheme = async () => {
         imageUrlTheme === '' ||
         (typeof imageUrlTheme === 'string' && !(imageUrlTheme instanceof File))
       ) {
-      themeWithoutImageUrl.imageUrlTheme = initialFormData.imageUrlTheme || ''
+        themeWithoutImageUrl.imageUrlTheme = initialFormData.imageUrlTheme || ''
       }
 
       formDataToSend.append('theme', JSON.stringify(themeWithoutImageUrl))
@@ -71,12 +71,11 @@ const getTheme = async () => {
         dispatch({ type: actions.SET_LOADING, payload: false })
         isSubmittingRef.current = false
       }, 1000)
-
     } catch (error) {
       showError(`❌ ${getErrorMessage(error)}`)
       dispatch({ type: actions.SET_LOADING, payload: false })
       isSubmittingRef.current = false
-    } 
+    }
   }
 
   if (!initialFormData && !isSubmittingRef.current) {

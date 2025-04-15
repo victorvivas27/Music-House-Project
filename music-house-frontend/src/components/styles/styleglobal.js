@@ -1,49 +1,53 @@
 export const inputStyles = {
   width: "99%",
   color: 'var(--color-azul)',
-  textShadow: '0 1px 2px var(--color-primario)',
+  height: 70,
   '& .MuiInputBase-input': {
-    color: 'var( --color-azul)',
-    height: "10px",
-    fontSize:21,
-   },
+    color: 'var(--color-azul)',
+   fontSize: '16px',
+  
+  },
+
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderColor: 'var(--color-secundario)',
       borderWidth: '2px',
       borderRadius: '8px',
-    
+      fontSize: '16px',
+      
     },
     '&:hover fieldset': {
       borderColor: 'var(--color-primario)',
-      textShadow: '0 1px 2px var(--color-primario)',
-
+      fontSize: '16px',
+    
     },
     '&.Mui-focused fieldset': {
       borderColor: 'var(--color-exito)',
-
-    },
+      fontSize: '16px',
+     
+    }
   },
 
   '& .MuiInputLabel-root': {
     color: 'var(--color-azul)',
-    textShadow: '0 1px 2px var(--color-primario)',
-
+    fontSize: '18px',
+   
   },
 
   '& .MuiInputLabel-root.Mui-focused': {
     color: 'var(--color-azul)',
-    textShadow: '0 1px 2px var(--color-primario)',
-  },
-};
+    fontSize: '18px',
+    
+  }
+}
 
 export const flexRowContainer = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   flexWrap: "wrap"
-  
- 
+
+
 };
 
 export const flexColumnContainer = {
@@ -61,7 +65,7 @@ export const paginationStyles = {
   '& .MuiTablePagination-selectLabel': {
     fontWeight: 'bold',
     color: 'var(--color-azul)',
-  textShadow: '0 1px 2px var(--color-primario)',
+    textShadow: '0 1px 2px var(--color-primario)',
   },
   '& .MuiTablePagination-input': {
     fontSize: '16px',
@@ -93,7 +97,17 @@ export const fontSizeResponsi = {
     sm: '23px',
     md: '25px',
     lg: '30px',
-    xl:'35px'
+    xl: '35px'
   },
   marginRight: 1
+}
+
+export const inputWidth = {
+  width: {
+    xs: 'auto',
+    sm: '75%',
+    md: '75%',
+    lg: '80%',
+    xl: '60%'
+  }
 }

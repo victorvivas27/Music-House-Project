@@ -8,7 +8,7 @@ import com.musichouse.api.music.dto.dto_exit.TokenDtoExit;
 import com.musichouse.api.music.dto.dto_exit.UserDtoExit;
 import com.musichouse.api.music.dto.dto_modify.UserDtoModify;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
-import com.musichouse.api.music.service.UserService;
+import com.musichouse.api.music.service.user.UserService;
 import com.musichouse.api.music.util.ApiResponse;
 import com.musichouse.api.music.util.FileValidatorUtils;
 import jakarta.mail.MessagingException;
@@ -198,10 +198,10 @@ public class UserController {
         UserDtoExit userDtoExit = userService.updateUser(userDtoModify, file);
 
 
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.<UserDtoExit>builder()
-                        .status(HttpStatus.CREATED)
-                        .statusCode(HttpStatus.CREATED.value())
+                        .status(HttpStatus.OK)
+                        .statusCode(HttpStatus.OK.value())
                         .message("Usuario modificado con éxito.")
                         .error(null)
                         .result(userDtoExit)

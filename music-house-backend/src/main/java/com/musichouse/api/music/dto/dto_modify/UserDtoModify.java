@@ -38,7 +38,9 @@ public class UserDtoModify {
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
+    @NotNull(message = "El campo roles no puede ser nulo")
+    @Size(min = 1, message = "Debe haber al menos un rol asignado")
     private List<Roles> roles;
 
-    private List<String> imageUrls;
+    private String picture;
 }

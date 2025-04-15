@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { UserForm } from './UserForm'
 import { Box, Typography } from '@mui/material'
 import { useNavigate, useParams, Link } from 'react-router-dom'
@@ -12,22 +12,27 @@ import { updatePhone } from '@/api/phones'
 import { Loader } from '@/components/common/loader/Loader'
 import { BoxFormUnder, BoxLogoSuperior, MainCrearUsuario } from '@/components/styles/ResponsiveComponents'
 import { Logo } from '@/components/Images/Logo'
+import { actions } from '@/components/utils/actions'
+import { useAppStates } from '@/components/utils/global.context'
 const EditUser = ({ onSwitch }) => {
   const { id } = useParams()
   const [user, setUser] = useState()
   const [formData, setFormData] = useState()
-  const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
   const { user: loggedUser, isUserAdmin } = useAuth()
-  const isLoggedUser = loggedUser?.idUser && loggedUser.idUser === Number(id)
+  const isLoggedUser = loggedUser?.idUser === id
   const canEditUser = !(isUserAdmin && !isLoggedUser)
   const { showSuccess, showError } = useAlert()
+   const { dispatch } = useAppStates()
+ const isSubmittingRef = useRef(false)
 
+ useEffect(() => {
   const fetchUser = async () => {
-    if (!id) return
-
-    setLoading(true)
+    if (!id) {
+      dispatch({ type: actions.SET_LOADING, payload: true })
+      return
+    }
     try {
       const userData = await UsersApi.getUserById(id)
       const result = userData.result
@@ -48,18 +53,20 @@ const EditUser = ({ onSwitch }) => {
       showError(`❌ ${getErrorMessage(error)}`)
       navigate('/')
     } finally {
-      setLoading(false)
+      dispatch({ type: actions.SET_LOADING, payload: false })
     }
   }
 
-  useEffect(() => {
-    fetchUser()
-  }, [id])
+ 
+  fetchUser()
+  }, [dispatch, id, navigate, showError])
 
   const handleSubmit = async (formData) => {
     if (!formData) return
 
+    isSubmittingRef.current = true
     setIsSubmitting(true)
+        dispatch({ type: actions.SET_LOADING, payload: true })
 
     try {
       const formDataToSend = new FormData()
@@ -105,17 +112,20 @@ const EditUser = ({ onSwitch }) => {
       }
 
       if (response && response.message) {
+        showSuccess(`✅ ${response.message}`)
         setTimeout(() => {
-          showSuccess(`✅ ${response.message}`)
           navigate(-1)
         }, 1100)
       }
+
+        setTimeout(() => {
+              dispatch({ type: actions.SET_LOADING, payload: false })
+              isSubmittingRef.current = false
+            }, 1000)
     } catch (error) {
       showError(`❌ ${getErrorMessage(error)}`)
-    } finally {
-      setTimeout(() => {
-        setIsSubmitting(false)
-      }, 1100)
+      dispatch({ type: actions.SET_LOADING, payload: false })
+      isSubmittingRef.current = false
     }
   }
 
@@ -126,9 +136,9 @@ const EditUser = ({ onSwitch }) => {
     }, 1100)
   }
 
-  if (loading) {
-    return <Loader title="Un momento por favor" />
-  }
+  const isLoadingData = !formData && !isSubmittingRef.current;
+
+  if (isLoadingData) return <Loader title="Un momento por favor..." />
 
   return (
     <MainCrearUsuario>

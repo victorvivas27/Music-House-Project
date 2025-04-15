@@ -1,11 +1,10 @@
-package com.musichouse.api.music.service;
+package com.musichouse.api.music.service.user;
 
 import com.musichouse.api.music.dto.dto_entrance.LoginDtoEntrance;
 import com.musichouse.api.music.dto.dto_entrance.UserDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.TokenDtoExit;
 import com.musichouse.api.music.dto.dto_exit.UserDtoExit;
 import com.musichouse.api.music.dto.dto_modify.UserDtoModify;
-import com.musichouse.api.music.entity.Roles;
 import com.musichouse.api.music.entity.User;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
 import com.musichouse.api.music.infra.MailManager;
@@ -16,6 +15,7 @@ import com.musichouse.api.music.repository.PhoneRepository;
 import com.musichouse.api.music.repository.UserRepository;
 import com.musichouse.api.music.s3utils.S3UrlParser;
 import com.musichouse.api.music.security.JwtService;
+import com.musichouse.api.music.service.StringValidator;
 import com.musichouse.api.music.service.awss3Service.AWSS3Service;
 import com.musichouse.api.music.service.awss3Service.S3FileDeleter;
 import com.musichouse.api.music.telegramchat.TelegramService;
@@ -31,19 +31,14 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 
@@ -62,6 +57,11 @@ public class UserService implements UserInterface {
     private final FavoriteRepository favoriteRepository;
     private final AWSS3Service awss3Service;
     private final S3FileDeleter s3FileDeleter;
+    private final UserValidator userValidator;
+    private final UserBuilder userBuilder;
+    private final EmailService emailService;
+    private final AuthHelper authHelper;
+
     @Autowired
     private final MailManager mailManager;
 
@@ -72,40 +72,30 @@ public class UserService implements UserInterface {
     public TokenDtoExit createUser(UserDtoEntrance userDtoEntrance, MultipartFile file)
             throws DataIntegrityViolationException, MessagingException {
 
-        if (userRepository.existsByEmail(userDtoEntrance.getEmail())) {
-            throw new DataIntegrityViolationException(
-                    "El correo electrónico: " + userDtoEntrance.getEmail() + " ya esta en uso");
+
+        userValidator.validateUniqueEmail(userDtoEntrance);
+
+
+        UUID id = UUID.randomUUID();
+        String imageUrl;
+
+        if (file != null && !file.isEmpty()) {
+            imageUrl = awss3Service.uploadFileToS3User(file, id);
+        } else {
+            imageUrl = awss3Service.copyDefaultUserImage(id);
         }
-
-        User user = modelMapper.map(userDtoEntrance, User.class);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        UUID generatedId = UUID.randomUUID();
-        user.setIdUser(generatedId);
-
-        Set<Roles> roles = userDtoEntrance.getRoles() != null && !userDtoEntrance.getRoles().isEmpty()
-                ? new HashSet<>(userDtoEntrance.getRoles())
-                : Set.of(Roles.USER);
-        user.setRoles(roles);
-
-        user.setTelegramChatId(userDtoEntrance.getTelegramChatId());
-        user.getAddresses().forEach(address -> address.setUser(user));
-        user.getPhones().forEach(phone -> phone.setUser(user));
-
-
-        String fileUrl = awss3Service.uploadFileToS3User(file, generatedId);
-        user.setPicture(fileUrl);
+        User user = userBuilder.buildUserWithImage(userDtoEntrance, id, imageUrl);
 
 
         User userSaved = userRepository.save(user);
-
         String token = jwtService.generateToken(userSaved);
 
+
         try {
-            sendMessageUser(userSaved.getEmail(), userSaved.getName(), userSaved.getLastName());
+            emailService.sendWelcomeEmail(userSaved);
         } catch (MessagingException e) {
-            String errorMessage = String.format(
-                    "No se pudo enviar el correo de bienvenida a %s", userSaved.getEmail());
-            throw new MessagingException(errorMessage, e);
+            throw new MessagingException(
+                    "No se pudo enviar el correo de bienvenida a " + userSaved.getEmail(), e);
         }
 
         telegramService.enviarMensajeDeBienvenida(
@@ -114,6 +104,7 @@ public class UserService implements UserInterface {
                 userSaved.getLastName(),
                 userSaved.getEmail()
         );
+
 
         return TokenDtoExit.builder()
                 .idUser(userSaved.getIdUser())
@@ -125,25 +116,15 @@ public class UserService implements UserInterface {
     @Override
     public TokenDtoExit loginUserAndCheckEmail(LoginDtoEntrance loginDtoEntrance)
             throws ResourceNotFoundException, AuthenticationException {
-        Optional<User> userOptional = userRepository.findByEmail(loginDtoEntrance.getEmail());
 
-        if (userOptional.isEmpty()) {
-            throw new ResourceNotFoundException(
-                    "Usuario no encontrado con el correo electrónico: " + loginDtoEntrance.getEmail());
+        User user = userValidator.validateUserExistsByEmail(loginDtoEntrance.getEmail());
 
-        }
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDtoEntrance.getEmail(),
-                        loginDtoEntrance.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Authentication authentication = authHelper.authenticate(loginDtoEntrance.getEmail(), loginDtoEntrance.getPassword());
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         String token = jwtService.generateToken(userDetails);
 
-        User user = userOptional.get();
 
         return TokenDtoExit.builder()
                 .idUser(user.getIdUser())
@@ -164,10 +145,7 @@ public class UserService implements UserInterface {
     @Cacheable(value = "users", key = "#idUser")
     public UserDtoExit getUserById(UUID idUser) throws ResourceNotFoundException {
 
-        User user = userRepository.findById(idUser)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Usuario con ID: " + idUser + " no encontrado"));
+        User user = userValidator.validateUserId(idUser);
 
         return modelMapper.map(user, UserDtoExit.class);
     }
@@ -175,45 +153,17 @@ public class UserService implements UserInterface {
 
     @Override
     @CacheEvict(value = "users", allEntries = true)
-    public UserDtoExit updateUser(UserDtoModify userDtoModify, MultipartFile file) throws ResourceNotFoundException {
-        // 🟢 1️⃣ Buscar el usuario a actualizar
-        User userToUpdate = userRepository.findById(userDtoModify.getIdUser())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userDtoModify.getIdUser()));
+    public UserDtoExit updateUser(UserDtoModify userDtoModify, MultipartFile file)
+            throws ResourceNotFoundException {
 
-        // 🟢 2️⃣ Verificar si el email ya está en uso
-        if (!userToUpdate.getEmail().equals(userDtoModify.getEmail()) &&
-                userRepository.existsByEmail(userDtoModify.getEmail())) {
-            throw new DataIntegrityViolationException("El correo electrónico ingresado ya está en uso.");
-        }
+        User userToUpdate = userValidator.validateUserId(userDtoModify.getIdUser());
 
-        // 🟢 3️⃣ Actualizar datos del usuario
-        userToUpdate.setName(userDtoModify.getName());
-        userToUpdate.setLastName(userDtoModify.getLastName());
-        userToUpdate.setEmail(userDtoModify.getEmail());
+        userValidator.validateEmailNotTakenOnUpdate(userToUpdate, userDtoModify.getEmail());
 
-        // 🟢 3️⃣ Opcional: actualizar roles si vienen en la request
-        if (userDtoModify.getRoles() != null && !userDtoModify.getRoles().isEmpty()) {
-            Set<Roles> newRoles = new HashSet<>(userDtoModify.getRoles());
-            userToUpdate.setRoles(newRoles);
-        }
+        modelMapper.map(userDtoModify, userToUpdate);
 
-        // 🟢 4️⃣ Manejo de la imagen en S3
-        if (file != null && !file.isEmpty()) {
-            // 📌 Obtener la URL de la imagen actual
-            String currentImageUrl = userToUpdate.getPicture();
+        userBuilder.updateUserImageIfPresent(userToUpdate, file);
 
-            // 📌 Eliminar imagen anterior solo si existe
-            if (currentImageUrl != null && !currentImageUrl.isEmpty()) {
-                String key = S3UrlParser.extractKeyFromS3Url(currentImageUrl);
-                s3FileDeleter.deleteFileFromS3(key);
-            }
-
-            // 📌 5️⃣ Subir la nueva imagen con la carpeta del usuario
-            String newFileUrl = awss3Service.uploadUserModifyFileToS3(file, userDtoModify);
-            userToUpdate.setPicture(newFileUrl);
-        }
-
-        // 🟢 6️⃣ Guardar cambios en la base de datos
         userRepository.save(userToUpdate);
 
         return modelMapper.map(userToUpdate, UserDtoExit.class);
@@ -224,9 +174,7 @@ public class UserService implements UserInterface {
     @CacheEvict(value = "users", allEntries = true)
     public void deleteUser(UUID idUser) throws ResourceNotFoundException {
 
-        User user = userRepository.findById(idUser)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "No se encontró el usuario con el ID proporcionado: " + idUser));
+        User user = userValidator.validateUserId(idUser);
 
         String imageUrl = user.getPicture();
 
@@ -258,27 +206,12 @@ public class UserService implements UserInterface {
     public Page<UserDtoExit> searchUserName(String name, Pageable pageable)
             throws IllegalArgumentException {
 
-        if (name == null ||
-                name.trim().isEmpty() ||
-                name.matches(".*[^a-zA-Z0-9ÁÉÍÓÚáéíóúñÑ\\s].*")) {
-
-
-            throw new IllegalArgumentException
-                    ("El parámetro de búsqueda es inválido. Ingrese solo letras, números o espacios.");
-        }
+        StringValidator.validateBasicText(name, name);
 
         Page<User> users = userRepository.findByNameContainingIgnoreCase(name.trim(), pageable);
 
         return users.map(user -> modelMapper.map(user, UserDtoExit.class));
 
     }
-
-
-    public void sendMessageUser(String email, String name, String lastName)
-            throws MessagingException {
-        mailManager.sendMessage(email, name, lastName);
-
-    }
-
 
 }

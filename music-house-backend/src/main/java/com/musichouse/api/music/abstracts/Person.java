@@ -2,9 +2,9 @@ package com.musichouse.api.music.abstracts;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,17 +12,31 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-public abstract class ImageUrl {
+public abstract class Person {
 
     /**
-     * URL de la imagen.
+     * El nombre del usuario.
      */
-    @Column(length = 1024)
-    private String imageUrl;
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    /**
+     * El apellido del usuario.
+     */
+    @Column(nullable = false, length = 100)
+    private String lastName;
+
+
+    /**
+     * El correo electrónico del usuario (usado para inicio de sesión y notificaciones).
+     * <p>
+     * Debe ser único en la base de datos para evitar duplicados.
+     */
+    @Column(nullable = false, length = 100, unique = true)
+    private String email;
+
 
     /**
      * Anotación que marca el campo como una fecha de creación automática.
@@ -31,6 +45,7 @@ public abstract class ImageUrl {
     @CreationTimestamp
     @Column(name = "regist_date", nullable = false, updatable = false)
     private LocalDateTime registDate;
+
 
     /**
      * Anotación que marca el campo como una fecha de modificación automática.
@@ -41,4 +56,14 @@ public abstract class ImageUrl {
     @Column(name = "modified_date", nullable = false)
     private LocalDateTime modifiedDate;
 
+    @PrePersist
+    @PreUpdate
+    protected void normalizeData() {
+        if (this.name != null) {
+            this.name = this.name.replaceAll("\\s+", " ").trim().toUpperCase();
+        }
+        if (this.lastName != null) {
+            this.lastName = this.lastName.replaceAll("\\s+", " ").trim().toUpperCase();
+        }
+    }
 }

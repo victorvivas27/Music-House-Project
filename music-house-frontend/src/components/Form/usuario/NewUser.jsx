@@ -1,4 +1,4 @@
-import { useState } from 'react'
+
 import { UserForm } from './UserForm'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
@@ -6,6 +6,8 @@ import { useAuth } from '@/hook/useAuth'
 import useAlert from '@/hook/useAlert'
 import { UsersApi } from '@/api/users'
 import { getErrorMessage } from '@/api/getErrorMessage'
+import { actions } from '@/components/utils/actions'
+import { useAppStates } from '@/components/utils/global.context'
 
 const NewUser = ({ onSwitch }) => {
   const initialFormData = {
@@ -22,14 +24,14 @@ const NewUser = ({ onSwitch }) => {
     idRol: ''
   }
 
-  const [loading, setLoading] = useState(false)
   const { setAuthData } = useAuth()
   const navigate = useNavigate()
   const { showSuccess, showError } = useAlert()
   const { isUserAdmin } = useAuth()
+  const { dispatch, state } = useAppStates()
 
   const handleSubmit = async (formData) => {
-    setLoading(true)
+    dispatch({ type: actions.SET_LOADING, payload: true })
 
     try {
       const formDataToSend = new FormData()
@@ -53,14 +55,14 @@ const NewUser = ({ onSwitch }) => {
             setAuthData({ token: response.result.token })
             navigate('/')
           }
-        }, 1700)
-      } else {
-        showError(`${response.message}`)
+        }, 1000)
       }
     } catch (error) {
       showError(`❌ ${getErrorMessage(error)}`)
     } finally {
-      setLoading(false)
+      setTimeout(() => {
+        dispatch({ type: actions.SET_LOADING, payload: false })
+      }, 1000)
     }
   }
 
@@ -70,7 +72,7 @@ const NewUser = ({ onSwitch }) => {
         onSwitch={onSwitch}
         initialFormData={initialFormData}
         onSubmit={handleSubmit}
-        loading={loading}
+        loading={state.loading}
       />
     </>
   )

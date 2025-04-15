@@ -69,7 +69,9 @@ export const Usuarios = () => {
       }, 500)
     }
   }
-  const rows = Array.isArray(state.users?.content) ? state.users.content : []
+  const rows = Array.isArray(state.users?.content) 
+  ? state.users.content 
+  : []
 
   useEffect(() => {
     getAllUsuarios(page, rowsPerPage, firstLoad)
