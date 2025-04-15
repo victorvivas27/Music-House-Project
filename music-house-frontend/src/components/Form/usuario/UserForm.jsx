@@ -192,7 +192,7 @@ export const UserForm = ({
                 />
               </Grid>
 
-              {!initialFormData.idUser && !isUserAdmin && (
+              
                 <Grid item xs={12}>
                   <FormControlLabel
                     control={
@@ -224,7 +224,7 @@ export const UserForm = ({
                     )}
                   </ErrorMessage>
                 </Grid>
-              )}
+             
 
               <Grid item xs={12}>
                 <ContainerBottom>

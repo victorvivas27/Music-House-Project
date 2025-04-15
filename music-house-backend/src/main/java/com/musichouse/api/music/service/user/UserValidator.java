@@ -44,4 +44,10 @@ public class UserValidator {
         }
     }
 
+    public void validateUserHasAtLeastOneRole(User user) {
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            throw new IllegalArgumentException("El usuario debe tener al menos un rol.");
+        }
+    }
+
 }

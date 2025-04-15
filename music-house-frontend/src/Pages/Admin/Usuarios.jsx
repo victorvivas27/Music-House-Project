@@ -101,10 +101,10 @@ export const Usuarios = () => {
       showError('Error', 'No hay usuario seleccionados para eliminar.')
       return
     }
-    const isConfirmed = await showConfirm({
-      title: `¿Eliminar ${selectedIds.length} usuario(s)?`,
-      text: 'Esta acción no se puede deshacer.'
-    })
+    const isConfirmed = await showConfirm(
+      `¿Eliminar ${selectedIds.length} usuario(s)?`,
+      'Esta acción no se puede deshacer.'
+    )
     if (!isConfirmed) return
     showLoading('Eliminando...', 'Por favor espera.')
     try {

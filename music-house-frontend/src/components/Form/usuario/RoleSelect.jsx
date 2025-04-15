@@ -14,12 +14,7 @@ export const RoleSelect = ({ onChange, selectedRole = '' }) => {
     setRoleValue(value)
 
     if (typeof onChange === 'function') {
-      onChange({
-        target: {
-          name: 'selectedRole',
-          value
-        }
-      })
+      onChange(value) 
     }
   }
 

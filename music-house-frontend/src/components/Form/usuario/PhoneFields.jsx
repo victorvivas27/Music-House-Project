@@ -12,6 +12,8 @@ import {
 import PropTypes from 'prop-types'
 
 export const PhoneFields = ({ phones, touched, errors, setFieldValue }) => {
+
+ 
   return (
     <Grid container spacing={2}>
       {phones.map((phone, index) => (
@@ -21,7 +23,7 @@ export const PhoneFields = ({ phones, touched, errors, setFieldValue }) => {
             <FormControl sx={{ ...inputStyles, mt: 2 }}>
               <Select
                 displayEmpty
-                value={phone.countryCode}
+                value={phone.countryCode||''}
                 onChange={(e) => {
                   const newCode = e.target.value
                   const currentNumber = phones[index].phoneNumber.replace(

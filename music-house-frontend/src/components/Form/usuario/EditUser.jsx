@@ -10,10 +10,15 @@ import { getErrorMessage } from '@/api/getErrorMessage'
 import { updateAddress } from '@/api/addresses'
 import { updatePhone } from '@/api/phones'
 import { Loader } from '@/components/common/loader/Loader'
-import { BoxFormUnder, BoxLogoSuperior, MainCrearUsuario } from '@/components/styles/ResponsiveComponents'
+import {
+  BoxFormUnder,
+  BoxLogoSuperior,
+  MainCrearUsuario
+} from '@/components/styles/ResponsiveComponents'
 import { Logo } from '@/components/Images/Logo'
 import { actions } from '@/components/utils/actions'
 import { useAppStates } from '@/components/utils/global.context'
+import { countryCodes } from '@/components/utils/codepaises/CountryCodes'
 const EditUser = ({ onSwitch }) => {
   const { id } = useParams()
   const [user, setUser] = useState()
@@ -24,41 +29,64 @@ const EditUser = ({ onSwitch }) => {
   const isLoggedUser = loggedUser?.idUser === id
   const canEditUser = !(isUserAdmin && !isLoggedUser)
   const { showSuccess, showError } = useAlert()
-   const { dispatch } = useAppStates()
- const isSubmittingRef = useRef(false)
+  const { dispatch } = useAppStates()
+  const isSubmittingRef = useRef(false)
 
- useEffect(() => {
-  const fetchUser = async () => {
-    if (!id) {
-      dispatch({ type: actions.SET_LOADING, payload: true })
-      return
-    }
-    try {
-      const userData = await UsersApi.getUserById(id)
-      const result = userData.result
-      setUser(userData)
-      setFormData({
-        idUser: id,
-        picture: result.picture || '',
-        name: result.name || '',
-        lastName: result.lastName || '',
-        email: result.email || '',
-        addresses: result.addresses?.length ? result.addresses : [],
-        phones: result.phones?.length ? result.phones : [],
-        telegramChatId: result.telegramChatId || '',
-        roles: result.roles || [],
-        selectedRole: ''
-      })
-    } catch (error) {
-      showError(`❌ ${getErrorMessage(error)}`)
-      navigate('/')
-    } finally {
-      dispatch({ type: actions.SET_LOADING, payload: false })
+  const parsePhone = (fullNumber) => {
+    if (!fullNumber) return { countryCode: '', phoneNumber: '' }
+    const code = countryCodes.find((c) => fullNumber.startsWith(c.code))
+    if (!code) return { countryCode: '', phoneNumber: fullNumber }
+    return {
+      countryCode: code.code,
+      phoneNumber: fullNumber.replace(code.code, '')
     }
   }
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!id) {
+        dispatch({ type: actions.SET_LOADING, payload: true })
+        return
+      }
+      try {
+        const userData = await UsersApi.getUserById(id)
+        const result = userData.result
+        setUser(userData)
+        setFormData({
+          idUser: id,
+          picture: result.picture || '',
+          name: result.name || '',
+          lastName: result.lastName || '',
+          email: result.email || '',
+          addresses: result.addresses?.length ? result.addresses : [],
+          phones: result.phones?.length
+            ? result.phones.map((p) => {
+                const parsed = parsePhone(p.phoneNumber)
+                return {
+                  ...p,
+                  countryCode: parsed.countryCode,
+                  phoneNumber: parsed.countryCode + parsed.phoneNumber,
+                  idPhone: p.idPhone
+                }
+              })
+            : [
+                {
+                  countryCode: '',
+                  phoneNumber: ''
+                }
+              ],
+          telegramChatId: result.telegramChatId || '',
+          roles: result.roles || [],
+          selectedRole: ''
+        })
+      } catch (error) {
+        showError(`❌ ${getErrorMessage(error)}`)
+        navigate('/')
+      } finally {
+        dispatch({ type: actions.SET_LOADING, payload: false })
+      }
+    }
 
- 
-  fetchUser()
+    fetchUser()
   }, [dispatch, id, navigate, showError])
 
   const handleSubmit = async (formData) => {
@@ -66,15 +94,16 @@ const EditUser = ({ onSwitch }) => {
 
     isSubmittingRef.current = true
     setIsSubmitting(true)
-        dispatch({ type: actions.SET_LOADING, payload: true })
+    dispatch({ type: actions.SET_LOADING, payload: true })
 
     try {
       const formDataToSend = new FormData()
       const { picture, ...userWithoutPicture } = formData
 
-      if (!picture ||
-         picture === '' ||
-         (typeof picture === 'object' && !(picture instanceof File))
+      if (
+        !picture ||
+        picture === '' ||
+        (typeof picture === 'object' && !(picture instanceof File))
       ) {
         userWithoutPicture.picture = user?.data?.picture || ''
       }
@@ -111,17 +140,15 @@ const EditUser = ({ onSwitch }) => {
         })
       }
 
-      if (response && response.message) {
-        showSuccess(`✅ ${response.message}`)
-        setTimeout(() => {
-          navigate(-1)
-        }, 1100)
-      }
+      showSuccess(`✅ ${response.message}`)
+      setTimeout(() => {
+        navigate(-1)
+      }, 1100)
 
-        setTimeout(() => {
-              dispatch({ type: actions.SET_LOADING, payload: false })
-              isSubmittingRef.current = false
-            }, 1000)
+      setTimeout(() => {
+        dispatch({ type: actions.SET_LOADING, payload: false })
+        isSubmittingRef.current = false
+      }, 1000)
     } catch (error) {
       showError(`❌ ${getErrorMessage(error)}`)
       dispatch({ type: actions.SET_LOADING, payload: false })
@@ -136,7 +163,7 @@ const EditUser = ({ onSwitch }) => {
     }, 1100)
   }
 
-  const isLoadingData = !formData && !isSubmittingRef.current;
+  const isLoadingData = !formData && !isSubmittingRef.current
 
   if (isLoadingData) return <Loader title="Un momento por favor..." />
 

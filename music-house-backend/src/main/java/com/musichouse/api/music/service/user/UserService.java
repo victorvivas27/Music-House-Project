@@ -162,6 +162,14 @@ public class UserService implements UserInterface {
 
         modelMapper.map(userDtoModify, userToUpdate);
 
+        // Reemplazar roles explícitamente
+        if (userDtoModify.getRoles() != null) {
+            userToUpdate.getRoles().clear();
+            userToUpdate.getRoles().addAll(userDtoModify.getRoles());
+        }
+
+        userValidator.validateUserHasAtLeastOneRole(userToUpdate);
+
         userBuilder.updateUserImageIfPresent(userToUpdate, file);
 
         userRepository.save(userToUpdate);
