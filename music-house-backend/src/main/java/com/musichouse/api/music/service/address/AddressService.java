@@ -65,7 +65,6 @@ public class AddressService implements AddressInterface {
 
         Address addressToUpdate = addressValidator.validateAddressId(addressDtoModify.getIdAddress());
 
-
         mapper.map(addressDtoModify, addressToUpdate);
 
         Address addressSaved = addressRepository.save(addressToUpdate);

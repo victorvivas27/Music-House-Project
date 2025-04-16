@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   Avatar,
   Card,
@@ -10,9 +10,9 @@ import {
   Alert,
   Tooltip,
   IconButton,
-  useMediaQuery,
   Stack,
-  Skeleton
+  Skeleton,
+  Grid
 } from '@mui/material'
 import EmailIcon from '@mui/icons-material/Email'
 import PhoneIcon from '@mui/icons-material/Phone'
@@ -27,8 +27,6 @@ import useImageLoader from '@/hook/useImageLoader'
 import { UsersApi } from '@/api/users'
 import { getErrorMessage } from '@/api/getErrorMessage'
 import { Loader } from '@/components/common/loader/Loader'
-import { MainWrapper, ParagraphResponsive, TitleResponsive } from '@/components/styles/ResponsiveComponents'
-import { flexRowContainer, fontSizeResponsi } from '@/components/styles/styleglobal'
 import { removePhone } from '@/api/phones'
 import { removeAddress } from '@/api/addresses'
 import ModalNewDireccion from '@/components/common/nuevadireccion/ModalNewDireccion'
@@ -36,8 +34,6 @@ import ModalNewPhone from '@/components/common/nuevontelefono/ModalNewPhone'
 import ModalUpdateUser from '@/components/common/modificardatosuser/ModalUpdateUser'
 import ModalUpdatePhone from '@/components/common/nuevontelefono/ModalUpdatePhone'
 import ModalUpdateDireccion from '@/components/common/nuevadireccion/ModalUpdateDireccion'
-
-
 
 const Perfil = () => {
   const { idUser } = useAuth()
@@ -54,492 +50,273 @@ const Perfil = () => {
   const [selectedPhone, setSelectedPhone] = useState(null)
   const [selectedDireccion, setSelectedDireccion] = useState(null)
   const { showSuccess, showConfirm } = useAlert()
-  const avatarLoaded = useImageLoader(userData?.picture, 500)
+  const avatarLoaded = useImageLoader(userData?.picture, 1500)
 
-  const isMobile = useMediaQuery('(max-width:600px)')
-
-  const handleOpenModal = () => setOpenModal(true)
-  const handleCloseModal = () => setOpenModal(false)
-
-  const handleOpenModalPhone = () => setOpenModalPhone(true)
-  const handleCloseModalPhone = () => setOpenModalPhone(false)
-
-  const handleOpenModalUser = () => setOpenModalUser(true)
-  const handleCloseModalUser = () => setOpenModalUser(false)
-
-  const handleOpenModalPhoneUpdate = (phone) => {
-    setSelectedPhone(phone)
-    setOpenModalPhoneUpdate(true)
-  }
-
-  const handleCloseModalPhoneUpdate = () => {
-    setOpenModalPhoneUpdate(false)
-    setSelectedPhone(null)
-  }
-
-  const handleOpenModalDireccionUpdate = (address) => {
-    setSelectedDireccion(address)
-    setOpenModalDireccionUpdate(true)
-  }
-
-  const handleCloseModalDireccionUpdate = () => {
-    setOpenModalDireccionUpdate(false)
-    setSelectedDireccion(null)
-  }
-
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     if (!idUser) return
-
     try {
       const response = await UsersApi.getUserById(idUser)
-
-      if (response?.result) {
-        setUserData(response.result)
-      } else {
-        setError(`❌ ${getErrorMessage(error)}`)
-        setOpenSnackbar(true)
-      }
+      if (response?.result) setUserData(response.result)
+      else throw new Error()
     } catch (err) {
       setError(`❌ ${getErrorMessage(error)}`)
       setOpenSnackbar(true)
     } finally {
       setLoading(false)
     }
-  }
+  }, [idUser, error])
 
   useEffect(() => {
     fetchUser()
-  }, [idUser])
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false)
-  }
+  }, [fetchUser])
 
   if (loading) return <Loader title="Un momento por favor..." />
 
   return (
-    <MainWrapper
-      sx={{
-        marginLeft: {
-          xs: '1%',
-          sm: '8%',
-          md: '3%',
-          lg: '3%',
-          xl: '3%'
-        }
-      }}
-    >
-      <Card
-        sx={{
-          borderRadius: 4,
-          boxShadow: 'var(--box-shadow)',
-          width: {
-            xs: '95%',
-            sm: '85%',
-            md: '90%',
-            lg: '90%',
-            xl: '90%'
-          }
-        }}
-      >
+    <Box sx={{ p: 3, marginTop: 40 }}>
+      <Card sx={{ borderRadius: 4, boxShadow: 'var(--box-shadow)', p: 2 }}>
         <CardContent>
-          {/* Encabezado con Avatar y Email */}
-          <Box
-            display="flex"
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={3}
             alignItems="center"
-            flexDirection={isMobile ? 'column' : 'row'}
-            gap={2}
           >
-            <Tooltip title="Editar tus datos">
-              <Stack spacing={1}>
-                {!avatarLoaded && (
-                  <Skeleton
-                    variant="circular"
-                    width={isMobile ? 70 : 90}
-                    height={isMobile ? 70 : 90}
-                    sx={{
-                      bgcolor: 'var(--color-primario)',
-                      animation: 'pulse 1.5s ease-in-out infinite'
-                    }}
-                  />
-                )}
-
-                {avatarLoaded && (
-                  <Avatar
-                    sx={{
-                      width: isMobile ? 70 : 90,
-                      height: isMobile ? 70 : 90
-                    }}
-                    onClick={handleOpenModalUser}
-                    src={userData?.picture || undefined}
-                  >
-                    {!userData?.picture && userData?.name?.[0]}
-                  </Avatar>
-                )}
-              </Stack>
-            </Tooltip>
+            {avatarLoaded ? (
+              <Tooltip title="Editar tus datos">
+                <Avatar
+                  src={userData?.picture || undefined}
+                  sx={{ width: 90, height: 90, cursor: 'pointer' }}
+                  onClick={() => setOpenModalUser(true)}
+                >
+                  {!userData?.picture && userData?.name?.[0]}
+                </Avatar>
+              </Tooltip>
+            ) : (
+              <Skeleton variant="circular" width={90} height={90} />
+            )}
 
             <Box>
-              <TitleResponsive sx={{ color: 'var(--texto-inverso-black)' }}>
-                {userData?.name || 'Nombre no disponible'}{' '}
-                {userData?.lastName || ''}
-              </TitleResponsive>
-
-              <Box display="flex" alignItems="center">
-                <EmailIcon sx={{ color: 'var(--color-azul)', mr: 1 }} />
-                <ParagraphResponsive>
-                  {userData?.email || 'Correo no disponible'}
-                </ParagraphResponsive>
-              </Box>
+              <Typography variant="h5">
+                {userData?.name} {userData?.lastName}
+              </Typography>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <EmailIcon fontSize="small" color="primary" />
+                <Typography variant="body2">{userData?.email}</Typography>
+              </Stack>
             </Box>
-          </Box>
+          </Stack>
 
-          <Divider sx={{ my: 4 }} />
+          <Divider sx={{ my: 3 }} />
 
-          {/* Teléfono */}
+          {/* Teléfonos */}
+          <Stack spacing={2}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <PhoneIcon color="success" />
+              <Typography variant="h6">Teléfonos</Typography>
+              <IconButton
+                onClick={() => setOpenModalPhone(true)}
+                color="secondary"
+              >
+                <AddIcon />
+              </IconButton>
+            </Stack>
 
-          <Box>
-            <Box
-              sx={{
-                ...flexRowContainer
-              }}
-            >
-              <Tooltip title="Agregar un nuevo telefono">
-                <IconButton onClick={handleOpenModalPhone}>
-                  <AddIcon
-                    sx={{
-                      backgroundColor: 'ButtonShadow',
-                      borderRadius: 20,
-                      color: 'var(--color-secundario)',
-                      ...fontSizeResponsi
-                    }}
-                  />
-                </IconButton>
-              </Tooltip>
-              <PhoneIcon
-                sx={{
-                  color: 'var(--color-exito)',
-                  ...fontSizeResponsi
-                }}
-              />
-              <TitleResponsive sx={{ color: 'var(--texto-inverso-black)' }}>
-                Telefonos:
-              </TitleResponsive>
-            </Box>
-
-            <Box
-              sx={{
-                ...flexRowContainer,
-                justifyContent: 'space-evenly'
-              }}
-            >
+            <Grid container spacing={2}>
               {userData?.phones?.length > 0 ? (
-                userData.phones.map((phone) => {
-                  return (
-                    <Box key={phone.idPhone}>
-                      <Card
-                        sx={{
-                          boxShadow: 'var(--box-shadow)',
-                          borderRadius: '8px',
-                          margin: 1
-                        }}
+                userData.phones.map((phone) => (
+                  <Grid item xs={12} sm={6} md={4} key={phone.idPhone}>
+                    <Card sx={{ p: 2 }}>
+                      <Stack
+                        justifyContent="space-between"
+                        direction="row"
+                        alignItems="center"
                       >
-                        <CardContent>
-                          <Box sx={{ ...flexRowContainer }}>
-                            {/* 📌 Número de teléfono clickeable para llamadas */}
-                            <ParagraphResponsive>
-                              <a
-                                href={`tel:${phone.phoneNumber}`}
-                                style={{
-                                  textDecoration: 'none',
-                                  color: 'var(--color-azul)'
-                                }}
-                              >
-                                {phone.phoneNumber}
-                              </a>
-                            </ParagraphResponsive>
-
-                            <Box>
-                              {/* Botón de editar */}
-                              <IconButton
-                                onClick={() =>
-                                  handleOpenModalPhoneUpdate(phone)
-                                }
-                              >
-                                <EditIcon
-                                  sx={{
-                                    color: 'var(--color-primario)'
-                                  }}
-                                />
-                              </IconButton>
-
-                              {/* Botón de eliminar con confirmación */}
-                              <IconButton
-                                onClick={async () => {
-                                  if (userData.phones.length > 1) {
-                                    const isConfirmed = await showConfirm(
-                                      '¿Estás seguro?',
-                                      'Esta acción eliminará el teléfono.'
-                                    )
-
-                                    if (isConfirmed) {
-                                      await removePhone(phone.idPhone)
-                                      await fetchUser()
-                                      showSuccess(
-                                        'Eliminado',
-                                        'El teléfono ha sido eliminado correctamente.'
-                                      )
-                                    }
-                                  }
-                                }}
-                                color="error"
-                                disabled={userData.phones.length === 1}
-                                sx={{
-                                  opacity:
-                                    userData.phones.length === 1 ? 0.5 : 1,
-                                  cursor:
-                                    userData.phones.length === 1
-                                      ? 'not-allowed'
-                                      : 'pointer'
-                                }}
-                              >
-                                <DeleteIcon
-                                  sx={{
-                                    color:
-                                      userData.phones.length === 1
-                                        ? 'gray'
-                                        : 'var(--color-error)'
-                                  }}
-                                />
-                              </IconButton>
-                            </Box>
-                          </Box>
-                        </CardContent>
-                      </Card>
-                    </Box>
-                  )
-                })
-              ) : (
-                <Typography variant="body2" sx={{ mt: 2 }}>
-                  No hay teléfonos registrados.
-                </Typography>
-              )}
-            </Box>
-          </Box>
-          <Divider sx={{ my: 4 }} />
-          {/* Sección de Direcciones con Grid */}
-          <Box>
-            <Box
-              sx={{
-                ...flexRowContainer
-              }}
-            >
-              <Tooltip title="Agregar nueva dirección">
-                <IconButton onClick={handleOpenModal}>
-                  <AddIcon
-                    sx={{
-                      backgroundColor: 'ButtonShadow',
-                      borderRadius: 20,
-                      color: 'var(--color-secundario)',
-                      ...fontSizeResponsi
-                    }}
-                  />
-                </IconButton>
-              </Tooltip>
-              <HomeIcon
-                sx={{
-                  color: 'var(--color-primario)',
-                  ...fontSizeResponsi
-                }}
-              />
-              <TitleResponsive sx={{ color: 'var(--texto-inverso-black)' }}>
-                Direcciones:
-              </TitleResponsive>
-            </Box>
-
-            <Box
-              sx={{
-                ...flexRowContainer,
-                justifyContent: 'space-evenly'
-              }}
-            >
-              {userData?.addresses?.length > 0 ? (
-                userData.addresses.map((address) => (
-                  <Box key={address.idAddress}>
-                    <Card
-                      sx={{
-                        boxShadow: 'var(--box-shadow)',
-                        borderRadius: '8px',
-                        margin: 1
-                      }}
-                    >
-                      <CardContent>
-                        <Box sx={{ ...flexRowContainer }}>
-                          <TitleResponsive
-                            sx={{ color: 'var(--texto-inverso-black)' }}
-                          >
-                            {address.street}
-                          </TitleResponsive>
-                          {/* Botón de editar */}
+                        <a
+                          href={`tel:${phone.phoneNumber}`}
+                          style={{ textDecoration: 'none', color: '#1976d2' }}
+                        >
+                          {phone.phoneNumber}
+                        </a>
+                        <Stack direction="row" spacing={1}>
                           <IconButton
                             onClick={() => {
-                              handleOpenModalDireccionUpdate(address)
+                              setSelectedPhone(phone)
+                              setOpenModalPhoneUpdate(true)
                             }}
                           >
-                            <EditIcon sx={{ color: 'var(--color-primario)' }} />
+                            <EditIcon fontSize="small" />
                           </IconButton>
-                          {/* Botón de eliminar con confirmación */}
                           <IconButton
                             onClick={async () => {
-                              if (userData.addresses.length > 1) {
-                                const isConfirm = await showConfirm(
+                              if (userData.phones.length > 1) {
+                                const confirm = await showConfirm(
                                   '¿Estás seguro?',
-                                  'Esta acción eliminará la dirección de forma permanente.'
+                                  'Esta acción eliminará el teléfono.'
                                 )
-
-                                if (isConfirm) {
-                                  await removeAddress(address.idAddress)
+                                if (confirm) {
+                                  await removePhone(phone.idPhone)
                                   await fetchUser()
                                   showSuccess(
                                     'Eliminado',
-                                    'La dirección ha sido eliminada correctamente.'
+                                    'Teléfono eliminado.'
                                   )
                                 }
                               }
                             }}
-                            color="error"
-                            disabled={userData.addresses.length === 1}
-                            sx={{
-                              opacity:
-                                userData.addresses.length === 1 ? 0.5 : 1,
-                              cursor:
-                                userData.addresses.length === 1
-                                  ? 'not-allowed'
-                                  : 'pointer'
-                            }}
+                            disabled={userData.phones.length === 1}
                           >
                             <DeleteIcon
-                              sx={{
-                                color:
-                                  userData.addresses.length === 1
-                                    ? 'gray'
-                                    : 'var(--color-error)'
-                              }}
+                              color={
+                                userData.phones.length === 1
+                                  ? 'disabled'
+                                  : 'error'
+                              }
                             />
                           </IconButton>
-                        </Box>
-                        <ParagraphResponsive>
-                          <strong>Número:</strong>{' '}
-                          <em
-                            style={{
-                              fontStyle: 'italic',
-                              fontWeight: 'inherit'
-                            }}
-                          >
-                            {address.number}
-                          </em>
-                        </ParagraphResponsive>
-
-                        <ParagraphResponsive>
-                          <strong> Ciudad:</strong>{' '}
-                          <em
-                            style={{
-                              fontFamily: 'italica',
-                              fontWeight: 'inherit'
-                            }}
-                          >
-                            {address.city}
-                          </em>
-                        </ParagraphResponsive>
-
-                        <ParagraphResponsive>
-                          <strong> Estado:</strong>{' '}
-                          <em
-                            style={{
-                              fontFamily: 'italica',
-                              fontWeight: 'inherit'
-                            }}
-                          >
-                            {address.state}
-                          </em>
-                        </ParagraphResponsive>
-
-                        <ParagraphResponsive>
-                          <strong> País:</strong>{' '}
-                          <em
-                            style={{
-                              fontFamily: 'italica',
-                              fontWeight: 'inherit'
-                            }}
-                          >
-                            {address.country}
-                          </em>
-                        </ParagraphResponsive>
-                      </CardContent>
+                        </Stack>
+                      </Stack>
                     </Card>
-                  </Box>
+                  </Grid>
                 ))
               ) : (
-                <Typography variant="body2" sx={{ mt: 2 }}>
+                <Typography variant="body2">
+                  No hay teléfonos registrados.
+                </Typography>
+              )}
+            </Grid>
+          </Stack>
+
+          <Divider sx={{ my: 3 }} />
+
+          {/* Direcciones */}
+          <Stack spacing={2}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <HomeIcon color="primary" />
+              <Typography variant="h6">Direcciones</Typography>
+              <IconButton onClick={() => setOpenModal(true)} color="secondary">
+                <AddIcon />
+              </IconButton>
+            </Stack>
+
+            <Grid container spacing={2}>
+              {userData?.addresses?.length > 0 ? (
+                userData.addresses.map((address) => (
+                  <Grid item xs={12} sm={6} md={4} key={address.idAddress}>
+                    <Card sx={{ p: 2 }}>
+                      <Stack spacing={1}>
+                        <Typography variant="subtitle1" fontWeight="bold">
+                          {address.street}, {address.number}
+                        </Typography>
+                        <Typography variant="body2">
+                          Ciudad: {address.city}
+                        </Typography>
+                        <Typography variant="body2">
+                          Estado: {address.state}
+                        </Typography>
+                        <Typography variant="body2">
+                          País: {address.country}
+                        </Typography>
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          justifyContent="flex-end"
+                        >
+                          <IconButton
+                            onClick={() => {
+                              setSelectedDireccion(address)
+                              setOpenModalDireccionUpdate(true)
+                            }}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            onClick={async () => {
+                              if (userData.addresses.length > 1) {
+                                const confirm = await showConfirm(
+                                  '¿Estás seguro?',
+                                  'Eliminarás esta dirección.'
+                                )
+                                if (confirm) {
+                                  await removeAddress(address.idAddress)
+                                  await fetchUser()
+                                  showSuccess(
+                                    'Eliminado',
+                                    'Dirección eliminada.'
+                                  )
+                                }
+                              }
+                            }}
+                            disabled={userData.addresses.length === 1}
+                          >
+                            <DeleteIcon
+                              color={
+                                userData.addresses.length === 1
+                                  ? 'disabled'
+                                  : 'error'
+                              }
+                            />
+                          </IconButton>
+                        </Stack>
+                      </Stack>
+                    </Card>
+                  </Grid>
+                ))
+              ) : (
+                <Typography variant="body2">
                   No hay direcciones registradas.
                 </Typography>
               )}
-            </Box>
-          </Box>
+            </Grid>
+          </Stack>
         </CardContent>
       </Card>
 
-      {/* Modal para agregar nueva dirección */}
+      {/* Modales */}
       <ModalNewDireccion
         open={openModal}
-        handleClose={handleCloseModal}
+        handleClose={() => setOpenModal(false)}
         idUser={idUser}
         refreshUserData={fetchUser}
       />
-
-      {/* Modal para agregar nuevo telefono */}
       <ModalNewPhone
         open={openModalPhone}
-        handleCloseModalPhone={handleCloseModalPhone}
+        handleCloseModalPhone={() => setOpenModalPhone(false)}
         idUser={idUser}
         refreshPhoneData={fetchUser}
       />
-
-      {/* Modal para modificar datos del usuario */}
       <ModalUpdateUser
         open={openModalUser}
-        handleCloseModalUser={handleCloseModalUser}
+        handleCloseModalUser={() => setOpenModalUser(false)}
         idUser={idUser}
         refreshUserData={fetchUser}
         userData={userData}
       />
-
-      {/* Modal para modificar datos del telefono  */}
       <ModalUpdatePhone
         open={openModalPhoneUpdate}
-        handleCloseModalPhoneUpdate={handleCloseModalPhoneUpdate}
+        handleCloseModalPhoneUpdate={() => setOpenModalPhoneUpdate(false)}
         refreshUserData={fetchUser}
-        selectedPhone={selectedPhone} // 📌 Pasa el teléfono seleccionado
+        selectedPhone={selectedPhone}
       />
-      {/* Modal para modificar datos de la direccion*/}
       <ModalUpdateDireccion
         open={openModalDireccionUpdate}
-        handleCloseModalDireccionUpdate={handleCloseModalDireccionUpdate}
+        handleCloseModalDireccionUpdate={() =>
+          setOpenModalDireccionUpdate(false)
+        }
         refreshUserData={fetchUser}
         selectedDireccion={selectedDireccion}
       />
 
-      {/* Snackbar para mostrar errores */}
+      {/* Snackbar */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
+        onClose={() => setOpenSnackbar(false)}
       >
-        <Alert onClose={handleCloseSnackbar} severity="error">
+        <Alert severity="error" onClose={() => setOpenSnackbar(false)}>
           {error}
         </Alert>
       </Snackbar>
-    </MainWrapper>
+    </Box>
   )
 }
 
