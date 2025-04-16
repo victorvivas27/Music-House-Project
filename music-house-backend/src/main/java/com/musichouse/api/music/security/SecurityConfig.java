@@ -37,7 +37,7 @@ public class SecurityConfig {
                         // Rutas de dirección (todas las operaciones)
                         .requestMatchers("/api/address/**").permitAll()
                         // Rutas de teléfono (todas las operaciones)
-                        .requestMatchers("/api/phone/**").permitAll()
+                        .requestMatchers("/api/phones/**").permitAll()
                         // Rutas de temas (todas las operaciones)
                         .requestMatchers("/api/themes/**").permitAll()
                         // Rutas de categorías (todas las operaciones)
