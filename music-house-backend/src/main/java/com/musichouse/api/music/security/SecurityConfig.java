@@ -53,7 +53,7 @@ public class SecurityConfig {
                         // Rutas de fechas disponibles (todas las operaciones)
                         .requestMatchers("/api/available-dates/**").permitAll()
                         // Rutas de Favoritos (todas las operaciones)
-                        .requestMatchers("/api/favorite/**").permitAll()
+                        .requestMatchers("/api/favorites/**").permitAll()
                         // Rutas de Politica de privacidad  (todas las operaciones)
                         .requestMatchers("/api/privacy-policy/**").permitAll()
                         // Rutas de Reserva  (todas las operaciones)

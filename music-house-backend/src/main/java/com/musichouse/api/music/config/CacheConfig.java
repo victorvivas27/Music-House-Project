@@ -21,7 +21,8 @@ public class CacheConfig {
                 buildCache("categories", 100, 10),
                 buildCache("themes", 100, 10),
                 buildCache("users", 100, 10),
-                buildCache("instruments", 100, 10)
+                buildCache("instruments", 100, 10),
+                buildCache("favorites", 100, 10)
         ));
         return cacheManager;
     }

@@ -84,7 +84,7 @@ const ProductCard = ({ name, imageUrl, id }) => {
         }
         arrow
       >
-        <Link to={`/instrument/${id}`} >
+        <Link to={`/instrument/${id}`}>
           {!imgError ? (
             <CardMedia
               component="img"
@@ -121,9 +121,7 @@ const ProductCard = ({ name, imageUrl, id }) => {
         </Link>
       </CustomTooltip>
       {/* ✅ Título debajo de la imagen */}
-      <ParagraphResponsive>
-        {name}
-      </ParagraphResponsive>
+      <ParagraphResponsive>{name}</ParagraphResponsive>
 
       <CardActions
         sx={{

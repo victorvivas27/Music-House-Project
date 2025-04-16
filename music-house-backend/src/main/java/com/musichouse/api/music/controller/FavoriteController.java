@@ -2,32 +2,32 @@ package com.musichouse.api.music.controller;
 
 import com.musichouse.api.music.dto.dto_entrance.FavoriteDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.FavoriteDtoExit;
-import com.musichouse.api.music.dto.dto_exit.IsFavoriteExit;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
-import com.musichouse.api.music.service.FavoriteService;
+import com.musichouse.api.music.service.favorite.FavoriteService;
 import com.musichouse.api.music.util.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/favorite")
+@RequestMapping("/api/favorites")
 public class FavoriteController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FavoriteController.class);
     private final FavoriteService favoriteService;
 
     // 🔹 AGREGAR FAVORITO
-    @PostMapping("/add")
+    @PostMapping()
     public ResponseEntity<ApiResponse<FavoriteDtoExit>> addFavorite(@RequestBody @Valid FavoriteDtoEntrance favoriteDtoEntrance) throws ResourceNotFoundException {
         FavoriteDtoExit favoriteDtoExit = favoriteService.addFavorite(favoriteDtoEntrance);
 
@@ -41,50 +41,21 @@ public class FavoriteController {
                         .build());
     }
 
-    // 🔹 OBTENER TODOS LOS FAVORITOS
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<FavoriteDtoExit>>> getAllFavorites() {
-        List<FavoriteDtoExit> favoriteDtoExits = favoriteService.getAllFavorite();
-
-        return ResponseEntity.ok(ApiResponse.<List<FavoriteDtoExit>>builder()
-                .status(HttpStatus.OK)
-                .statusCode(HttpStatus.OK.value())
-                .message("Lista de favoritos obtenida con éxito.")
-                .error(null)
-                .result(favoriteDtoExits)
-                .build());
-    }
 
     // 🔹 BUSCAR FAVORITOS POR ID DE USUARIO
-    @GetMapping("/search/{userId}")
-    public ResponseEntity<ApiResponse<List<FavoriteDtoExit>>> getFavoritesByUserId(@PathVariable UUID userId) {
-        List<FavoriteDtoExit> favoriteDtoExits = favoriteService.getFavoritesByUserId(userId);
+    @GetMapping("{idUser}")
+    public ResponseEntity<ApiResponse<Page<FavoriteDtoExit>>> getFavoritesByUserId(@PathVariable UUID idUser, Pageable pageable) {
 
-        String message = favoriteDtoExits.isEmpty()
-                ? "No se encontraron favoritos para el usuario con ID: " + userId
-                : "Favoritos encontrados con éxito para el usuario con ID: " + userId;
+        Page<FavoriteDtoExit> favoriteDtoExits = favoriteService.getFavoritesByUserId(idUser, pageable);
 
-        return ResponseEntity.ok(ApiResponse.<List<FavoriteDtoExit>>builder()
+        return ResponseEntity.ok(ApiResponse.<Page<FavoriteDtoExit>>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
-                .message(message)
+                .message("Favoritos del Usuario")
                 .error(null)
                 .result(favoriteDtoExits)
                 .build());
     }
 
-    // 🔹 ELIMINAR FAVORITO
-    @DeleteMapping("/delete/{idInstrument}/{idUser}/{idFavorite}")
-    public ResponseEntity<ApiResponse<IsFavoriteExit>> deleteFavorite(
-            @PathVariable UUID idInstrument, @PathVariable UUID idUser, @PathVariable UUID idFavorite) throws ResourceNotFoundException {
-        ApiResponse<IsFavoriteExit> response = favoriteService.deleteFavorite(idInstrument, idUser, idFavorite);
 
-        return ResponseEntity.ok(ApiResponse.<IsFavoriteExit>builder()
-                .status(HttpStatus.OK)
-                .statusCode(HttpStatus.OK.value())
-                .message("Instrumento eliminado de favoritos con éxito.")
-                .error(null)
-                .result(response.getResult())
-                .build());
-    }
 }

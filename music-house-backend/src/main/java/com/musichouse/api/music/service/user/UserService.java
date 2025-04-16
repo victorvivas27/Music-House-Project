@@ -187,7 +187,7 @@ public class UserService implements UserInterface {
         String imageUrl = user.getPicture();
 
 
-        favoriteRepository.deleteByUserId(idUser);
+        favoriteRepository.deleteByIdUser(idUser);
 
 
         user.getRoles().clear();

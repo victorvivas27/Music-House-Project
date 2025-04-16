@@ -1,15 +1,18 @@
-import { useCallback, useEffect, useRef, useState} from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAppStates } from '@/components/utils/global.context'
 import { getInstruments } from '@/api/instruments'
 import { actions } from '@/components/utils/actions'
 import { getTheme } from '@/api/theme'
 import { Loader } from '@/components/common/loader/Loader'
-import { MainWrapper, ProductsWrapper, TitleResponsive } from '@/components/styles/ResponsiveComponents'
+import {
+  MainWrapper,
+  ProductsWrapper,
+  TitleResponsive
+} from '@/components/styles/ResponsiveComponents'
 import AutoScrollCarousel from '@/components/common/autoScrollCarousel/AutoScrollCarousel'
 import ProductCard from '@/components/common/instrumentGallery/ProductCard'
 import { getErrorMessage } from '@/api/getErrorMessage'
 import useAlert from '@/hook/useAlert'
-
 
 export const Home = () => {
   const { state, dispatch } = useAppStates()

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Typography, Box } from '@mui/material'
 import { useAppStates } from '@/components/utils/global.context'
 import { useAuth } from '@/hook/useAuth'
-import { getAllFavorites } from '@/api/favorites'
+import {  getFavoritesByUserId } from '@/api/favorites'
 import { actions } from '@/components/utils/actions'
 import { Loader } from '@/components/common/loader/Loader'
 import { MainWrapper, ProductsWrapper } from '@/components/styles/ResponsiveComponents'
@@ -12,22 +12,37 @@ import ProductCard from '@/components/common/instrumentGallery/ProductCard'
 
 export const Favorites = () => {
   const [loading, setLoading] = useState(true)
-  const { state, dispatch } = useAppStates()
+  const [page, setPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+  const pageSize = 3
+const { state, dispatch } = useAppStates()
   const { favorites } = state
   const { idUser } = useAuth()
 
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      const response = await getAllFavorites(idUser)
-      dispatch({
-        type: actions.UPDATE_FAVORITES,
-        payload: Array.isArray(response.result) ? response.result : []
-      })
-      setLoading(false)
-    }
+  const fetchFavorites = async (pageToLoad = 0) => {
+    const response = await getFavoritesByUserId(idUser, pageToLoad, pageSize)
+    const data = response?.result
 
-    fetchFavorites()
-  }, [idUser, dispatch])
+    dispatch({
+      type: actions.UPDATE_FAVORITES,
+      payload: pageToLoad === 0
+        ? data.content
+        : [...favorites, ...data.content]
+    })
+
+    setHasMore(!data.last)
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchFavorites(0)
+  }, [idUser])
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1
+    setPage(nextPage)
+    fetchFavorites(nextPage)
+  }
 
   if (loading) return <Loader title="Cargando favoritos..." />
 
@@ -46,28 +61,16 @@ export const Favorites = () => {
     >
       <ArrowBack />
 
-      <Box
-        sx={{
-          textAlign: 'center'
-        }}
-      >
+      <Box sx={{ textAlign: 'center' }}>
         <Typography
           variant="h4"
           component="h1"
           fontWeight="bold"
-          sx={{
-            color: 'var(--color-primario)',
-            marginBottom: 1
-          }}
+          sx={{ color: 'var(--color-primario)', marginBottom: 1 }}
         >
           🎵 Tus Favoritos
         </Typography>
-        <Typography
-          variant="subtitle1"
-          sx={{
-            color: 'text.secondary'
-          }}
-        >
+        <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
           Aquí puedes ver los instrumentos que marcaste como favoritos.
         </Typography>
       </Box>
@@ -78,7 +81,7 @@ export const Favorites = () => {
             <ProductCard
               key={`favorite-card-${index}`}
               name={favorite.instrument.name}
-              imageUrl={favorite.imageUrl}
+              imageUrl={favorite.instrument.imageUrl}
               id={favorite.instrument.idInstrument}
               isFavorite={true}
             />
@@ -93,11 +96,30 @@ export const Favorites = () => {
               fontStyle: 'italic'
             }}
           >
-            No se han encontrado favoritos. ¡Explora instrumentos y agrega
-            algunos! 🎸🎺
+            No se han encontrado favoritos. ¡Explora instrumentos y agrega algunos! 🎸🎺
           </Typography>
         )}
       </ProductsWrapper>
+
+      {/* 🔽 Botón de paginación */}
+      {hasMore && (
+        <Box sx={{ textAlign: 'center', mt: 2 }}>
+          <button
+            onClick={handleLoadMore}
+            style={{
+              padding: '10px 20px',
+              fontSize: '1rem',
+              borderRadius: '8px',
+              backgroundColor: 'var(--color-primario)',
+              color: 'white',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            Cargar más favoritos
+          </button>
+        </Box>
+      )}
     </MainWrapper>
   )
 }

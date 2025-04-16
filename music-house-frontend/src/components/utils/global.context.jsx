@@ -10,7 +10,7 @@ import PropTypes from 'prop-types'
 const initialState = {
   favorites: [],
   loading: false,
- 
+
   characteristics: [
     { name: 'Estuche', image: instrumentCase, id: 'instrumentCase' },
     { name: 'Soporte', image: support, id: 'support' },
@@ -24,7 +24,7 @@ const initialState = {
   categories: { content: [], totalElements: 0 },
   themes: { content: [], totalElements: 0 },
   users: { content: [], totalElements: 0 },
-  instruments: { content: [], totalElements: 0 },
+  instruments: { content: [], totalElements: 0 }
 }
 
 const ContextGlobal = createContext()
@@ -34,7 +34,7 @@ const appReducer = (state, action) => {
     case actions.SET_LOADING:
       return { ...state, loading: action.payload }
 
-  case actions.FIND_INSTRUMENT:
+    case actions.FIND_INSTRUMENT:
       return {
         ...state,
         searchOptions: {
@@ -49,7 +49,9 @@ const appReducer = (state, action) => {
       }
 
     case actions.TOGGLE_FAVORITE: {
-      const { isFavorite, favorite, instrumentId } = action.payload
+      const { favorite } = action.payload
+      const isFavorite = favorite.isFavorite
+      const instrumentId = favorite.instrument.idInstrument
 
       const updatedFavorites = isFavorite
         ? [...state.favorites, favorite]
@@ -64,39 +66,48 @@ const appReducer = (state, action) => {
       return {
         ...state,
         categories: action.payload?.content
-          ? action.payload 
-          : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } 
+          ? action.payload
+          : {
+              content: Array.isArray(action.payload) ? action.payload : [],
+              totalElements: 0
+            }
       }
 
-  case actions.SET_THEMES:
-    return {
-      ...state,
-      themes: action.payload?.content
-        ? action.payload 
-        : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } 
-    }
+    case actions.SET_THEMES:
+      return {
+        ...state,
+        themes: action.payload?.content
+          ? action.payload
+          : {
+              content: Array.isArray(action.payload) ? action.payload : [],
+              totalElements: 0
+            }
+      }
     case actions.SET_INSTRUMENTS:
       return {
         ...state,
         instruments: action.payload?.content
-          ? action.payload 
-          : { content: Array.isArray(action.payload) ? action.payload : [], totalElements: 0 } 
+          ? action.payload
+          : {
+              content: Array.isArray(action.payload) ? action.payload : [],
+              totalElements: 0
+            }
       }
-      case actions.APPEND_INSTRUMENTS:
-        return {
-          ...state,
-          instruments: {
-            ...action.payload,
-            content: [
-              ...(state.instruments?.content || []),
-              ...action.payload.content
-            ]
-          }
+    case actions.APPEND_INSTRUMENTS:
+      return {
+        ...state,
+        instruments: {
+          ...action.payload,
+          content: [
+            ...(state.instruments?.content || []),
+            ...action.payload.content
+          ]
         }
+      }
     case actions.SET_USERS:
       return {
         ...state,
-        users: action.payload 
+        users: action.payload
       }
 
     default:
