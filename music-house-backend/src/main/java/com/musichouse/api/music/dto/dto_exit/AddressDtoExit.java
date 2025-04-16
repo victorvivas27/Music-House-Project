@@ -3,7 +3,7 @@ package com.musichouse.api.music.dto.dto_exit;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -17,8 +17,11 @@ public class AddressDtoExit {
 
     private UUID idUser;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date registDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Santiago")
+    private LocalDateTime registDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Santiago")
+    private LocalDateTime modifiedDate;
 
     private String street;
 
