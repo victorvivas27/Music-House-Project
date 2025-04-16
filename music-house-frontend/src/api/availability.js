@@ -18,7 +18,7 @@ export const getInstrumentAvailability = async (idInstrument, startDate, endDate
 export const getAllAvailableDatesByInstrument = async (idInstrument) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/available-dates/find/all/${idInstrument}/instrument`
+      `${BASE_URL}/available-dates/${idInstrument}`
     );
     return response.data;
   } catch (error) {
@@ -29,7 +29,7 @@ export const getAllAvailableDatesByInstrument = async (idInstrument) => {
 
 export const addAvailableDates = async (availableDates) => {
   try {
-    const response = await axios.post(`${BASE_URL}/available-dates/add`, availableDates);
+    const response = await axios.post(`${BASE_URL}/available-dates`, availableDates);
     return response.data; 
   } catch (error) {
     handleApiError(error);
@@ -37,12 +37,4 @@ export const addAvailableDates = async (availableDates) => {
 };
 
 
-export const removeAvailableDate = async (idInstrument, idDate) => {
-  try {
-    const response = await axios.delete(`${BASE_URL}/available-dates/delete/${idInstrument}/${idDate}`);
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-  }
-};
 

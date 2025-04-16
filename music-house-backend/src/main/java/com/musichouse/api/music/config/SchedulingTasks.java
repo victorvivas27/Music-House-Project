@@ -1,6 +1,6 @@
 package com.musichouse.api.music.config;
 
-import com.musichouse.api.music.service.AvailableDateService;
+import com.musichouse.api.music.service.availableDate.AvailableDateService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

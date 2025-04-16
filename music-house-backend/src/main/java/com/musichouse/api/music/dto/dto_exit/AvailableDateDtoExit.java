@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -18,8 +18,11 @@ public class AvailableDateDtoExit {
 
     private UUID idInstrument;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date registDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Santiago")
+    private LocalDateTime registDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Santiago")
+    private LocalDateTime modifiedDate;
 
     private LocalDate dateAvailable;
 

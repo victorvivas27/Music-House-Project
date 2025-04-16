@@ -24,7 +24,8 @@ public class CacheConfig {
                 buildCache("instruments", 100, 10),
                 buildCache("favorites", 100, 10),
                 buildCache("addresses", 100, 10),
-                buildCache("phones", 100, 10)
+                buildCache("phones", 100, 10),
+                buildCache("availableDates", 100, 10)
         ));
         return cacheManager;
     }

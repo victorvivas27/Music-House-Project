@@ -1,6 +1,6 @@
 package com.musichouse.api.music.util;
 
-import com.musichouse.api.music.service.AvailableDateService;
+import com.musichouse.api.music.service.availableDate.AvailableDateService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
