@@ -35,7 +35,8 @@ public class AvailableDateService implements AvailableDateInterface {
 
     @Override
     @CacheEvict(value = "availableDates", allEntries = true)
-    public List<AvailableDateDtoExit> addAvailableDates(List<AvailableDateDtoEntrance> availableDatesDtoList) throws ResourceNotFoundException {
+    public List<AvailableDateDtoExit> addAvailableDates(List<AvailableDateDtoEntrance> availableDatesDtoList)
+            throws ResourceNotFoundException {
 
         List<AvailableDateDtoExit> result = new ArrayList<>();
 
@@ -45,7 +46,8 @@ public class AvailableDateService implements AvailableDateInterface {
 
             availableDateValidator.validateFutureDate(dto.getDateAvailable());
 
-            Optional<AvailableDate> existing = availableDateRepository.findByInstrumentIdInstrumentAndDateAvailable(dto.getIdInstrument(), dto.getDateAvailable());
+            Optional<AvailableDate> existing = availableDateRepository
+                    .findByInstrumentIdInstrumentAndDateAvailable(dto.getIdInstrument(), dto.getDateAvailable());
 
             AvailableDate entity = availableDateBuilder.createOrUpdate(dto, instrument, existing);
 
@@ -84,12 +86,19 @@ public class AvailableDateService implements AvailableDateInterface {
      */
 
     @Transactional
-    public List<AvailableDateDtoExit> findAllInstrumentByDatesRange(LocalDate startDate, LocalDate endDate) throws ResourceNotFoundException {
+    public List<AvailableDateDtoExit> findAllInstrumentByDatesRange(LocalDate startDate, LocalDate endDate)
+            throws ResourceNotFoundException {
         List<AvailableDate> availableDates = availableDateRepository.findByDateAvailableBetween(startDate, endDate);
         if (availableDates.isEmpty()) {
             throw new ResourceNotFoundException("No hay fechas disponibles en el rango de fechas proporcionado.");
         }
-        return availableDates.stream().filter(AvailableDate::getAvailable).map(availableDate -> mapper.map(availableDate, AvailableDateDtoExit.class)).collect(Collectors.toList());
+        return availableDates
+                .stream()
+                .filter(AvailableDate::getAvailable)
+                .map(availableDate -> mapper
+                        .map(availableDate,
+                                AvailableDateDtoExit.class))
+                .collect(Collectors.toList());
     }
 
 

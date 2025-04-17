@@ -145,4 +145,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleFileNotFoundException(DuplicateImageException e) {
         return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
+
+    // 🔹 Instrumento Reservado
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBusinessRuleException(BusinessRuleException e) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
 }

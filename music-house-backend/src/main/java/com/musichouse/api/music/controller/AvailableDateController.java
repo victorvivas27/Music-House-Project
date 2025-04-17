@@ -63,7 +63,7 @@ public class AvailableDateController {
                 .build());
     }
 
-
+    // 🔹LISTA LAS FECHAS DISPONIBLER POR ID DEL INSTRUMENTO
     @GetMapping("/{idInstrument}")
     public ResponseEntity<ApiResponse<List<?>>> findAllAvailableDatesByInstrumentId(
             @PathVariable UUID idInstrument) throws ResourceNotFoundException {
