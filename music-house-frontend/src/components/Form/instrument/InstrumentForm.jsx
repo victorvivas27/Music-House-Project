@@ -22,13 +22,13 @@ import ArrowBack from '@/components/utils/ArrowBack'
 import LoadingText from '@/components/common/loadingText/LoadingText'
 import PropTypes from 'prop-types'
 import SelectInfinete from '@/components/common/selectInfinite/SelectInfinite'
-import { getCategories } from '@/api/categories'
-import { getTheme } from '@/api/theme'
+import { getCategories, getCategoryById } from '@/api/categories'
+import { getTheme, getThemeById } from '@/api/theme'
 import ImageUploadMultiple from './ImageUploadMultiple'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import SmsFailedIcon from '@mui/icons-material/SmsFailed'
 import { validationSchema } from '@/validations/instrument'
-import {  inputStyles } from '@/components/styles/styleglobal'
+import { inputStyles } from '@/components/styles/styleglobal'
 import TooltipMy from '@/components/common/toolTip/ToolTipMy'
 
 const InstrumentForm = ({
@@ -57,14 +57,12 @@ const InstrumentForm = ({
             component={Form}
             sx={{
               minWidth: '1100px',
-              mx: 'auto',
               p: 4,
               borderRadius: 4,
-              boxShadow: 4,
-              backgroundColor: '#fafafa',
+              boxShadow: "var(--box-shadow)",
               display: 'flex',
               flexDirection: 'column',
-              gap: 4
+              marginBottom:10
             }}
           >
             <Grid container spacing={4}>
@@ -74,7 +72,7 @@ const InstrumentForm = ({
                 md={6}
                 display="flex"
                 flexDirection="column"
-                gap={2}
+                gap={6}
               >
                 <FormControl>
                   <Field
@@ -137,7 +135,7 @@ const InstrumentForm = ({
                 flexDirection="column"
                 gap={2}
               >
-                <Box  sx={{display:"flex"}}>
+                <Box sx={{ display: 'flex' }}>
                   <SelectInfinete
                     label="🎸🎷Selecciona una Categoría 🥁🪘"
                     name="idCategory"
@@ -146,6 +144,7 @@ const InstrumentForm = ({
                       setFieldValue('idCategory', e.target.value)
                     }
                     fetchDataFn={getCategories}
+                    fetchSingleItemFn={getCategoryById}
                     getId={(cat) => cat.idCategory}
                     getLabel={(cat) => cat.categoryName}
                     pageSize={2}
@@ -155,20 +154,22 @@ const InstrumentForm = ({
                     message="⚠️ Recuerda seleccionar una categoría antes de continuar."
                     textColor="whithe"
                     backgroundColor="orange"
-                    fontSize='12px'
-                    width='350px'
+                    fontSize="12px"
+                    width="350px"
                   >
-                    <SmsFailedIcon sx={{color:"orange"}} />
+                    <SmsFailedIcon sx={{ color: 'orange' }} />
                   </TooltipMy>
                 </Box>
 
-                <Box sx={{display:"flex"}}>
+                <Box sx={{ display: 'flex' }}>
                   <SelectInfinete
                     label="🎭 Selecciona una temática"
                     name="idTheme"
                     selectedValue={values.idTheme}
-                    onChange={(e) => setFieldValue('idTheme', e.target.value)}
+                    onChange={(e) =>
+                       setFieldValue('idTheme', e.target.value)}
                     fetchDataFn={getTheme}
+                    fetchSingleItemFn={getThemeById}
                     getId={(item) => item.idTheme}
                     getLabel={(item) => item.themeName}
                     pageSize={2}
@@ -177,10 +178,10 @@ const InstrumentForm = ({
                     message="⚠️ No olvides elegir una temática para tu instrumento."
                     textColor="whithe"
                     backgroundColor="orange"
-                    fontSize='12px'
-                    width='350px'
+                    fontSize="12px"
+                    width="350px"
                   >
-                    <SmsFailedIcon sx={{color:"orange"}}/>
+                    <SmsFailedIcon sx={{ color: 'orange' }} />
                   </TooltipMy>
                 </Box>
 

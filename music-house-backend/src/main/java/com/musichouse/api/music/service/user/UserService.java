@@ -26,7 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -84,10 +86,11 @@ public class UserService implements UserInterface {
         } else {
             imageUrl = awss3Service.copyDefaultUserImage(id);
         }
+
         User user = userBuilder.buildUserWithImage(userDtoEntrance, id, imageUrl);
 
-
         User userSaved = userRepository.save(user);
+
         String token = jwtService.generateToken(userSaved);
 
 
@@ -119,7 +122,10 @@ public class UserService implements UserInterface {
 
         User user = userValidator.validateUserExistsByEmail(loginDtoEntrance.getEmail());
 
-        Authentication authentication = authHelper.authenticate(loginDtoEntrance.getEmail(), loginDtoEntrance.getPassword());
+        Authentication authentication = authHelper.authenticate(
+                loginDtoEntrance.getEmail(),
+                loginDtoEntrance.getPassword()
+        );
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
@@ -132,7 +138,10 @@ public class UserService implements UserInterface {
                 .build();
     }
 
-    @Cacheable(value = "users")
+    @Cacheable(
+            value = "users",
+            key = "'all-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()"
+    )
     public Page<UserDtoExit> getAllUser(Pageable pageable) {
 
         Page<User> usersPage = userRepository.findAll(pageable);
@@ -152,7 +161,7 @@ public class UserService implements UserInterface {
 
 
     @Override
-    @CacheEvict(value = "users", allEntries = true)
+    @CachePut(value = "users", key = "#userDtoModify.idUser")
     public UserDtoExit updateUser(UserDtoModify userDtoModify, MultipartFile file)
             throws ResourceNotFoundException {
 
@@ -162,9 +171,11 @@ public class UserService implements UserInterface {
 
         modelMapper.map(userDtoModify, userToUpdate);
 
-        // Reemplazar roles explícitamente
+
         if (userDtoModify.getRoles() != null) {
+
             userToUpdate.getRoles().clear();
+
             userToUpdate.getRoles().addAll(userDtoModify.getRoles());
         }
 
@@ -179,7 +190,14 @@ public class UserService implements UserInterface {
 
 
     @Override
-    @CacheEvict(value = "users", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "users", key = "#idUser"),
+            @CacheEvict(value = "favorites", key = "#idUser"),
+            @CacheEvict(value = "addresses", key = "#idUser"),
+            @CacheEvict(value = "phones", key = "#idUser"),
+            @CacheEvict(value = "users", allEntries = true)
+
+    })
     public void deleteUser(UUID idUser) throws ResourceNotFoundException {
 
         User user = userValidator.validateUserId(idUser);
@@ -200,6 +218,7 @@ public class UserService implements UserInterface {
         if (imageUrl != null && !imageUrl.isEmpty()) {
 
             String key = S3UrlParser.extractKeyFromS3Url(imageUrl);
+
             s3FileDeleter.deleteFileFromS3(key);
 
         }

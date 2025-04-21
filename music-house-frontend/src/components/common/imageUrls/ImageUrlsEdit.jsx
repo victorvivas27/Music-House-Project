@@ -1,4 +1,4 @@
-import { imageUrlsAllInstrumentId, removeImage } from "@/api/images"
+import { imageUrlsAllInstrumentId, removeImage } from "@/api/imagesInstrument"
 import useAlert from "@/hook/useAlert"
 import { Delete } from "@mui/icons-material"
 import { Box, IconButton } from "@mui/material"

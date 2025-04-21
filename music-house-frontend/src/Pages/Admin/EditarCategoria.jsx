@@ -72,7 +72,7 @@ export const EditarCategoria = () => {
   }
 
   return (
-    <main>
+    <>
       <CreateWrapper isHeaderVisible={isHeaderVisible}>
         <TitleResponsive>Editar Categoría</TitleResponsive>
         <CategoryForm
@@ -100,6 +100,6 @@ export const EditarCategoria = () => {
           Funcionalidad no disponible en esta resolución
         </Typography>
       </Box>
-    </main>
+    </>
   )
 }

@@ -8,7 +8,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const addImage = async (formData) => {
   try {
-    const response = await axios.post(`${BASE_URL}/imageurls/add_image`, formData, {
+    const response = await axios.post(`${BASE_URL}/imageurls`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -24,7 +24,7 @@ export const addImage = async (formData) => {
 
 export const removeImage = async (idImage, idInstrument) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/imageurls/delete/${idInstrument}/image-id/${idImage}`);
+    const response = await axios.delete(`${BASE_URL}/imageurls/${idInstrument}/${idImage}`);
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -34,7 +34,7 @@ export const removeImage = async (idImage, idInstrument) => {
 
 export const imageUrlsAllInstrumentId = async (idInstrument) => {
   try {
-    const response = await axios.get(`${BASE_URL}/imageurls/by-instrument/${idInstrument}`);
+    const response = await axios.get(`${BASE_URL}/imageurls/${idInstrument}`);
     return response.data;
   } catch (error) {
     handleApiError(error);

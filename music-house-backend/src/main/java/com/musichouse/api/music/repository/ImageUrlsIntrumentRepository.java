@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ImageUrlsRepository extends JpaRepository<ImageUrlsInstrument, UUID> {
-   
+public interface ImageUrlsIntrumentRepository extends JpaRepository<ImageUrlsInstrument, UUID> {
+
 
     @Modifying
     @Query("DELETE FROM ImageUrlsInstrument i WHERE i.idImage = :idImage AND i.instrument.idInstrument = :idInstrument")

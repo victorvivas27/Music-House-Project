@@ -1,15 +1,13 @@
 import { Box, FormControl, TextField, CircularProgress } from '@mui/material'
 import PropTypes from 'prop-types'
-import {
-  inputStyles
-} from '@/components/styles/styleglobal'
+import { inputStyles } from '@/components/styles/styleglobal'
 import {
   ContainerBottom,
   CustomButton
 } from '@/components/styles/ResponsiveComponents'
 import ArrowBack from '@/components/utils/ArrowBack'
 import LoadingText from '@/components/common/loadingText/LoadingText'
-import { ErrorMessage, Field, Formik } from 'formik'
+import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { CategoryValidationSchema } from '@/validations/category'
 
 export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
@@ -21,37 +19,31 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
     <Formik
       initialValues={initialFormData}
       validationSchema={CategoryValidationSchema}
-      onSubmit={(values) => {
-        onSubmit(values)
-      }}
+      onSubmit={onSubmit}
     >
-      {({ errors, touched,handleSubmit }) => (
+      {({ errors, touched, handleSubmit }) => (
         <fieldset
           disabled={loading}
           style={{ border: 'none', padding: 0, margin: 0 }}
         >
           <Box
-            component="form"
+            component={Form}
             onSubmit={handleSubmit}
             sx={{
+              minWidth: '1100px',
+              p: 4,
+              borderRadius: 4,
+              boxShadow: "var(--box-shadow)",
               display: 'flex',
               flexDirection: 'column',
-              width: '600px',
-              p: 4,
-              border: '1px solid #ccc',
-              borderRadius: 4,
-              boxShadow: 3,
-              backgroundColor: '#fff',
-              gap: 3
+              marginBottom:10
             }}
           >
-            {/* Nombre */}
-            <FormControl>
+            <FormControl fullWidth>
               <Field
                 as={TextField}
                 label="Nombre"
                 name="categoryName"
-                
                 multiline
                 minRows={1}
                 maxRows={5}
@@ -60,8 +52,8 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
                 helperText={<ErrorMessage name="categoryName" />}
               />
             </FormControl>
-            {/* Descripción */}
-            <FormControl>
+
+            <FormControl fullWidth>
               <Field
                 as={TextField}
                 label="Descripción"
@@ -70,16 +62,14 @@ export const CategoryForm = ({ initialFormData, onSubmit, loading }) => {
                 multiline
                 minRows={3}
                 maxRows={10}
-                
                 sx={{ ...inputStyles }}
                 error={touched.description && Boolean(errors.description)}
                 helperText={<ErrorMessage name="description" />}
               />
             </FormControl>
-            {/* Botón */}
+
             <ContainerBottom>
               <ArrowBack />
-
               <CustomButton disabled={loading} type="submit">
                 {loading ? (
                   <>

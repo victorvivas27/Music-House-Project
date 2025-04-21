@@ -38,15 +38,13 @@ export const ThemeForm = ({ initialFormData, onSubmit, loading }) => {
           <Box
             component={Form}
             sx={{
+              minWidth: '1100px',
+              p: 4,
+              borderRadius: 4,
+              boxShadow: "var(--box-shadow)",
               display: 'flex',
               flexDirection: 'column',
-              width: '600px',
-              p: 4,
-              border: '1px solid #ccc',
-              borderRadius: 4,
-              boxShadow: 3,
-              backgroundColor: '#fff',
-              gap: 3
+              marginBottom:10
             }}
           >
             {/* Nombre */}

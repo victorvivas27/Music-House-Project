@@ -34,21 +34,30 @@ import {
 } from '@/components/styles/ResponsiveComponents'
 import ArrowBack from '@/components/utils/ArrowBack'
 import { headCellsTheme } from '@/components/utils/types/HeadCells'
-import { flexRowContainer, paginationStyles } from '@/components/styles/styleglobal'
+import {
+  flexRowContainer,
+  paginationStyles
+} from '@/components/styles/styleglobal'
 import { useAppStates } from '@/components/utils/global.context'
 import { actions } from '@/components/utils/actions'
 import SearchNameTheme from '@/components/common/search/SearchNameTheme'
+import { usePaginationControl } from '@/hook/usePaginationControl'
 
 export const Theme = () => {
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('themeName')
   const [selected, setSelected] = useState([])
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(5)
   const [firstLoad, setFirstLoad] = useState(true)
   const navigate = useNavigate()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
   const { state, dispatch } = useAppStates()
+  const {
+    page,
+    safePage,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage
+  } = usePaginationControl(state.themes.totalElements)
 
   const getAllTheme = async (
     pageToUse = page,
@@ -197,12 +206,10 @@ export const Theme = () => {
                       {page * rowsPerPage + index + 1}
                     </TableCell>
 
-                    <TableCell align="left"sx={{ ...flexRowContainer}}>
+                    <TableCell align="left" sx={{ ...flexRowContainer }}>
                       <Box
                         sx={{
-                          width: 80,
-                        
-                         
+                          width: 80
                         }}
                       >
                         <img
@@ -225,13 +232,16 @@ export const Theme = () => {
                     </TableCell>
 
                     <TableCell align="left">{row.themeName}</TableCell>
-                    <TableCell align="left"
+                    <TableCell
+                      align="left"
                       sx={{
                         whiteSpace: 'normal',
                         wordBreak: 'break-word',
-                        maxWidth: 500 
+                        maxWidth: 500
                       }}
-                    >{row.description}</TableCell>
+                    >
+                      {row.description}
+                    </TableCell>
                     <TableCell align="left">{row.registDate}</TableCell>
                     <TableCell align="left">{row.modifiedDate}</TableCell>
                     <TableCell align="left">
@@ -276,28 +286,25 @@ export const Theme = () => {
                   </TableCell>
                 </TableRow>
               )}
-            </TableBody>
-
-            {Array.from({ length: Math.max(0, rowsPerPage - rows.length) }).map(
-              (_, i) => (
+              {Array.from({
+                length: Math.max(0, rowsPerPage - rows.length)
+              }).map((_, i) => (
                 <TableRow key={`empty-${i}`} style={{ height: 80 }}>
                   <TableCell colSpan={7} />
                 </TableRow>
-              )
-            )}
+              ))}
+            </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={state.themes.totalElements || 0}
           rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={(event, newPage) => setPage(newPage)}
-          onRowsPerPageChange={(event) => {
-            setRowsPerPage(parseInt(event.target.value, 10))
-            setPage(0)
-          }}
+          page={safePage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Filas por página"
           sx={{
             ...paginationStyles

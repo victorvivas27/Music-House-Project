@@ -46,10 +46,10 @@ const MisReservas = () => {
     const reserva = reservas.find((r) => r.idReservation === idReservation)
     if (!reserva) return
 
-    const isConfirmed = await showConfirm({
-      title: '¿Eliminar reserva?',
-      text: 'Esta acción no se puede deshacer.'
-    })
+    const isConfirmed = await showConfirm(
+      '¿Eliminar reserva?',
+      'Esta acción no se puede deshacer.'
+    )
     if (!isConfirmed) return
 
     showLoading('Eliminando...', 'Por favor espera.')

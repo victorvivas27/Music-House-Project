@@ -277,8 +277,6 @@ export const Instruments = () => {
                   </TableCell>
                 </TableRow>
               )}
-            </TableBody>
-
             {Array.from({ length: Math.max(0, rowsPerPage - rows.length) }).map(
               (_, i) => (
                 <TableRow key={`empty-${i}`} style={{ height: 80 }}>
@@ -286,6 +284,8 @@ export const Instruments = () => {
                 </TableRow>
               )
             )}
+            </TableBody>
+
           </Table>
         </TableContainer>
         <TablePagination

@@ -25,16 +25,21 @@ public class CacheConfig {
                 buildCache("favorites", 100, 10),
                 buildCache("addresses", 100, 10),
                 buildCache("phones", 100, 10),
-                buildCache("availableDates", 100, 10)
+                buildCache("availableDates", 100, 10),
+                buildCache("imagesByInstrument", 100, 10),
+                buildCache("reservations", 100, 10)
         ));
         return cacheManager;
     }
 
     private CaffeineCache buildCache(String name, int maxSize, int expireAfterWrite) {
+
         Caffeine<Object, Object> caffeineBuilder = Caffeine.newBuilder()
                 .maximumSize(maxSize)
                 .expireAfterWrite(expireAfterWrite, TimeUnit.MINUTES);
+
         Cache<Object, Object> cache = caffeineBuilder.build();
+
         return new CaffeineCache(name, cache);
     }
 }

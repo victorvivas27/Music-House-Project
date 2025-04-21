@@ -1,7 +1,7 @@
 export const inputStyles = {
   width: "99%",
   color: 'var(--color-azul)',
-  height: 70,
+  margin:2,
   '& .MuiInputBase-input': {
     color: 'var(--color-azul)',
     fontSize: '16px',

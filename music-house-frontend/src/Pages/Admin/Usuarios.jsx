@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Table,
   TableBody,
@@ -50,34 +50,33 @@ export const Usuarios = () => {
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
   const { state, dispatch } = useAppStates()
 
-  const getAllUsuarios = async (
-    pageToUse = page,
-    sizeToUse = rowsPerPage,
-    isFirst = false
-  ) => {
-    if (isFirst) dispatch({ type: actions.SET_LOADING, payload: true })
-    const sort = `${orderBy},${order}`
+  const getAllUsuarios = useCallback(
+    async (pageToUse = page, sizeToUse = rowsPerPage, isFirst = false) => {
+      if (isFirst) dispatch({ type: actions.SET_LOADING, payload: true })
+      const sort = `${orderBy},${order}`
 
-    try {
-      const data = await UsersApi.getUsers(pageToUse, sizeToUse, sort)
-      dispatch({ type: actions.SET_USERS, payload: data.result })
-    } catch {
-      dispatch({
-        type: actions.SET_USERS,
-        payload: { content: [], totalElements: 0 }
-      })
-    } finally {
-      setTimeout(() => {
-        if (isFirst) setFirstLoad(false)
-        dispatch({ type: actions.SET_LOADING, payload: false })
-      }, 500)
-    }
-  }
+      try {
+        const data = await UsersApi.getUsers(pageToUse, sizeToUse, sort)
+        dispatch({ type: actions.SET_USERS, payload: data.result })
+      } catch {
+        dispatch({
+          type: actions.SET_USERS,
+          payload: { content: [], totalElements: 0 }
+        })
+      } finally {
+        setTimeout(() => {
+          if (isFirst) setFirstLoad(false)
+          dispatch({ type: actions.SET_LOADING, payload: false })
+        }, 500)
+      }
+    },
+    [dispatch, order, orderBy, page, rowsPerPage]
+  )
   const rows = Array.isArray(state.users?.content) ? state.users.content : []
 
   useEffect(() => {
     getAllUsuarios(page, rowsPerPage, firstLoad)
-  }, [page, rowsPerPage, order, orderBy])
+  }, [page, rowsPerPage, order, orderBy, getAllUsuarios, firstLoad])
 
   const handleAdd = () => navigate('/agregarUsuario')
 

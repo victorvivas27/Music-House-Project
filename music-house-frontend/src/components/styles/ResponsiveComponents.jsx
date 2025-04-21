@@ -47,8 +47,10 @@ export const ContainerBottom = styled(Grid, {
   shouldForwardProp: (prop) => prop !== 'sx',
    
 })(({ theme, sx = {} }) => ({
-   width: '100%',
+  
   ...flexColumnContainer,
+  marginTop:30,
+ 
   [theme.breakpoints.up('sm')]: {
     width: '100%'
   },
@@ -173,18 +175,13 @@ export const ParagraphResponsive = styled(Typography, {
 export const CreateWrapper = styled(Container, {
   shouldForwardProp: (prop) => prop !== 'isHeaderVisible'
 })(({ theme, isHeaderVisible }) => ({
-  display: 'none',
-
+  
   [theme.breakpoints.up('lg')]: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     gap: '1rem',
-    marginBottom: '14rem',
-    width: '100%',
     minHeight: '100vh',
-    height: 'auto',
-    maxWidth: '90%',
     paddingTop: isHeaderVisible ? 50 : 50,
     marginTop: '310px',
     transition: 'padding-top 1s ease-in-out'

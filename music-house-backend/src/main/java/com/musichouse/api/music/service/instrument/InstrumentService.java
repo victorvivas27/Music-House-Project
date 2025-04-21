@@ -18,7 +18,9 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -63,7 +65,10 @@ public class InstrumentService implements InstrumentInterface {
 
 
     @Override
-    @Cacheable(value = "instruments")
+    @Cacheable(
+            value = "instruments",
+            key = "'all-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()"
+    )
     public Page<InstrumentDtoExit> getAllInstruments(Pageable pageable) {
 
         Page<Instrument> instrumentPage = instrumentRepository.findAll(pageable);
@@ -76,7 +81,8 @@ public class InstrumentService implements InstrumentInterface {
 
     @Override
     @Cacheable(value = "instruments", key = "#idInstrument")
-    public InstrumentDtoExit getInstrumentById(UUID idInstrument) throws ResourceNotFoundException {
+    public InstrumentDtoExit getInstrumentById(UUID idInstrument)
+            throws ResourceNotFoundException {
 
         Instrument instrument = instrumentValidator.validateInstrumentId(idInstrument);
 
@@ -85,8 +91,17 @@ public class InstrumentService implements InstrumentInterface {
 
 
     @Override
-    @CacheEvict(value = "instruments", allEntries = true)
-    public InstrumentDtoExit updateInstrument(InstrumentDtoModify instrumentDtoModify) throws ResourceNotFoundException {
+    @Caching(
+            put = {
+                    @CachePut(value = "instruments", key = "#instrumentDtoModify.idInstrument")
+            },
+            evict = {
+                    
+                    @CacheEvict(value = "instruments", allEntries = true)
+            }
+    )
+    public InstrumentDtoExit updateInstrument(InstrumentDtoModify instrumentDtoModify)
+            throws ResourceNotFoundException {
 
         Instrument instrumentToUpdate = instrumentBuilder.buildInstrument(instrumentDtoModify);
 
@@ -98,7 +113,11 @@ public class InstrumentService implements InstrumentInterface {
 
     @Override
     @Transactional
-    @CacheEvict(value = "instruments", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "instruments", key = "#idInstrument"),
+            @CacheEvict(value = "favorites", key = "#idInstrument"),
+            @CacheEvict(value = "instruments", allEntries = true)
+    })
     public void deleteInstrument(UUID idInstrument) throws ResourceNotFoundException {
 
         Instrument instrument = instrumentValidator.validateInstrumentId(idInstrument);

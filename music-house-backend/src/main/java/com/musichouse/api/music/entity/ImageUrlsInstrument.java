@@ -2,7 +2,11 @@ package com.musichouse.api.music.entity;
 
 import com.musichouse.api.music.abstracts.ImageUrl;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
@@ -13,7 +17,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Table(name = "IMAGE_URLS_INSTRUMENTS")
 @AllArgsConstructor
 @NoArgsConstructor

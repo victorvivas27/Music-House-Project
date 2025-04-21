@@ -80,7 +80,7 @@ public class ReservationService implements ReservationInterface {
                 );
 
         Reservation reservationSaved = reservationRepository.save(reservation);
-        // 🔒 Bloquear fechas reservadas
+
         List<AvailableDate> datesToUpdate =
                 availableDateRepository.findByInstrumentIdInstrumentAndDateAvailableBetween(
                         instrument.getIdInstrument(),
@@ -89,6 +89,7 @@ public class ReservationService implements ReservationInterface {
                 );
 
         datesToUpdate.forEach(date -> date.setAvailable(false));
+
         availableDateRepository.saveAll(datesToUpdate);
 
         ReservationDtoExit reservationDtoExit = reservationBuilder.buildDtoReservationExit(

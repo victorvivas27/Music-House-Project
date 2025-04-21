@@ -38,17 +38,23 @@ import {
 import ArrowBack from '@/components/utils/ArrowBack'
 import { paginationStyles } from '@/components/styles/styleglobal'
 import SearchNameCategory from '@/components/common/search/SearchINameCategory'
+import { usePaginationControl } from '@/hook/usePaginationControl'
 
 export const Categories = () => {
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('categoryName')
   const [selected, setSelected] = useState([])
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(5)
-  const [firstLoad, setFirstLoad] = useState(true)
+ const [firstLoad, setFirstLoad] = useState(true)
   const navigate = useNavigate()
   const { showConfirm, showLoading, showSuccess, showError } = useAlert()
   const { state, dispatch } = useAppStates()
+  const {
+    page,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    safePage
+  } = usePaginationControl(state.categories.totalElements)
 
   const fetchData = async (
     pageToUse = page,
@@ -249,14 +255,15 @@ export const Categories = () => {
                   </TableCell>
                 </TableRow>
               )}
-            </TableBody>
-            {Array.from({ length: Math.max(0, rowsPerPage - rows.length) }).map(
+               {Array.from({ length: Math.max(0, rowsPerPage - rows.length) }).map(
               (_, i) => (
                 <TableRow key={`empty-${i}`} style={{ height: 80 }}>
                   <TableCell colSpan={7} />
                 </TableRow>
               )
             )}
+            </TableBody>
+           
           </Table>
         </TableContainer>
 
@@ -265,12 +272,9 @@ export const Categories = () => {
           component="div"
           count={state.categories.totalElements || 0}
           rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={(event, newPage) => setPage(newPage)}
-          onRowsPerPageChange={(event) => {
-            setRowsPerPage(parseInt(event.target.value, 10))
-            setPage(0)
-          }}
+          page={safePage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Filas por página"
           sx={{ ...paginationStyles }}
         />

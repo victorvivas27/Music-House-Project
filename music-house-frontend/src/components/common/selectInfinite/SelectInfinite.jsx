@@ -1,4 +1,6 @@
+import { getErrorMessage } from '@/api/getErrorMessage'
 import { inputStyles } from '@/components/styles/styleglobal'
+import useAlert from '@/hook/useAlert'
 import {
   CircularProgress,
   FormControl,
@@ -18,12 +20,14 @@ const SelectInfinete = ({
   fetchDataFn,
   getId,
   getLabel,
-  pageSize = 5
+  pageSize = 5,
+  fetchSingleItemFn
 }) => {
   const [items, setItems] = useState([])
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
+  const { showError } = useAlert()
 
   const fetchItems = useCallback(async (overridePage = page) => {
     if (loading || !hasMore) return
@@ -37,12 +41,12 @@ const SelectInfinete = ({
       ])
       setHasMore(!res?.result?.last)
       setPage(prev => prev + 1)
-    } catch (err) {
-      console.error('⚠️ Error al cargar:', err)
+    } catch (error) {
+       showError(`❌ ${getErrorMessage(error)}`)
     } finally {
       setLoading(false)
     }
-  }, [fetchDataFn, page, pageSize, loading, hasMore, getId])
+  }, [page, loading, hasMore, fetchDataFn, pageSize, getId, showError])
 
   useEffect(() => {
     if (items.length === 0) fetchItems()
@@ -50,18 +54,29 @@ const SelectInfinete = ({
 
   useEffect(() => {
     const ensureSelectedLoaded = async () => {
-      if (selectedValue && !items.some(i => getId(i) === selectedValue)) {
+    
+   if (selectedValue && !items.some(i => getId(i) === selectedValue)) {
         try {
-          const res = await fetchDataFn(0, pageSize * 3)
-          const match = res?.result?.content?.find(i => getId(i) === selectedValue)
-          if (match) setItems(prev => [...prev, match])
-        } catch (err) {
-          console.error('⚠️ Error cargando valor seleccionado:', err)
+          let match = null
+  
+          if (fetchSingleItemFn) {
+            match = (await fetchSingleItemFn(selectedValue))?.result
+          } else {
+            const res = await fetchDataFn(0, pageSize * 5)
+            match = res?.result?.content?.find(i => getId(i) === selectedValue)
+          }
+  
+          if (match && getId(match)) {
+            setItems(prev => [...prev, match])
+          }
+        } catch (error) {
+          showError(`❌ ${getErrorMessage(error)}`)
         }
       }
     }
+  
     ensureSelectedLoaded()
-  }, [selectedValue, items, fetchDataFn, getId, pageSize])
+  }, [selectedValue, items, fetchDataFn, getId, pageSize, fetchSingleItemFn, showError])
 
   const handleScroll = e => {
     const bottom = e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight - 10
@@ -87,12 +102,11 @@ const SelectInfinete = ({
         <MenuItem value="" disabled>
           <Typography variant="body1">{label}</Typography>
         </MenuItem>
-
-        {items.map(item => (
-          <MenuItem key={getId(item)} value={getId(item)}>
-            {getLabel(item)}
-          </MenuItem>
-        ))}
+        {items.map((item, index) => (
+  <MenuItem key={`${getId(item) ?? index}`} value={getId(item)}>
+    {getLabel(item)}
+  </MenuItem>
+))}
 
         {loading && (
           <MenuItem disabled>
@@ -113,7 +127,8 @@ SelectInfinete.propTypes = {
   fetchDataFn: PropTypes.func.isRequired,
   getId: PropTypes.func.isRequired,
   getLabel: PropTypes.func.isRequired,
-  pageSize: PropTypes.number
+  pageSize: PropTypes.number,
+  fetchSingleItemFn: PropTypes.func,
 }
 
 export default SelectInfinete
