@@ -45,7 +45,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       # Solo si necesitás restaurar datos una vez
-      - /c/Users/vivas/Desktop/Db_music_house/backup.sql:/docker-entrypoint-initdb.d/backup.sql
+      #- /c/Users/vivas/Desktop/Db_music_house/backup.sql:/docker-entrypoint-initdb.d/backup.sql
     networks:
       - music_net
     restart: always
