@@ -1,21 +1,28 @@
 package com.musichouse.api.music.dto.dto_exit;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryDtoExit {
+
     private UUID idCategory;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date registDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Santiago")
+    private LocalDateTime registDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Santiago")
+    private LocalDateTime modifiedDate;
+
     private String categoryName;
+
     private String description;
 
 

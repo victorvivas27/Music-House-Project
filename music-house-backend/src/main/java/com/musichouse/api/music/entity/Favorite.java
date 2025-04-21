@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -49,9 +50,21 @@ public class Favorite {
     private User user;
 
     /**
-     * La fecha y hora en que se registró este elemento favorito.
+     * Anotación que marca el campo como una fecha de creación automática.
+     * Hibernate asigna automáticamente la fecha y hora actual al insertar la entidad en la base de datos.
      */
     @CreationTimestamp
-    @Temporal(TemporalType.DATE)
-    private Date registDate;
+    @Column(name = "regist_date", nullable = false, updatable = false)
+    private LocalDateTime registDate;
+
+    /**
+     * Anotación que marca el campo como una fecha de modificación automática.
+     * Hibernate asigna automáticamente la fecha y hora actual cada vez que
+     * la entidad es actualizada en la base de datos.
+     */
+    @UpdateTimestamp
+    @Column(name = "modified_date", nullable = false)
+    private LocalDateTime modifiedDate;
+
+
 }

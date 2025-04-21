@@ -1,21 +1,22 @@
 export const getErrorMessage = (error) => {
   if (!error) return '⚠️ Error desconocido (sin detalles).'
 
+  const response = error.response?.data
 
-  if (error.message || error.error) {
-    return error.message || error.error
+  // 🔹 Captura todos los posibles mensajes
+  const message = response?.message || error.message
+  const errorDetail = response?.error || error.error
+
+  // 🔸 Si errorDetail es un array, lo unimos
+  const errorText = Array.isArray(errorDetail)
+    ? errorDetail.join('\n')
+    : errorDetail
+
+  // 🔹 Combina ambos si existen
+  if (message && errorText) {
+    return `${message}\n${errorText}`
   }
 
-
-  if (error.response?.data?.message || error.response?.data?.error) {
-    return error.response.data.message || error.response.data.error
-  }
-
-
-  if (error instanceof Error) {
-    return error.message
-  }
-
-
-  return '⚠️ Error inesperado.'
-} 
+  // 🔹 Solo uno u otro
+  return message || errorText || '⚠️ Error inesperado.'
+}

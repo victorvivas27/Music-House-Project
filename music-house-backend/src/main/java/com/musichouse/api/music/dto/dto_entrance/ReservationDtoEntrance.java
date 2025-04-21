@@ -31,4 +31,5 @@ public class ReservationDtoEntrance {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
+
 }

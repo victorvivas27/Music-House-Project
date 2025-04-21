@@ -10,9 +10,14 @@ import java.util.List;
 @Getter
 @Builder
 public class JwtClaims {
+
     private String id;
+
     private String email;
+
     private List<String> roles;
+
     private String name;
+
     private String lastName;
 }

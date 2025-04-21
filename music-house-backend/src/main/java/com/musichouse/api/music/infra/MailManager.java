@@ -75,7 +75,8 @@ public class MailManager {
                                             LocalDate endDate,
                                             String reservationCode,
                                             BigDecimal totalPrice,
-                                            String imageURL) throws MessagingException {
+                                            String imageURL)
+            throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         Context context = new Context();

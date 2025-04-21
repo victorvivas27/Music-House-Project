@@ -2,10 +2,9 @@ package com.musichouse.api.music.dto.dto_exit;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.musichouse.api.music.entity.Instrument;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -21,11 +20,10 @@ public class FavoriteDtoExit {
 
     private Boolean isFavorite;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date registDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Santiago")
+    private LocalDateTime registDate;
 
-    private Instrument instrument;
+    private InstrumentFavoriteDtoExit instrument;
 
-    private String imageUrl;
 
 }

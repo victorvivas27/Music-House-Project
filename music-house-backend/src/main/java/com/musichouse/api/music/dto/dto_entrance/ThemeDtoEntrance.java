@@ -1,26 +1,30 @@
 package com.musichouse.api.music.dto.dto_entrance;
 
-import jakarta.validation.Valid;
+import com.musichouse.api.music.interfaces.HasName;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.List;
-
-@Data
+@Setter
+@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ThemeDtoEntrance {
+public class ThemeDtoEntrance implements HasName {
 
     @NotBlank(message = "El nombre de la tematica es obligatorio")
     @Size(max = 100, message = "El nombre de la tematica debe tener como máximo {max} caracteres")
     private String themeName;
 
+    @NotBlank(message = "La descripcion de la tematica es obligatorio")
     @Size(max = 1024, message = "La descripción de la tematica debe tener como máximo {max} caracteres")
     private String description;
 
-    @Valid
-    private List<String> imageUrls;
+
+    private String imageUrlTheme;
+
+    @Override
+    public String getName() {
+        return themeName;
+    }
 }

@@ -15,7 +15,7 @@ public class S3UrlParser {
 
         try {
             // 🟢 1️⃣ Reemplazar espacios en la URL con "%20" para asegurar compatibilidad
-            //gggggooooooooooooooooooooooooooooooooooooooooooo
+
             String encodedUrl = imageUrl.replace(" ", "%20");
 
             // 🟢 2️⃣ Convertir la URL en un objeto URI
@@ -24,7 +24,7 @@ public class S3UrlParser {
             // 🟢 3️⃣ Extraer el path (clave completa en S3) y decodificar caracteres especiales
             String key = URLDecoder.decode(uri.getPath().substring(1), StandardCharsets.UTF_8.name());
 
-            //LOGGER.info("ESTA ES LA KEY CORRECTA: " + key);
+
             return key;
         } catch (URISyntaxException | UnsupportedEncodingException e) {
             throw new RuntimeException("Error al procesar la URL de la imagen", e);

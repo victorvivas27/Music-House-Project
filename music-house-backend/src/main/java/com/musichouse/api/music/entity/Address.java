@@ -3,8 +3,9 @@ package com.musichouse.api.music.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -26,7 +27,7 @@ import java.util.UUID;
  * Esto se hace para evitar problemas de recursión
  * infinita en las operaciones de igualdad y hashCode.
  */
-@EqualsAndHashCode(exclude = {"user"})
+
 
 public class Address {
     /**
@@ -83,12 +84,20 @@ public class Address {
 
     /**
      * Anotación que marca el campo como una fecha de creación automática.
-     * Hibernate asigna automáticamente la fecha y hora actual al insertar
-     * la entidad en la base de datos.
+     * Hibernate asigna automáticamente la fecha y hora actual al insertar la entidad en la base de datos.
      */
     @CreationTimestamp
-    @Temporal(TemporalType.DATE)
-    private Date registDate;
+    @Column(name = "regist_date", nullable = false, updatable = false)
+    private LocalDateTime registDate;
+
+    /**
+     * Anotación que marca el campo como una fecha de modificación automática.
+     * Hibernate asigna automáticamente la fecha y hora actual cada vez que
+     * la entidad es actualizada en la base de datos.
+     */
+    @UpdateTimestamp
+    @Column(name = "modified_date", nullable = false)
+    private LocalDateTime modifiedDate;
 
     // 📌 Normalizar a mayúsculas antes de guardar o actualizar
     @PrePersist
@@ -98,13 +107,13 @@ public class Address {
             this.street = this.street.replaceAll("\\s+", " ").trim().toUpperCase();
         }
 
-        if (this.city != null){
+        if (this.city != null) {
             this.city = this.city.replaceAll("\\s+", " ").trim().toUpperCase();
         }
-        if (this.state != null){
+        if (this.state != null) {
             this.state = this.state.replaceAll("\\s+", " ").trim().toUpperCase();
         }
-        if (this.country != null){
+        if (this.country != null) {
             this.country = this.country.replaceAll("\\s+", " ").trim().toUpperCase();
         }
 

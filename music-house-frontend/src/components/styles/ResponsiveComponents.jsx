@@ -6,9 +6,9 @@ import background from '@/assets/CrearUsuarioBackGround.png'
 export const CustomButton = styled(Button, {
   shouldForwardProp: (prop) => prop !== 'sx'
 })(({ theme, sx = {} }) => ({
+  width: '100%',
   display: 'flex',
   justifyContent: 'space-evenly',
-  width: '40%',
   height: '40px',
   color: 'var(--color-secundario)',
   backgroundColor: 'var(--color-primario)',
@@ -16,15 +16,14 @@ export const CustomButton = styled(Button, {
   textTransform: 'none',
   borderRadius: '8px',
   transition: '0.3s',
- '&:hover': {
-    backgroundColor: 'var(--color-secundario)',
-    color: 'var(--color-primario)'
+  '&:hover': {
+    backgroundColor: 'var(--color-primario)',
+    color: 'var(--color-azul)'
   },
   '&:active': {
-    backgroundColor: 'var(--color-primario-active)'
+    backgroundColor: 'var(--color-exito)'
   },
   '&:disabled': {
-   
     cursor: 'not-allowed'
   },
 
@@ -45,9 +44,13 @@ export const CustomButton = styled(Button, {
 }))
 
 export const ContainerBottom = styled(Grid, {
-  shouldForwardProp: (prop) => prop !== 'sx'
+  shouldForwardProp: (prop) => prop !== 'sx',
+   
 })(({ theme, sx = {} }) => ({
+  
   ...flexColumnContainer,
+  marginTop:30,
+ 
   [theme.breakpoints.up('sm')]: {
     width: '100%'
   },
@@ -88,10 +91,10 @@ export const ContainerForm = styled(Grid, {
 export const TitleResponsive = styled(Typography, {
   shouldForwardProp: (prop) => prop !== 'sx'
 })(({ theme, sx = {} }) => ({
-  color: 'var(--texto-inverso-white)',
-  fontWeight: 300,
-  fontSize: '1rem',
+  color: 'var(--texto-inverso-darck)',
   textShadow: '0 1px 2px var(--color-primario)',
+  fontWeight: 350,
+  fontSize: '1rem',
 
   [theme.breakpoints.up('sm')]: {
     fontWeight: 350,
@@ -107,8 +110,7 @@ export const TitleResponsive = styled(Typography, {
   },
   [theme.breakpoints.up('xl')]: {
     fontWeight: 500,
-    fontSize: '2rem',
-    
+    fontSize: '2rem'
   },
 
   ...sx
@@ -140,28 +142,31 @@ export const ContainerLogo = styled(Box, {
 export const ParagraphResponsive = styled(Typography, {
   shouldForwardProp: (prop) => prop !== 'sx'
 })(({ theme, sx = {} }) => ({
-
   fontWeight: 300,
   fontSize: '0.7rem',
   fontStyle: 'italic',
   textShadow: '0 1px 2px var(--color-primario)',
+  wordWrap: 'break-word',
+  overflowWrap: 'break-word',
+
+  // 💡 Línea clamp (máximo 3 líneas + "...")
+  display: '-webkit-box',
+  WebkitLineClamp: 3,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 
   [theme.breakpoints.up('sm')]: {
-    fontSize: '0.7rem',
-   
+    fontSize: '0.7rem'
   },
   [theme.breakpoints.up('md')]: {
-    fontSize: '0.8rem',
-   
+    fontSize: '0.8rem'
   },
   [theme.breakpoints.up('lg')]: {
-    fontSize: '0.9rem',
-    
+    fontSize: '0.9rem'
   },
   [theme.breakpoints.up('xl')]: {
-    fontSize: '1.2rem',
-   
-   
+    fontSize: '0.9rem'
   },
 
   ...sx
@@ -170,25 +175,18 @@ export const ParagraphResponsive = styled(Typography, {
 export const CreateWrapper = styled(Container, {
   shouldForwardProp: (prop) => prop !== 'isHeaderVisible'
 })(({ theme, isHeaderVisible }) => ({
-  display: 'none',
-
+  
   [theme.breakpoints.up('lg')]: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     gap: '1rem',
-    marginBottom: '14rem',
-    width: '100%',
     minHeight: '100vh',
-    height: 'auto',
-    maxWidth: '90%',
     paddingTop: isHeaderVisible ? 50 : 50,
     marginTop: '310px',
     transition: 'padding-top 1s ease-in-out'
   }
 }))
-
-
 
 export const BoxFormUnder = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -196,8 +194,6 @@ export const BoxFormUnder = styled(Grid)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   margin: 'auto',
-
-  
 
   [theme.breakpoints.down('sm')]: {
     width: '99%',
@@ -220,33 +216,30 @@ export const BoxFormUnder = styled(Grid)(({ theme }) => ({
 export const BoxLogoSuperior = styled(Grid)(() => ({
   display: 'flex',
   flexDirection: 'column',
- alignItems: 'flex-end',
- marginTop:20,
- 
+  alignItems: 'flex-end',
+  marginTop: 20
 }))
 
 export const MainCrearUsuario = styled(Grid)(() => ({
   display: 'flex',
   flexDirection: 'column',
- backgroundImage: `url(${background})`,
+  backgroundImage: `url(${background})`,
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'left bottom',
   height: '100%',
   minHeight: '100vh',
   transition: 'background-image 1s ease-in-out',
-  backgroundAttachment: 'fixed',
- 
+  backgroundAttachment: 'fixed'
 }))
 
 export const MainWrapper = styled(Box)(() => ({
   display: 'flex',
-  justifyContent: 'flex-start', 
-  alignItems: 'center', 
+  justifyContent: 'flex-start',
+  alignItems: 'center',
   width: '100vw',
-  marginTop: 305, 
-  marginBottom: 50,
-  
+  marginTop: 305,
+  marginBottom: 50
 }))
 
 export const InstrumentDetailWrapper = styled(Box)(() => ({
@@ -255,9 +248,9 @@ export const InstrumentDetailWrapper = styled(Box)(() => ({
   flexDirection: 'column',
   alignItems: 'center',
   width: '98vw',
-  margin:"auto",
+  margin: 'auto',
   marginTop: 310,
-  marginBottom: 50,
+  marginBottom: 50
 }))
 
 export const PageWrapper = styled(Grid)(({ theme }) => ({
@@ -282,7 +275,7 @@ export const ProductsWrapper = styled(Box)(() => ({
   gap: 2,
   width: '100%',
   maxWidth: '99%',
-  margin: '0 auto',
- 
+  margin: '0 auto'
 }))
+
 

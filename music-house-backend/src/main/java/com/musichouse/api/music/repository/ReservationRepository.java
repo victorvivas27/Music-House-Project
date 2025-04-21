@@ -20,14 +20,15 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
     @Query("SELECT f FROM Reservation f WHERE f.user.id = :userId")
     List<Reservation> findByUserId(@Param("userId") UUID userId);
 
-    @Query("SELECT r FROM Reservation r WHERE r.instrument.id = :instrumentId AND " +
-            "((r.startDate <= :endDate AND r.startDate >= :startDate) OR " +
-            "(r.endDate >= :startDate AND r.endDate <= :endDate) OR " +
-            "(r.startDate <= :startDate AND r.endDate >= :endDate))")
-    List<Reservation> findByInstrumentIdAndDateRange(@Param("instrumentId") UUID instrumentId,
-                                                     @Param("startDate") LocalDate startDate,
-                                                     @Param("endDate") LocalDate endDate);
 
     @Query("SELECT COUNT(r) > 0 FROM Reservation r WHERE r.instrument.id = :idInstrument")
     boolean existsByIdInstrument(@Param("idInstrument") UUID idInstrument);
+
+    @Query("SELECT COUNT(r) > 0 FROM Reservation r " +
+            "WHERE r.instrument.idInstrument = :instrumentId " +
+            "AND (:startDate < r.endDate AND :endDate > r.startDate)")
+    boolean existsByInstrumentAndDateRange(
+            @Param("instrumentId") UUID instrumentId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 }

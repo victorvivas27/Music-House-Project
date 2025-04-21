@@ -2,7 +2,10 @@ package com.musichouse.api.music.dto.dto_modify;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.musichouse.api.music.dto.dto_entrance.CharacteristicDtoEntrance;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.math.BigDecimal;

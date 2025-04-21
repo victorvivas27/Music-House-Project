@@ -5,61 +5,93 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musichouse.api.music.dto.dto_entrance.ThemeDtoEntrance;
 import com.musichouse.api.music.dto.dto_exit.ThemeDtoExit;
 import com.musichouse.api.music.dto.dto_modify.ThemeDtoModify;
-import com.musichouse.api.music.entity.Theme;
 import com.musichouse.api.music.exception.ResourceNotFoundException;
-import com.musichouse.api.music.service.ThemeService;
+import com.musichouse.api.music.service.themeService.ThemeService;
 import com.musichouse.api.music.util.ApiResponse;
-import jakarta.validation.Valid;
+import com.musichouse.api.music.util.FileValidatorUtils;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/theme")
+@RequestMapping("/api/themes")
 public class ThemeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThemeController.class);
     private final ThemeService themeService;
     private final ObjectMapper objectMapper;
+    private Validator validator;
 
     // 🔹 CREAR TEMÁTICA
-    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<?>> createTheme(
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<ThemeDtoExit>> createTheme(
             @RequestPart("theme") String themeJson,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) throws ResourceNotFoundException, JsonProcessingException {
-        // 📌 Convertir JSON a Objeto
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ) throws JsonProcessingException, ResourceNotFoundException {
+
+        // 1. Parsear JSON a DTO
         ThemeDtoEntrance themeDtoEntrance = objectMapper.readValue(themeJson, ThemeDtoEntrance.class);
 
-        // 📌 Llamar al servicio
-        ThemeDtoExit themeDtoExit = themeService.createTheme(files, themeDtoEntrance);
+        // 2. Validar archivo (solo uno ahora)
+        List<String> fileErrors = FileValidatorUtils.validateImage(image);
+
+        // 3. Validar DTO manualmente
+        Set<ConstraintViolation<ThemeDtoEntrance>> violations = validator.validate(themeDtoEntrance);
+        List<String> dtoErrors = violations.stream()
+                .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+                .toList();
+
+        // 4. Unificar errores
+        List<String> allErrors = new ArrayList<>();
+        allErrors.addAll(fileErrors);
+        allErrors.addAll(dtoErrors);
+
+        if (!allErrors.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.<ThemeDtoExit>builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .message("Errores de validación")
+                    .error(allErrors)
+                    .result(null)
+                    .build());
+        }
+
+        // 5. Crear temática
+        ThemeDtoExit created = themeService.createTheme(themeDtoEntrance, image);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.<ThemeDtoExit>builder()
                         .status(HttpStatus.CREATED)
                         .statusCode(HttpStatus.CREATED.value())
-                        .message("Thematica creado exitosamente.")
+                        .message("Temática creada con éxito.")
                         .error(null)
-                        .result(themeDtoExit)
+                        .result(created)
                         .build());
     }
 
 
     // 🔹 OBTENER TODAS LAS TEMÁTICAS
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<ThemeDtoExit>>> allTheme() {
-        List<ThemeDtoExit> themeDtoExits = themeService.getAllThemes();
-        return ResponseEntity.ok(ApiResponse.<List<ThemeDtoExit>>builder()
+    @GetMapping()
+    public ResponseEntity<ApiResponse<Page<ThemeDtoExit>>> allTheme(Pageable pageable) {
+
+        Page<ThemeDtoExit> themeDtoExits = themeService.getAllThemes(pageable);
+        return ResponseEntity.ok(ApiResponse.<Page<ThemeDtoExit>>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Lista de temáticas obtenida exitosamente.")
@@ -69,72 +101,76 @@ public class ThemeController {
     }
 
     // 🔹 BUSCAR TEMÁTICA POR ID
-    @GetMapping("/search/{idTheme}")
-    public ResponseEntity<ApiResponse<ThemeDtoExit>> searchThemeById(@PathVariable UUID idTheme) {
-        try {
-            ThemeDtoExit foundTheme = themeService.getThemeById(idTheme);
-            return ResponseEntity.ok(ApiResponse.<ThemeDtoExit>builder()
-                    .status(HttpStatus.OK)
-                    .statusCode(HttpStatus.OK.value())
-                    .message("Temática encontrada con éxito.")
-                    .error(null)
-                    .result(foundTheme)
-                    .build());
-        } catch (ResourceNotFoundException e) {
+    @GetMapping("{idTheme}")
+    public ResponseEntity<ApiResponse<ThemeDtoExit>> searchThemeById(@PathVariable UUID idTheme)
+            throws ResourceNotFoundException {
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.<ThemeDtoExit>builder()
-                            .status(HttpStatus.NOT_FOUND)
-                            .statusCode(HttpStatus.NOT_FOUND.value())
-                            .message("No se encontró la temática con el ID proporcionado.")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
-        }
+        ThemeDtoExit foundTheme = themeService.getThemeById(idTheme);
+
+        return ResponseEntity.ok(ApiResponse.<ThemeDtoExit>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Temática encontrada con éxito.")
+                .error(null)
+                .result(foundTheme)
+                .build());
+
     }
 
     // 🔹 ACTUALIZAR TEMÁTICA
-    @PutMapping("/update")
-    public ResponseEntity<ApiResponse<?>> updateTheme(@RequestBody @Valid ThemeDtoModify themeDtoModify) {
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<ThemeDtoExit>> updateTheme(
+            @RequestPart("theme") String themeJson,
+            @RequestPart(value = "image", required = false) MultipartFile file
+    ) throws JsonProcessingException, ResourceNotFoundException {
 
+        // 1. Parsear el JSON a DTO
+        ThemeDtoModify themeDtoModify = objectMapper.readValue(themeJson, ThemeDtoModify.class);
 
-        try {
-            ThemeDtoExit updatedTheme = themeService.updateTheme(themeDtoModify);
-            return ResponseEntity.ok(ApiResponse.<ThemeDtoExit>builder()
-                    .status(HttpStatus.OK)
-                    .statusCode(HttpStatus.OK.value())
-                    .message("Temática actualizada con éxito.")
-                    .error(null)
-                    .result(updatedTheme)
+        // 2. Validar imagen si se envió
+        List<String> imageErrors = FileValidatorUtils.validateImage(file);
+
+        // 3. Validar DTO manualmente
+        Set<ConstraintViolation<ThemeDtoModify>> violations = validator.validate(themeDtoModify);
+        List<String> dtoErrors = violations.stream()
+                .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+                .toList();
+
+        // 4. Unificar errores
+        List<String> allErrors = new ArrayList<>();
+        allErrors.addAll(imageErrors);
+        allErrors.addAll(dtoErrors);
+
+        if (!allErrors.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.<ThemeDtoExit>builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .message("Errores de validación")
+                    .error(allErrors)
+                    .result(null)
                     .build());
-        } catch (ResourceNotFoundException e) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.<UUID>builder()
-                            .status(HttpStatus.NOT_FOUND)
-                            .statusCode(HttpStatus.NOT_FOUND.value())
-                            .message("No se encontró la temática con el ID proporcionado.")
-                            .error(e.getMessage())
-                            .result(themeDtoModify.getIdTheme())
-                            .build());
-        } catch (DataIntegrityViolationException e) {
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.<String>builder()
-                            .status(HttpStatus.BAD_REQUEST)
-                            .statusCode(HttpStatus.BAD_REQUEST.value())
-                            .message("La temática ya existe en la base de datos.")
-                            .error(e.getMessage())
-                            .result(themeDtoModify.getThemeName())
-                            .build());
         }
+
+        // 5. Actualizar temática
+        ThemeDtoExit updated = themeService.updateTheme(themeDtoModify, file);
+
+        return ResponseEntity.ok(ApiResponse.<ThemeDtoExit>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Temática actualizada con éxito.")
+                .error(null)
+                .result(updated)
+                .build());
     }
 
+
     // 🔹 ELIMINAR TEMÁTICA
-    @DeleteMapping("/delete/{idTheme}")
-    public ResponseEntity<ApiResponse<Void>> deleteTheme(@PathVariable UUID idTheme) throws ResourceNotFoundException {
+    @DeleteMapping("{idTheme}")
+    public ResponseEntity<ApiResponse<Void>> deleteTheme(@PathVariable UUID idTheme)
+            throws ResourceNotFoundException {
 
         themeService.deleteTheme(idTheme);
+
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
@@ -147,54 +183,22 @@ public class ThemeController {
     }
 
     // 🔹 BUSCAR TEMÁTICA POR NOMBRE
-    @GetMapping("/find/nameTheme/{themeName}")
-    public ResponseEntity<ApiResponse<List<Theme>>> searchTheme(@PathVariable String themeName) {
-        try {
-            if (themeName == null || themeName.trim().isEmpty()) {
-                throw new IllegalArgumentException("El nombre de la temática no puede estar vacío.");
-            }
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<ThemeDtoExit>>> searchThemeByName(
+            @RequestParam String name,
+            Pageable pageable) {
 
-            List<Theme> themes = themeService.searchTheme(themeName);
-            if (themes.isEmpty()) {
 
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.<List<Theme>>builder()
-                                .status(HttpStatus.NOT_FOUND)
-                                .statusCode(HttpStatus.NOT_FOUND.value())
-                                .message("No se encontraron temáticas con el nombre: " + themeName)
-                                .error(null)
-                                .result(null)
-                                .build());
-            }
+        Page<ThemeDtoExit> themeDtoExits = themeService.searchTheme(name, pageable);
 
-            return ResponseEntity.ok(ApiResponse.<List<Theme>>builder()
-                    .status(HttpStatus.OK)
-                    .statusCode(HttpStatus.OK.value())
-                    .message("Temáticas encontradas con éxito.")
-                    .error(null)
-                    .result(themes)
-                    .build());
+        return ResponseEntity.ok(ApiResponse.<Page<ThemeDtoExit>>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Búsqueda de tematicas exitosa.")
+                .error(null)
+                .result(themeDtoExits)
+                .build());
 
-        } catch (IllegalArgumentException e) {
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.<List<Theme>>builder()
-                            .status(HttpStatus.BAD_REQUEST)
-                            .statusCode(HttpStatus.BAD_REQUEST.value())
-                            .message("Parámetro de búsqueda inválido: " + themeName)
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<List<Theme>>builder()
-                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                            .message("Ocurrió un error al procesar la búsqueda.")
-                            .error(e.getMessage())
-                            .result(null)
-                            .build());
-        }
     }
 }

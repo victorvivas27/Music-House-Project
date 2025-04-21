@@ -69,17 +69,21 @@ export const headCellsReservas = [
 
 export const headCellsInstrument = [
   {
+    id: 'index',
+    numeric: true,
+    disablePadding: false,
+    label: 'N°',
+    hidden: false,
+    disableSort: true
+  },
+  {
     id: 'imageUrl',
     numeric: true,
     disablePadding: false,
-    label: 'Imagen'
+    label: 'Imagen',
+    disableSort: true
   },
-  {
-    id: 'idInstrument',
-    numeric: true,
-    disablePadding: false,
-    label: 'ID'
-  },
+ 
   {
     id: 'name',
     numeric: false,
@@ -87,30 +91,97 @@ export const headCellsInstrument = [
     label: 'Nombre'
   },
   {
+    id: 'themeName',
+    numeric: false,
+    disablePadding: false,
+    label: 'Tematica',
+    disableSort: true
+  },
+  {
+    id: 'categoryName',
+    numeric: false,
+    disablePadding: false,
+    label: 'Categoria',
+    disableSort: true
+  },
+  {
+    id: 'registDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Registro'
+  },
+  {
+    id: 'modifiedDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Modificado'
+  },
+  {
     id: 'actions',
     numeric: false,
     disablePadding: false,
-    label: 'Acciones'
+    label: 'Acciones',
+    disableSort: true
   }
 ]
 
 export const headCellsUser = [
-  {id: 'imageUrl', numeric: true,disablePadding: false,label: 'Imagen'},
-  { id: 'idUser', numeric: true, disablePadding: false, label: 'ID' },
-  { id: 'rol', numeric: false, disablePadding: false, label: 'Rol' },
+  {
+    id: 'index',
+    numeric: true,
+    disablePadding: false,
+    label: 'N°',
+    hidden: false,
+    disableSort: true
+  },
+  {
+    id: 'imageUrl',
+    numeric: true,
+    disablePadding: false,
+    label: 'Imagen',
+    disableSort: true
+  },
+  {
+    id: 'rol',
+    numeric: false,
+    disablePadding: false,
+    label: 'Rol',
+    disableSort: true
+  },
   { id: 'name', numeric: false, disablePadding: false, label: 'Nombre' },
   { id: 'lastName', numeric: false, disablePadding: false, label: 'Apellido' },
   { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'actions', numeric: false, disablePadding: false, label: 'Acciones' }
+  {
+    id: 'registDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Registro'
+  },
+  {
+    id: 'modifiedDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Modificado'
+  },
+  {
+    id: 'actions',
+    numeric: false,
+    disablePadding: false,
+    label: 'Acciones',
+    disableSort: true
+  }
 ]
 
 export const headCellsCategory = [
   {
-    id: 'idCategory',
+    id: 'index',
     numeric: true,
     disablePadding: false,
-    label: 'ID'
+    label: 'N°',
+    hidden: false,
+    disableSort: true
   },
+
   {
     id: 'categoryName',
     numeric: false,
@@ -121,28 +192,45 @@ export const headCellsCategory = [
     id: 'description',
     numeric: false,
     disablePadding: false,
-    label: 'Descripción'
+    label: 'Descripción',
+    disableSort: true
+  },
+  {
+    id: 'registDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Registro'
+  },
+  {
+    id: 'modifiedDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Modificado'
   },
   {
     id: 'actions',
     numeric: false,
     disablePadding: false,
-    label: 'Acciones'
+    label: 'Acciones',
+    disableSort: true
   }
 ]
 
 export const headCellsTheme = [
   {
+    id: 'index',
+    numeric: true,
+    disablePadding: false,
+    label: 'N°',
+    hidden: false,
+    disableSort: true
+  },
+  {
     id: 'imageUrl',
     numeric: true,
     disablePadding: false,
-    label: 'Imagen'
-  },
-  {
-    id: 'idTheme',
-    numeric: true,
-    disablePadding: false,
-    label: 'ID'
+    label: 'Imagen',
+    disableSort: true
   },
   {
     id: 'themeName',
@@ -154,12 +242,26 @@ export const headCellsTheme = [
     id: 'description',
     numeric: false,
     disablePadding: false,
-    label: 'Descripción'
+    label: 'Descripción',
+    disableSort: true
+  },
+  {
+    id: 'registDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Registro'
+  },
+  {
+    id: 'modifiedDate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Modificado'
   },
   {
     id: 'actions',
     numeric: false,
     disablePadding: false,
-    label: 'Acciones'
+    label: 'Acciones',
+    disableSort: true
   }
 ]

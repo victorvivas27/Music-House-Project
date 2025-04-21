@@ -3,11 +3,12 @@ import CardMedia from '@mui/material/CardMedia'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
 import { ParagraphResponsive, TitleResponsive } from '@/components/styles/ResponsiveComponents'
+import { flexColumnContainer } from '@/components/styles/styleglobal'
 
 
 
 
-const TematicCard = ({ title, imageUrl, paragraph }) => {
+const TematicCard = ({ title, imageUrlTheme, paragraph }) => {
   return (
     <Card
       sx={{
@@ -23,16 +24,13 @@ const TematicCard = ({ title, imageUrl, paragraph }) => {
             md: 550,
             lg: 550
           },
+          ...flexColumnContainer,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
           color: 'white',
           textAlign: 'center',
 
-          backgroundImage: `url(${imageUrl})`,
+          backgroundImage: imageUrlTheme ? `url(${encodeURI(imageUrlTheme)})` : 'none',
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -68,7 +66,7 @@ const TematicCard = ({ title, imageUrl, paragraph }) => {
 
 TematicCard.propTypes = {
   title: PropTypes.string.isRequired,
-  imageUrl: PropTypes.string.isRequired,
+  imageUrlTheme: PropTypes.string.isRequired,
   paragraph: PropTypes.string
 }
 

@@ -1,10 +1,9 @@
+import { useCallback } from 'react'
 import Swal from 'sweetalert2'
 
 const useAlert = () => {
- 
 
-  // ✅ Alerta de confirmación antes de realizar una acción
-  const showConfirm = async (
+  const showConfirm = useCallback(async (
     title,
     text,
     confirmText = 'Sí, continuar',
@@ -38,10 +37,9 @@ const useAlert = () => {
     })
 
     return result.isConfirmed
-  }
+  }, [])
 
-  // ✅ Alerta de carga mientras se procesa una acción
-  const showLoading = (title = 'Procesando...', text = 'Por favor espera.') => {
+  const showLoading = useCallback((title = 'Procesando...', text = 'Por favor espera.') => {
     Swal.fire({
       title,
       text,
@@ -62,47 +60,41 @@ const useAlert = () => {
         popup: 'custom-swal'
       }
     })
-  }
+  }, [])
 
-  // ✅ Alerta de éxito
-const showSuccess = (
-  title = '¡Éxito!',
-  text,
-  onClose 
-) => {
-  Swal.fire({
-    title,
-    text,
-    icon: 'success',
-    confirmButtonColor: '#3085d6',
-    showConfirmButton: false,
-    timer: 2050,
-    timerProgressBar: true,
-    background: 'var(--color-secundario)',
-    color: 'var(--color-primario)',
-    showClass: {
-      popup: 'animate__animated animate__fadeInDown'
-    },
-    hideClass: {
-      popup: 'animate__animated animate__fadeOutUp'
-    },
-    customClass: {
-      popup: 'custom-swal'
-    },
-    didClose: () => {
-      if (onClose) onClose()
-    }
-  })
-}
+  const showSuccess = useCallback((title = '¡Éxito!', text, onClose) => {
+    Swal.fire({
+      title,
+      text,
+      icon: 'success',
+      confirmButtonColor: '#3085d6',
+      showConfirmButton: false,
+      timer: 1000,
+      timerProgressBar: true,
+      background: 'var(--color-secundario)',
+      color: 'var(--color-primario)',
+      showClass: {
+        popup: 'animate__animated animate__fadeInDown'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOutUp'
+      },
+      customClass: {
+        popup: 'custom-swal'
+      },
+      didClose: () => {
+        if (onClose) onClose()
+      }
+    })
+  }, [])
 
-  // ✅ Alerta de error
-  const showError = (title = 'Error',text) => {
+  const showError = useCallback((title = 'Error', text) => {
     Swal.fire({
       title,
       text,
       icon: 'error',
       confirmButtonColor: '#d33',
-      confirmButtonText: 'Entendido ✔️', 
+      confirmButtonText: 'Entendido ✔️',
       background: 'var(--color-secundario)',
       color: 'var(--color-primario)',
       showClass: {
@@ -116,7 +108,7 @@ const showSuccess = (
         confirmButton: 'custom-swal-btn'
       }
     })
-  }
+  }, [])
 
   return {
     showConfirm,

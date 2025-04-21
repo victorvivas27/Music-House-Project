@@ -1,9 +1,11 @@
 package com.musichouse.api.music.dto.dto_exit;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -37,5 +39,11 @@ public class ReservationDtoExit {
 
     private String instrumentName;
 
+
     private String imageUrl;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Santiago")
+    private LocalDateTime registDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Santiago")
+    private LocalDateTime modifiedDate;
 }

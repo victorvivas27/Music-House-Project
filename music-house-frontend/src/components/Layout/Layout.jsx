@@ -48,6 +48,7 @@ export const UserLayoutWithoutHeaderFooter = () => {
 }
 
 export const AdminLayout = () => {
+ 
   return (
     <ThemeProvider theme={theme}>
       <Box

@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneralException(Exception e) {
         String errorMessage = e.getMessage() != null ? e.getMessage() : "Error interno desconocido";
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor: " + errorMessage);
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
     }
 
     // 🔹 Excepción cuando un email ya existe (puede ser 400 o 409 según prefieras)
@@ -138,5 +138,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FileNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleFileNotFoundException(FileNotFoundException e) {
         return buildResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    // 🔹 Imagen Duplicada
+    @ExceptionHandler(DuplicateImageException.class)
+    public ResponseEntity<ApiResponse<Void>> handleFileNotFoundException(DuplicateImageException e) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    // 🔹 Instrumento Reservado
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBusinessRuleException(BusinessRuleException e) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 }

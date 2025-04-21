@@ -3,9 +3,10 @@ import { handleApiError } from './handleApiError';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 
-export const getInstruments = async () => {
+export const getInstruments = async (page=0,size=5,sort="name,asc") => {
   try {
-    const response = await axios.get(`${BASE_URL}/instrument/all`);
+    const response = await axios
+    .get(`${BASE_URL}/instruments?page=${page}&size=${size}&sort=${sort}`);
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -15,7 +16,8 @@ export const getInstruments = async () => {
 
 export const getInstrumentById = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/instrument/search/${id}`);
+    const response = await axios
+    .get(`${BASE_URL}/instruments/${id}`);
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -23,19 +25,13 @@ export const getInstrumentById = async (id) => {
 };
 
 
-export const getThemes = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/theme/all`);
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-  }
-};
+
 
 
 export const createInstrument = async (formData) => {
   try {
-    const response = await axios.post(`${BASE_URL}/instrument/create`, formData, {
+    const response = await axios
+    .post(`${BASE_URL}/instruments`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -49,7 +45,8 @@ export const createInstrument = async (formData) => {
 
 export const updateInstrument = async (payload) => {
   try {
-    const response = await axios.put(`${BASE_URL}/instrument/update`, payload);
+    const response = await axios
+    .put(`${BASE_URL}/instruments`, payload);
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -59,7 +56,8 @@ export const updateInstrument = async (payload) => {
 
 export const deleteInstrument = async (idInstrument) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/instrument/delete/${idInstrument}`);
+    const response = await axios
+    .delete(`${BASE_URL}/instruments/${idInstrument}`);
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -67,11 +65,17 @@ export const deleteInstrument = async (idInstrument) => {
 };
 
 
-export const searchInstrumentsByName = async (name) => {
+export const searchInstrumentsByName = async (name, page = 0, size = 10) => {
   if (!name) return [];
 
   try {
-    const response = await axios.get(`${BASE_URL}/instrument/find/name/${name}`);
+    const response = await axios.get(`${BASE_URL}/instruments/search`, {
+      params: {
+        name,
+        page,
+        size
+      }
+    });
     return response.data;
   } catch (error) {
     handleApiError(error);

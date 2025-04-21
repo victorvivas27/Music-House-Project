@@ -4,7 +4,6 @@ import com.musichouse.api.music.entity.Roles;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,9 +17,7 @@ public class UserDtoEntrance {
 
     private UUID idUser;
 
-    //@NotNull(message = "Debes volocar un imagen de perfil")
-    @Size(min = 1, max = 2048, message = "La imagen de perfil debe tener entre 1 y 2048 caracteres")
-    @URL(message = "La imagen de perfil debe ser una URL válida")
+
     private String picture;
 
     @NotNull(message = "El nombre es obligatorio")
@@ -45,20 +42,18 @@ public class UserDtoEntrance {
     @Pattern(regexp = ".*[@#$%^&+=!*].*", message = "La contraseña debe contener al menos un carácter especial (@, #, $, etc.)")
     private String password;
 
-    @NotNull(message = "El campo addresses debe estar presente y no puede estar vacío")
     @Valid
+    @NotNull(message = "El campo addresses debe estar presente y no puede estar vacío")
     private List<AddressDtoEntrance> addresses;
 
     @Valid
     @NotNull(message = "El campo phones debe estar presente y no puede estar vacío")
     private List<PhoneDtoEntrance> phones;
 
-    @NotNull(message = "❌ El código de Telegram es obligatorio")
-    @Min(value = 10000, message = "⚠️ El código de Telegram debe tener al menos 5 dígitos")
-    @Max(value = 999999999999999L, message = "⚠️ El código de Telegram no puede superar los 15 dígitos")
+    @NotNull(message = "El código de Telegram es obligatorio")
+    @Positive(message = "El código de Telegram debe ser un número positivo")
     private Long telegramChatId;
 
-    //@NotNull(message = "El campo roles no puede ser nulo")
-    //@Size(min = 1, message = "Debe haber al menos un rol asignado")
+   
     private List<Roles> roles;
 }
